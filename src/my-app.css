@@ -1,0 +1,11 @@
+body {
+  font-family: sans-serif;
+}
+
+.message {
+  background-color: #94aa7d;
+}
+
+.typing-container {
+  color: grey;
+}
