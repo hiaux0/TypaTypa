@@ -1,5 +1,5 @@
 body {
-  font-family: sans-serif;
+  font-family: mono, sans-serif;
 }
 
 .message {
@@ -8,4 +8,13 @@ body {
 
 .typing-container {
   color: grey;
+  .typed-text {
+    color: black;
+  }
+  .current-letter {
+    border-bottom: 1px solid black;
+  }
+  .text-to-type {
+    color: grey;
+  }
 }
