@@ -1,8 +1,34 @@
 <div class="message">${message}</div>
 <br />
+
+<!-- Topics -->
+<div class="topics-container">Topics</div>
+
+<!-- New Text -->
+<div class="text-input-container">
+  Text Input
+  <textarea
+    rows="1"
+    value.bind="newInputText"
+    placeholder="Paste new text here"
+  ></textarea>
+</div>
+
 <br />
+<!-- Typing -->
+left to type: ${remainingWordsToType.size}
 <div class="typing-container">
   <span class="typed-text">${typedText}</span
   ><span class="current-letter">${currentLetter}</span
   ><span class="text-to-type">${currentTextToType}</span>
+</div>
+
+<br />
+
+<!-- Remember -->
+<div class="remember-container">
+  <h4>Remember</h4>
+  <template repeat.for="word of rememberList">
+    <span class="remember-word">${word}</span>
+  </template>
 </div>

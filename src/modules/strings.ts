@@ -1,0 +1,82 @@
+/**
+ * getWordAtIndex("012 4567", 1) => "012"
+ * getWordAtIndex("012 4567", 2) => "012"
+ * getWordAtIndex("012 4567", 4) => "4567"
+ */
+export function getWordAtIndex(
+  input: string,
+  index: number,
+): string | undefined {
+  const untilChars = [" ", "\n", "\t"];
+  let current = input[index];
+  if (!current) return;
+  if (untilChars.includes(current)) return;
+
+  let startIndex = getIndexBackwardsUntil(input, index, untilChars);
+  let endIndex = getIndexForwardUntil(input, index, untilChars);
+  const word = input.slice(startIndex, endIndex + 1);
+  return word;
+}
+
+export function findLongest(input: string[]): string {
+  if (input.length === 0) return "";
+  let longest = "";
+  for (const item of input) {
+    if (item.length > longest.length) {
+      longest = item;
+    }
+  }
+  return longest;
+}
+
+function getIndexBackwardsUntil(
+  input: string,
+  index: number,
+  untilChars: string[],
+): number {
+  let startIndex = 0;
+  for (let i = index; i >= 0; i--) {
+    let char = input[i];
+    if (untilChars.includes(char)) {
+      break;
+    }
+    startIndex = i;
+  }
+  return startIndex;
+}
+
+function getIndexForwardUntil(
+  input: string,
+  index: number,
+  untilChars: string[],
+): number {
+  let endIndex = 0;
+  for (let i = index; i < input.length; i++) {
+    let char = input[i];
+    if (untilChars.includes(char)) {
+      break;
+    }
+    endIndex = i;
+  }
+  return endIndex;
+}
+
+/**
+ * 1. no special chars
+ * 2. all lower case
+ * @example
+ * ```ts
+ * const inputText = "Hello, world! This is a test.";
+ * const tokens = tokenize(inputText);
+ * console.log(tokens); // ["Hello", "world", "This", "is", "a", "test"]
+ * ```
+ */
+export function tokenize(text: string, option?: { lower?: boolean }): string[] {
+  const rawTokens = text.match(/\b\w+\b/g);
+  if (!rawTokens) return [];
+  let tokens = rawTokens as string[];
+  if (option.lower) {
+    tokens = rawTokens.map((token) => token.toLowerCase());
+  }
+  return tokens;
+}

@@ -1,5 +1,11 @@
+$border-color: #eee;
+
 body {
   font-family: mono, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: unset;
 }
 
 .message {
@@ -8,6 +14,8 @@ body {
 
 .typing-container {
   color: grey;
+  border: 1px solid $border-color;
+
   .typed-text {
     color: black;
   }
@@ -15,6 +23,13 @@ body {
     border-bottom: 1px solid black;
   }
   .text-to-type {
+    color: grey;
+  }
+}
+
+.remember-container {
+  border: 1px solid $border-color;
+  .remember-word {
     color: grey;
   }
 }
