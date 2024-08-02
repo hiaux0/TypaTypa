@@ -1,0 +1,17 @@
+<div class="tab-drawer-container">
+  <!-- 1. Tab Bar -->
+  <div class="tab-bar">
+    <div
+      repeat.for="topic of topics"
+      class="tab-bar__tab ${this.activeTopic.title === topic.title ? 'active' : ''}"
+      click.trigger="toggleDrawer(topic.title)"
+    >
+      ${topic.title}
+    </div>
+  </div>
+
+  <!-- 2. Drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer__content">${activeTopic.content}</div>
+  </div>
+</div>
