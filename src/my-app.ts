@@ -111,7 +111,7 @@ export class MyApp {
   }
 
   public onTopicChange = (topic: Topic): void => {
-    const text = topic.content.join(" ");
+    const text = topic.content.map((item) => item.text).join(" ");
     this.newInputTextChanged(text);
   };
 

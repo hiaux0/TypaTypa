@@ -1,9 +1,10 @@
-<button>Add new</button>
-
-<!-- Left -->
 <div class="topics-container">
+  <!-- Left -->
   <section class="topics-list-container">
-    <h4>List</h4>
+    <div class="topics-list-header">
+      <h4>List</h4>
+      <button type="button" click.trigger="addTopic()">+</button>
+    </div>
 
     <div class="topics-list">
       <div
@@ -18,10 +19,19 @@
 
   <!-- Right -->
   <section class="selected-topic-container">
-    <h4>Selected</h4>
+    <div class="content-list-header">
+      <h4>Selected</h4>
+      <button type="button" click.trigger="addContent(this.selectedTopic)">
+        +
+      </button>
+    </div>
+
     <div class="content-container">
       <div class="content" repeat.for="item of selectedTopic.content">
-        <textarea value.bind="item"></textarea>
+        <textarea
+          value.bind="item.text"
+          placeholder="${item.text === '' ? 'add new content' : ''}"
+        ></textarea>
       </div>
     </div>
   </section>

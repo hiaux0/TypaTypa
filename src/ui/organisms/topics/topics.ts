@@ -2,18 +2,22 @@ import { bindable } from "aurelia";
 import "./topics.scss";
 
 export interface Topic {
+  id?: string;
   title: string;
-  content: string[];
+  content: {
+    id?: string;
+    text: string;
+  }[];
 }
 
 const TOPICS: Topic[] = [
   {
     title: "Living",
-    content: ["live one", "live two"],
+    content: [{ text: "live one" }, { text: "live two" }],
   },
   {
     title: "Education",
-    content: ["edu one", "edu two"],
+    content: [{ text: "edu one" }, { text: "edu two" }],
   },
 ];
 
@@ -24,6 +28,20 @@ export class Topics {
 
   attached() {
     this.selectedTopic = this.topics[1];
+  }
+
+  public addTopic(): void {
+    const title = "New Topic";
+    this.topics.push({
+      title,
+      content: [{ text: "" }],
+    });
+    this.selectTopic(title);
+  }
+
+  public addContent(topic: Topic): void {
+    const newContent = { text: "" };
+    topic.content = [newContent, ...topic.content];
   }
 
   public selectTopic(topicTitle: string): void {

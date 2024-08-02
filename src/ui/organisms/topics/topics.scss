@@ -6,6 +6,12 @@
   .topics-list-container {
     width: 30%;
     height: 100%;
+
+    .topics-list-header {
+      display: flex;
+      justify-content: space-between;
+    }
+
     .topics-list {
       height: 80%;
       border: 1px solid black;
@@ -25,9 +31,16 @@
       }
     }
   }
+
   .selected-topic-container {
     margin-left: 12px;
     width: 60%;
+
+    .content-list-header {
+      display: flex;
+      justify-content: space-between;
+    }
+
     .content-container {
       height: 80%;
       border: 1px solid black;
