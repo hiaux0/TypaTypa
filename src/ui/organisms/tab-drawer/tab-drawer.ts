@@ -10,7 +10,7 @@ export class TabDrawer {
   public message = "tab-drawer.html";
   @bindable() public tabs = [];
   @bindable() public activeTab: Tabs | null = null;
-  public isDrawerOpen = true;
+  @bindable() public isDrawerOpen = true;
 
   attached() {
     this.activeTab = this.tabs[0];

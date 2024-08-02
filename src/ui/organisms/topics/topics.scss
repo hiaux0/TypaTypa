@@ -1,3 +1,11 @@
+@import "../../colors.scss";
+
+@mixin header() {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
 .topics-container {
   width: 100%;
   height: 100%;
@@ -8,22 +16,23 @@
     height: 100%;
 
     .topics-list-header {
-      display: flex;
-      justify-content: space-between;
+      @include header;
     }
 
     .topics-list {
       height: 80%;
-      border: 1px solid black;
+      border: 1px solid $borderColor;
+      border-radius: $borderRadius0;
+      overflow: scroll;
 
       .topic {
         padding: 10px;
         &:hover {
-          background: #ccc;
+          background: $primary1;
           cursor: pointer;
         }
         &.active {
-          background: #ddd;
+          background: $primary0;
         }
 
         .topic-title {
@@ -37,16 +46,16 @@
 
   .selected-topic-container {
     margin-left: 12px;
-    width: 60%;
+    width: 70%;
 
     .content-list-header {
-      display: flex;
-      justify-content: space-between;
+      @include header;
     }
 
     .content-container {
       height: 80%;
-      border: 1px solid black;
+      border: 1px solid $borderColor;
+      border-radius: $borderRadius0;
       overflow: scroll;
 
       .content {

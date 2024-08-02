@@ -1,0 +1,34 @@
+/* $primary: #bfd6a7; */
+
+$primary0: #d5dcbc; //          sage (green)
+$primary: #ccd5ae; //           sage (green)
+/* $primary1: #c4cea1; //           sage (green) */ // Note: one step less than below (#bcc794), but too light imo
+$primary1: #bcc794; //          sage (green)
+$primaryDark0: #3e403b; //      lighter black olive
+$primaryDark: #343531; //       black olive
+$primaryDark1: #292a27; //      darker black olive
+$primaryDark2: #1f201d; //      darker black olive
+
+$secondaryLight0: #fcfbef; //   lighter beige
+$secondaryLight: #fefae0; //    beige
+$secondary: #faedce; //         beige
+
+$black0: #252815; //            lighter
+$black: #181b0e; //             main black
+$black1: #0c0d07; //            darker
+
+$white0: #ffffff; //            lighter white
+$white: #f7f8f2; //             main white
+$white1: #eff1e4; //            darker white
+
+$grey: #7f8177; //              main grey
+
+$textColor: $primaryDark2;
+$borderColor: $black;
+$borderRadius0: 0.1rem;
+$borderRadius: 0.2rem;
+
+$marginS: 0.3rem;
+$padding0: 6px;
+$drawerPadding: 20px;
+$fontSizeS: 0.8rem;

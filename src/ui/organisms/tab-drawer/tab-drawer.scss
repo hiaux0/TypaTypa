@@ -1,5 +1,6 @@
+@import "../../colors";
+
 $tabBarHeight: 36px;
-$drawerPadding: 20px;
 $zIndexTabs: 20;
 $zIndexDrawer: 10;
 
@@ -12,8 +13,8 @@ $zIndexDrawer: 10;
     width: 100%;
     height: $tabBarHeight;
     display: flex;
-    background: #333;
-    color: #fff;
+    background: $primaryDark;
+    color: $white;
     justify-content: space-around;
     z-index: $zIndexTabs;
 
@@ -24,15 +25,15 @@ $zIndexDrawer: 10;
       padding: 10px 0;
 
       &:hover {
-        background: #222;
+        background: $primaryDark1;
       }
 
       &.active {
-        background: #444;
-        border-top: 3px solid #333;
-        border-bottom: 3px solid #333;
+        background: $primaryDark0;
+        border-top: 3px solid $primaryDark;
+        border-bottom: 3px solid $primaryDark;
         &:hover {
-          background: #222;
+          background: $primaryDark1;
         }
       }
     }
@@ -41,11 +42,15 @@ $zIndexDrawer: 10;
   .drawer {
     position: fixed;
     bottom: $tabBarHeight;
-    width: 100%;
+    width: calc(100% - 2rem);
+    /* width: calc(100%); */
     height: 0;
-    margin-bottom: -2 * $drawerPadding;
+    margin: 1rem;
+    border: 1px solid $borderColor;
+    border-radius: $borderRadius;
+    margin-bottom: -3 * $drawerPadding;
     padding: $drawerPadding;
-    background: #f5f5f5;
+    background: $secondaryLight;
     overflow: hidden;
     transition: height 0.3s ease;
     z-index: $zIndexDrawer;

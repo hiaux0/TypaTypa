@@ -1,19 +1,9 @@
-<div class="message">${message}</div>
+<div class="app-header">${appName}</div>
 <br />
-
-<!-- New Text -->
-<!--<div class="text-input-container">-->
-<!--  Text Input-->
-<!--  <textarea-->
-<!--    rows="1"-->
-<!--    value.bind="newInputText"-->
-<!--    placeholder="Paste new text here"-->
-<!--  ></textarea>-->
-<!--</div>-->
 
 <br />
 <!-- Typing -->
-<section class="typing-container">
+<section class="typing-container ${isDrawerOpen ? 'top' : ''}">
   <div class="left-to-type">left to type: ${remainingWordsToType.size}</div>
   <div class="typing-input-container">
     <span class="typed-text">${typedText}</span
@@ -25,7 +15,11 @@
 <br />
 
 <!-- Tab Drawer -->
-<tab-drawer active-tab.two-way="activeTopic" tabs.bind="topics">
+<tab-drawer
+  active-tab.two-way="activeTopic"
+  tabs.bind="topics"
+  is-drawer-open.two-way="isDrawerOpen"
+>
   <template au-slot="content" if.bind="activeTopic.title === 'Topics'">
     <topics on-topic-change.bind="onTopicChange" />
   </template>

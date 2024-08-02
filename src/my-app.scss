@@ -1,41 +1,108 @@
 @import "./ui/reset.scss";
+@import "./ui/colors";
 
-$border-color: #eee;
+* {
+  box-sizing: border-box;
+}
 
 body {
   font-family: mono, sans-serif;
+  color: $textColor;
+  background: $secondaryLight0;
 }
 
-.message {
+/**
+ * MIT License
+ * Copyright (c) 2021-2022 by Joel Dare
+ * https://github.com/codazoda/neatcss/blob/710195f27b485ae8737c3492947424f489cc7d89/LICENSE.txt
+ */
+button,
+.button,
+input[type="submit"] {
+  display: inline-block;
+  text-align: center;
+  padding: 0.5em;
+  background-color: $primary;
+  color: $textColor;
+  border-radius: $borderRadius;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.icon-button {
+  padding: 1px 4px;
+
+  &__outlined {
+    border: 1px solid $borderColor;
+    padding: 0px 3px;
+    background-color: unset;
+    &:hover {
+      background-color: $primary;
+    }
+  }
+}
+
+input,
+textarea {
+  border: 1px solid $borderColor;
+  border-radius: $borderRadius;
+  background: $secondaryLight0;
+}
+
+textarea {
+  padding-left: $padding0;
+  padding-top: $padding0;
+}
+
+.app-header {
+  display: flex;
+  font-weight: 600;
+  align-items: center;
+  padding: 0 1rem;
+  height: 32px;
   background-color: #94aa7d;
 }
 
 .typing-container {
+  top: 100px;
+  position: relative;
   padding: 0 20px;
+  transition: top 0.3s ease;
+  &.top {
+    /* top: -40px; */
+    top: 0px;
+  }
 
   .left-to-type {
     display: flex;
     justify-content: end;
+    margin-bottom: $marginS;
+    font-size: $fontSizeS;
   }
   .typing-input-container {
-    color: grey;
-    border: 1px solid $border-color;
+    color: $grey;
+    border: 1px solid $borderColor;
+    border-radius: $borderRadius;
+    padding: 12px;
 
     .typed-text {
-      color: black;
+      line-height: 2rem;
+      color: $textColor;
     }
     .current-letter {
-      border-bottom: 1px solid black;
+      border-bottom: 2px solid $borderColor;
     }
     .text-to-type {
-      color: grey;
+      line-height: 2rem;
+      color: $grey;
     }
   }
 }
 
 .remember-container {
-  border: 1px solid $border-color;
+  border: 1px solid $borderColor;
   .remember-word {
-    color: grey;
+    color: $grey;
   }
 }

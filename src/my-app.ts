@@ -5,6 +5,7 @@ import { getDefinition } from "./modules/dictionary";
 import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
 import { Topic } from "./types";
 import { database } from "./modules/database";
+import { APP_NAME } from "./modules/constants";
 
 interface Features {
   remember: Set<string>;
@@ -16,7 +17,7 @@ interface Features {
 
 /*prettier-ignore*/ const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
 // /*prettier-ignore*/ const WORDS = ["as", "ht"]
-const AMOUNT_OF_WORDS = 2;
+const AMOUNT_OF_WORDS = 12;
 const TOPICS: Tabs[] = [
   {
     title: "Topics",
@@ -30,7 +31,7 @@ const TOPICS: Tabs[] = [
 ];
 
 export class MyApp {
-  public message = "Typing App cua Emy";
+  public appName = APP_NAME;
   public topics = TOPICS;
   @observable public newInputText = "";
   public typedText = "";
@@ -40,6 +41,9 @@ export class MyApp {
   public nextWordsToType: Set<string> = new Set();
 
   public rememberList: Features["remember"] = new Set();
+  public dictionaryLookedUpList: Set<string> = new Set();
+
+  public isDrawerOpen = false;
 
   public newInputTextChanged(newText: string): void {
     const tokens = tokenize(newText, { lower: true });
@@ -49,6 +53,9 @@ export class MyApp {
   }
 
   attached() {
+    const dbData = database.getItem();
+    this.rememberList = new Set(dbData.rememberList);
+    this.dictionaryLookedUpList = new Set(dbData.dictionaryLookedUpList);
     const selectedTopic = database.getSelectedTopic();
     this.onTopicChange(selectedTopic);
 
@@ -87,10 +94,15 @@ export class MyApp {
       case "?": {
         const definition = getDefinition(wordAtIndex);
         /*prettier-ignore*/ console.log("[my-app.ts,78] definition: ", definition);
+        this.dictionaryLookedUpList.add(wordAtIndex);
+        database.setItem({
+          dictionaryLookedUpList: Array.from(this.dictionaryLookedUpList),
+        });
         break;
       }
       case "+": {
         this.rememberList.add(wordAtIndex);
+        database.setItem({ rememberList: Array.from(this.rememberList) });
         break;
       }
       case "-": {

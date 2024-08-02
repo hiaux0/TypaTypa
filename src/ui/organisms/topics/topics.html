@@ -3,7 +3,13 @@
   <section class="topics-list-container">
     <div class="topics-list-header">
       <h4>List</h4>
-      <button type="button" click.trigger="addTopic()">+</button>
+      <button
+        type="button"
+        class="icon-button__outlined"
+        click.trigger="addTopic()"
+      >
+        +
+      </button>
     </div>
 
     <div class="topics-list">
@@ -32,7 +38,11 @@
   <section class="selected-topic-container">
     <div class="content-list-header">
       <h4>Selected</h4>
-      <button type="button" click.trigger="addContent(this.selectedTopic)">
+      <button
+        type="button"
+        class="icon-button__outlined"
+        click.trigger="addContent(this.selectedTopic)"
+      >
         +
       </button>
     </div>
