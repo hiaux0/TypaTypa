@@ -15,11 +15,16 @@
       padding: 10px 0;
 
       &:hover {
-        background: #444;
+        background: #222;
       }
 
       &.active {
-        background: #222;
+        background: #444;
+        border-top: 3px solid #333;
+        border-bottom: 3px solid #333;
+        &:hover {
+          background: #222;
+        }
       }
     }
   }

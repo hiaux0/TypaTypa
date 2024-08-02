@@ -1,17 +1,17 @@
 <div class="tab-drawer-container">
   <!-- 1. Tab Bar -->
-  <div class="tab-bar">
+  <section class="tab-bar">
     <div
       repeat.for="topic of topics"
-      class="tab-bar__tab ${this.activeTopic.title === topic.title ? 'active' : ''}"
+      class="tab-bar__tab ${(this.activeTopic?.title === topic.title && isDrawerOpen) ? 'active' : ''}"
       click.trigger="toggleDrawer(topic.title)"
     >
       ${topic.title}
     </div>
-  </div>
+  </section>
 
   <!-- 2. Drawer -->
-  <div class="drawer" id="drawer">
-    <div class="drawer__content">${activeTopic.content}</div>
-  </div>
+  <section class="drawer ${isDrawerOpen ? 'active' : ''}" ref="drawerRef">
+    <div class="drawer__content">${activeTopic?.content}</div>
+  </section>
 </div>

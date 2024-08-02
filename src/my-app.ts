@@ -1,7 +1,7 @@
 import { observable } from "aurelia";
 import { getWordAtIndex, tokenize } from "./modules/strings";
-import * as Dictionary from "./data/dictionary.json";
 import { getRandomWordsFromSetAndRemove } from "./modules/random";
+import { getDefinition } from "./modules/dictionary";
 
 interface Features {
   remember: Set<string>;
@@ -46,8 +46,6 @@ export class MyApp {
   }
 
   public handleTyping(key: string): void {
-    console.clear();
-    console.log("this.currentTextToType: ", this.currentTextToType);
     const advance = key === this.currentLetter;
     const shouldGiveNextWords = this.currentTextToType === "";
     if (advance && !shouldGiveNextWords) {
@@ -74,7 +72,8 @@ export class MyApp {
     const wordAtIndex = getWordAtIndex(text, index);
     switch (key) {
       case "?": {
-        // const definition = Dictionary[wordAtIndex];
+        const definition = getDefinition(wordAtIndex);
+        /*prettier-ignore*/ console.log("[my-app.ts,78] definition: ", definition);
         break;
       }
       case "+": {
