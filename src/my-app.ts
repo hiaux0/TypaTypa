@@ -1,5 +1,9 @@
 import { observable } from "aurelia";
-import { getWordAtIndex, tokenize } from "./modules/strings";
+import {
+  getIndexForwardUntil,
+  getWordAtIndex,
+  tokenize,
+} from "./modules/strings";
 import { getRandomWordsFromSetAndRemove } from "./modules/random";
 import { getDefinition } from "./modules/dictionary";
 import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
@@ -36,7 +40,7 @@ export class MyApp {
   @observable public newInputText = "";
   public typedText = "";
   public currentLetter = "";
-  public currentTextToType = "";
+  public upcommingTextToType = "";
   public remainingWordsToType: Set<string> = new Set(WORDS);
   public nextWordsToType: Set<string> = new Set();
 
@@ -67,11 +71,11 @@ export class MyApp {
 
   public handleTyping(key: string): void {
     const advance = key === this.currentLetter;
-    const shouldGiveNextWords = this.currentTextToType === "";
+    const shouldGiveNextWords = this.upcommingTextToType === "";
     if (advance && !shouldGiveNextWords) {
       this.typedText += key;
-      this.currentLetter = this.currentTextToType[0];
-      this.currentTextToType = this.currentTextToType.slice(1);
+      this.currentLetter = this.upcommingTextToType[0];
+      this.upcommingTextToType = this.upcommingTextToType.slice(1);
     }
 
     // Each typing round
@@ -88,7 +92,7 @@ export class MyApp {
 
   public handleShortcuts(key: string): void {
     const index = this.typedText.length;
-    const text = this.typedText + this.currentLetter + this.currentTextToType;
+    const text = this.typedText + this.currentLetter + this.upcommingTextToType;
     const wordAtIndex = getWordAtIndex(text, index);
     switch (key) {
       case "?": {
@@ -109,6 +113,15 @@ export class MyApp {
         this.rememberList.delete(wordAtIndex);
         break;
       }
+      case ".": {
+        const endOfWordIndex = getIndexForwardUntil(text, index);
+        const nextWordIndex = endOfWordIndex + 1 + 1; // +1 for space, +1 for first letter of next word
+        console.log("todo: skip word");
+        this.typedText = text.slice(0, nextWordIndex);
+        this.currentLetter = text[nextWordIndex];
+        this.upcommingTextToType = text.slice(nextWordIndex + 1);
+        break;
+      }
     }
   }
 
@@ -121,7 +134,7 @@ export class MyApp {
     this.remainingWordsToType = remaining;
     const nextAsString = Array.from(this.nextWordsToType).join(" ");
     this.currentLetter = nextAsString[0];
-    this.currentTextToType = nextAsString.slice(1);
+    this.upcommingTextToType = nextAsString.slice(1);
   }
 
   public onTopicChange = (topic: Topic): void => {
@@ -132,6 +145,6 @@ export class MyApp {
   private resetTyping() {
     this.typedText = "";
     this.currentLetter = "";
-    this.currentTextToType = "";
+    this.upcommingTextToType = "";
   }
 }

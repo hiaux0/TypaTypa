@@ -1,3 +1,4 @@
+const UNTIL_CHARS = [" ", "\n", "\t"];
 /**
  * getWordAtIndex("012 4567", 1) => "012"
  * getWordAtIndex("012 4567", 2) => "012"
@@ -6,8 +7,8 @@
 export function getWordAtIndex(
   input: string,
   index: number,
+  untilChars = UNTIL_CHARS,
 ): string | undefined {
-  const untilChars = [" ", "\n", "\t"];
   let current = input[index];
   if (!current) return;
   if (untilChars.includes(current)) return;
@@ -45,10 +46,10 @@ function getIndexBackwardsUntil(
   return startIndex;
 }
 
-function getIndexForwardUntil(
+export function getIndexForwardUntil(
   input: string,
   index: number,
-  untilChars: string[],
+  untilChars = UNTIL_CHARS,
 ): number {
   let endIndex = 0;
   for (let i = index; i < input.length; i++) {
