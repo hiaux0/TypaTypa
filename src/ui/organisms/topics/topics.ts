@@ -1,6 +1,7 @@
+import { bindable } from "aurelia";
 import "./topics.scss";
 
-interface Topic {
+export interface Topic {
   title: string;
   content: string[];
 }
@@ -17,6 +18,7 @@ const TOPICS: Topic[] = [
 ];
 
 export class Topics {
+  @bindable() public onTopicChange: (topic: Topic) => void = () => {};
   public topics = TOPICS;
   public selectedTopic: Topic | null = null;
 
@@ -27,5 +29,6 @@ export class Topics {
   public selectTopic(topicTitle: string): void {
     const found = this.topics.find((topic) => topic.title === topicTitle);
     this.selectedTopic = found ?? null;
+    this.onTopicChange(this.selectedTopic);
   }
 }

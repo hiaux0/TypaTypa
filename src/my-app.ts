@@ -3,6 +3,7 @@ import { getWordAtIndex, tokenize } from "./modules/strings";
 import { getRandomWordsFromSetAndRemove } from "./modules/random";
 import { getDefinition } from "./modules/dictionary";
 import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
+import { Topic } from "./ui/organisms/topics/topics";
 
 interface Features {
   remember: Set<string>;
@@ -21,6 +22,9 @@ const TOPICS: Tabs[] = [
   },
   {
     title: "Remember",
+  },
+  {
+    title: "Dictionary",
   },
 ];
 
@@ -105,6 +109,11 @@ export class MyApp {
     this.currentLetter = nextAsString[0];
     this.currentTextToType = nextAsString.slice(1);
   }
+
+  public onTopicChange = (topic: Topic): void => {
+    const text = topic.content.join(" ");
+    this.newInputTextChanged(text);
+  };
 
   private resetTyping() {
     this.typedText = "";

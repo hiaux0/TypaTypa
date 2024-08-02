@@ -14,6 +14,8 @@
         - [ ] with "!"? (or already done via "-"?)
 - [ ] choose different [topics]
     - [ ] add [topics] to texts
+- typing
+    - [ ] "." to skip word
 - [ ] en dictionary
     - [x] type "?" to get dictionary defintion
     - [ ] type "!" to ???
@@ -23,7 +25,17 @@
 - [ ] help
     - [ ] list all shortcuts
 
+
 # Todo
-- [ ] reduce size of dictoinary data
-    - [ ] filter out a list of all words
-        - one way to reduce the size, is by removing really rare words
+- ui
+    - [ ] add button
+    - [ ] "?" should switch to "dictionary" tab
+    - [ ]  hook up "topics" with typing
+    - [ ]  support vn chars
+        - https://stackoverflow.com/questions/26543329/java-regex-to-match-vietnamese-chars
+
+
+- data
+    - [ ] reduce size of dictoinary data
+        - [ ] filter out a list of all words
+            - one way to reduce the size, is by removing really rare words

@@ -9,10 +9,9 @@
       <div
         class="topic ${this.selectedTopic.title === topic.title ? 'active' : ''}"
         repeat.for="topic of topics"
+        click.trigger="selectTopic(topic.title)"
       >
-        <div class="topic-title" click.trigger="selectTopic(topic.title)">
-          ${topic.title}
-        </div>
+        <div class="topic-title">${topic.title}</div>
       </div>
     </div>
   </section>
