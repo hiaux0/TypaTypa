@@ -1,4 +1,4 @@
-@import './ui/reset.scss';
+@import "./ui/reset.scss";
 
 $border-color: #eee;
 
@@ -6,26 +6,30 @@ body {
   font-family: mono, sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin-top: unset;
-}
-
 .message {
   background-color: #94aa7d;
 }
 
 .typing-container {
-  color: grey;
-  border: 1px solid $border-color;
+  padding: 0 20px;
 
-  .typed-text {
-    color: black;
+  .left-to-type {
+    display: flex;
+    justify-content: end;
   }
-  .current-letter {
-    border-bottom: 1px solid black;
-  }
-  .text-to-type {
+  .typing-input-container {
     color: grey;
+    border: 1px solid $border-color;
+
+    .typed-text {
+      color: black;
+    }
+    .current-letter {
+      border-bottom: 1px solid black;
+    }
+    .text-to-type {
+      color: grey;
+    }
   }
 }
 

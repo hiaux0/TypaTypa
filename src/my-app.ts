@@ -2,6 +2,7 @@ import { observable } from "aurelia";
 import { getWordAtIndex, tokenize } from "./modules/strings";
 import { getRandomWordsFromSetAndRemove } from "./modules/random";
 import { getDefinition } from "./modules/dictionary";
+import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
 
 interface Features {
   remember: Set<string>;
@@ -14,9 +15,18 @@ interface Features {
 /*prettier-ignore*/ const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
 // /*prettier-ignore*/ const WORDS = ["as", "ht"]
 const AMOUNT_OF_WORDS = 2;
+const TOPICS: Tabs[] = [
+  {
+    title: "Topics",
+  },
+  {
+    title: "Remember",
+  },
+];
 
 export class MyApp {
   public message = "Typing App cua Emy";
+  public topics = TOPICS;
   @observable public newInputText = "";
   //private typedText = "Hello ";
   //private currentLetter = "w";

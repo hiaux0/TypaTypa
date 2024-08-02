@@ -1,11 +1,6 @@
 <div class="message">${message}</div>
 <br />
 
-<tab-drawer></tab-drawer>
-
-<!-- Topics -->
-<div class="topics-container">Topics</div>
-
 <!-- New Text -->
 <div class="text-input-container">
   Text Input
@@ -18,19 +13,28 @@
 
 <br />
 <!-- Typing -->
-left to type: ${remainingWordsToType.size}
-<div class="typing-container">
-  <span class="typed-text">${typedText}</span
-  ><span class="current-letter">${currentLetter}</span
-  ><span class="text-to-type">${currentTextToType}</span>
-</div>
+<section class="typing-container">
+  <div class="left-to-type">left to type: ${remainingWordsToType.size}</div>
+  <div class="typing-input-container">
+    <span class="typed-text">${typedText}</span
+    ><span class="current-letter">${currentLetter}</span
+    ><span class="text-to-type">${currentTextToType}</span>
+  </div>
+</section>
 
 <br />
 
-<!-- Remember -->
-<div class="remember-container">
-  <h4>Remember</h4>
-  <template repeat.for="word of rememberList">
-    <span class="remember-word">${word}</span>
-  </template>
-</div>
+<!-- Tab Drawer -->
+<tab-drawer active-tab.two-way="activeTopic" tabs.bind="topics">
+  <div au-slot="content" if.bind="activeTopic.title === 'Topics'">
+    Manage Topics from my-app.html
+  </div>
+  <div au-slot="content" if.bind="activeTopic.title === 'Remember'">
+    <div class="remember-container">
+      <h4>Remember</h4>
+      <template repeat.for="word of rememberList">
+        <span class="remember-word">${word}</span>
+      </template>
+    </div>
+  </div>
+</tab-drawer>

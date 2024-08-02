@@ -1,0 +1,28 @@
+<template as-custom-element="my-element">
+  <bindable name="people"></bindable>
+  <au-slot name="grid">
+    <au-slot name="header">
+      <h4>First Name</h4>
+      <h4>Last Name</h4>
+    </au-slot>
+    <template repeat.for="person of people">
+      <au-slot name="content" expose.bind="{ person, $event, $odd, $index }">
+        <div>${person.firstName}</div>
+        <div>${person.lastName}</div>
+      </au-slot>
+    </template>
+  </au-slot>
+</template>
+
+<my-element people.bind="people">
+  <template au-slot="header">
+    <h4>Meta</h4>
+    <h4>Surname</h4>
+    <h4>Given name</h4>
+  </template>
+  <template au-slot="content">
+    <div>${$host.$index}-${$host.$even}-${$host.$odd}</div>
+    <div>${$host.person.lastName}</div>
+    <div>${$host.person.firstName}</div>
+  </template>
+</my-element>

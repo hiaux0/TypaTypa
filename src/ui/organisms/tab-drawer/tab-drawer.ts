@@ -1,41 +1,25 @@
+import { bindable } from "aurelia";
 import "./tab-drawer.scss";
 
-interface Topic {
+export interface Tabs {
   title: string;
-  content: string;
 }
-
-interface TabDrawerConfig {
-  topcis: Topic;
-}
-
-const TOPICS: Topic[] = [
-  {
-    title: "Topics",
-    content: "Manage your Topics here.",
-  },
-  {
-    title: "Remember",
-    content: "Manage your Remembers here.",
-  },
-];
 
 export class TabDrawer {
   public drawerRef: HTMLElement | null = null;
   public message = "tab-drawer.html";
-  public topics = TOPICS;
-  public activeTopic: Topic | null = this.topics[0];
-  public isDrawerOpen = false;
+  @bindable() public tabs = [];
+  @bindable() public activeTab: Tabs | null = null;
+  public isDrawerOpen = true;
 
   attached() {
-    /*prettier-ignore*/ console.log("[tab-drawer.ts,32] this.activeTopic: ", this.activeTopic);
-    /*prettier-ignore*/ console.log("[tab-drawer.ts,34] this.isDrawerOpen: ", this.isDrawerOpen);
+    this.activeTab = this.tabs[0];
   }
 
   public openDrawer(topicTitle: string): void {
     this.isDrawerOpen = true;
-    const activeTopic = this.topics.find((topic) => topic.title === topicTitle);
-    this.activeTopic = activeTopic;
+    const activeTab = this.tabs.find((topic) => topic.title === topicTitle);
+    this.activeTab = activeTab;
   }
 
   public closeDrawer(): void {
@@ -48,13 +32,13 @@ export class TabDrawer {
       return;
     }
 
-    const activeTopic = this.topics.find((topic) => topic.title === topicTitle);
-    const isSameTopic = this.activeTopic?.title === activeTopic?.title;
+    const activeTopic = this.tabs.find((topic) => topic.title === topicTitle);
+    const isSameTopic = this.activeTab?.title === activeTopic?.title;
     if (isSameTopic) {
       this.closeDrawer();
       return;
     }
 
-    this.activeTopic = activeTopic;
+    this.activeTab = activeTopic;
   }
 }
