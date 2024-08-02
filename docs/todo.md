@@ -15,7 +15,7 @@
 - [ ] choose different [topics]
     - [ ] add [topics] to texts
 - typing
-    - [ ] "." to skip word
+    - [x] "." to skip word
 - [ ] en dictionary
     - [x] type "?" to get dictionary defintion
     - [ ] type "!" to ???
@@ -28,11 +28,15 @@
 
 # Todo
 - ui
-    - [ ] add button
+    - [x] add button
     - [ ] "?" should switch to "dictionary" tab
     - [ ]  hook up "topics" with typing
     - [ ]  support vn chars
         - https://stackoverflow.com/questions/26543329/java-regex-to-match-vietnamese-chars
+    - keyboard
+        - [ ] "T" Topics
+        - [ ] "R" Remember
+        - [ ] "D" Dictionary
 
 
 - data

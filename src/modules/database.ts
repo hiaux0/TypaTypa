@@ -1,10 +1,11 @@
-import { DatabaseType, Topic } from "../types";
+import { DatabaseType, defaultDatabaseType, Topic } from "../types";
 
 const storageKey = "typing-app-v0.1";
 
 class Database {
   public getItem(): DatabaseType {
-    const data = localStorage.getItem(storageKey);
+    const data =
+      localStorage.getItem(storageKey) ?? JSON.stringify(defaultDatabaseType);
     const asJson = JSON.parse(data) as unknown as DatabaseType;
     return asJson;
   }

@@ -4,6 +4,12 @@ export interface DatabaseType {
   rememberList: string[];
   dictionaryLookedUpList: string[];
 }
+export const defaultDatabaseType: DatabaseType = {
+  topics: [],
+  selectedTopicId: undefined,
+  rememberList: [],
+  dictionaryLookedUpList: [],
+};
 
 export interface Topic {
   id?: string;
