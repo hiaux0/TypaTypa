@@ -12,7 +12,18 @@
         repeat.for="topic of topics"
         click.trigger="selectTopic(topic.title)"
       >
-        <div class="topic-title">${topic.title}</div>
+        <div class="topic-title">
+          <template if.bind="isEmptyTopic(topic) && isEditTopicTitle">
+            <input
+              class="new-topic-title"
+              type="text"
+              value.bind="topic.title"
+              blur.trigger="titleForNewTopicAdded(topic)"
+              focus="true"
+            />
+          </template>
+          <template else>${topic.title}</template>
+        </div>
       </div>
     </div>
   </section>

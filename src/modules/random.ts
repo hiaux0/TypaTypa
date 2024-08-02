@@ -1,3 +1,12 @@
+let counter = 0;
+export function generateId(): string {
+  const rnd = Math.random().toString(25).slice(2);
+  let newId = Date.now().toString(25);
+  newId += counter++;
+  const finalId = newId + "-" + rnd;
+  return finalId;
+}
+
 export function getRandoNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

@@ -1,5 +1,7 @@
 import { bindable } from "aurelia";
 import "./topics.scss";
+import { generateId } from "../../../modules/random";
+import { getTranslation } from "../../../modules/translations";
 
 export interface Topic {
   id?: string;
@@ -12,10 +14,12 @@ export interface Topic {
 
 const TOPICS: Topic[] = [
   {
+    id: generateId(),
     title: "Living",
     content: [{ text: "live one" }, { text: "live two" }],
   },
   {
+    id: generateId(),
     title: "Education",
     content: [{ text: "edu one" }, { text: "edu two" }],
   },
@@ -23,24 +27,64 @@ const TOPICS: Topic[] = [
 
 export class Topics {
   @bindable() public onTopicChange: (topic: Topic) => void = () => {};
+  public translations = {
+    untitled: getTranslation("untitled"),
+  };
   public topics = TOPICS;
   public selectedTopic: Topic | null = null;
+  public isEditTopicTitle = false;
 
   attached() {
     this.selectedTopic = this.topics[1];
   }
 
   public addTopic(): void {
-    const title = "New Topic";
-    this.topics.push({
+    this.isEditTopicTitle = true;
+    const alreadyHasUntitleTopic = this.findTopicByTitle(
+      this.translations.untitled,
+    );
+    let title = this.translations.untitled;
+    if (alreadyHasUntitleTopic) {
+      title += this.getNumOfUntitledTitles();
+    }
+
+    const newTopic = {
+      id: generateId(),
       title,
-      content: [{ text: "" }],
-    });
+      content: [{ id: generateId(), text: "" }],
+    };
+    this.topics = [newTopic, ...this.topics];
     this.selectTopic(title);
   }
 
+  public isEmptyTopic(topic: Topic): boolean {
+    const isEmptyContent =
+      topic.content.length === 1 && topic.content[0].text === "";
+    const isUntitled = topic.title === this.translations.untitled;
+    const is = isUntitled && isEmptyContent;
+    return is;
+  }
+
+  public findTopicByTitle(title: string): Topic | undefined {
+    return this.topics.find((topic) => topic.title === title);
+  }
+  public getNumOfUntitledTitles(): number {
+    const filtered = this.topics.filter(
+      (topic) => topic.title.includes(this.translations.untitled),
+    );
+    const amount = filtered.length;
+    return amount;
+  }
+
+  public titleForNewTopicAdded(topic: Topic) {
+    this.isEditTopicTitle = false;
+    // To have Aurelia re-render the component, first remove, then add the topic again
+    this.topics = this.topics.filter((t) => t.id !== topic.id);
+    this.topics = [topic, ...this.topics];
+  }
+
   public addContent(topic: Topic): void {
-    const newContent = { text: "" };
+    const newContent = { id: generateId(), text: "" };
     topic.content = [newContent, ...topic.content];
   }
 
