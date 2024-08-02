@@ -3,7 +3,8 @@ import { getWordAtIndex, tokenize } from "./modules/strings";
 import { getRandomWordsFromSetAndRemove } from "./modules/random";
 import { getDefinition } from "./modules/dictionary";
 import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
-import { Topic } from "./ui/organisms/topics/topics";
+import { Topic } from "./types";
+import { database } from "./modules/database";
 
 interface Features {
   remember: Set<string>;
@@ -48,7 +49,8 @@ export class MyApp {
   }
 
   attached() {
-    this.selectWordsToType();
+    const selectedTopic = database.getSelectedTopic();
+    this.onTopicChange(selectedTopic);
 
     document.addEventListener("keydown", (event) => {
       this.handleTyping(event.key);

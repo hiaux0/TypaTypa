@@ -2,15 +2,8 @@ import { bindable } from "aurelia";
 import "./topics.scss";
 import { generateId } from "../../../modules/random";
 import { getTranslation } from "../../../modules/translations";
-
-export interface Topic {
-  id?: string;
-  title: string;
-  content: {
-    id?: string;
-    text: string;
-  }[];
-}
+import { Topic } from "../../../types";
+import { database } from "../../../modules/database";
 
 const TOPICS: Topic[] = [
   {
@@ -30,12 +23,20 @@ export class Topics {
   public translations = {
     untitled: getTranslation("untitled"),
   };
-  public topics = TOPICS;
+  public topics = [];
   public selectedTopic: Topic | null = null;
   public isEditTopicTitle = false;
 
   attached() {
-    this.selectedTopic = this.topics[1];
+    const dbData = database.getItem();
+    this.topics = dbData.topics ?? TOPICS;
+
+    const targetTopic = database.getSelectedTopic();
+    if (targetTopic) {
+      this.selectedTopic = targetTopic;
+    } else {
+      this.selectedTopic = this.topics[1];
+    }
   }
 
   public addTopic(): void {
@@ -55,6 +56,8 @@ export class Topics {
     };
     this.topics = [newTopic, ...this.topics];
     this.selectTopic(title);
+
+    database.setItem({ topics: this.topics });
   }
 
   public isEmptyTopic(topic: Topic): boolean {
@@ -68,9 +71,10 @@ export class Topics {
   public findTopicByTitle(title: string): Topic | undefined {
     return this.topics.find((topic) => topic.title === title);
   }
+
   public getNumOfUntitledTitles(): number {
-    const filtered = this.topics.filter(
-      (topic) => topic.title.includes(this.translations.untitled),
+    const filtered = this.topics.filter((topic) =>
+      topic.title.includes(this.translations.untitled),
     );
     const amount = filtered.length;
     return amount;
@@ -81,16 +85,24 @@ export class Topics {
     // To have Aurelia re-render the component, first remove, then add the topic again
     this.topics = this.topics.filter((t) => t.id !== topic.id);
     this.topics = [topic, ...this.topics];
+    database.setItem({ topics: this.topics });
   }
 
   public addContent(topic: Topic): void {
     const newContent = { id: generateId(), text: "" };
     topic.content = [newContent, ...topic.content];
+    database.setItem({ topics: this.topics });
   }
 
   public selectTopic(topicTitle: string): void {
     const found = this.topics.find((topic) => topic.title === topicTitle);
     this.selectedTopic = found ?? null;
     this.onTopicChange(this.selectedTopic);
+
+    database.setItem({ selectedTopicId: this.selectedTopic?.id });
+  }
+
+  public contentChanged(): void {
+    database.setItem({ topics: this.topics });
   }
 }

@@ -42,6 +42,7 @@
         <textarea
           value.bind="item.text"
           placeholder="${item.text === '' ? 'add new content' : ''}"
+          blur.trigger="contentChanged()"
         ></textarea>
       </div>
     </div>
