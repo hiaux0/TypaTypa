@@ -26,9 +26,7 @@
 
 <!-- Tab Drawer -->
 <tab-drawer active-tab.two-way="activeTopic" tabs.bind="topics">
-  <div au-slot="content" if.bind="activeTopic.title === 'Topics'">
-    Manage Topics from my-app.html
-  </div>
+  <topics au-slot="content" if.bind="activeTopic.title === 'Topics'" />
   <div au-slot="content" if.bind="activeTopic.title === 'Remember'">
     <div class="remember-container">
       <h4>Remember</h4>

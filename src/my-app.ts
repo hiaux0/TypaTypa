@@ -28,9 +28,6 @@ export class MyApp {
   public message = "Typing App cua Emy";
   public topics = TOPICS;
   @observable public newInputText = "";
-  //private typedText = "Hello ";
-  //private currentLetter = "w";
-  //private currentTextToType = "e are typing";
   public typedText = "";
   public currentLetter = "";
   public currentTextToType = "";

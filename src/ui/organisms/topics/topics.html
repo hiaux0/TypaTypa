@@ -1,1 +1,29 @@
-<div>${message}</div>
+<button>Add new</button>
+
+<!-- Left -->
+<div class="topics-container">
+  <section class="topics-list-container">
+    <h4>List</h4>
+
+    <div class="topics-list">
+      <div
+        class="topic ${this.selectedTopic.title === topic.title ? 'active' : ''}"
+        repeat.for="topic of topics"
+      >
+        <div class="topic-title" click.trigger="selectTopic(topic.title)">
+          ${topic.title}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Right -->
+  <section class="selected-topic-container">
+    <h4>Selected</h4>
+    <div class="content-container">
+      <div class="content" repeat.for="item of selectedTopic.content">
+        <textarea value.bind="item"></textarea>
+      </div>
+    </div>
+  </section>
+</div>
