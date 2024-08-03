@@ -50,7 +50,9 @@
     "lint": "npm run lint:js && npm run lint:html && npm run lint:css",
     "pretest": "npm run lint",
     "start": "webpack serve",
+    "start:mem": "node --max_old_space_size=8384 ./node_modules/webpack/bin/webpack.js serve",
     "build": "webpack --env production",
+    "build:mem": "node --max_old_space_size=8384 ./node_modules/webpack/bin/webpack.js build --env production",
     "analyze": "webpack --env production --analyze",
     "test": "jest"
   },

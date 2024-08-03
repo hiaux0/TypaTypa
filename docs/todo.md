@@ -37,6 +37,13 @@
         - [ ] "T" Topics
         - [ ] "R" Remember
         - [ ] "D" Dictionary
+    - dictionary
+        - [ ] if no meaning, then check syn and deduce singular form
+            - inspections -> no meaning obj, but syn
+                - inspection -> okay
+        - [ ] if no hit, then search for similar
+    - setting
+        - not random words, but as the text is
 
 
 - data
