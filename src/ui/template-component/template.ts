@@ -1,5 +1,5 @@
-import './tab-drawer.scss';
+import './template.scss';
 
 export class TabDrawer {
-  public message = "tab-drawer.html";
+  public message = "template.html";
 }

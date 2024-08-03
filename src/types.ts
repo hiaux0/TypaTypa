@@ -1,3 +1,12 @@
+type WordType = "Noun";
+export interface DictionaryLookUp {
+  MEANINGS: {
+    [numberKey: string]: [WordType, string, string[], string[]];
+  };
+  ANTONYMS: string[];
+  SYNONYMS: string[];
+}
+
 export interface DatabaseType {
   topics: Topic[];
   selectedTopicId?: string;

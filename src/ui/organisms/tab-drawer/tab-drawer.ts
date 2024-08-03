@@ -10,7 +10,12 @@ export class TabDrawer {
   public message = "tab-drawer.html";
   @bindable() public tabs = [];
   @bindable() public activeTab: Tabs | null = null;
+  @bindable() public activeTabName = "";
   @bindable() public isDrawerOpen = true;
+
+  activeTabNameChanged(tabName: string): void {
+    this.openDrawer(tabName);
+  }
 
   attached() {
     this.activeTab = this.tabs[0];

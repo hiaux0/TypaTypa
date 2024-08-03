@@ -19,7 +19,8 @@ interface Features {
   }[];
 }
 
-/*prettier-ignore*/ const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
+// /*prettier-ignore*/ const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
+/*prettier-ignore*/ const WORDS = ["are", "after"]
 // /*prettier-ignore*/ const WORDS = ["as", "ht"]
 const AMOUNT_OF_WORDS = 12;
 const TOPICS: Tabs[] = [
@@ -46,8 +47,10 @@ export class MyApp {
 
   public rememberList: Features["remember"] = new Set();
   public dictionaryLookedUpList: Set<string> = new Set();
+  public wordToLookUp = "";
 
   public isDrawerOpen = false;
+  public activeTabName = "";
 
   public newInputTextChanged(newText: string): void {
     const tokens = tokenize(newText, { lower: true });
@@ -96,12 +99,16 @@ export class MyApp {
     const wordAtIndex = getWordAtIndex(text, index);
     switch (key) {
       case "?": {
-        const definition = getDefinition(wordAtIndex);
-        /*prettier-ignore*/ console.log("[my-app.ts,78] definition: ", definition);
+        // 1. Look up word in dictionary
         this.dictionaryLookedUpList.add(wordAtIndex);
         database.setItem({
           dictionaryLookedUpList: Array.from(this.dictionaryLookedUpList),
         });
+
+        // 2. Set active tab to Dictionary
+        this.wordToLookUp = wordAtIndex;
+        /*prettier-ignore*/ console.log("[my-app.ts,110] this.wordToLookUp: ", this.wordToLookUp);
+        this.activeTabName = "Dictionary";
         break;
       }
       case "+": {
@@ -137,7 +144,8 @@ export class MyApp {
     this.upcommingTextToType = nextAsString.slice(1);
   }
 
-  public onTopicChange = (topic: Topic): void => {
+  public onTopicChange = (topic: Topic | undefined): void => {
+    if (!topic) return;
     const text = topic.content.map((item) => item.text).join(" ");
     this.newInputTextChanged(text);
   };

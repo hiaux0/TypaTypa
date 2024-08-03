@@ -19,7 +19,7 @@ class Database {
     localStorage.setItem(storageKey, JSON.stringify(finalData));
   }
 
-  public getSelectedTopic(): Topic {
+  public getSelectedTopic(): Topic | undefined {
     const { topics, selectedTopicId } = this.getItem();
     const targetTopic = topics.find((topic) => topic.id === selectedTopicId);
     return targetTopic;

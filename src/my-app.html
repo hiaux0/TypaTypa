@@ -17,6 +17,7 @@
 <!-- Tab Drawer -->
 <tab-drawer
   active-tab.two-way="activeTopic"
+  active-tab-name.bind="activeTabName"
   tabs.bind="topics"
   is-drawer-open.two-way="isDrawerOpen"
 >
@@ -31,4 +32,7 @@
       </template>
     </div>
   </div>
+  <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
+    <dictionary word.bind="wordToLookUp" />
+  </template>
 </tab-drawer>
