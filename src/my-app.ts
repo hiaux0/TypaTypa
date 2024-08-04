@@ -10,6 +10,7 @@ import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
 import { Topic } from "./types";
 import { database } from "./modules/database";
 import { APP_NAME } from "./modules/constants";
+import { initDebugShortcuts } from "./modules/debugging";
 
 interface Features {
   remember: Set<string>;
@@ -70,6 +71,7 @@ export class MyApp {
       this.handleTyping(event.key);
       this.handleShortcuts(event.key);
     });
+    initDebugShortcuts();
   }
 
   public handleTyping(key: string): void {

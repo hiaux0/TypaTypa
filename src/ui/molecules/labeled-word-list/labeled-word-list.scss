@@ -1,14 +1,15 @@
 @import "../../colors.scss";
+@import "../../mixins.scss";
 
 .labeled-words-container {
-  margin-top: 1rem;
+  margin-top: 0.4rem;
   font-size: $fontSizeS;
   font-style: italic;
+  line-height: 1rem;
 
   .word {
     &:hover {
-      cursor: pointer;
-      font-weight: 600;
+      @include wordHover;
     }
   }
 }

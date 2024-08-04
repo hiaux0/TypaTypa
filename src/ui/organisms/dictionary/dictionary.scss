@@ -1,8 +1,69 @@
 @import "../../colors.scss";
+@import "../../mixins.scss";
 
-.header {
-  .title {
-    border-bottom: 2px solid $borderColor;
+dictionary {
+  .look-up-history-container {
+    position: absolute;
+    top: -38px;
   }
 
+  .header {
+    h4 {
+      margin-bottom: 12px;
+      .title {
+        border-bottom: 2px solid $primaryDark0;
+        color: $primaryDark0;
+      }
+    }
+    labeled-word-list {
+      color: $grey;
+      font-size: $fontSizeS;
+    }
+  }
+
+  .meanings-container {
+    margin-top: 16px;
+    color: $primaryDark0;
+    /* overflow: scroll; */
+
+    h3 {
+      font-size: $fontSizeL;
+    }
+
+    .meaning {
+      color: $textColor;
+      margin-top: 16px;
+      .word-type {
+        font-size: $fontSizeXS;
+      }
+
+      .word-definition {
+      }
+
+      ul {
+        &.other-synonym-container {
+          font-size: $fontSizeS;
+          padding-top: unset;
+          /* border-bottom: 1px solid; */
+        }
+        &.example-phrases-container {
+          font-size: $fontSizeS;
+          font-style: italic;
+          li {
+            margin-left: 2rem;
+          }
+          /* border-top: 1px solid; */
+        }
+        li {
+          font-size: $fontSizeS;
+        }
+      }
+    }
+  }
+
+  .word {
+    &:hover {
+      @include wordHover;
+    }
+  }
 }

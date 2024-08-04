@@ -43,7 +43,6 @@ $zIndexDrawer: 10;
     position: fixed;
     bottom: $tabBarHeight;
     width: calc(100% - 2rem);
-    /* width: calc(100%); */
     height: 0;
     margin: 1rem;
     border: 1px solid $borderColor;
@@ -51,17 +50,19 @@ $zIndexDrawer: 10;
     margin-bottom: -3 * $drawerPadding;
     padding: $drawerPadding;
     background: $secondaryLight;
-    overflow: hidden;
+    /* overflow: hidden; */
     transition: height 0.3s ease;
     z-index: $zIndexDrawer;
 
     &.active {
       height: 300px;
       margin-bottom: unset;
+      /* overflow: scroll; */
     }
 
     .drawer__content {
       height: 100%;
+      overflow: scroll;
     }
   }
 }

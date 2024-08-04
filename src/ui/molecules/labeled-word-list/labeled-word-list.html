@@ -1,9 +1,11 @@
 <section class="labeled-words-container">
-  <label>${label}: </label>
+  <label>${finalLabel}</label>
   <let has-words.bind="words.length > 0"></let>
-  <template if.bind="hasWords" repeat.for="word of words.sort()">
+  <template if.bind="hasWords" repeat.for="word of words">
     <em class="word" click.trigger="onWordClicked(word)">${word}</em
-    ><template if.bind="$index < words.length - 1">,</template>
+    ><template if.bind="$index < words.length - 1">${seperator}</template>
   </template>
-  <em else class="word">n/a</em>
+  <em else class="word">
+    <template if.bind="!!this.label">n/a</template>
+  </em>
 </section>

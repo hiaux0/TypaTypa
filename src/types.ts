@@ -1,7 +1,10 @@
-type WordType = "Noun";
+export type WordType = "Noun";
+export type OtherSynonyms = string[];
+export type ExamplePhrases = string[];
+export type WordMeaning = [WordType, string, OtherSynonyms, ExamplePhrases];
 export interface DictionaryLookUp {
   MEANINGS: {
-    [numberKey: string]: [WordType, string, string[], string[]];
+    [numberKey: string]: WordMeaning;
   };
   ANTONYMS: string[];
   SYNONYMS: string[];

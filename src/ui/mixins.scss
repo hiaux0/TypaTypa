@@ -1,0 +1,5 @@
+@mixin wordHover {
+  cursor: pointer;
+  font-weight: 600;
+  border-bottom: 1px dashed;
+}

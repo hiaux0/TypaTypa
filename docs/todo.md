@@ -36,8 +36,8 @@
     - inspections -> no meaning obj, but syn
       - inspection -> okay
   - [ ] if no hit, then search for similar
-  - [ ] be able to lookup any words
-  - [ ] show lookup history
+  - [x] be able to lookup any words
+  - [x] show lookup history
 - intro
   - [ ] have typing text be an intro
 - keyboard
@@ -48,7 +48,7 @@
   - not random words, but as the text is
 
 - data
-  - [ ] reduce size of dictoinary data
+  - [ ] reduce size of dictionary data
     - [ ] filter out a list of all words
       - one way to reduce the size, is by removing really rare words
 

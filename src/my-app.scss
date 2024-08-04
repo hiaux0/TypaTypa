@@ -50,6 +50,13 @@ textarea {
   background: $secondaryLight0;
 }
 
+ol, ul {
+  margin-left: 2rem;
+  padding-top: 1rem;
+}
+li, ol, ul {
+}
+
 textarea {
   padding-left: $padding0;
   padding-top: $padding0;
