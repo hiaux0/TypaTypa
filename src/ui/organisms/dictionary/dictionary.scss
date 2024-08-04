@@ -2,68 +2,77 @@
 @import "../../mixins.scss";
 
 dictionary {
-  .look-up-history-container {
+  .above-header {
     position: absolute;
-    top: -38px;
-  }
-
-  .header {
-    h4 {
-      margin-bottom: 12px;
-      .title {
-        border-bottom: 2px solid $primaryDark0;
-        color: $primaryDark0;
+    top: -32px;
+    width: calc(100% - 2rem);
+    .space-between {
+      display: flex;
+      justify-content: space-between;
+      .look-up-history-container {
       }
     }
-    labeled-word-list {
-      color: $grey;
-      font-size: $fontSizeS;
-    }
   }
 
-  .meanings-container {
-    margin-top: 16px;
-    color: $primaryDark0;
-    /* overflow: scroll; */
-
-    h3 {
-      font-size: $fontSizeL;
+  .main {
+    .header {
+      h4 {
+        margin-bottom: 12px;
+        .title {
+          border-bottom: 2px solid $primaryDark0;
+          color: $primaryDark0;
+        }
+      }
+      labeled-word-list {
+        color: $grey;
+        font-size: $fontSizeS;
+      }
     }
 
-    .meaning {
-      color: $textColor;
+    .meanings-container {
       margin-top: 16px;
-      .word-type {
-        font-size: $fontSizeXS;
+      color: $primaryDark0;
+      /* overflow: scroll; */
+
+      h3 {
+        font-size: $fontSizeL;
       }
 
-      .word-definition {
-      }
-
-      ul {
-        &.other-synonym-container {
-          font-size: $fontSizeS;
-          padding-top: unset;
-          /* border-bottom: 1px solid; */
+      .meaning {
+        color: $textColor;
+        margin-top: 16px;
+        .word-type {
+          font-size: $fontSizeXS;
         }
-        &.example-phrases-container {
-          font-size: $fontSizeS;
-          font-style: italic;
-          li {
-            margin-left: 2rem;
+
+        .word-definition {
+        }
+
+        ul {
+          &.other-synonym-container {
+            font-size: $fontSizeS;
+            padding-top: unset;
+            /* border-bottom: 1px solid; */
           }
-          /* border-top: 1px solid; */
-        }
-        li {
-          font-size: $fontSizeS;
+          &.example-phrases-container {
+            font-size: $fontSizeS;
+            font-style: italic;
+            li {
+              margin-left: 2rem;
+            }
+            /* border-top: 1px solid; */
+          }
+          li {
+            font-size: $fontSizeS;
+          }
         }
       }
     }
-  }
 
-  .word {
-    &:hover {
-      @include wordHover;
+    .word {
+      &:hover {
+        @include wordHover;
+      }
     }
   }
 }

@@ -1,58 +1,85 @@
-<!-- Look up history -->
-<section class="look-up-history-container">
-  <labeled-word-list
-    words.bind="Array.from(lookUpHistory)"
-    seperator=" >"
-    on-word-clicked.bind="lookUp"
-  ></labeled-word-list>
+<section class="above-header">
+  <div class="space-between">
+    <!-- Look up history -->
+    <div class="look-up-history-container">
+      <labeled-word-list
+        words.bind="Array.from(lookUpHistory)"
+        seperator=" >"
+        on-word-clicked.bind="lookUp"
+      ></labeled-word-list>
+    </div>
+    <div class="search-container">
+      <!-- Search -->
+      <input
+        type="text"
+        placeholder="Search..."
+        value.bind="searchValue"
+        change.bind="lookUp(searchValue)"
+      />
+    </div>
+  </div>
 </section>
 
-<!-- Header -->
-<section class="header">
-  <h4>
-    <span class="title">${word}</span>
-  </h4>
-  <labeled-word-list
-    label="Synonyms"
-    words.bind="definition.SYNONYMS"
-    on-word-clicked.bind="lookUp"
-  ></labeled-word-list>
-  <labeled-word-list
-    label="Antonyms"
-    words.bind="definition.ANTONYMS"
-    on-word-clicked.bind="lookUp"
-  ></labeled-word-list>
-</section>
+<!-- Not Found -->
+<section class="not-found" if.bind="!definition">Not found huhu</section>
+<!-- Main -->
+<section class="main" else>
+  <!-- Header -->
+  <section class="header">
+    <h4>
+      <span class="title">${word}</span>
+    </h4>
+    <labeled-word-list
+      label="Synonyms"
+      words.bind="definition.SYNONYMS"
+      on-word-clicked.bind="lookUp"
+    ></labeled-word-list>
+    <labeled-word-list
+      label="Antonyms"
+      words.bind="definition.ANTONYMS"
+      on-word-clicked.bind="lookUp"
+    ></labeled-word-list>
+  </section>
 
-<!-- Meaning -->
-<section class="meanings-container">
-  <h3>Meanings:</h3>
-  <template
-    repeat.for="[wordType, definition, otherSynonyms, examplesPhrases] of meanings"
-  >
-    <section class="meaning">
-      ${$index + 1}.
-      <span class="word-type word" click.trigger="lookUp(wordType)"
-        >(${wordType})</span
-      >
-      <span class="word-definition" repeat.for="word of definition.split(' ')">
-        <span class="word" click.trigger="lookUp(word)">${word}</span>
-      </span>
-      <ul class="other-synonym-container" if.bind="otherSynonyms.length > 0">
-        <labeled-word-list
-          label="Other Syonyms"
-          words.bind="otherSynonyms"
-          on-word-clicked.bind="lookUp"
-        ></labeled-word-list>
-      </ul>
-      <ul class="example-phrases-container" if.bind="examplesPhrases.length > 0">
-        <label>Examples: </label>
-        <li repeat.for="phrase of examplesPhrases" click.trigger="lookUp(phrase)">
-          <span repeat.for="word of phrase.split(' ')">
-            <span class="word" click.trigger="lookUp(word)">${word}</span>
-          </span>
-        </li>
-      </ul>
-    </section>
-  </template>
+  <!-- Meaning -->
+  <section class="meanings-container">
+    <h3>Meanings:</h3>
+    <template
+      repeat.for="[wordType, definition, otherSynonyms, examplesPhrases] of meanings"
+    >
+      <section class="meaning">
+        ${$index + 1}.
+        <span class="word-type word" click.trigger="lookUp(wordType)"
+          >(${wordType})</span
+        >
+        <span
+          class="word-definition"
+          repeat.for="word of definition.split(' ')"
+        >
+          <span class="word" click.trigger="lookUp(word)">${word}</span>
+        </span>
+        <ul class="other-synonym-container" if.bind="otherSynonyms.length > 0">
+          <labeled-word-list
+            label="Other Syonyms"
+            words.bind="otherSynonyms"
+            on-word-clicked.bind="lookUp"
+          ></labeled-word-list>
+        </ul>
+        <ul
+          class="example-phrases-container"
+          if.bind="examplesPhrases.length > 0"
+        >
+          <label>Examples: </label>
+          <li
+            repeat.for="phrase of examplesPhrases"
+            click.trigger="lookUp(phrase)"
+          >
+            <span repeat.for="word of phrase.split(' ')">
+              <span class="word" click.trigger="lookUp(word)">${word}</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+    </template>
+  </section>
 </section>

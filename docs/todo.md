@@ -36,6 +36,7 @@
     - inspections -> no meaning obj, but syn
       - inspection -> okay
   - [ ] if no hit, then search for similar
+  - [x] add search bar
   - [x] be able to lookup any words
   - [x] show lookup history
 - intro

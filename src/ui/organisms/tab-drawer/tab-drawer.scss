@@ -41,7 +41,7 @@ $zIndexDrawer: 10;
 
   .drawer {
     position: fixed;
-    bottom: $tabBarHeight;
+    bottom: 20px;
     width: calc(100% - 2rem);
     height: 0;
     margin: 1rem;
@@ -56,6 +56,7 @@ $zIndexDrawer: 10;
 
     &.active {
       height: 300px;
+      bottom: $tabBarHeight;
       margin-bottom: unset;
       /* overflow: scroll; */
     }
