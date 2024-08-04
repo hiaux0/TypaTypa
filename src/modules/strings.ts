@@ -62,6 +62,11 @@ export function getIndexForwardUntil(
   return endIndex;
 }
 
+export function getValueFromPixelString(input: string): number {
+  const value = parseInt(input.replace("px", ""));
+  return value;
+}
+
 /**
  * 1. no special chars
  * 2. all lower case

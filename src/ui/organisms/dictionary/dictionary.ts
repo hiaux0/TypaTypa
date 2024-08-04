@@ -2,14 +2,18 @@ import { bindable } from "aurelia";
 import "./dictionary.scss";
 import { getDefinition } from "../../../modules/dictionary";
 import { DictionaryLookUp, WordMeaning, WordType } from "../../../types";
+import { getValueFromPixelString } from "../../../modules/strings";
 
 export class Dictionary {
   @bindable() public word = "";
+  public lookUpHistoryContainerRef: HTMLElement = null;
   public searchValue = "";
   public definition: DictionaryLookUp | undefined = undefined;
-  public lookUpHistory = new Set<string>(["applying", "apply"]);
+  /*prettier-ignore*/ public lookUpHistory = new Set<string>(["applying", "apply", "more", "word", "go", "here", "therefore", "important", "timewise", "ashtashtsahtshshtashashtshtshaaaaaaatshtt"]);
+  // public lookUpHistory = new Set<string>([]);
   public wordType: WordType | undefined = undefined;
   public meanings: WordMeaning[] = [];
+  public aboveHeaderTop = 0;
 
   wordChanged(newWord: string): void {
     if (!newWord) return;
@@ -20,9 +24,11 @@ export class Dictionary {
     } else {
       this.meanings = [];
     }
+    this.calculateAboveHeaderHeight();
   }
 
   attached() {
+    this.calculateAboveHeaderHeight();
     this.wordChanged(this.word);
   }
 
@@ -40,5 +46,17 @@ export class Dictionary {
     // this.lookUpHistory.delete(word);
     this.lookUpHistory.add(word);
     this.lookUpHistory = new Set(this.lookUpHistory);
+  }
+
+  public calculateAboveHeaderHeight(): void {
+    window.setTimeout(() => {
+      const heightString = window.getComputedStyle(
+        this.lookUpHistoryContainerRef,
+      ).height;
+      const height = getValueFromPixelString(heightString);
+      const adjusted = height + 8; // + 8: give margin
+      /*prettier-ignore*/ console.log("[dictionary.ts,57] adjusted: ", adjusted);
+      this.aboveHeaderTop = adjusted;
+    }, 0);
   }
 }
