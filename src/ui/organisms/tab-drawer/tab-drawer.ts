@@ -18,7 +18,7 @@ export class TabDrawer {
   }
 
   attached() {
-    this.activeTab = this.tabs[0];
+    this.activeTab = this.tabs[2];
   }
 
   public openDrawer(topicTitle: string): void {

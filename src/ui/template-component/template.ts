@@ -1,5 +1,5 @@
 import './template.scss';
 
-export class TabDrawer {
+export class template {
   public message = "template.html";
 }

@@ -1,0 +1,14 @@
+@import "../../colors.scss";
+
+.labeled-words-container {
+  margin-top: 1rem;
+  font-size: $fontSizeS;
+  font-style: italic;
+
+  .word {
+    &:hover {
+      cursor: pointer;
+      font-weight: 600;
+    }
+  }
+}

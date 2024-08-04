@@ -47,10 +47,10 @@ export class MyApp {
 
   public rememberList: Features["remember"] = new Set();
   public dictionaryLookedUpList: Set<string> = new Set();
-  public wordToLookUp = "";
 
-  public isDrawerOpen = false;
-  public activeTabName = "";
+  public wordToLookUp = "after";
+  public isDrawerOpen = true;
+  public activeTabName = "Dictionary";
 
   public newInputTextChanged(newText: string): void {
     const tokens = tokenize(newText, { lower: true });

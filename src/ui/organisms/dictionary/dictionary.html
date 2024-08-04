@@ -1,3 +1,15 @@
-<h4 class="header">
-  <span class="word">${word}</span>
-</h4>
+<section class="header">
+  <h4>
+    <span class="title">${word}</span>
+  </h4>
+  <labeled-word-list
+    label="Synonyms"
+    words.bind="definition.SYNONYMS"
+    on-word-clicked.bind="lookUp"
+  ></labeled-word-list>
+  <labeled-word-list
+    label="Antonyms"
+    words.bind="definition.ANTONYMS"
+    on-word-clicked.bind="lookUp"
+  ></labeled-word-list>
+</section>

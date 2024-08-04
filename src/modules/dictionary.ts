@@ -29,7 +29,6 @@ import { DictionaryLookUp } from "../types";
 export function getDefinition(word: string): DictionaryLookUp | undefined {
   const upper = word.toUpperCase();
   const firstLetter = word[0].toUpperCase();
-  /*prettier-ignore*/ console.log("[dictionary.ts,30] firstLetter: ", firstLetter);
   switch (firstLetter) {
     case "A":
       return A[upper];
