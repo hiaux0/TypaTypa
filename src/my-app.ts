@@ -29,10 +29,10 @@ const TOPICS: Tabs[] = [
     title: "Topics",
   },
   {
-    title: "Remember",
+    title: "Dictionary",
   },
   {
-    title: "Dictionary",
+    title: "Remember",
   },
 ];
 

@@ -24,6 +24,9 @@
   <template au-slot="content" if.bind="activeTopic.title === 'Topics'">
     <topics on-topic-change.bind="onTopicChange" />
   </template>
+  <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
+    <dictionary word.bind="wordToLookUp" />
+  </template>
   <div au-slot="content" if.bind="activeTopic.title === 'Remember'">
     <div class="remember-container">
       <h4>Remember</h4>
@@ -32,7 +35,4 @@
       </template>
     </div>
   </div>
-  <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
-    <dictionary word.bind="wordToLookUp" />
-  </template>
 </tab-drawer>

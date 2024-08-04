@@ -27,9 +27,9 @@ export class Dictionary {
   }
 
   public lookUp = (word: string): void => {
-    this.word = word;
-    this.wordChanged(word);
-    this.handleLookUpHistory(word);
+    this.word = word.trim();
+    this.wordChanged(this.word);
+    this.handleLookUpHistory(this.word);
   };
 
   public handleLookUpHistory(word: string): void {
@@ -37,7 +37,7 @@ export class Dictionary {
     // Delete then re-add, so the word appears at the end again.
     // We do this, since a word could have been looked up at the start of a long look up session,
     // and the user could have forgotten about it.
-    this.lookUpHistory.delete(word);
+    // this.lookUpHistory.delete(word);
     this.lookUpHistory.add(word);
     this.lookUpHistory = new Set(this.lookUpHistory);
   }
