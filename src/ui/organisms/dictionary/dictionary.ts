@@ -55,7 +55,6 @@ export class Dictionary {
       ).height;
       const height = getValueFromPixelString(heightString);
       const adjusted = height + 8; // + 8: give margin
-      /*prettier-ignore*/ console.log("[dictionary.ts,57] adjusted: ", adjusted);
       this.aboveHeaderTop = adjusted;
     }, 0);
   }

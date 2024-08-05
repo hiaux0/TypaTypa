@@ -3,3 +3,8 @@
   font-weight: 600;
   border-bottom: 1px dashed;
 }
+
+@mixin border {
+  border: 1px solid $borderColor;
+  border-radius: $borderRadius;
+}

@@ -1,0 +1,71 @@
+/**
+ * MIT License
+ * Copyright (c) 2021-2022 by Joel Dare
+ * https://github.com/codazoda/neatcss/blob/710195f27b485ae8737c3492947424f489cc7d89/LICENSE.txt
+
+ * Changes by hiaux0 2024
+ */
+
+@import "./colors.scss";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: mono, sans-serif;
+  color: $textColor;
+  background: $secondaryLight0;
+}
+
+button,
+.button,
+input[type="submit"] {
+  display: inline-block;
+  text-align: center;
+  padding: 0.5em;
+  background-color: $primary;
+  color: $textColor;
+  border-radius: $borderRadius;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.icon-button {
+  padding: 1px 4px;
+  &:hover {
+    background-color: $primary1;
+  }
+
+  &__outlined {
+    border: 1px solid $borderColor;
+    padding: 0px 3px;
+    background-color: unset;
+    &:hover {
+      background-color: $primary;
+    }
+  }
+}
+
+input,
+textarea {
+  border: 1px solid $borderColor;
+  border-radius: $borderRadius;
+  background: $secondaryLight0;
+}
+
+ol,
+ul {
+  margin-left: 2rem;
+  padding-top: 1rem;
+}
+li,
+ol,
+ul {
+}
+
+textarea {
+  padding-left: $padding0;
+  padding-top: $padding0;
+}
