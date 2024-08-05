@@ -2,7 +2,7 @@
   <!-- Left -->
   <section class="topics-list-container">
     <div class="topics-list-header">
-      <h4>List</h4>
+      <h4>${getTranslation("topic.list")}</h4>
       <button
         type="button"
         class="icon-button__outlined"
@@ -53,6 +53,7 @@
           value.bind="item.text"
           placeholder="${item.text === '' ? 'add new content' : ''}"
           blur.trigger="contentChanged()"
+          autosize
         ></textarea>
       </div>
     </div>

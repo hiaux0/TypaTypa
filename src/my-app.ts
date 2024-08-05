@@ -9,7 +9,7 @@ import { getDefinition } from "./modules/dictionary";
 import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
 import { Topic } from "./types";
 import { database } from "./modules/database";
-import { APP_NAME } from "./modules/constants";
+import { AMOUNT_OF_WORDS, APP_NAME, TOPICS } from "./modules/constants";
 import { initDebugShortcuts } from "./modules/debugging";
 import { getIsInputActive } from "./modules/htmlElements";
 import { ShortcutService } from "./services/ShortcutService";
@@ -25,21 +25,6 @@ interface Features {
 // /*prettier-ignore*/ const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
 // /*prettier-ignore*/ const WORDS = ["are", "after"]
 /*prettier-ignore*/ const WORDS = []
-const AMOUNT_OF_WORDS = 12;
-const TOPICS: Tabs[] = [
-  {
-    title: "Topics",
-    shortcut: "T",
-  },
-  {
-    title: "Dictionary",
-    shortcut: "D",
-  },
-  {
-    title: "Remember",
-    shortcut: "R",
-  },
-];
 
 export class MyApp {
   public appName = APP_NAME;
@@ -59,7 +44,7 @@ export class MyApp {
   //public activeTabName = "";
   public wordToLookUp = "after";
   public isDrawerOpen = true;
-  public activeTabName = "Dictionary";
+  public activeTabName = "Topics";
 
   public newInputTextChanged(newText: string): void {
     const tokens = tokenize(newText, { lower: true });

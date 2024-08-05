@@ -20,9 +20,7 @@ const TOPICS: Topic[] = [
 
 export class Topics {
   @bindable() public onTopicChange: (topic: Topic) => void = () => {};
-  public translations = {
-    untitled: getTranslation("untitled"),
-  };
+  public getTranslation = getTranslation;
   public topics = [];
   public selectedTopic: Topic | null = null;
   public isEditTopicTitle = false;
@@ -41,10 +39,8 @@ export class Topics {
 
   public addTopic(): void {
     this.isEditTopicTitle = true;
-    const alreadyHasUntitleTopic = this.findTopicByTitle(
-      this.translations.untitled,
-    );
-    let title = this.translations.untitled;
+    let title = getTranslation("untitled");
+    const alreadyHasUntitleTopic = this.findTopicByTitle(title);
     if (alreadyHasUntitleTopic) {
       title += this.getNumOfUntitledTitles();
     }
@@ -63,7 +59,7 @@ export class Topics {
   public isEmptyTopic(topic: Topic): boolean {
     const isEmptyContent =
       topic.content.length === 1 && topic.content[0].text === "";
-    const isUntitled = topic.title === this.translations.untitled;
+    const isUntitled = topic.title === getTranslation("untitled");
     const is = isUntitled && isEmptyContent;
     return is;
   }
@@ -74,7 +70,7 @@ export class Topics {
 
   public getNumOfUntitledTitles(): number {
     const filtered = this.topics.filter((topic) =>
-      topic.title.includes(this.translations.untitled),
+      topic.title.includes(getTranslation("untitled")),
     );
     const amount = filtered.length;
     return amount;
