@@ -4,8 +4,13 @@
 dictionary {
   .above-header {
     position: absolute;
-    top: -32px; // +8
-    width: calc(100% - 2rem);
+    left: 0;
+    top: -52px;
+    width: 100%;
+    padding: 12px;
+    @include borders();
+    background-color: $secondaryLight;
+
     .space-between {
       display: flex;
       justify-content: space-between;

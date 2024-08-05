@@ -54,7 +54,7 @@ export class Dictionary {
         this.lookUpHistoryContainerRef,
       ).height;
       const height = getValueFromPixelString(heightString);
-      const adjusted = height + 8; // + 8: give margin
+      const adjusted = height + 8 + 20; // + 8: give margin
       this.aboveHeaderTop = adjusted;
     }, 0);
   }
