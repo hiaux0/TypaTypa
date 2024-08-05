@@ -1,5 +1,6 @@
 @import "./ui/reset.scss";
-@import "./ui/custom.scss"; // must come before reset.scss
+@import "./ui/custom.scss"; // must come after reset.scss
+@import "./ui/mixins.scss";
 @import "./ui/colors";
 
 .app-header {
@@ -65,6 +66,12 @@
     .text-to-type {
       line-height: 2rem;
       color: $grey;
+    }
+  }
+
+  .word {
+    &:hover {
+      @include wordHover;
     }
   }
 }

@@ -104,17 +104,7 @@ export class MyApp {
     const wordAtIndex = getWordAtIndex(text, index);
     switch (key) {
       case "?": {
-        this.activeTabName = "";
-        // 1. Look up word in dictionary
-        this.dictionaryLookedUpList.add(wordAtIndex);
-        database.setItem({
-          dictionaryLookedUpList: Array.from(this.dictionaryLookedUpList),
-        });
-
-        // 2. Set active tab to Dictionary
-        this.wordToLookUp = wordAtIndex;
-        /*prettier-ignore*/ console.log("[my-app.ts,110] this.wordToLookUp: ", this.wordToLookUp);
-        this.activeTabName = "Dictionary";
+        this.lookUp(wordAtIndex);
         break;
       }
       case "+": {
@@ -155,6 +145,20 @@ export class MyApp {
     const text = topic.content.map((item) => item.text).join(" ");
     this.newInputTextChanged(text);
   };
+
+  public lookUp(word: string): void {
+    this.activeTabName = "";
+    // 1. Look up word in dictionary
+    this.dictionaryLookedUpList.add(word);
+    database.setItem({
+      dictionaryLookedUpList: Array.from(this.dictionaryLookedUpList),
+    });
+
+    // 2. Set active tab to Dictionary
+    this.wordToLookUp = word;
+    /*prettier-ignore*/ console.log("[my-app.ts,110] this.wordToLookUp: ", this.wordToLookUp);
+    this.activeTabName = "Dictionary";
+  }
 
   private resetTyping() {
     this.typedText = "";
