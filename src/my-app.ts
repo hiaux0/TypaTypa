@@ -12,6 +12,7 @@ import { database } from "./modules/database";
 import { APP_NAME } from "./modules/constants";
 import { initDebugShortcuts } from "./modules/debugging";
 import { getIsInputActive } from "./modules/htmlElements";
+import { ShortcutService } from "./services/ShortcutService";
 
 interface Features {
   remember: Set<string>;
@@ -28,12 +29,15 @@ const AMOUNT_OF_WORDS = 12;
 const TOPICS: Tabs[] = [
   {
     title: "Topics",
+    shortcut: "T",
   },
   {
     title: "Dictionary",
+    shortcut: "D",
   },
   {
     title: "Remember",
+    shortcut: "R",
   },
 ];
 
@@ -74,6 +78,7 @@ export class MyApp {
     document.addEventListener("keydown", (event) => {
       this.handleTyping(event.key);
       this.handleShortcuts(event.key);
+      ShortcutService.clickGlobalShortcut(event.key);
     });
     initDebugShortcuts();
   }

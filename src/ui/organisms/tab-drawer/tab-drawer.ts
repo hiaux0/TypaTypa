@@ -4,10 +4,11 @@ import { onOutsideClick } from "../../../modules/htmlElements";
 
 export interface Tabs {
   title: string;
+  shortcut?: string;
 }
 
 export class TabDrawer {
-  @bindable() public tabs = [];
+  @bindable() public tabs: Tabs[] = [];
   @bindable() public activeTab: Tabs | null = null;
   @bindable() public activeTabName = "";
   @bindable() public isDrawerOpen = true;

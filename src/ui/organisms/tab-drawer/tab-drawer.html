@@ -5,8 +5,9 @@
       repeat.for="tab of tabs"
       class="tab-bar__tab ${(this.activeTab?.title === tab.title && isDrawerOpen) ? 'active' : ''}"
       click.trigger="toggleDrawer(tab.title)"
+      data-shortcut.bind="tab.shortcut"
     >
-      <div>${tab.title}</div>
+      ${tab.title} <span if.bind="tab.shortcut">(${tab.shortcut})</span>
     </div>
   </section>
 
