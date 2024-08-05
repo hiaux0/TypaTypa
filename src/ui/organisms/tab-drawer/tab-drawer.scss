@@ -1,6 +1,7 @@
 @import "../../colors";
+@import "../../mixins";
 
-$tabBarHeight: 36px;
+$tabBarHeight: 46px;
 $zIndexTabs: 20;
 $zIndexDrawer: 10;
 
@@ -39,31 +40,40 @@ $zIndexDrawer: 10;
     }
   }
 
-  .drawer {
+  .drawer-overlay {
     position: fixed;
     bottom: 20px;
-    width: calc(100% - 2rem);
+    width: 100%;
     height: 0;
-    margin: 1rem;
     border: 1px solid $borderColor;
     border-radius: $borderRadius;
     margin-bottom: -3 * $drawerPadding;
-    padding: $drawerPadding;
-    background: $secondaryLight;
-    /* overflow: hidden; */
-    transition: height 0.3s ease;
     z-index: $zIndexDrawer;
 
     &.active {
-      height: 70%;
+      height: 100%;
       bottom: $tabBarHeight;
       margin-bottom: unset;
-      /* overflow: scroll; */
+      background: $black05;
     }
 
     .drawer__content {
-      height: 100%;
+      position: absolute;
+      bottom: 0;
+      height: 0;
+      width: calc(100% - 2rem);
+      margin: 1rem;
+      padding: $drawerPadding;
+      background: $secondaryLight;
       overflow: scroll;
+      @include borders();
+      opacity: 1;
+      z-index: 50;
+      transition: height 0.3s ease;
+
+      &.active {
+        height: 70%;
+      }
     }
   }
 }

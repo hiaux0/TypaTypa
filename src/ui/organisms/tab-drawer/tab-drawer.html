@@ -11,8 +11,11 @@
   </section>
 
   <!-- 2. Drawer -->
-  <section class="drawer ${isDrawerOpen ? 'active' : ''}" ref="drawerRef">
-    <div class="drawer__content">
+  <section
+    class="drawer-overlay ${isDrawerOpen ? 'active' : ''}"
+    ref="drawerRef"
+  >
+    <div class="drawer__content ${isDrawerOpen ? 'active' : ''}">
       <au-slot name="content">.. content here ..</au-slot>
     </div>
   </section>

@@ -8,3 +8,8 @@
   border: 1px solid $borderColor;
   border-radius: $borderRadius;
 }
+
+@mixin borders($color: $borderColor) {
+  border: 1px solid $color;
+  border-radius: $borderRadius;
+}

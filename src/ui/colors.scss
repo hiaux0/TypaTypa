@@ -16,6 +16,7 @@ $secondary: #faedce; //         beige
 
 $black0: #252815; //            lighter
 $black: #181b0e; //             main black
+$black05: #181b0e78; //             main black
 $black1: #0c0d07; //            darker
 
 $white0: #ffffff; //            lighter white
@@ -29,6 +30,8 @@ $borderColor: $black;
 $borderRadius0: 0.1rem;
 $borderRadius: 0.2rem;
 
+$tabBarHeight: 36px;
+
 $marginS: 0.3rem;
 $padding0: 6px;
 $drawerPadding: 20px;
@@ -36,4 +39,9 @@ $fontSizeXS: 0.6rem;
 $fontSizeS: 0.8rem;
 $fontSizeL: 1.2rem;
 
+$zIndexDrawer: 10;
+$zIndexTabs: 20;
+$zIndex10: 10;
+$zIndex20: 20;
 $zIndex30: 30;
+$zIndex40: 40;
