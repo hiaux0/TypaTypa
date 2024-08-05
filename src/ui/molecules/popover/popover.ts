@@ -9,7 +9,7 @@ function onOutsideClick(
     const isOkayElementClicked = okayElements?.some((okayElement) => {
       return okayElement.contains(event.target as HTMLElement);
     });
-    const isClickInside = element.contains(event.target as HTMLElement);
+    const isClickInside = element?.contains(event.target as HTMLElement);
     if (!isClickInside && !isOkayElementClicked) {
       callback();
     }
@@ -21,7 +21,7 @@ function onOutsideClick(
 export class Popover {
   public popoverContainerRef: HTMLElement = null;
   public clickTriggerRef: HTMLElement = null;
-  public isOpen = true;
+  public isOpen = false;
   public keepOpen = false;
 
   attached() {

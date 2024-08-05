@@ -9,8 +9,8 @@ export class Dictionary {
   public lookUpHistoryContainerRef: HTMLElement = null;
   public searchValue = "";
   public definition: DictionaryLookUp | undefined = undefined;
-  /*prettier-ignore*/ public lookUpHistory = new Set<string>(["applying", "apply", "more", "word", "go", "here", "therefore", "important", "timewise", "ashtashtsahtshshtashashtshtshaaaaaaatshtt"]);
-  // public lookUpHistory = new Set<string>([]);
+  // /*prettier-ignore*/ public lookUpHistory = new Set<string>(["applying", "apply", "more", "word", "go", "here", "therefore", "important", "timewise", "ashtashtsahtshshtashashtshtshaaaaaaatshtt"]);
+  public lookUpHistory = new Set<string>([]);
   public wordType: WordType | undefined = undefined;
   public meanings: WordMeaning[] = [];
   public aboveHeaderTop = 0;

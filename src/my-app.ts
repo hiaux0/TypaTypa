@@ -11,6 +11,7 @@ import { Topic } from "./types";
 import { database } from "./modules/database";
 import { APP_NAME } from "./modules/constants";
 import { initDebugShortcuts } from "./modules/debugging";
+import { getIsInputActive } from "./modules/htmlElements";
 
 interface Features {
   remember: Set<string>;
@@ -21,8 +22,8 @@ interface Features {
 }
 
 // /*prettier-ignore*/ const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
-/*prettier-ignore*/ const WORDS = ["are", "after"]
-// /*prettier-ignore*/ const WORDS = ["as", "ht"]
+// /*prettier-ignore*/ const WORDS = ["are", "after"]
+/*prettier-ignore*/ const WORDS = []
 const AMOUNT_OF_WORDS = 12;
 const TOPICS: Tabs[] = [
   {
@@ -49,9 +50,12 @@ export class MyApp {
   public rememberList: Features["remember"] = new Set();
   public dictionaryLookedUpList: Set<string> = new Set();
 
-  public wordToLookUp = "after";
-  public isDrawerOpen = true;
-  public activeTabName = "Dictionary";
+  public wordToLookUp = "";
+  public isDrawerOpen = false;
+  public activeTabName = "";
+  //public wordToLookUp = "after";
+  //public isDrawerOpen = true;
+  //public activeTabName = "Dictionary";
 
   public newInputTextChanged(newText: string): void {
     const tokens = tokenize(newText, { lower: true });
@@ -75,6 +79,8 @@ export class MyApp {
   }
 
   public handleTyping(key: string): void {
+    const isActive = getIsInputActive();
+    if (isActive) return;
     const advance = key === this.currentLetter;
     const shouldGiveNextWords = this.upcommingTextToType === "";
     if (advance && !shouldGiveNextWords) {
@@ -96,6 +102,8 @@ export class MyApp {
   }
 
   public handleShortcuts(key: string): void {
+    const isActive = getIsInputActive();
+    if (isActive) return;
     const index = this.typedText.length;
     const text = this.typedText + this.currentLetter + this.upcommingTextToType;
     const wordAtIndex = getWordAtIndex(text, index);

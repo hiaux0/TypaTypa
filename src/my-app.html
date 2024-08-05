@@ -3,15 +3,26 @@
   <div class="app-more-options">
     <popover>
       <button au-slot="trigger" class="icon-button help">?</button>
-      <ol au-slot="content" style="padding-top: unset;">
-        <li>Press "Topics"</li>
-        <li>Press "+" next to "List"</li>
-        <li>Choose topic name</li>
-        <li>On the right, "+" in the "Content" section</li>
-        <li>Paste your text into the inptu</li>
-        <li>PRess on "Topics" again to close</li>
-        <li>Now the words should appear in the typing box</li>
-      </ol>
+      <template au-slot="content">
+        Adding new topics and content: 
+        <ol style="padding-top: unset">
+          <li>Press "Topics"</li>
+          <li>Press "+" next to "List"</li>
+          <li>Choose topic name</li>
+          <li>On the right, "+" in the "Content" section</li>
+          <li>Paste your text into the inptu</li>
+          <li>PRess on "Topics" again to close</li>
+          <li>Now the words should appear in the typing box</li>
+        </ol>
+        <hr />
+        Typing Practice: Press one of the following key to
+        <ul>
+          <li>"?" - look up the word</li>
+          <li>"." - skip the word</li>
+          <li>"+" - add to remember list</li>
+          <li>"-" - remove from remember list</li>
+        </ul>
+      </template>
     </popover>
     <button class="icon-button">
       <span class="settings-icon">⚙</span>
