@@ -36,10 +36,11 @@
 <section class="typing-container ${isDrawerOpen ? 'top' : ''}">
   <div class="left-to-type">left to type: ${remainingWordsToType.size}</div>
   <div class="typing-input-container">
-    <template repeat.for="typedWord of typedText.split(' ')"
-      ><span class="word" click.trigger="lookUp(typedWord)">${typedWord}</span
-      ><span if.bind="$index < typedText.split(' ').length - 1">
-      </span></template
+    <span class="typed-text">
+      <template repeat.for="typedWord of typedText.split(' ')"
+        ><span class="word" click.trigger="lookUp(typedWord)">${typedWord}</span
+        ><span if.bind="$index < typedText.split(' ').length - 1"> </span
+      ></template></span
     ><span class="current-letter">${currentLetter}</span
     ><span class="text-to-type"
       ><template repeat.for="upcommingWord of upcommingTextToType.split(' ')"
