@@ -49,12 +49,14 @@ $zIndexDrawer: 10;
     border-radius: $borderRadius;
     margin-bottom: -3 * $drawerPadding;
     z-index: $zIndexDrawer;
+    background-color: unset;
+    transition: background-color 300ms ease;
 
     &.active {
       height: 100%;
       bottom: $tabBarHeight;
       margin-bottom: unset;
-      background: $black05;
+      background-color: $black05;
     }
 
     .drawer__content {
