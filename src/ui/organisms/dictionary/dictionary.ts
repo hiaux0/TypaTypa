@@ -6,11 +6,12 @@ import { getValueFromPixelString } from "../../../modules/strings";
 
 export class Dictionary {
   @bindable() public word = "";
+  @bindable() public lookUpHistory: string[] = [];
+  public internalLookUpHistory = new Set<string>([]);
   public lookUpHistoryContainerRef: HTMLElement = null;
   public searchValue: string | undefined = undefined;
   public definition: DictionaryLookUp | undefined = undefined;
   // /*prettier-ignore*/ public lookUpHistory = new Set<string>(["applying", "apply", "more", "word", "go", "here", "therefore", "important", "timewise", "ashtashtsahtshshtashashtshtshaaaaaaatshtt"]);
-  public lookUpHistory = new Set<string>([]);
   public wordType: WordType | undefined = undefined;
   public meanings: WordMeaning[] = [];
   public aboveHeaderTop = 0;
@@ -27,6 +28,11 @@ export class Dictionary {
   }
 
   attached() {
+    this.internalLookUpHistory = new Set([
+      ...Array.from(this.internalLookUpHistory),
+      ...this.lookUpHistory,
+    ]);
+
     this.calculateAboveHeaderHeight();
     this.wordChanged(this.word);
   }
@@ -44,8 +50,8 @@ export class Dictionary {
     // We do this, since a word could have been looked up at the start of a long look up session,
     // and the user could have forgotten about it.
     // this.lookUpHistory.delete(word);
-    this.lookUpHistory.add(word);
-    this.lookUpHistory = new Set(this.lookUpHistory);
+    this.internalLookUpHistory.add(word);
+    this.internalLookUpHistory = new Set(this.internalLookUpHistory);
   }
 
   public calculateAboveHeaderHeight(): void {

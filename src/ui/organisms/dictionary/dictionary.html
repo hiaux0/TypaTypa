@@ -3,7 +3,7 @@
     <!-- Look up history -->
     <div class="look-up-history-container" ref="lookUpHistoryContainerRef">
       <labeled-word-list
-        words.bind="Array.from(lookUpHistory)"
+        words.bind="Array.from(internalLookUpHistory)"
         seperator=" >"
         on-word-clicked.bind="lookUp"
       ></labeled-word-list>

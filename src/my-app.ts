@@ -104,6 +104,7 @@ export class MyApp {
     const wordAtIndex = getWordAtIndex(text, index);
     switch (key) {
       case "?": {
+        this.activeTabName = "";
         // 1. Look up word in dictionary
         this.dictionaryLookedUpList.add(wordAtIndex);
         database.setItem({

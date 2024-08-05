@@ -42,7 +42,8 @@ dictionary {
     .meanings-container {
       margin-top: 16px;
       color: $primaryDark0;
-      /* overflow: scroll; */
+      overflow: scroll;
+      height: 50vh;
 
       h3 {
         font-size: $fontSizeL;

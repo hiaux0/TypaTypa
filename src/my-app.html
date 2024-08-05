@@ -4,7 +4,7 @@
     <popover>
       <button au-slot="trigger" class="icon-button help">?</button>
       <template au-slot="content">
-        Adding new topics and content: 
+        Adding new topics and content:
         <ol style="padding-top: unset">
           <li>Press "Topics"</li>
           <li>Press "+" next to "List"</li>
@@ -55,7 +55,10 @@
     <topics on-topic-change.bind="onTopicChange" />
   </template>
   <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
-    <dictionary word.bind="wordToLookUp" />
+    <dictionary
+      word.bind="wordToLookUp"
+      look-up-history.bind="Array.from(dictionaryLookedUpList)"
+    />
   </template>
   <div au-slot="content" if.bind="activeTopic.title === 'Remember'">
     <div class="remember-container">
