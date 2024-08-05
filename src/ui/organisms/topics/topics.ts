@@ -68,6 +68,10 @@ export class Topics {
     return this.topics.find((topic) => topic.title === title);
   }
 
+  public findTopicById(id: string): Topic | undefined {
+    return this.topics.find((topic) => topic.id === id);
+  }
+
   public getNumOfUntitledTitles(): number {
     const filtered = this.topics.filter((topic) =>
       topic.title.includes(getTranslation("untitled")),
@@ -98,7 +102,26 @@ export class Topics {
     database.setItem({ selectedTopicId: this.selectedTopic?.id });
   }
 
-  public contentChanged(): void {
+  public refreshTopic(): void {
+    const dbData = database.getItem();
+    this.topics = dbData.topics ?? TOPICS;
+
+    const targetTopic = database.getSelectedTopic();
+    if (targetTopic) {
+      this.selectedTopic = targetTopic;
+    } else {
+      this.selectedTopic = this.topics[1];
+    }
+  }
+
+  public contentChanged(contentId: string, contentText: string): void {
+    const targetTopic = this.findTopicById(this.selectedTopic.id);
+    const targetContent = targetTopic.content.find(
+      (content) => content.id === contentId,
+    );
+    targetContent.text = contentText;
     database.setItem({ topics: this.topics });
+    this.refreshTopic();
+    this.onTopicChange(targetTopic);
   }
 }

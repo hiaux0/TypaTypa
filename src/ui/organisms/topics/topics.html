@@ -48,11 +48,11 @@
     </div>
 
     <div class="content-container">
-      <div class="content" repeat.for="item of selectedTopic.content">
+      <div class="content" repeat.for="content of selectedTopic.content">
         <textarea
-          value.bind="item.text"
-          placeholder="${item.text === '' ? 'add new content' : ''}"
-          blur.trigger="contentChanged()"
+          value.bind="content.text"
+          placeholder="${content.text === '' ? 'add new content' : ''}"
+          blur.trigger="contentChanged(content.id, content.text)"
           autosize
         ></textarea>
       </div>
