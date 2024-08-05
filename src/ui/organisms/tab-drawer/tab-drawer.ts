@@ -31,6 +31,7 @@ export class TabDrawer {
         this.isDrawerOpen = false;
       },
       [this.tabBarRef],
+      [".word"],
     );
   }
 
