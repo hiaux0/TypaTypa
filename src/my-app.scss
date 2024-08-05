@@ -32,8 +32,10 @@
 }
 
 .typing-container {
-  top: 100px;
   position: relative;
+  top: 320px;
+  width: 80%;
+  margin: 0 auto;
   padding: 0 20px;
   transition: top 0.3s ease;
   &.top {

@@ -1,5 +1,5 @@
-import * as A from "../data/dictionary/a.json";
 import { DictionaryLookUp } from "../types";
+import * as A from "../data/dictionary/a.json";
 //import * as B from "../data/dictionary/b.json";
 //import * as C from "../data/dictionary/c.json";
 //import * as D from "../data/dictionary/d.json";
