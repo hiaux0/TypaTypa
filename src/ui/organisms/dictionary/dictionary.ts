@@ -7,7 +7,7 @@ import { getValueFromPixelString } from "../../../modules/strings";
 export class Dictionary {
   @bindable() public word = "";
   public lookUpHistoryContainerRef: HTMLElement = null;
-  public searchValue = "";
+  public searchValue: string | undefined = undefined;
   public definition: DictionaryLookUp | undefined = undefined;
   // /*prettier-ignore*/ public lookUpHistory = new Set<string>(["applying", "apply", "more", "word", "go", "here", "therefore", "important", "timewise", "ashtashtsahtshshtashashtshtshaaaaaaatshtt"]);
   public lookUpHistory = new Set<string>([]);
@@ -18,7 +18,6 @@ export class Dictionary {
   wordChanged(newWord: string): void {
     if (!newWord) return;
     this.definition = getDefinition(newWord);
-    /*prettier-ignore*/ console.log("[dictionary.ts,13] this.definition: ", this.definition);
     if (Object.keys(this.definition?.MEANINGS ?? {}).length > 0) {
       this.meanings = Object.values(this.definition.MEANINGS);
     } else {
@@ -32,8 +31,9 @@ export class Dictionary {
     this.wordChanged(this.word);
   }
 
-  public lookUp = (word: string): void => {
-    this.word = word.trim();
+  public lookUp = (word: string | undefined): void => {
+    if (!word) return;
+    this.word = word?.trim();
     this.wordChanged(this.word);
     this.handleLookUpHistory(this.word);
   };

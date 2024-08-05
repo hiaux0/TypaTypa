@@ -1,6 +1,7 @@
 import { bindable } from "aurelia";
 import "./tab-drawer.scss";
 import { onOutsideClick } from "../../../modules/htmlElements";
+import { SELECTED_TAB_INDEX } from "../../../modules/constants";
 
 export interface Tabs {
   title: string;
@@ -21,7 +22,7 @@ export class TabDrawer {
   }
 
   attached() {
-    this.activeTab = this.tabs[1];
+    this.activeTab = this.tabs[SELECTED_TAB_INDEX];
 
     onOutsideClick(
       this.drawerContentRef,

@@ -5,8 +5,16 @@ import { getTranslation } from "./translations";
 
 export const APP_NAME = "TypaTypa";
 
+export const INITIAL_APP_STATE = {
+  typing: {
+    tabs: {
+      isDrawerOpen: true,
+    },
+  },
+};
+
 export const AMOUNT_OF_WORDS = 12;
-export const TOPICS: Tabs[] = [
+export const TABS: Tabs[] = [
   {
     title: "Topics",
     shortcut: "T",
@@ -21,16 +29,25 @@ export const TOPICS: Tabs[] = [
   },
 ];
 
+export const WORD_TO_LOOK_UP = "apply";
+export const SELECTED_TAB_INDEX = 1;
+export const SELECTED_TAB_TITLE = TABS[SELECTED_TAB_INDEX].title;
+
 const DEFAULT_TOPICS: Topic[] = [
   {
     id: generateId(),
     title: getTranslation("introduction"),
-    content: [{ id: generateId(), text: `Welcome to the TypaTypa App :)
+    content: [
+      {
+        id: generateId(),
+        text: `Welcome to the TypaTypa App :)
 
 This app has 2 purposes:
 1. Improve your typing speed.
 2. Improve your vocabulary.
-` }],
+`,
+      },
+    ],
   },
 ];
 

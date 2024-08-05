@@ -5,11 +5,16 @@ import {
   tokenize,
 } from "./modules/strings";
 import { getRandomWordsFromSetAndRemove } from "./modules/random";
-import { getDefinition } from "./modules/dictionary";
-import { Tabs } from "./ui/organisms/tab-drawer/tab-drawer";
 import { Topic } from "./types";
 import { database } from "./modules/database";
-import { AMOUNT_OF_WORDS, APP_NAME, TOPICS } from "./modules/constants";
+import {
+  AMOUNT_OF_WORDS,
+  APP_NAME,
+  INITIAL_APP_STATE,
+  SELECTED_TAB_TITLE,
+  TABS,
+  WORD_TO_LOOK_UP,
+} from "./modules/constants";
 import { initDebugShortcuts } from "./modules/debugging";
 import { getIsInputActive } from "./modules/htmlElements";
 import { ShortcutService } from "./services/ShortcutService";
@@ -28,7 +33,7 @@ interface Features {
 
 export class MyApp {
   public appName = APP_NAME;
-  public topics = TOPICS;
+  public topics = TABS;
   @observable public newInputText = "";
   public typedText = "";
   public currentLetter = "";
@@ -42,9 +47,9 @@ export class MyApp {
   //public wordToLookUp = "";
   //public isDrawerOpen = false;
   //public activeTabName = "";
-  public wordToLookUp = "after";
-  public isDrawerOpen = true;
-  public activeTabName = "Topics";
+  public wordToLookUp = WORD_TO_LOOK_UP;
+  public isDrawerOpen = INITIAL_APP_STATE.typing.tabs.isDrawerOpen ?? false;
+  public activeTabName = SELECTED_TAB_TITLE;
 
   public newInputTextChanged(newText: string): void {
     const tokens = tokenize(newText, { lower: true });
