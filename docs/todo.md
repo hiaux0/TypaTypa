@@ -29,16 +29,13 @@
 # Todo
 
 - ui
-  - [x] "?" should switch to "dictionary" tab
   - [ ] make background darker when drawer open
 - dictionary
   - [ ] if no meaning, then check syn and deduce singular form
     - inspections -> no meaning obj, but syn
       - inspection -> okay
   - [ ] if no hit, then search for similar
-  - [x] add search bar
-  - [x] be able to lookup any words
-  - [x] show lookup history
+  - [ ] close on outside click
 - intro
   - [ ] have typing text be an intro
 - keyboard
@@ -56,6 +53,10 @@
 # Done
   - [x] add button
   - [x] hook up "topics" with typing
+  - [x] "?" should switch to "dictionary" tab
+  - [x] add search bar
+  - [x] be able to lookup any words
+  - [x] show lookup history
 
 # Backlog
 

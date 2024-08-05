@@ -1,6 +1,6 @@
 <div class="tab-drawer-container">
   <!-- 1. Tab Bar -->
-  <section class="tab-bar">
+  <section ref="tabBarRef" class="tab-bar">
     <div
       repeat.for="tab of tabs"
       class="tab-bar__tab ${(this.activeTab?.title === tab.title && isDrawerOpen) ? 'active' : ''}"
@@ -11,11 +11,11 @@
   </section>
 
   <!-- 2. Drawer -->
-  <section
-    class="drawer-overlay ${isDrawerOpen ? 'active' : ''}"
-    ref="drawerRef"
-  >
-    <div class="drawer__content ${isDrawerOpen ? 'active' : ''}">
+  <section class="drawer-overlay ${isDrawerOpen ? 'active' : ''}">
+    <div
+      ref="drawerContentRef"
+      class="drawer__content ${isDrawerOpen ? 'active' : ''}"
+    >
       <au-slot name="content">.. content here ..</au-slot>
     </div>
   </section>

@@ -1,22 +1,5 @@
+import { onOutsideClick } from "../../../modules/htmlElements";
 import "./popover.scss";
-
-function onOutsideClick(
-  element: HTMLElement,
-  callback: () => void,
-  okayElements?: HTMLElement[],
-) {
-  function onClickCallback(event: MouseEvent) {
-    const isOkayElementClicked = okayElements?.some((okayElement) => {
-      return okayElement.contains(event.target as HTMLElement);
-    });
-    const isClickInside = element?.contains(event.target as HTMLElement);
-    if (!isClickInside && !isOkayElementClicked) {
-      callback();
-    }
-  }
-
-  document.addEventListener("click", onClickCallback);
-}
 
 export class Popover {
   public popoverContainerRef: HTMLElement = null;

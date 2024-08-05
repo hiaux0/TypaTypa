@@ -1,17 +1,19 @@
 import { bindable } from "aurelia";
 import "./tab-drawer.scss";
+import { onOutsideClick } from "../../../modules/htmlElements";
 
 export interface Tabs {
   title: string;
 }
 
 export class TabDrawer {
-  public drawerRef: HTMLElement | null = null;
-  public message = "tab-drawer.html";
   @bindable() public tabs = [];
   @bindable() public activeTab: Tabs | null = null;
   @bindable() public activeTabName = "";
   @bindable() public isDrawerOpen = true;
+  public drawerContentRef: HTMLElement | null = null;
+  public tabBarRef: HTMLElement | null = null;
+  public message = "tab-drawer.html";
 
   activeTabNameChanged(tabName: string): void {
     this.openDrawer(tabName);
@@ -19,6 +21,15 @@ export class TabDrawer {
 
   attached() {
     this.activeTab = this.tabs[1];
+
+    onOutsideClick(
+      this.drawerContentRef,
+      () => {
+        if (!this.isDrawerOpen) return;
+        this.isDrawerOpen = false;
+      },
+      [this.tabBarRef],
+    );
   }
 
   public openDrawer(topicTitle: string): void {
