@@ -61,7 +61,7 @@ export class MyApp {
   attached() {
     const dbData = database.getItem();
     this.rememberList = new Set(dbData.rememberList);
-    this.dictionaryLookedUpList = new Set(dbData.dictionaryLookedUpList);
+    // this.dictionaryLookedUpList = new Set(dbData.dictionaryLookedUpList);
     const selectedTopic = database.getSelectedTopic();
     this.onTopicChange(selectedTopic);
 
@@ -150,9 +150,9 @@ export class MyApp {
     this.activeTabName = "";
     // 1. Look up word in dictionary
     this.dictionaryLookedUpList.add(word);
-    database.setItem({
-      dictionaryLookedUpList: Array.from(this.dictionaryLookedUpList),
-    });
+    //database.setItem({
+    //  dictionaryLookedUpList: Array.from(this.dictionaryLookedUpList),
+    //});
 
     // 2. Set active tab to Dictionary
     this.wordToLookUp = word;

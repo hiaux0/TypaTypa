@@ -11,7 +11,7 @@ import { getValueFromPixelString } from "../../../modules/strings";
 
 export class Dictionary {
   @bindable() public word = "";
-  @bindable() public lookUpHistory: LabeledWordsData[] = [];
+  @bindable() public lookUpHistory: string[] = [];
   public internalLookUpHistory = new Map<string, LabeledWordsData>([]);
   public lookUpHistoryContainerRef: HTMLElement = null;
   public finalWord = "";
@@ -23,10 +23,8 @@ export class Dictionary {
   public aboveHeaderTop = 0;
 
   wordChanged(newWord: string): void {
-    /*prettier-ignore*/ console.log("[dictionary.ts,26] newWord: ", newWord);
     if (!newWord) return;
     const definition = getDefinition(newWord);
-    /*prettier-ignore*/ console.log("[dictionary.ts,22] definition: ", definition);
     this.handleLookUpHistory(this.word, definition);
     if (!definition) return;
     this.finalWord = newWord;
@@ -47,10 +45,17 @@ export class Dictionary {
   }
 
   public initInternalLookUpHistory(): void {
-    //this.internalLookUpHistory = new Set([
-    //  ...Array.from(this.internalLookUpHistory),
-    //  ...this.lookUpHistory,
-    //]);
+    this.lookUpHistory;
+    const updatedLookUpHistory = new Map<string, LabeledWordsData>();
+    this.lookUpHistory.forEach((word) => {
+      const definition = getDefinition(word);
+      const result: LabeledWordsData = { word, disabled: !definition };
+      updatedLookUpHistory.set(word, result);
+    });
+    this.internalLookUpHistory = new Map([
+      ...Array.from(this.internalLookUpHistory),
+      ...Array.from(updatedLookUpHistory),
+    ]);
   }
 
   public lookUp = (word: string | undefined): void => {
@@ -63,13 +68,11 @@ export class Dictionary {
     // Delete then re-add, so the word appears at the end again.
     // We do this, since a word could have been looked up at the start of a long look up session,
     // and the user could have forgotten about it.
-    // this.lookUpHistory.delete(word);
     this.internalLookUpHistory.set(word, {
       word,
       disabled: !definition,
     });
     this.internalLookUpHistory = new Map(this.internalLookUpHistory);
-    /*prettier-ignore*/ console.log("[dictionary.ts,63] this.internalLookUpHistory: ", this.internalLookUpHistory);
   }
 
   public calculateAboveHeaderHeight(): void {
