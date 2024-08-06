@@ -7,7 +7,10 @@
       click.trigger="toggleDrawer(tab.title)"
       data-shortcut.bind="tab.shortcut"
     >
-      ${tab.title} <span if.bind="tab.shortcut">(${tab.shortcut})</span>
+      ${tab.title}
+      <span if.bind="tab.shortcut" class="tab-shortcut">
+        (${tab.shortcut})</span
+      >
     </div>
   </section>
 

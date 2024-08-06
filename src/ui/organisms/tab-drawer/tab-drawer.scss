@@ -27,11 +27,9 @@ $zIndexDrawer: 10;
       display: flex;
       justify-content: center;
       align-items: center;
-
       &:hover {
         background: $primaryDark1;
       }
-
       &.active {
         background: $primaryDark0;
         border-top: 3px solid $primaryDark;
@@ -39,6 +37,11 @@ $zIndexDrawer: 10;
         &:hover {
           background: $primaryDark1;
         }
+      }
+
+      .tab-shortcut {
+        margin-left: 4px;
+        font-size: $fontSizeS;
       }
     }
   }

@@ -85,7 +85,7 @@ export class MyApp {
 
     // No more words
     if (this.remainingWordsToType.size === 0) {
-      this.remainingWordsToType = this.poolOfWords
+      this.remainingWordsToType = this.poolOfWords;
     }
   }
 
@@ -96,6 +96,10 @@ export class MyApp {
     const text = this.typedText + this.currentLetter + this.upcommingTextToType;
     const wordAtIndex = getWordAtIndex(text, index);
     switch (key) {
+      case "Escape": {
+        this.isDrawerOpen = false;
+        break;
+      }
       case "?": {
         this.lookUp(wordAtIndex);
         break;
