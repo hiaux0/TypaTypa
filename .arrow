@@ -10,3 +10,6 @@ src/ui/organisms/tab-drawer/tab-drawer.scss
 src/ui/organisms/topics/topics.ts
 src/ui/organisms/topics/topics.html
 src/ui/organisms/topics/topics.scss
+src/ui/molecules/labeled-word-list/labeled-word-list.ts
+src/ui/molecules/labeled-word-list/labeled-word-list.html
+src/ui/molecules/labeled-word-list/labeled-word-list.scss
