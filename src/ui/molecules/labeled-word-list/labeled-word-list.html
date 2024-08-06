@@ -22,8 +22,11 @@
   <!-- Normal Words -->
   <template else>
     <let has-words.bind="words.length > 0"></let>
-    <template if.bind="hasWords" repeat.for="word of words">
-      <em class="word" click.trigger="onWordClicked(word)">${word}</em
+    <template if.bind="hasWords" repeat.for="wordOrPhrase of words">
+      <template repeat.for="word of wordOrPhrase.split(' ')">
+        <em class="word" click.trigger="onWordClicked(word)">${word}</em
+        ><span if.bind="$index < typedText.split(' ').length - 1">
+        </span></template
       ><template if.bind="$index < words.length - 1">${seperator}</template>
     </template>
     <em else class="word">

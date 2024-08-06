@@ -19,9 +19,6 @@ export class LabeledWordList {
   }
 
   attached() {
-    if (this.debug) {
-      /*prettier-ignore*/ console.log("[labeled-word-list.ts,22] this.customWords: ", this.customWords);
-    }
     this.wordsChanged();
 
     if (this.label) {

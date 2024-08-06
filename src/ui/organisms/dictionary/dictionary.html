@@ -7,7 +7,6 @@
       if.bind="Array.from(internalLookUpHistory).length > 0"
     >
       <labeled-word-list
-        debug="true"
         custom-words.bind="Array.from(internalLookUpHistory)"
         seperator=" >"
         on-word-clicked.bind="lookUp"
@@ -35,11 +34,13 @@
       <span class="title">${finalWord}</span>
     </h4>
     <labeled-word-list
+      if.bind="definition.SYNONYMS.length > 0"
       label="Synonyms"
       words.bind="definition.SYNONYMS"
       on-word-clicked.bind="lookUp"
     ></labeled-word-list>
     <labeled-word-list
+      if.bind="definition.ANTONYMS.length > 0"
       label="Antonyms"
       words.bind="definition.ANTONYMS"
       on-word-clicked.bind="lookUp"
