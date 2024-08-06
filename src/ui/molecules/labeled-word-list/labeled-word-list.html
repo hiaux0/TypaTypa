@@ -6,7 +6,7 @@
     <let has-words.bind="customWords.length > 0"></let>
     <template if.bind="hasWords" repeat.for="[word, wordData] of customWords">
       <em
-        class="word ${wordData.disabled ? 'disabled' : ''}"
+        class="word ${wordData.disabled ? 'disabled' : ''} ${highlightWord.toLowerCase() === word.toLowerCase() ? 'highlight' : ''}"
         title="not found"
         click.trigger="onWordClicked(word)"
         >${word}</em

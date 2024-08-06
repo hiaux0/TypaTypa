@@ -25,8 +25,10 @@ export class Dictionary {
   wordChanged(newWord: string): void {
     if (!newWord) return;
     const definition = getDefinition(newWord);
+    // Still add to look up history, even if no definition is found.
     this.handleLookUpHistory(this.word, definition);
     if (!definition) return;
+
     this.finalWord = newWord;
     this.definition = definition;
     if (Object.keys(this.definition?.MEANINGS ?? {}).length > 0) {
@@ -71,7 +73,13 @@ export class Dictionary {
   }
 
   public handleLookUpHistory(word: string, definition: DictionaryLookUp): void {
-    // Delete then re-add, so the word appears at the end again.
+    // 1. Don't add duplicates (case insensitive)
+    const alreadyPresent = Array.from(this.internalLookUpHistory.keys()).find(
+      (wordInHistory) => wordInHistory.toLowerCase() === word.toLowerCase(),
+    );
+    if (alreadyPresent) return;
+
+    // 2. Delete then re-add, so the word appears at the end again.
     // We do this, since a word could have been looked up at the start of a long look up session,
     // and the user could have forgotten about it.
     this.internalLookUpHistory.set(word, {

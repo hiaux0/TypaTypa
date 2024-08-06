@@ -4,11 +4,12 @@
     <div
       class="look-up-history-container"
       ref="lookUpHistoryContainerRef"
-      if.bind="Array.from(internalLookUpHistory).length > 0"
+      if.bind="Array.from(internalLookUpHistory).length > 0 && finalWord"
     >
       <labeled-word-list
         custom-words.bind="Array.from(internalLookUpHistory)"
         seperator=" >"
+        highlight-word.bind="word"
         on-word-clicked.bind="lookUp"
       ></labeled-word-list>
     </div>

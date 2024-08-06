@@ -6,6 +6,7 @@ export class LabeledWordList {
   @bindable() label = "";
   @bindable() words: string[] = [];
   @bindable() customWords: LabeledWordsData[] = [];
+  @bindable() highlightWord = "";
   @bindable() seperator = ",";
   @bindable() shouldSort = false;
   @bindable() debug = false;
@@ -24,5 +25,10 @@ export class LabeledWordList {
     if (this.label) {
       this.finalLabel = `${this.label}: `;
     }
+  }
+
+  public shouldHighlightWord(word: string): boolean {
+    const same = this.highlightWord.toLowerCase() === word.toLowerCase();
+    return same;
   }
 }

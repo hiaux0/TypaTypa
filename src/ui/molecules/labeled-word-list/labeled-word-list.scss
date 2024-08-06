@@ -11,6 +11,10 @@
     &:not(.disabled):hover {
       @include wordHover;
     }
+    &.highlight {
+      border: 1px solid $red;
+      padding: 2px;
+    }
     &.disabled {
       color: $grey;
       cursor: default;
