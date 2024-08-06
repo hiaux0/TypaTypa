@@ -9,12 +9,12 @@
 # Features
 
 - [ ] pass your own text into the app
-  - [ ] save passed text (convience)
+  - [x] save passed text (convience)
   - [ ] strip out common english words
-  - [ ] mark words, that you already know
-    - [ ] with "!"? (or already done via "-"?)
-- [ ] choose different [topics]
-  - [ ] add [topics] to texts
+  - [x] mark words, that you already know
+    - [x] with "!"? (or already done via "-"?)
+- [x] choose different [topics]
+  - [x] add [topics] to texts
 - typing
   - [x] "." to skip word
 - [ ] en dictionary
@@ -23,34 +23,46 @@
   - [x] type "+" to add to words "to learn""
   - [x] type "-" to remove words from "to learn"
 - [ ] double click on word to add it to lessons/topics
-- [ ] help
-  - [ ] list all shortcuts
+- [x] help
+  - [x] list all shortcuts
 
 # Todo
 
 - ui
   - [ ] make background darker when drawer open
-- dictionary
-  - [ ] if no meaning, then check syn and deduce singular form
-    - inspections -> no meaning obj, but syn
-      - inspection -> okay
-  - [ ] if no hit, then search for similar
-  - [ ] close on outside click
-- intro
-  - [ ] have typing text be an intro
-- keyboard
-  - [ ] "T" Topics
-  - [ ] "R" Remember
-  - [ ] "D" Dictionary
-- setting
-  - not random words, but as the text is
 
 - data
   - [ ] reduce size of dictionary data
     - [ ] filter out a list of all words
       - one way to reduce the size, is by removing really rare words
+- dictionary
+  - [ ] if no meaning, then check syn and deduce singular form
+    - inspections -> no meaning obj, but syn
+      - inspection -> okay
+  - [ ] if no hit, then search for similar
+  - [ ] Use another dic <<<<<<<
+- intro
+  - [ ] have typing text be an intro
+- keyboard
+  - [ ] support backspace in typing-container
+- setting
+  - not random words, but as the text is
+- topics
+  - [ ] fix(topics): 
+  - [ ] topics: ctrl+v global -> add into "unsorted" topic
+- typing
+  - [ ] loop
 
 # Done
+
+  - [x] fix(topics): search bar appears again
+  - [x] fix(topics): click inside also close
+  - [x] close on outside click
+  - [x] look up: add highlight to current word in the history
+  - [x] "T" Topics
+  - [x] "R" Remember
+  - [x] "D" Dictionary
+
   - [x] add button
   - [x] hook up "topics" with typing
   - [x] "?" should switch to "dictionary" tab
