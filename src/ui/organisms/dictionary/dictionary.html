@@ -67,6 +67,8 @@
         >
           <span class="word" click.trigger="lookUp(word)">${word}</span>
         </span>
+
+        <!-- Synonym -->
         <ul class="other-synonym-container" if.bind="otherSynonyms.length > 0">
           <labeled-word-list
             label="Other Syonyms"
@@ -74,15 +76,14 @@
             on-word-clicked.bind="lookUp"
           ></labeled-word-list>
         </ul>
+
+        <!-- Example -->
         <ul
           class="example-phrases-container"
           if.bind="examplesPhrases.length > 0"
         >
           <label>Examples: </label>
-          <li
-            repeat.for="phrase of examplesPhrases"
-            click.trigger="lookUp(phrase)"
-          >
+          <li repeat.for="phrase of examplesPhrases">
             <span repeat.for="word of phrase.split(' ')">
               <span class="word" click.trigger="lookUp(word)">${word}</span>
             </span>
