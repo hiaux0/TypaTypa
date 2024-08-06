@@ -34,10 +34,10 @@ interface Features {
 export class MyApp {
   public appName = APP_NAME;
   public topics = TABS;
-  @observable public newInputText = "";
   public typedText = "";
   public currentLetter = "";
   public upcommingTextToType = "";
+  public poolOfWords: Set<string> = new Set([]);
   public remainingWordsToType: Set<string> = new Set(WORDS);
   public nextWordsToType: Set<string> = new Set();
 
@@ -50,13 +50,6 @@ export class MyApp {
   public wordToLookUp = WORD_TO_LOOK_UP;
   public isDrawerOpen = INITIAL_APP_STATE.typing.tabs.isDrawerOpen ?? false;
   public activeTabName = SELECTED_TAB_TITLE;
-
-  public newInputTextChanged(newText: string): void {
-    const tokens = tokenize(newText, { lower: true });
-    this.remainingWordsToType = new Set(tokens);
-    this.resetTyping();
-    this.selectWordsToType();
-  }
 
   attached() {
     const dbData = database.getItem();
@@ -92,7 +85,7 @@ export class MyApp {
 
     // No more words
     if (this.remainingWordsToType.size === 0) {
-      this.remainingWordsToType = new Set(WORDS);
+      this.remainingWordsToType = this.poolOfWords
     }
   }
 
@@ -143,7 +136,11 @@ export class MyApp {
   public onTopicChange = (topic: Topic | undefined): void => {
     if (!topic) return;
     const text = topic.content.map((item) => item.text).join(" ");
-    this.newInputTextChanged(text);
+    const tokens = tokenize(text, { lower: true });
+    this.poolOfWords = new Set(tokens);
+    this.remainingWordsToType = this.poolOfWords;
+    this.resetTyping();
+    this.selectWordsToType();
   };
 
   public lookUp(word: string): void {
@@ -156,7 +153,6 @@ export class MyApp {
 
     // 2. Set active tab to Dictionary
     this.wordToLookUp = word;
-    /*prettier-ignore*/ console.log("[my-app.ts,110] this.wordToLookUp: ", this.wordToLookUp);
     this.activeTabName = "Dictionary";
   }
 
