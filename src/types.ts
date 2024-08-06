@@ -10,6 +10,11 @@ export interface DictionaryLookUp {
   SYNONYMS: string[];
 }
 
+export interface LabeledWordsData {
+  word: string;
+  disabled: boolean;
+}
+
 export interface Topic {
   id?: string;
   title: string;

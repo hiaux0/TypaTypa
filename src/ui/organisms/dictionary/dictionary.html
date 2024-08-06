@@ -1,9 +1,14 @@
 <section class="above-header" style="top: -${aboveHeaderTop}px">
   <div class="space-between">
     <!-- Look up history -->
-    <div class="look-up-history-container" ref="lookUpHistoryContainerRef">
+    <div
+      class="look-up-history-container"
+      ref="lookUpHistoryContainerRef"
+      if.bind="Array.from(internalLookUpHistory).length > 0"
+    >
       <labeled-word-list
-        words.bind="Array.from(internalLookUpHistory)"
+        debug="true"
+        custom-words.bind="Array.from(internalLookUpHistory)"
         seperator=" >"
         on-word-clicked.bind="lookUp"
       ></labeled-word-list>
@@ -21,13 +26,13 @@
 </section>
 
 <!-- Not Found -->
-<section class="not-found" if.bind="!definition">Nothing found huhu</section>
+<!-- <section class="not-found" if.bind="!definition">Nothing found huhu</section> -->
 <!-- Main -->
-<section class="main" else>
+<section class="main">
   <!-- Header -->
   <section class="header">
     <h4>
-      <span class="title">${word}</span>
+      <span class="title">${finalWord}</span>
     </h4>
     <labeled-word-list
       label="Synonyms"

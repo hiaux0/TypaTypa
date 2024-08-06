@@ -8,8 +8,12 @@
   margin-right: 25px;
 
   .word {
-    &:hover {
+    &:not(.disabled):hover {
       @include wordHover;
+    }
+    &.disabled {
+      color: $grey;
+      cursor: default;
     }
   }
 }

@@ -1,11 +1,33 @@
 <section class="labeled-words-container">
   <label>${finalLabel}</label>
-  <let has-words.bind="words.length > 0"></let>
-  <template if.bind="hasWords" repeat.for="word of words">
-    <em class="word" click.trigger="onWordClicked(word)">${word}</em
-    ><template if.bind="$index < words.length - 1">${seperator}</template>
+
+  <!-- Custom Words -->
+  <template if.bind="customWords.length > 0">
+    <let has-words.bind="customWords.length > 0"></let>
+    <template if.bind="hasWords" repeat.for="[word, wordData] of customWords">
+      <em
+        class="word ${wordData.disabled ? 'disabled' : ''}"
+        title="not found"
+        click.trigger="onWordClicked(word)"
+        >${word}</em
+      ><template if.bind="$index < customWords.length - 1"
+        >${seperator}</template
+      >
+    </template>
+    <em else class="word">
+      <template if.bind="!!this.label">n/a</template>
+    </em>
   </template>
-  <em else class="word">
-    <template if.bind="!!this.label">n/a</template>
-  </em>
+
+  <!-- Normal Words -->
+  <template else>
+    <let has-words.bind="words.length > 0"></let>
+    <template if.bind="hasWords" repeat.for="word of words">
+      <em class="word" click.trigger="onWordClicked(word)">${word}</em
+      ><template if.bind="$index < words.length - 1">${seperator}</template>
+    </template>
+    <em else class="word">
+      <template if.bind="!!this.label">n/a</template>
+    </em>
+  </template>
 </section>
