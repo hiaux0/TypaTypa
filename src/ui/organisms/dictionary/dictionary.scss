@@ -8,6 +8,7 @@ dictionary {
     top: -52px;
     width: 100%;
     padding: 12px;
+    padding-bottom: 6px;
     @include borders();
     background-color: $secondaryLight;
 
@@ -20,6 +21,12 @@ dictionary {
         display: flex;
         align-items: end;
         margin-bottom: 4px;
+
+        .search-help {
+          margin-top: 4px;
+          font-size: $fontSizeXXS;
+          color: $grey;
+        }
       }
     }
   }

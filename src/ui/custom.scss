@@ -53,6 +53,9 @@ textarea {
   border: 1px solid $borderColor;
   border-radius: $borderRadius;
   background: $secondaryLight0;
+  &::placeholder {
+    font-size: $fontSizeS;
+  }
 }
 
 ol,

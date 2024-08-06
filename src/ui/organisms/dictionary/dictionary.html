@@ -14,12 +14,15 @@
     </div>
     <div class="search-container">
       <!-- Search -->
-      <input
-        type="text"
-        placeholder="Search..."
-        value.bind="searchValue"
-        change.bind="lookUp(searchValue)"
-      />
+      <div class="flex-okay">
+        <input
+          type="text"
+          placeholder="Search..."
+          value.bind="searchValue"
+          keydown.trigger="searchOnKeydown"
+        />
+        <div class="search-help">Press Enter to search</div>
+      </div>
     </div>
   </div>
 </section>

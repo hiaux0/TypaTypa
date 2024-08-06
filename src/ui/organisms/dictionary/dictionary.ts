@@ -64,6 +64,12 @@ export class Dictionary {
     this.wordChanged(this.word);
   };
 
+  public searchOnKeydown(event: KeyboardEvent): void {
+    const key = event.key;
+    if (key !== "Enter") return;
+    this.lookUp(this.searchValue);
+  }
+
   public handleLookUpHistory(word: string, definition: DictionaryLookUp): void {
     // Delete then re-add, so the word appears at the end again.
     // We do this, since a word could have been looked up at the start of a long look up session,
@@ -81,7 +87,7 @@ export class Dictionary {
         this.lookUpHistoryContainerRef,
       ).height;
       const height = getValueFromPixelString(heightString);
-      const adjusted = height + 8 + 20; // + 8: give margin
+      const adjusted = height + 22; // + 22: give margin
       this.aboveHeaderTop = adjusted;
     }, 0);
   }
