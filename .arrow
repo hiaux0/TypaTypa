@@ -1,6 +1,9 @@
 src/my-app.ts
 src/my-app.html
 src/my-app.scss
+src/ui/organisms/dictionary/dictionary.ts
+src/ui/organisms/dictionary/dictionary.html
+src/ui/organisms/dictionary/dictionary.scss
 src/ui/organisms/tab-drawer/tab-drawer.ts
 src/ui/organisms/tab-drawer/tab-drawer.html
 src/ui/organisms/tab-drawer/tab-drawer.scss
