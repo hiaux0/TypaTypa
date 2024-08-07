@@ -20,7 +20,7 @@ export class Dictionary {
   // /*prettier-ignore*/ public lookUpHistory = new Set<string>(["applying", "apply", "more", "word", "go", "here", "therefore", "important", "timewise", "ashtashtsahtshshtashashtshtshaaaaaaatshtt"]);
   public wordType: WordType | undefined = undefined;
   public meanings: WordMeaning[] = [];
-  public aboveHeaderTop = 0;
+  public aboveHeaderTop = -52;
 
   wordChanged(newWord: string): void {
     if (!newWord) return;
@@ -90,6 +90,7 @@ export class Dictionary {
   }
 
   public calculateAboveHeaderHeight(): void {
+    if (!this.lookUpHistoryContainerRef) return;
     window.setTimeout(() => {
       const heightString = window.getComputedStyle(
         this.lookUpHistoryContainerRef,

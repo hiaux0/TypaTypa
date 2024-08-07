@@ -1,11 +1,7 @@
 <section class="above-header" style="top: -${aboveHeaderTop}px">
   <div class="space-between">
     <!-- Look up history -->
-    <div
-      class="look-up-history-container"
-      ref="lookUpHistoryContainerRef"
-      if.bind="Array.from(internalLookUpHistory).length > 0 && finalWord"
-    >
+    <div class="look-up-history-container" ref="lookUpHistoryContainerRef">
       <labeled-word-list
         custom-words.bind="Array.from(internalLookUpHistory)"
         seperator=" >"
