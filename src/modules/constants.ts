@@ -8,7 +8,7 @@ export const APP_NAME = "TypaTypa";
 export const INITIAL_APP_STATE = {
   typing: {
     tabs: {
-      isDrawerOpen: true,
+      isDrawerOpen: false,
     },
   },
 };
@@ -29,9 +29,9 @@ export const TABS: Tabs[] = [
   },
 ];
 
-export const WORD_TO_LOOK_UP = "apply";
+export const WORD_TO_LOOK_UP = "";
 export const SELECTED_TAB_INDEX = 1;
-export const SELECTED_TAB_TITLE = TABS[SELECTED_TAB_INDEX].title;
+export const SELECTED_TAB_TITLE = TABS[SELECTED_TAB_INDEX]?.title;
 
 const DEFAULT_TOPICS: Topic[] = [
   {
@@ -40,13 +40,14 @@ const DEFAULT_TOPICS: Topic[] = [
     content: [
       {
         id: generateId(),
+        // text: 'apply hello agree world around okay amazing bro'
         text: `Welcome to the TypaTypa App :)
 
 This app has 2 purposes:
 1. Improve your typing speed.
 2. Improve your vocabulary.
 `,
-      },
+     },
     ],
   },
 ];
