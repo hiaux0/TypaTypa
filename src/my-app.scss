@@ -70,6 +70,21 @@
     }
   }
 
+  .separate-input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+
+    input {
+      width: 100px;
+      padding: 4px 8px;
+      font-size: $fontSizeL;
+      background-color: $white1;
+    }
+  }
+
   .word {
     &:hover {
       @include wordHover;

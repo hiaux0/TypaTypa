@@ -36,6 +36,7 @@ export class MyApp {
   public topics = TABS;
   public typedText = "";
   public currentLetter = "";
+  public currentWord = "";
   public upcommingTextToType = "";
   public poolOfWords: Set<string> = new Set([]);
   public remainingWordsToType: Set<string> = new Set(WORDS);
@@ -43,6 +44,7 @@ export class MyApp {
 
   public rememberList: Features["remember"] = new Set();
   public dictionaryLookedUpList: Set<string> = new Set();
+  public separateInputValue = "";
 
   //public wordToLookUp = "";
   //public isDrawerOpen = false;
@@ -79,17 +81,18 @@ export class MyApp {
 
     // Each typing round
     else if (shouldGiveNextWords) {
-      this.resetTyping();
+      this.resetCurrentRound();
       this.selectWordsToType();
     }
 
     // No more words
     if (this.remainingWordsToType.size === 0) {
-      this.remainingWordsToType = this.poolOfWords;
+      this.resetWholeSession();
     }
   }
 
   public handleShortcuts(key: string): void {
+    // /*prettier-ignore*/ console.log("[my-app.ts,93] key: ", key);
     const isActive = getIsInputActive();
     if (isActive) return;
     const index = this.typedText.length;
@@ -114,15 +117,20 @@ export class MyApp {
         break;
       }
       case ".": {
-        const endOfWordIndex = getIndexForwardUntil(text, index);
-        const nextWordIndex = endOfWordIndex + 1 + 1; // +1 for space, +1 for first letter of next word
-        console.log("todo: skip word");
-        this.typedText = text.slice(0, nextWordIndex);
-        this.currentLetter = text[nextWordIndex];
-        this.upcommingTextToType = text.slice(nextWordIndex + 1);
+        this.skipWord(index);
         break;
       }
     }
+  }
+
+  public skipWord(index: number) {
+    const allText =
+      this.typedText + this.currentLetter + this.upcommingTextToType;
+    const endOfWordIndex = getIndexForwardUntil(allText, index);
+    const nextWordIndex = endOfWordIndex + 1 + 1; // +1 for space, +1 for first letter of next word
+    this.typedText = allText.slice(0, nextWordIndex);
+    this.currentLetter = allText[nextWordIndex];
+    this.upcommingTextToType = allText.slice(nextWordIndex + 1);
   }
 
   public selectWordsToType() {
@@ -142,8 +150,8 @@ export class MyApp {
     const text = topic.content.map((item) => item.text).join(" ");
     const tokens = tokenize(text, { lower: true });
     this.poolOfWords = new Set(tokens);
-    this.remainingWordsToType = this.poolOfWords;
-    this.resetTyping();
+    this.resetWholeSession();
+    this.resetCurrentRound();
     this.selectWordsToType();
   };
 
@@ -160,9 +168,43 @@ export class MyApp {
     this.activeTabName = "Dictionary";
   }
 
-  private resetTyping() {
+  public separateInputChanged(event: Event): void {
+    // const text = (event as any).data as string;
+    const text = this.separateInputValue;
+    if (!text) return;
+    if (!text.endsWith(" ")) return;
+    const separateInputWord = text.trim();
+
+    const index = this.typedText.length;
+    const all = this.typedText + this.currentLetter + this.upcommingTextToType;
+    const wordAtIndex = getWordAtIndex(all, index);
+
+    if (separateInputWord === wordAtIndex) {
+      // only clear if word is correct
+      this.separateInputValue = "";
+      this.skipWord(index);
+
+      if (this.upcommingTextToType.length === 0) {
+        this.resetCurrentRound();
+        this.resetWholeSession();
+        this.selectWordsToType();
+      }
+    }
+  }
+
+  public onKeyDownSeparateInput(event: KeyboardEvent): void {
+    if (event.key === "Escape") {
+      this.separateInputValue = "";
+    }
+  }
+
+  private resetCurrentRound() {
     this.typedText = "";
     this.currentLetter = "";
     this.upcommingTextToType = "";
+  }
+
+  private resetWholeSession() {
+    this.remainingWordsToType = this.poolOfWords;
   }
 }
