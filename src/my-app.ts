@@ -18,6 +18,9 @@ import {
 import { initDebugShortcuts } from "./modules/debugging";
 import { getIsInputActive } from "./modules/htmlElements";
 import { ShortcutService } from "./services/ShortcutService";
+import { route } from "@aurelia/router-lite";
+import { TypingPage } from "./ui/pages/typing-page/typing-page";
+import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
 
 interface Features {
   remember: Set<string>;
@@ -31,6 +34,21 @@ interface Features {
 // /*prettier-ignore*/ const WORDS = ["are", "after"]
 /*prettier-ignore*/ const WORDS = []
 
+@route({
+  title: APP_NAME,
+  routes: [
+    {
+      path: ['typing'],
+      component: TypingPage,
+      title: 'Typing',
+    },
+    {
+      path: "asht",
+      component: PropagandaPage,
+      title: "ASHT",
+    },
+  ],
+})
 export class MyApp {
   public appName = APP_NAME;
   public topics = TABS;

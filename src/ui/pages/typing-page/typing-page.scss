@@ -1,0 +1,64 @@
+@import "../../reset.scss";
+@import "../../custom.scss";
+@import "../../mixins.scss";
+@import "../../colors.scss";
+
+.typing-container {
+  position: relative;
+  top: 30vh;
+  width: 80%;
+  margin: 0 auto;
+  padding: 0 20px;
+  transition: top 0.3s ease;
+  &.top {
+    /* top: -40px; */
+    top: 0px;
+  }
+
+  .left-to-type {
+    display: flex;
+    justify-content: end;
+    margin-bottom: $marginS;
+    font-size: $fontSizeS;
+  }
+  .typing-input-container {
+    color: $grey;
+    border: 1px solid $borderColor;
+    border-radius: $borderRadius;
+    padding: 12px;
+    font-size: $fontSizeXL;
+
+    .typed-text {
+      line-height: 2rem;
+      color: $textColor;
+    }
+    .current-letter {
+      border-bottom: 2px solid $borderColor;
+    }
+    .text-to-type {
+      line-height: 2rem;
+      color: $grey;
+    }
+  }
+
+  .separate-input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+
+    input {
+      width: 100px;
+      padding: 4px 8px;
+      font-size: $fontSizeL;
+      background-color: $white1;
+    }
+  }
+
+  .word {
+    &:hover {
+      @include wordHover;
+    }
+  }
+}

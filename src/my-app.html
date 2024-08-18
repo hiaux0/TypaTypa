@@ -32,36 +32,7 @@
 
 <br />
 <br />
-<!-- Typing -->
-<section class="typing-container ${isDrawerOpen ? 'top' : ''}">
-  <div class="left-to-type">left to type: ${remainingWordsToType.size}</div>
-  <div class="typing-input-container">
-    <span class="typed-text">
-      <template repeat.for="typedWord of typedText.split(' ')"
-        ><span class="word" click.trigger="lookUp(typedWord)">${typedWord}</span
-        ><span if.bind="$index < typedText.split(' ').length - 1">
-        </span></template></span
-    ><span class="current-letter">${currentLetter}</span
-    ><span class="text-to-type"
-      ><template repeat.for="upcommingWord of upcommingTextToType.split(' ')"
-        ><span class="word" click.trigger="lookUp(upcommingWord)"
-          >${upcommingWord}</span
-        ><span></span>
-      </template>
-    </span>
-  </div>
-  <div class="separate-input">
-    <input
-      type="text"
-      value.bind="separateInputValue"
-      focus="true"
-      placeholder="Type here"
-      input.trigger="separateInputChanged"
-      keydown.trigger="onKeyDownSeparateInput"
-    />
-  </div>
-</section>
-
+<au-viewport></au-viewport>
 <br />
 
 <!-- Tab Drawer -->
