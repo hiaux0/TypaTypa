@@ -58,3 +58,7 @@ export const defaultDatabaseType: DatabaseType = {
   rememberList: [],
   dictionaryLookedUpList: [],
 };
+
+// /*prettier-ignore*/ export const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
+// /*prettier-ignore*/ export const WORDS = ["are", "after"]
+/*prettier-ignore*/ export const WORDS = []

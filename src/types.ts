@@ -29,3 +29,11 @@ export interface DatabaseType {
   rememberList: string[];
   dictionaryLookedUpList: string[];
 }
+
+export interface Features {
+  remember: Set<string>;
+  topics: {
+    id: string;
+    title: string;
+  }[];
+}

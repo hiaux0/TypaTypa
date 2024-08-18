@@ -38,17 +38,17 @@
 <!-- Tab Drawer -->
 <tab-drawer
   active-tab.two-way="activeTopic"
-  active-tab-name.bind="activeTabName"
+  active-tab-name.bind="store.activeTabName"
   tabs.bind="topics"
-  is-drawer-open.two-way="isDrawerOpen"
+  is-drawer-open.two-way="store.isDrawerOpen"
 >
   <template au-slot="content" if.bind="activeTopic.title === 'Topics'">
     <topics on-topic-change.bind="onTopicChange" />
   </template>
   <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
     <dictionary
-      word.bind="wordToLookUp"
-      look-up-history.bind="Array.from(dictionaryLookedUpList)"
+      word.bind="store.wordToLookUp"
+      look-up-history.bind="Array.from(store.dictionaryLookedUpList)"
     />
   </template>
   <div au-slot="content" if.bind="activeTopic.title === 'Remember'">
