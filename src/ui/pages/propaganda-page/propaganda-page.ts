@@ -14,7 +14,7 @@ export interface PropagandaRow {
 
 export class PropagandaPage {
   public propagandaTableRows: PropagandaRow[] = [];
-  @observable public searchPropagandaValue = "h";
+  @observable public searchPropagandaValue = "";
   public searchTopicsValue = "";
   public searchTagsValue = "";
   public propagandaSuggestions: UiSuggestion[] = [];

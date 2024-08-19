@@ -1,4 +1,4 @@
-import { inject } from "aurelia";
+import { EventAggregator, inject, resolve } from "aurelia";
 import { Store } from "../../../modules/store";
 import "./typing-page.scss";
 import { ShortcutService } from "../../../services/ShortcutService";
@@ -12,8 +12,9 @@ import {
 } from "../../../modules/strings";
 import { Features, Topic } from "../../../types";
 import { getRandomWordsFromSetAndRemove } from "../../../modules/random";
+import { ON_TOPIC_CHANGE } from "../../../modules/eventMessages";
 
-@inject(Store)
+// @inject(EventAggregator, Store)
 export class TypingPage {
   public message = "typing-page.html";
   public currentLetter = "";
@@ -26,20 +27,24 @@ export class TypingPage {
   public nextWordsToType: Set<string> = new Set();
   public rememberList: Features["remember"] = new Set();
 
-  constructor(private store: Store) {}
+  constructor(
+    private ea: EventAggregator = resolve(EventAggregator),
+    private store: Store = resolve(Store),
+  ) {}
 
   attached() {
     const dbData = database.getItem();
     this.rememberList = new Set(dbData.rememberList);
     const selectedTopic = database.getSelectedTopic();
     this.onTopicChange(selectedTopic);
-    // this.dictionaryLookedUpList = new Set(dbData.dictionaryLookedUpList);
+    this.ea.subscribe(ON_TOPIC_CHANGE, this.onTopicChange);
 
-    document.addEventListener("keydown", (event) => {
-      this.handleTyping(event.key);
-      this.handleShortcuts(event.key);
-      ShortcutService.clickGlobalShortcut(event.key);
-    });
+    document // this.dictionaryLookedUpList = new Set(dbData.dictionaryLookedUpList);
+      .addEventListener("keydown", (event) => {
+        this.handleTyping(event.key);
+        this.handleShortcuts(event.key);
+        ShortcutService.clickGlobalShortcut(event.key);
+      });
   }
 
   public handleTyping(key: string): void {

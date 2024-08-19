@@ -24,6 +24,7 @@ module.exports = function(env, { analyze }) {
     mode: production ? 'production' : 'development',
     devtool: production ? undefined : 'eval-source-map',
     optimization: {
+      concatenateModules: false,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -49,6 +50,7 @@ module.exports = function(env, { analyze }) {
       modules: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'dev-app'), 'node_modules'],
       alias: production ? {
         // add your production aliases here
+        ...getAureliaProdAliases()
       } : {
         ...getAureliaDevAliases()
         // add your development aliases here
@@ -85,6 +87,12 @@ module.exports = function(env, { analyze }) {
         }
       ]
     },
+    externals: [
+      // Skip npm dependencies in plugin build.
+      // production && nodeExternals(),
+      production && /^(aurelia)$/i,
+      production && /^(@aurelia\/.+)$/i,
+    ].filter(p => p),
     plugins: [
       new HtmlWebpackPlugin({ template: 'index.html', favicon: 'favicon.ico' }),
       new Dotenv({
@@ -117,6 +125,32 @@ function getAureliaDevAliases() {
       const packageLocation = require.resolve(name);
       map[name] = path.resolve(packageLocation, `../../esm/index.dev.mjs`);
     } catch {/**/}
+    return map;
+  }, {});
+}
+
+function getAureliaProdAliases() {
+  return [
+    'aurelia',
+    'fetch-client',
+    'kernel',
+    'metadata',
+    'platform',
+    'platform-browser',
+    'route-recognizer',
+    'router',
+    'router-lite',
+    'runtime',
+    'runtime-html',
+    'testing',
+    'state',
+    'ui-virtualization'
+  ].reduce((map, pkg) => {
+    const name = pkg === 'aurelia' ? pkg : `@aurelia/${pkg}`;
+    try {
+      const packageLocation = require.resolve(name);
+      map[name] = path.resolve(packageLocation, `../../esm/index.mjs`);
+    } catch {/**/ }
     return map;
   }, {});
 }

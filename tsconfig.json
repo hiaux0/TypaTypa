@@ -9,11 +9,6 @@
     "importHelpers": true,
     "sourceMap": true
   },
-  "include": [
-    "test",
-    "src"
-  ],
-  "files": [
-    "src/resource.d.ts"
-  ]
+  "include": ["test", "src"],
+  "files": ["src/resource.d.ts"]
 }

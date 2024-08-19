@@ -51,7 +51,7 @@
   is-drawer-open.two-way="store.isDrawerOpen"
 >
   <template au-slot="content" if.bind="activeTopic.title === 'Topics'">
-    <topics on-topic-change.bind="onTopicChange" />
+    <topics on-topic-change.bind="store.onTopicChange" />
   </template>
   <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
     <dictionary

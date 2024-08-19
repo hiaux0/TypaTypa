@@ -38,7 +38,8 @@ export class MyApp {
   }
 
   attached() {
-    this.router.load(PropagandaPage);
+    this.router.load(TypingPage);
+    // this.router.load(PropagandaPage);
     initDebugShortcuts();
   }
 }

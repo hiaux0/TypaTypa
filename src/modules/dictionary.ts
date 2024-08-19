@@ -1,5 +1,5 @@
 import { DictionaryLookUp } from "../types";
-import * as A from "../data/dictionary/a.json";
+// import * as A from "../data/dictionary/a.json";
 //import * as B from "../data/dictionary/b.json";
 //import * as C from "../data/dictionary/c.json";
 //import * as D from "../data/dictionary/d.json";
@@ -30,8 +30,8 @@ export function getDefinition(word: string): DictionaryLookUp | undefined {
   const upper = word.toUpperCase();
   const firstLetter = word[0].toUpperCase();
   switch (firstLetter) {
-    case "A":
-      return A[upper];
+    //case "A":
+    //  return A[upper];
     //case "B":
     //  return B[upper];
     //case "C":

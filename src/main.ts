@@ -1,5 +1,4 @@
-import Aurelia from "aurelia";
-// import { RouterConfiguration } from "@aurelia/router";
+import Aurelia, { Registration } from "aurelia";
 import { RouterConfiguration } from "@aurelia/router-lite";
 import { MyApp } from "./my-app";
 import { AutosizeCustomAttribute } from "./ui/attributes/autosize";
@@ -17,6 +16,6 @@ const organisms = [Dictionary, TabDrawer, Topics];
 
 Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
   .register([...attributes, ...molecules, ...organisms, Scratch])
-  .register(Store)
+  .register(Registration.singleton(Store, Store))
   .app(MyApp)
   .start();
