@@ -13,3 +13,11 @@ src/ui/organisms/topics/topics.scss
 src/ui/molecules/labeled-word-list/labeled-word-list.ts
 src/ui/molecules/labeled-word-list/labeled-word-list.html
 src/ui/molecules/labeled-word-list/labeled-word-list.scss
+src/ui/pages/typing-page/typing-page.ts
+src/ui/pages/typing-page/typing-page.html
+src/ui/pages/typing-page/typing-page.scss
+src/ui/pages/propaganda-page/propaganda-page.ts
+src/ui/pages/propaganda-page/propaganda-page.html
+src/ui/pages/propaganda-page/propaganda-page.scss
+src/modules/store.ts
+.arrow

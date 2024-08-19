@@ -1,1 +1,58 @@
-<div>${message}</div>
+<!-- add a search field for each column -->
+<article class="propaganda-page-container">
+  <section class="search-container">
+    <div class="search">
+      <input
+        type="text"
+        placeholder="Search propaganda"
+        value.bind="searchPropagandaValue"
+        tabindex="1"
+      />
+      <ul if.bind="searchPropagandaValue" class="propaganda-completion-list">
+        <li
+          repeat.for="suggestion of propagandaSuggestions"
+          class="suggestion"
+          click.trigger="selectSuggestion(suggestion.original)"
+        >
+          <span innerhtml.bind="suggestion.highlighted"></span>
+          <!-- ${propaganda} -->
+        </li>
+      </ul>
+    </div>
+
+    <div class="search">
+      <input
+        type="text"
+        placeholder="Search topics"
+        value.bind="searchTopicsValue"
+        tabindex="1"
+      />
+    </div>
+    <div class="search">
+      <input
+        type="text"
+        placeholder="Search tags"
+        value.bind="searchTagsValue"
+        tabindex="1"
+      />
+    </div>
+  </section>
+
+  <!--create a basic table with 3 columns, and 4 rows in aurelia, using repeat.for-->
+  <table>
+    <thead>
+      <tr>
+        <th>Propaganda</th>
+        <th>Topics</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr repeat.for="row of propagandaTableRows">
+        <td>${row.propaganda}</td>
+        <td>${row.topics}</td>
+        <td>${row.tags}</td>
+      </tr>
+    </tbody>
+  </table>
+</article>

@@ -1,7 +1,7 @@
 import { inject } from "aurelia";
 import { APP_NAME, TABS } from "./modules/constants";
 import { initDebugShortcuts } from "./modules/debugging";
-import { route } from "@aurelia/router-lite";
+import { route, Router } from "@aurelia/router-lite";
 import { TypingPage } from "./ui/pages/typing-page/typing-page";
 import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
 import { Store } from "./modules/store";
@@ -15,13 +15,13 @@ import { Store } from "./modules/store";
       title: "Typing",
     },
     {
-      path: "asht",
+      path: "propaganda",
       component: PropagandaPage,
-      title: "ASHT",
+      title: "Propaganda",
     },
   ],
 })
-@inject(Store)
+@inject(Router, Store)
 export class MyApp {
   public appName = APP_NAME;
   public topics = TABS;
@@ -30,11 +30,15 @@ export class MyApp {
   //public isDrawerOpen = false;
   //public activeTabName = "";
 
-  constructor(private store: Store) {
+  constructor(
+    private router: Router,
+    private store: Store,
+  ) {
     /*prettier-ignore*/ console.log("[my-app.ts,78] this.store: ", this.store);
   }
 
   attached() {
+    this.router.load(PropagandaPage);
     initDebugShortcuts();
   }
 }

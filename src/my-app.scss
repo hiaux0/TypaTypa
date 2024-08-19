@@ -11,8 +11,17 @@
   height: 32px;
   background-color: $primary2;
 
-  .app-name {
-    font-weight: 600;
+  .left {
+    display: flex;
+    .app-name {
+      font-weight: 600;
+    }
+    .links {
+      margin-left: 3rem;
+      a {
+        margin-right: 1rem;
+      }
+    }
   }
 
   .app-more-options {
@@ -31,7 +40,6 @@
     }
   }
 }
-
 
 .remember-container {
   border: 1px solid $borderColor;
