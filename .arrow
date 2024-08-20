@@ -1,3 +1,14 @@
+%% Propaganda Page
+src/my-app.ts
+src/modules/store.ts
+.arrow
+src/ui/pages/propaganda-page/propaganda-page.ts
+src/ui/pages/propaganda-page/propaganda-page.html
+src/ui/pages/propaganda-page/propaganda-page.scss
+src/ui/molecules/autocomplete-input/autocomplete-input.ts
+src/ui/molecules/autocomplete-input/autocomplete-input.html
+src/ui/molecules/autocomplete-input/autocomplete-input.scss
+
 src/my-app.ts
 src/my-app.html
 src/my-app.scss
