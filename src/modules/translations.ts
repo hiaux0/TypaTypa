@@ -2,6 +2,8 @@ export const translations = {
   introduction: "Introduction",
   List: "List",
   ["topic.list"]: "Topic List",
+  search: "Search",
+  ["search.propaganda"]: "Search Propaganda",
   untitled: "Untitled",
 } as const;
 

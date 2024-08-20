@@ -1,0 +1,31 @@
+@import "../../colors.scss";
+@import "../../mixins.scss";
+
+.autocomplete-container {
+  .suggesion-list {
+    position: absolute;
+    max-height: 400px;
+    overflow: scroll;
+    padding: unset;
+    background: $white;
+    @include borders($size: 1.5px);
+    @include boxShadow();
+    margin: 0;
+
+    .suggestion {
+      padding: 6px;
+      list-style: none;
+      border-bottom: 1px solid $grey;
+      .highlight {
+        @include highlightWord();
+      }
+      &:hover {
+        cursor: pointer;
+        background-color: $white1;
+      }
+      &.active {
+        background-color: $secondary;
+      }
+    }
+  }
+}

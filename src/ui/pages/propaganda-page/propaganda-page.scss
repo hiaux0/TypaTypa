@@ -9,32 +9,9 @@
   .search-container {
     display: flex;
 
-    .search {
+    input {
       margin-right: 1rem;
-
-      .propaganda-completion-list {
-        position: absolute;
-        max-height: 400px;
-        overflow: scroll;
-        padding: unset;
-        background: $white;
-        @include borders($size: 1.5px);
-        @include boxShadow();
-        margin: 0;
-
-        .suggestion {
-          padding: 6px;
-          list-style: none;
-          border-bottom: 1px solid $grey;
-          .highlight {
-            @include highlightWord();
-          }
-          &:hover {
-            cursor: pointer;
-            background-color: $white1;
-          }
-        }
-      }
+      padding: 6px;
     }
   }
 
@@ -52,6 +29,7 @@
 
   th {
     background-color: #f2f2f2;
+    font-weight: 600;
   }
 
   tr:nth-child(even) {

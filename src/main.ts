@@ -2,6 +2,7 @@ import Aurelia, { Registration } from "aurelia";
 import { RouterConfiguration } from "@aurelia/router-lite";
 import { MyApp } from "./my-app";
 import { AutosizeCustomAttribute } from "./ui/attributes/autosize";
+import { AutocompleteInput } from "./ui/molecules/autocomplete-input/autocomplete-input";
 import { LabeledWordList } from "./ui/molecules/labeled-word-list/labeled-word-list";
 import { Popover } from "./ui/molecules/popover/popover";
 import { Dictionary } from "./ui/organisms/dictionary/dictionary";
@@ -11,7 +12,7 @@ import { Scratch } from "./ui/scratch/scratch";
 import { Store } from "./modules/store";
 
 const attributes = [AutosizeCustomAttribute];
-const molecules = [LabeledWordList, Popover];
+const molecules = [AutocompleteInput, LabeledWordList, Popover];
 const organisms = [Dictionary, TabDrawer, Topics];
 
 Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))

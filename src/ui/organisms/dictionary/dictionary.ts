@@ -22,9 +22,9 @@ export class Dictionary {
   public meanings: WordMeaning[] = [];
   public aboveHeaderTop = -52;
 
-  wordChanged(newWord: string): void {
+  async wordChanged(newWord: string): Promise<void> {
     if (!newWord) return;
-    const definition = getDefinition(newWord);
+    const definition = await getDefinition(newWord);
     // Still add to look up history, even if no definition is found.
     this.handleLookUpHistory(this.word, definition);
     if (!definition) return;
@@ -46,14 +46,15 @@ export class Dictionary {
     this.wordChanged(this.word);
   }
 
-  public initInternalLookUpHistory(): void {
+  public async initInternalLookUpHistory(): Promise<void> {
     this.lookUpHistory;
     const updatedLookUpHistory = new Map<string, LabeledWordsData>();
-    this.lookUpHistory.forEach((word) => {
-      const definition = getDefinition(word);
+    // create a async for loop to get the definition of each word
+    for await (const word of this.lookUpHistory) {
+      const definition = await getDefinition(word);
       const result: LabeledWordsData = { word, disabled: !definition };
       updatedLookUpHistory.set(word, result);
-    });
+    }
     this.internalLookUpHistory = new Map([
       ...Array.from(this.internalLookUpHistory),
       ...Array.from(updatedLookUpHistory),

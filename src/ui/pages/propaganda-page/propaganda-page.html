@@ -1,24 +1,11 @@
 <!-- add a search field for each column -->
 <article class="propaganda-page-container">
   <section class="search-container">
-    <div class="search">
-      <input
-        type="text"
-        placeholder="Search propaganda"
-        value.bind="searchPropagandaValue"
-        tabindex="1"
-      />
-      <ul if.bind="searchPropagandaValue" class="propaganda-completion-list">
-        <li
-          repeat.for="suggestion of propagandaSuggestions"
-          class="suggestion"
-          click.trigger="selectSuggestion(suggestion.original)"
-        >
-          <span innerhtml.bind="suggestion.highlighted"></span>
-          <!-- ${propaganda} -->
-        </li>
-      </ul>
-    </div>
+    <autocomplete-input
+      value.two-way="searchPropagandaValue"
+      placeholder="${translations['search.propaganda']}"
+      source.bind="allPropaganda"
+    ></autocomplete-input>
 
     <div class="search">
       <input

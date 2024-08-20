@@ -33,13 +33,12 @@ export class MyApp {
   constructor(
     private router: Router,
     private store: Store,
-  ) {
-    /*prettier-ignore*/ console.log("[my-app.ts,78] this.store: ", this.store);
-  }
+  ) {}
 
   attached() {
-    this.router.load(TypingPage);
-    // this.router.load(PropagandaPage);
+    // this.router.load(TypingPage);
+    this.router.load(PropagandaPage);
+
     initDebugShortcuts();
   }
 }
