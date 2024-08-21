@@ -22,46 +22,16 @@ export class AutocompleteInput {
 
   attached() {
     this.updateSuggestions(this.value);
-
-    this.autocompleteContainerRef?.addEventListener("keydown", (event) => {
-      const isActive = document.activeElement === this.searchInputRef;
-      if (!isActive) return;
-
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        this.activeCursorIndex = Math.min(
-          this.suggestions.length - 1,
-          this.activeCursorIndex + 1,
-        );
-        this.scrollToSuggestion();
-      }
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        this.activeCursorIndex = Math.max(0, this.activeCursorIndex - 1);
-        this.scrollToSuggestion();
-      }
-    });
+    this.initKeyboardEvents();
   }
 
-  private suggestionIsVisible(element): boolean {
-    const parent = this.suggesionListRef;
-    const elementRect = element.getBoundingClientRect();
-    const parentRect = parent.getBoundingClientRect();
-
-    return (
-      elementRect.top >= parentRect.top &&
-      elementRect.bottom <= parentRect.bottom
-    );
+  public selectSuggestion(suggestionName: string): void {
+    this.value = suggestionName;
+    this.clearSuggestions();
   }
 
-  private scrollToSuggestion(): void {
-    const elementToScroll = document.querySelector(
-      `[data-scroll-index="${this.activeCursorIndex}"]`,
-    );
-    const is = this.suggestionIsVisible(elementToScroll);
-    if (is) return;
-
-    elementToScroll?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  private clearSuggestions(): void {
+    this.suggestions = [];
   }
 
   private updateSuggestions(searchValue: string): void {
@@ -87,7 +57,61 @@ export class AutocompleteInput {
     });
   }
 
-  private clearSuggestions(): void {
-    this.suggestions = [];
+  private initKeyboardEvents(): void {
+    this.autocompleteContainerRef?.addEventListener("keydown", (event) => {
+      const isActive = document.activeElement === this.searchInputRef;
+      if (!isActive) return;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        this.activeCursorIndex = Math.min(
+          this.suggestions.length - 1,
+          this.activeCursorIndex + 1,
+        );
+        this.scrollToSuggestion();
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        this.activeCursorIndex = Math.max(0, this.activeCursorIndex - 1);
+        this.scrollToSuggestion();
+        return;
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const suggestion = this.suggestions[this.activeCursorIndex];
+        if (!suggestion) return;
+
+        this.selectSuggestion(suggestion.original);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        this.value = "";
+        return;
+      }
+    });
+  }
+
+  private scrollToSuggestion(): void {
+    const elementToScroll = document.querySelector(
+      `[data-scroll-index="${this.activeCursorIndex}"]`,
+    );
+    if (!elementToScroll) return;
+    const is = this.suggestionIsVisible(elementToScroll as HTMLElement);
+    if (is) return;
+
+    elementToScroll.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  private suggestionIsVisible(element: HTMLElement): boolean {
+    const parent = this.suggesionListRef;
+    const elementRect = element.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect();
+
+    return (
+      elementRect.top >= parentRect.top &&
+      elementRect.bottom <= parentRect.bottom
+    );
   }
 }

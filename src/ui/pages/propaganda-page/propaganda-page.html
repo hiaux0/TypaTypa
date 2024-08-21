@@ -1,45 +1,50 @@
 <!-- add a search field for each column -->
 <article class="propaganda-page-container">
-  <section class="search-container">
-    <autocomplete-input
-      value.two-way="searchPropagandaValue"
-      placeholder="${translations['search.propaganda']}"
-      source.bind="allPropaganda"
-    ></autocomplete-input>
+  <section class="table-filtering-container">
+    <!-- Search -->
+    <div class="search-container">
+      <autocomplete-input
+        value.two-way="searchPropagandaValue"
+        placeholder="${translations['search.propaganda']}"
+        source.bind="allPropaganda"
+      ></autocomplete-input>
 
-    <div class="search">
-      <input
-        type="text"
-        placeholder="Search topics"
-        value.bind="searchTopicsValue"
-        tabindex="1"
-      />
+      <autocomplete-input
+        value.two-way="searchTopicValue"
+        placeholder="${translations['search.topics']}"
+        source.bind="allTopics"
+        autofocus="true"
+      ></autocomplete-input>
+
+      <autocomplete-input
+        value.two-way="searchTagValue"
+        placeholder="${translations['search.tags']}"
+        source.bind="allTags"
+        autofocus="true"
+      ></autocomplete-input>
     </div>
-    <div class="search">
-      <input
-        type="text"
-        placeholder="Search tags"
-        value.bind="searchTagsValue"
-        tabindex="1"
-      />
-    </div>
+
+    <!-- Number of entries -->
+    <div class="number-of-entries">Amount: ${propagandaTableRows.length}</div>
   </section>
 
   <!--create a basic table with 3 columns, and 4 rows in aurelia, using repeat.for-->
-  <table>
-    <thead>
-      <tr>
-        <th>Propaganda</th>
-        <th>Topics</th>
-        <th>Tags</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr repeat.for="row of propagandaTableRows">
-        <td>${row.propaganda}</td>
-        <td>${row.topics}</td>
-        <td>${row.tags}</td>
-      </tr>
-    </tbody>
-  </table>
+  <section class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Propaganda</th>
+          <th>Topics</th>
+          <th>Tags</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr repeat.for="row of propagandaTableRows">
+          <td>${row.propaganda}</td>
+          <td>${row.topics}</td>
+          <td>${row.tags}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </article>

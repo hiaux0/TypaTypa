@@ -14,81 +14,64 @@ export interface PropagandaRow {
 }
 
 export class PropagandaPage {
+  @observable public searchPropagandaValue = "";
+  @observable public searchTopicValue = "";
+  @observable public searchTagValue = "fre";
+  public initialRowData: PropagandaRow[] = [];
   public propagandaTableRows: PropagandaRow[] = [];
-  @observable public searchPropagandaValue = "a";
-  public searchTopicsValue = "";
-  public searchTagsValue = "";
-  public propagandaSuggestions: UiSuggestion[] = [];
-  public allPropaganda: string[];
   public translations = translations;
+  public allPropaganda: string[];
+  public allTopics: string[];
+  public allTags: string[];
 
   private searchPropagandaValueChanged(): void {
-    this.resetSuggestions();
-    this.generateRows();
+    this.filterRowData();
+  }
+  private searchTopicValueChanged(): void {
+    this.filterRowData();
+  }
+  private searchTagValueChanged(): void {
+    this.filterRowData();
   }
 
   created() {
     this.allPropaganda = Object.keys(data.propaganda);
+    this.allTopics = Object.keys(data.topics);
+    this.allTags = Object.keys(data.tags);
   }
 
   attached() {
-    this.generateRows();
+    this.initRowData();
   }
 
-  public selectSuggestion(suggestion: string): void {
-    /*prettier-ignore*/ console.log("[propaganda-page.ts,50] suggestion: ", suggestion);
-    this.searchPropagandaValue = suggestion;
-    this.generateRows();
-    // this.searchPropagandaValue = "";
-  }
-
-  private generateRows(): void {
+  private initRowData(): void {
     const rows: PropagandaRow[] = [];
     for (const propaganda in data.propaganda) {
-      // Filter propaganda
-      const included = propaganda
-        .toLowerCase()
-        .includes(this.searchPropagandaValue.toLowerCase());
-      if (!included) continue;
-      // this.highlightSearchPropagandaValue(propaganda);
-
       const topics = data.propaganda[propaganda].topics.join(", ");
       const tags = data.propaganda[propaganda].tags.join(", ");
-
       rows.push({ propaganda, topics, tags });
     }
+    this.initialRowData = rows;
     this.propagandaTableRows = rows;
   }
 
-  private resetSuggestions(): void {
-    this.propagandaSuggestions = [];
+  private filterRowData(): void {
+    const filteredByPropaganda = this.initialRowData.filter((row) => {
+      return row.propaganda
+        .toLowerCase()
+        .includes(this.searchPropagandaValue.toLowerCase());
+    });
+
+    const filteredByTopic = filteredByPropaganda.filter((row) => {
+      return row.topics
+        .toLowerCase()
+        .includes(this.searchTopicValue.toLowerCase());
+    });
+
+    const filteredByTag = filteredByTopic.filter((row) => {
+      return row.tags.toLowerCase().includes(this.searchTagValue.toLowerCase());
+    });
+
+    this.propagandaTableRows = filteredByTag;
   }
-
-  //private highlightSearchPropagandaValue(propaganda: string): void {
-  //  if (this.searchPropagandaValue.length === 0) return;
-  //
-  //  const index = propaganda
-  //    .toLowerCase()
-  //    .indexOf(this.searchPropagandaValue.toLowerCase());
-  //  const before = propaganda.substring(0, index);
-  //  const match = propaganda.substring(
-  //    index,
-  //    index + this.searchPropagandaValue.length,
-  //  );
-  //  const after = propaganda.substring(
-  //    index + this.searchPropagandaValue.length,
-  //  );
-  //  this.propagandaSuggestions.push({
-  //    highlighted: `${before}<span class="highlight">${match}</span>${after}`,
-  //    original: propaganda,
-  //  });
-  //}
-
-  //public filterRows() {
-  //  const filteredRows: PropagandaRow[] = [];
-  //  for (const row of this.propagandaTableRows) {
-  //    filteredRows.push(row);
-  //  }
-  //  this.propagandaTableRows = filteredRows;
-  //}
 }

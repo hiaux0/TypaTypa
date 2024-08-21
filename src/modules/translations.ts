@@ -4,6 +4,8 @@ export const translations = {
   ["topic.list"]: "Topic List",
   search: "Search",
   ["search.propaganda"]: "Search Propaganda",
+  ["search.tags"]: "Search Tags",
+  ["search.topics"]: "Search Topics",
   untitled: "Untitled",
 } as const;
 

@@ -4,35 +4,44 @@
 .propaganda-page-container {
   margin: 1rem;
   height: 80vh;
-  overflow: scroll;
 
-  .search-container {
+  .table-filtering-container {
     display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
 
-    input {
-      margin-right: 1rem;
-      padding: 6px;
+    .search-container {
+      display: flex;
+
+      input {
+        margin-right: 1rem;
+        padding: 6px;
+      }
     }
+    /* .number-of-entries { } */
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+  .table-container {
+    height: 75vh;
+    overflow: scroll;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
 
-  th,
-  td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left;
-  }
+    th {
+      background-color: #f2f2f2;
+      font-weight: 600;
+    }
 
-  th {
-    background-color: #f2f2f2;
-    font-weight: 600;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
   }
 }

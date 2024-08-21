@@ -1,7 +1,6 @@
 <div class="autocomplete-container" ref="autocompleteContainerRef">
   <input
     ref="searchInputRef"
-    autofocus="true"
     type="text"
     placeholder.bind="placeholder"
     value.bind="value"
@@ -14,9 +13,7 @@
       click.trigger="selectSuggestion(suggestion.original)"
       data-scroll-index="${$index}"
     >
-      ${$index}
       <span innerhtml.bind="suggestion.highlighted"></span>
-      <!-- ${propaganda} -->
     </li>
   </ul>
 </div>
