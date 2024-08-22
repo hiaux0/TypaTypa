@@ -10,7 +10,9 @@
   "dependencies": {
     "@aurelia/router": "latest",
     "@aurelia/router-lite": "^2.0.0-beta.21",
-    "aurelia": "latest"
+    "@slickgrid-universal/vanilla-bundle": "^5.5.2",
+    "aurelia": "latest",
+    "aurelia-slickgrid": "^8.5.2"
   },
   "devDependencies": {
     "@aurelia/testing": "latest",

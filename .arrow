@@ -1,13 +1,19 @@
 %% Propaganda Page
+src/main.ts
 src/my-app.ts
 src/modules/store.ts
-.arrow
 src/ui/pages/propaganda-page/propaganda-page.ts
 src/ui/pages/propaganda-page/propaganda-page.html
 src/ui/pages/propaganda-page/propaganda-page.scss
 src/ui/molecules/autocomplete-input/autocomplete-input.ts
 src/ui/molecules/autocomplete-input/autocomplete-input.html
 src/ui/molecules/autocomplete-input/autocomplete-input.scss
+src/ui/organisms/custom-table/custom-table.ts
+src/ui/organisms/custom-table/custom-table.html
+src/ui/organisms/custom-table/custom-table.scss
+.arrow
+
+
 
 src/my-app.ts
 src/my-app.html
