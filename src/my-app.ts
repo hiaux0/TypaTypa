@@ -5,10 +5,16 @@ import { route, Router } from "@aurelia/router-lite";
 import { TypingPage } from "./ui/pages/typing-page/typing-page";
 import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
 import { Store } from "./modules/store";
+import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 
 @route({
   title: APP_NAME,
   routes: [
+    {
+      path: ["grid-test"],
+      component: GridTestPage,
+      title: "Grid Test",
+    },
     {
       path: ["typing"],
       component: TypingPage,
@@ -37,7 +43,8 @@ export class MyApp {
 
   attached() {
     // this.router.load(TypingPage);
-    this.router.load(PropagandaPage);
+    // this.router.load(PropagandaPage);
+    this.router.load(GridTestPage);
 
     initDebugShortcuts();
   }

@@ -11,7 +11,16 @@ src/ui/molecules/autocomplete-input/autocomplete-input.scss
 src/ui/organisms/custom-table/custom-table.ts
 src/ui/organisms/custom-table/custom-table.html
 src/ui/organisms/custom-table/custom-table.scss
-.arrow
+arrow
+
+%% Grid Test
+src/main.ts
+src/my-app.ts
+src/modules/store.ts
+src/ui/pages/grid-test-page/grid-test-page.ts
+src/ui/pages/grid-test-page/grid-test-page.html
+src/ui/pages/grid-test-page/grid-test-page.scss
+arrow
 
 
 
@@ -37,4 +46,4 @@ src/ui/pages/propaganda-page/propaganda-page.ts
 src/ui/pages/propaganda-page/propaganda-page.html
 src/ui/pages/propaganda-page/propaganda-page.scss
 src/modules/store.ts
-.arrow
+arrow

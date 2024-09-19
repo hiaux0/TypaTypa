@@ -1,0 +1,19 @@
+<!-- A B C D 1 2 3 4 -->
+
+<main class="grid-test-container">
+  <section class="row-container" repeat.for="rowIndex of rowSize + 1">
+    <!-- Column Header -->
+    <div if.bind="rowIndex === 0" class="cell column-header">&nbsp;</div>
+    <!-- Rows -->
+    <div else class="cell row-header">${rowIndex}</div>
+
+    <div class="column-container" repeat.for="columnIndex of columnSize">
+      <!-- Column Header -->
+      <div if.bind="rowIndex === 0" class="cell column-header">
+        ${numberToAlphabet(columnIndex)}
+      </div>
+      <!-- Cell -->
+      <div else class="cell"></div>
+    </div>
+  </section>
+</main>

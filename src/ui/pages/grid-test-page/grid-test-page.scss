@@ -1,0 +1,37 @@
+$columnWidth: 36px;
+
+@mixin cell() {
+  padding: 4px;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  min-width: $columnWidth;
+  min-height: $columnWidth;
+}
+
+.grid-test-container {
+  margin: 8px;
+
+  .cell {
+    @include cell();
+  }
+
+  .row-container {
+    display: flex;
+    /* border: 1px solid black; */
+    .column-header {
+    }
+    .row-header {
+    }
+
+    .cell-container {
+    }
+
+    .column-container {
+      .cell {
+        &:hover {
+          background: red;
+        }
+      }
+    }
+  }
+}

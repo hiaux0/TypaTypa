@@ -1,32 +1,16 @@
 # Goals
 
+
 - practice english
   - by typing each word
     - improve typing speed
     - improve grammar
     - enhance recall of words
 
-# Features
-
-- [ ] pass your own text into the app
-  - [x] save passed text (convience)
-  - [ ] strip out common english words
-  - [x] mark words, that you already know
-    - [x] with "!"? (or already done via "-"?)
-- [x] choose different [topics]
-  - [x] add [topics] to texts
-- typing
-  - [x] "." to skip word
-- [ ] en dictionary
-  - [x] type "?" to get dictionary defintion
-  - [ ] type "!" to ???
-  - [x] type "+" to add to words "to learn""
-  - [x] type "-" to remove words from "to learn"
-- [ ] double click on word to add it to lessons/topics
-- [x] help
-  - [x] list all shortcuts
-
 # Todo
+- grid test
+  - [ ] spreadsheet like headers
+  - [ ] rows and columns grid
 
 - ui
   - [ ] make background darker when drawer open
@@ -69,6 +53,27 @@
   - [x] add search bar
   - [x] be able to lookup any words
   - [x] show lookup history
+
+
+# Features
+
+- [ ] pass your own text into the app
+  - [x] save passed text (convience)
+  - [ ] strip out common english words
+  - [x] mark words, that you already know
+    - [x] with "!"? (or already done via "-"?)
+- [x] choose different [topics]
+  - [x] add [topics] to texts
+- typing
+  - [x] "." to skip word
+- [ ] en dictionary
+  - [x] type "?" to get dictionary defintion
+  - [ ] type "!" to ???
+  - [x] type "+" to add to words "to learn""
+  - [x] type "-" to remove words from "to learn"
+- [ ] double click on word to add it to lessons/topics
+- [x] help
+  - [x] list all shortcuts
 
 # Backlog
 
