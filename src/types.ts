@@ -37,3 +37,6 @@ export interface Features {
     title: string;
   }[];
 }
+
+export type GridSelectionCoord = [number, number];
+export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];

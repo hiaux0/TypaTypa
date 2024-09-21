@@ -2,6 +2,7 @@ import { EventAggregator, resolve } from "aurelia";
 import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../modules/eventMessages";
 import { clear } from "console";
+import { GridSelectionCoord, GridSelectionRange } from "../../../types";
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
@@ -21,7 +22,6 @@ export class GridTestPage {
 
   attached() {
     this.gridTestContainerRef.addEventListener("mouseup", () => {
-      this.logCoords();
 
       this.iterateOverSelectedCells((columnIndex, rowIndex) => {
         if (this.isInArea(columnIndex, rowIndex)) {
@@ -69,18 +69,13 @@ export class GridTestPage {
   public onMouseOver = (columnIndex: number, rowIndex: number) => {
     if (!this.isDragStart) return;
     clear();
-    /*prettier-ignore*/ console.log("---------------------------------------");
-    const before = this.getCoords();
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,73] before: ", before);
+    const before = this.getSelectedArea();
     this.endColumnIndex = columnIndex;
     this.endRowIndex = rowIndex;
 
-    const after = this.getCoords();
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,75] after: ", after);
-    this.logCoords();
+    const after = this.getSelectedArea();
 
     const diff = this.calculateDiff(before, after);
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,78] diff: ", diff);
     if (diff.length) {
       diff.forEach(([columnIndex, rowIndex]) => {
         this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
@@ -98,10 +93,10 @@ export class GridTestPage {
   };
 
   private calculateDiff(
-    before: [number, number][],
-    after: [number, number][],
-  ): [number, number][] {
-    const diff: [number, number][] = [];
+    before: GridSelectionRange,
+    after: GridSelectionRange,
+  ): GridSelectionRange {
+    const diff: any = [];
 
     const [beforeStartColumn, beforeStartRow] = before[0]; // Top-left corner of first rectangle
     const [beforeEndColumn, beforeEndRow] = before[1]; // Bottom-right corner of first rectangle
@@ -126,8 +121,8 @@ export class GridTestPage {
     return diff;
   }
 
-  public getCoords(): [number, number][] {
-    const coords: [number, number][] = [
+  public getCoords(): GridSelectionRange {
+    const coords: GridSelectionRange = [
       [this.startColumnIndex, this.startRowIndex],
       [this.endColumnIndex, this.endRowIndex],
     ];
@@ -141,7 +136,8 @@ export class GridTestPage {
    * C4 not ok
    */
   public isInArea(columnIndex: number, rowIndex: number): boolean {
-    const [startColumn, endColumn, startRow, endRow] = this.getSelectedArea();
+    const [[startColumn, startRow], [endColumn, endRow]] =
+      this.getSelectedArea();
 
     const isInColumn = columnIndex >= startColumn && columnIndex <= endColumn;
     const isInRow = rowIndex >= startRow && rowIndex <= endRow;
@@ -154,7 +150,10 @@ export class GridTestPage {
     const maxColumnIndex = Math.max(this.startColumnIndex, this.endColumnIndex);
     const minRowIndex = Math.min(this.startRowIndex, this.endRowIndex);
     const maxRowIndex = Math.max(this.startRowIndex, this.endRowIndex);
-    const result = [minColumnIndex, maxColumnIndex, minRowIndex, maxRowIndex];
+    const result: GridSelectionRange = [
+      [minColumnIndex, minRowIndex],
+      [maxColumnIndex, maxRowIndex],
+    ];
     return result;
   }
 
@@ -163,17 +162,21 @@ export class GridTestPage {
     startRow: number,
     endCol: number,
     endRow: number,
-  ): [number, number, number, number] {
+  ): GridSelectionRange {
     const minColumnIndex = Math.min(startCol, endCol);
     const maxColumnIndex = Math.max(startCol, endCol);
     const minRowIndex = Math.min(startRow, endRow);
     const maxRowIndex = Math.max(startRow, endRow);
-    return [minColumnIndex, minRowIndex, maxColumnIndex, maxRowIndex];
+    const result: GridSelectionRange = [
+      [minColumnIndex, minRowIndex],
+      [maxColumnIndex, maxRowIndex],
+    ];
+    return result;
   }
 
   private iterateOverRange(
-    start: [number, number],
-    end: [number, number],
+    start: GridSelectionCoord,
+    end: GridSelectionCoord,
     callback: (columnIndex: number, rowIndex: number) => void,
   ) {
     for (let columnIndex = start[0]; columnIndex <= end[0]; columnIndex++) {
@@ -196,8 +199,8 @@ export class GridTestPage {
   private iterateOverSelectedCells(
     callback: (columnIndex: number, rowIndex: number) => void,
   ) {
-    this.logCoords();
-    const [startColumn, endColumn, startRow, endRow] = this.getSelectedArea();
+    const [[startColumn, startRow], [endColumn, endRow]] =
+      this.getSelectedArea();
     for (
       let columnIndex = startColumn;
       columnIndex <= endColumn;
