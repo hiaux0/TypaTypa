@@ -1,19 +1,28 @@
 <!-- A B C D 1 2 3 4 -->
+<import from="./grid-cell/grid-cell"></import>
 
-<main class="grid-test-container">
-  <section class="row-container" repeat.for="rowIndex of rowSize + 1">
-    <!-- Column Header -->
-    <div if.bind="rowIndex === 0" class="cell column-header">&nbsp;</div>
-    <!-- Rows -->
-    <div else class="cell row-header">${rowIndex}</div>
+<main ref="gridTestContainerRef" class="grid-test-container">
+  <!-- Column Header -->
+  <section class="column-container row-header">
+    <div class="cell column-header-corner"></div>
+    <div class="cell-header" repeat.for="rowIndex of rowSize">${rowIndex}</div>
+  </section>
 
-    <div class="column-container" repeat.for="columnIndex of columnSize">
-      <!-- Column Header -->
-      <div if.bind="rowIndex === 0" class="cell column-header">
-        ${numberToAlphabet(columnIndex)}
-      </div>
+  <section class="column-container" repeat.for="columnIndex of columnSize">
+    <!-- Row Header -->
+    <div class="cell-header column-header">
+      <!-- ${numberToAlphabet(columnIndex)} -->
+      ${(columnIndex)}
+    </div>
+    <div class="row-container" repeat.for="rowIndex of rowSize">
       <!-- Cell -->
-      <div else class="cell"></div>
+      <grid-cell
+        row.bind="rowIndex"
+        column.bind="columnIndex"
+        selected.bind="isInArea(columnIndex,rowIndex)"
+        mousedown.trigger="startMouseDrag(columnIndex,rowIndex)"
+        mouseover.trigger="onMouseOver(columnIndex, rowIndex)"
+      ></grid-cell>
     </div>
   </section>
 </main>

@@ -10,28 +10,40 @@ $columnWidth: 36px;
 
 .grid-test-container {
   margin: 8px;
+  user-select: none;
 
   .cell {
     @include cell();
+    &:hover {
+      background: red;
+    }
+    &.selected-cell {
+      background: orange;
+    }
+  }
+  .cell-header {
+    @include cell();
+    &:hover {
+      background: blue;
+    }
   }
 
+  .column-container {
+    display: inline-block;
+  }
+
+  .row-header {
+    margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`)
+  }
   .row-container {
-    display: flex;
-    /* border: 1px solid black; */
-    .column-header {
-    }
+  }
+}
+
+@supports (not (-moz-appearance: button)) and (contain: paint) and
+  (-webkit-appearance: none) {
+  .grid-test-container {
     .row-header {
-    }
-
-    .cell-container {
-    }
-
-    .column-container {
-      .cell {
-        &:hover {
-          background: red;
-        }
-      }
+      margin-right: -5px; // microadjust white space after row header (probably comes from `display: inline-block;`)
     }
   }
 }
