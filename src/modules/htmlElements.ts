@@ -1,3 +1,5 @@
+import { getValueFromPixelString } from "./strings";
+
 export function getIsInputActive(): boolean | null {
   const isInputActive = ["INPUT", "TEXTAREA"].includes(
     document.activeElement?.nodeName ?? "",
@@ -80,4 +82,13 @@ export function findParentElement(
   }
 
   return null; // no matching parent found
+}
+
+export function getElementPositionAsNumber(
+  element: HTMLElement,
+  position: string = "left",
+): number {
+  const leftString = window.getComputedStyle(element)[position];
+  const result = getValueFromPixelString(leftString);
+  return result;
 }

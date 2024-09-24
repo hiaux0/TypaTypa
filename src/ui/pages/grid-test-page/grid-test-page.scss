@@ -11,6 +11,24 @@ $columnWidth: 36px;
 .grid-test-container {
   margin: 8px;
   user-select: none;
+  position: relative;
+
+  /* DEV  */
+  .test-component {
+    position: absolute;
+    width: 111px;
+    height: 37px;
+    border: 1px solid black;
+    top: 35px;
+    left: 90px;
+    background: purple;
+    /* opacity: 0.7; */
+
+    &:hover {
+      background: yellow;
+      cursor: pointer;
+    }
+  }
 
   .cell {
     @include cell();

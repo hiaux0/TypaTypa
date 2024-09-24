@@ -14,8 +14,9 @@ import { Topics } from "./ui/organisms/topics/topics";
 import { Scratch } from "./ui/scratch/scratch";
 import { Store } from "./modules/store";
 import { CustomTable } from "./ui/organisms/custom-table/custom-table";
+import { DraggableCustomAttribute } from "./ui/attributes/draggable";
 
-const attributes = [AutosizeCustomAttribute];
+const attributes = [AutosizeCustomAttribute, DraggableCustomAttribute];
 const molecules = [AutocompleteInput, LabeledWordList, Popover];
 const organisms = [CustomTable, Dictionary, TabDrawer, Topics];
 

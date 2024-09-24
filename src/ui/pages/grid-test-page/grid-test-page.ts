@@ -3,9 +3,11 @@ import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../modules/eventMessages";
 import { clear } from "console";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
+import { getElementPositionAsNumber } from "../../../modules/htmlElements";
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
+  public testButtonRef: HTMLElement;
   public rowSize = 3;
   public columnSize = 5;
   // Drag and select
@@ -22,17 +24,16 @@ export class GridTestPage {
 
   attached() {
     this.gridTestContainerRef.addEventListener("mouseup", () => {
-
-      this.iterateOverSelectedCells((columnIndex, rowIndex) => {
-        if (this.isInArea(columnIndex, rowIndex)) {
-          this.eventAggregator.publish(
-            EV_CELL_SELECTED(columnIndex, rowIndex),
-            {
-              selected: false,
-            },
-          );
-        }
-      });
+      //this.iterateOverSelectedCells((columnIndex, rowIndex) => {
+      //  if (this.isInArea(columnIndex, rowIndex)) {
+      //    this.eventAggregator.publish(
+      //      EV_CELL_SELECTED(columnIndex, rowIndex),
+      //      {
+      //        selected: false,
+      //      },
+      //    );
+      //  }
+      //});
 
       this.resetDrag();
     });
@@ -50,6 +51,14 @@ export class GridTestPage {
   };
 
   public startMouseDrag = (columnIndex: number, rowIndex: number) => {
+    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
+      if (this.isInArea(columnIndex, rowIndex)) {
+        this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
+          selected: false,
+        });
+      }
+    });
+
     this.isDragStart = true;
     this.startColumnIndex = columnIndex;
     this.endColumnIndex = columnIndex;
@@ -214,9 +223,9 @@ export class GridTestPage {
 
   private resetDrag() {
     this.isDragStart = false;
-    this.startColumnIndex = NaN;
-    this.endColumnIndex = NaN;
-    this.startRowIndex = NaN;
-    this.endRowIndex = NaN;
+    //this.startColumnIndex = NaN;
+    //this.endColumnIndex = NaN;
+    //this.startRowIndex = NaN;
+    // this.endRowIndex = NaN;
   }
 }
