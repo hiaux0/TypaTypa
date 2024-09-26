@@ -3,10 +3,9 @@
 <import from="./grid-cell/grid-cell"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <!-- <button class="test-component" draggable>Trigger</button> -->
   <div repeat.for="panel of gridPanels">
     <button
-      class="test-component"
+      class="panel-item"
       draggable
       style="
         top: ${START_PANEL_TOP + (panel.row) * CELL_HEIGHT - 1}px;
@@ -37,8 +36,9 @@
         row.bind="rowIndex"
         column.bind="columnIndex"
         selected.bind="isInArea(columnIndex,rowIndex)"
-        mousedown.trigger="startMouseDrag(columnIndex,rowIndex)"
-        mouseover.trigger="onMouseOver(columnIndex, rowIndex)"
+        mousedown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
+        mouseover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
+        mouseup.trigger="onMouseUpGridCell()"
       ></grid-cell>
     </div>
   </section>

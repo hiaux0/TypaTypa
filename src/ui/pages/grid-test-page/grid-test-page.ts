@@ -20,19 +20,20 @@ export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public rowSize = 3;
   public columnSize = 5;
-  // Drag and select
-  public startColumnIndex = NaN;
-  public endColumnIndex = NaN;
-  public startRowIndex = NaN;
-  public endRowIndex = NaN;
-
-  public gridPanels: GridPanel[] = [];
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
+  // Drag and select //
+  // Container needs to keep track of these values, because the grid cells are not aware of each other
+  public dragStartColumnIndex = NaN;
+  public dragEndColumnIndex = NaN;
+  public dragStartRowIndex = NaN;
+  public dragEndRowIndex = NaN;
+
+  public gridPanels: GridPanel[] = [];
   public START_PANEL_TOP = 32;
   public START_PANEL_LEFT = 64;
 
-  private isDragStart = false;
+  private isStartDragGridCell = false;
 
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
@@ -45,24 +46,15 @@ export class GridTestPage {
       //{ row: 2, col: 3, width: 2, type: "button" },
     ];
     this.gridTestContainerRef.addEventListener("mouseup", () => {
-      //this.iterateOverSelectedCells((columnIndex, rowIndex) => {
-      //  if (this.isInArea(columnIndex, rowIndex)) {
-      //    this.eventAggregator.publish(
-      //      EV_CELL_SELECTED(columnIndex, rowIndex),
-      //      {
-      //        selected: false,
-      //      },
-      //    );
-      //  }
-      //});
-
-      this.resetDrag();
+      //this.unselectAllSelecedCells();
+      //this.addGridPanelToSelection();
+      //this.resetDrag();
     });
   }
 
   public logCoords() {
-    const start = `${this.startColumnIndex}:${this.startRowIndex}`;
-    const end = `${this.endColumnIndex}:${this.endRowIndex}`;
+    const start = `${this.dragStartColumnIndex}:${this.dragStartRowIndex}`;
+    const end = `${this.dragEndColumnIndex}:${this.dragEndRowIndex}`;
     const all = `[${start}] - [${end}]`;
     /*prettier-ignore*/ console.log("[grid-test-page.ts,20] all: ", all);
   }
@@ -71,23 +63,17 @@ export class GridTestPage {
     return String.fromCharCode(65 + num);
   };
 
-  public startMouseDrag = (columnIndex: number, rowIndex: number) => {
-    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
-      if (this.isInArea(columnIndex, rowIndex)) {
-        this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
-          selected: false,
-        });
-      }
-    });
+  public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
+    this.unselectAllSelecedCells();
 
-    this.isDragStart = true;
-    this.startColumnIndex = columnIndex;
-    this.endColumnIndex = columnIndex;
-    this.startRowIndex = rowIndex;
-    this.endRowIndex = rowIndex;
+    this.isStartDragGridCell = true;
+    this.dragStartColumnIndex = columnIndex;
+    this.dragEndColumnIndex = columnIndex;
+    this.dragStartRowIndex = rowIndex;
+    this.dragEndRowIndex = rowIndex;
 
     this.eventAggregator.publish(
-      EV_CELL_SELECTED(this.startColumnIndex, this.startRowIndex),
+      EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex),
       {
         selected: true,
       },
@@ -96,12 +82,12 @@ export class GridTestPage {
 
   public publishCellUpdate(): void {}
 
-  public onMouseOver = (columnIndex: number, rowIndex: number) => {
-    if (!this.isDragStart) return;
+  public onMouseOverGridCell = (columnIndex: number, rowIndex: number) => {
+    if (!this.isStartDragGridCell) return;
     clear();
     const before = this.getSelectedArea();
-    this.endColumnIndex = columnIndex;
-    this.endRowIndex = rowIndex;
+    this.dragEndColumnIndex = columnIndex;
+    this.dragEndRowIndex = rowIndex;
 
     const after = this.getSelectedArea();
 
@@ -121,6 +107,12 @@ export class GridTestPage {
       });
     });
   };
+
+  public onMouseUpGridCell(): void {
+    this.unselectAllSelecedCells();
+    this.addGridPanelToSelection();
+    this.resetDrag();
+  }
 
   private calculateDiff(
     before: GridSelectionRange,
@@ -153,8 +145,8 @@ export class GridTestPage {
 
   public getCoords(): GridSelectionRange {
     const coords: GridSelectionRange = [
-      [this.startColumnIndex, this.startRowIndex],
-      [this.endColumnIndex, this.endRowIndex],
+      [this.dragStartColumnIndex, this.dragStartRowIndex],
+      [this.dragEndColumnIndex, this.dragEndRowIndex],
     ];
     return coords;
   }
@@ -175,11 +167,32 @@ export class GridTestPage {
     return is;
   }
 
+  private addGridPanelToSelection(): void {
+    const selected = this.getSelectedArea();
+    const [[startColumn, startRow], [endColumn, endRow]] = selected;
+    const width = endColumn - startColumn + 1;
+    const height = endRow - startRow + 1;
+    const newPanel: GridPanel = {
+      row: startRow,
+      col: startColumn,
+      width,
+      height,
+      type: "button",
+    };
+    this.gridPanels.push(newPanel);
+  }
+
   private getSelectedArea() {
-    const minColumnIndex = Math.min(this.startColumnIndex, this.endColumnIndex);
-    const maxColumnIndex = Math.max(this.startColumnIndex, this.endColumnIndex);
-    const minRowIndex = Math.min(this.startRowIndex, this.endRowIndex);
-    const maxRowIndex = Math.max(this.startRowIndex, this.endRowIndex);
+    const minColumnIndex = Math.min(
+      this.dragStartColumnIndex,
+      this.dragEndColumnIndex,
+    );
+    const maxColumnIndex = Math.max(
+      this.dragStartColumnIndex,
+      this.dragEndColumnIndex,
+    );
+    const minRowIndex = Math.min(this.dragStartRowIndex, this.dragEndRowIndex);
+    const maxRowIndex = Math.max(this.dragStartRowIndex, this.dragEndRowIndex);
     const result: GridSelectionRange = [
       [minColumnIndex, minRowIndex],
       [maxColumnIndex, maxRowIndex],
@@ -242,11 +255,22 @@ export class GridTestPage {
     }
   }
 
+  private unselectAllSelecedCells(): void {
+    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
+      if (this.isInArea(columnIndex, rowIndex)) {
+        this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
+          selected: false,
+        });
+      }
+    });
+  }
+
   private resetDrag() {
-    this.isDragStart = false;
-    //this.startColumnIndex = NaN;
-    //this.endColumnIndex = NaN;
-    //this.startRowIndex = NaN;
-    // this.endRowIndex = NaN;
+    this.isStartDragGridCell = false;
+
+    this.dragStartColumnIndex = NaN;
+    this.dragEndColumnIndex = NaN;
+    this.dragStartRowIndex = NaN;
+    this.dragEndRowIndex = NaN;
   }
 }

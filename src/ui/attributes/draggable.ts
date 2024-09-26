@@ -12,9 +12,6 @@ export class DraggableCustomAttribute {
   private draggedElementMouseDownY = NaN;
 
   constructor() {
-    this.element;
-    /*prettier-ignore*/ console.log("[draggable.ts,8] this.element: ", this.element);
-
     this.element.addEventListener("mousedown", (event) => {
       this.isDraggedElement = true;
       this.draggedElement = event.target as HTMLElement;
