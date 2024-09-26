@@ -1,5 +1,7 @@
-# Goals
 
+
+
+# Goals
 
 - practice english
   - by typing each word
@@ -8,10 +10,17 @@
     - enhance recall of words
 
 # Todo
+
+## Grid
+
+- [ ] control grid panels via css variables?
+- [ ] how to store column width - a width+height map?
+
 - grid test
   - [ ] spreadsheet like headers
   - [ ] rows and columns grid
 
+## Typing
 - ui
   - [ ] make background darker when drawer open
 

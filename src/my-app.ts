@@ -6,6 +6,7 @@ import { TypingPage } from "./ui/pages/typing-page/typing-page";
 import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
 import { Store } from "./modules/store";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
+import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
 
 @route({
   title: APP_NAME,
@@ -14,6 +15,11 @@ import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
       path: ["grid-test"],
       component: GridTestPage,
       title: "Grid Test",
+    },
+    {
+      path: ["khong-a"],
+      component: KhongAPage,
+      title: "Khong a",
     },
     {
       path: ["typing"],

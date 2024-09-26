@@ -3,7 +3,21 @@
 <import from="./grid-cell/grid-cell"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <button ref="testButtonRef" class="test-component" draggable>Trigger</button>
+  <!-- <button class="test-component" draggable>Trigger</button> -->
+  <div repeat.for="panel of gridPanels">
+    <button
+      class="test-component"
+      draggable
+      style="
+        top: ${START_PANEL_TOP + (panel.row) * CELL_HEIGHT - 1}px;
+        left: ${START_PANEL_LEFT + (panel.col) * CELL_WIDTH - 1}px;
+        width: ${ (panel.width ?? 1) * CELL_WIDTH }px;
+        height: ${ (panel.height ?? 1) * CELL_HEIGHT }px;
+      "
+    >
+      Panel ${$index}
+    </button>
+  </div>
 
   <!-- Column Header -->
   <section class="column-container row-header">

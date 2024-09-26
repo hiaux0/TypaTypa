@@ -1,11 +1,12 @@
-$columnWidth: 36px;
+$columnWidth: 64px;
+$columnHeight: 32px;
 
 @mixin cell() {
   padding: 4px;
   border-right: 1px solid black;
   border-bottom: 1px solid black;
   min-width: $columnWidth;
-  min-height: $columnWidth;
+  min-height: $columnHeight;
 }
 
 .grid-test-container {
@@ -16,12 +17,12 @@ $columnWidth: 36px;
   /* DEV  */
   .test-component {
     position: absolute;
-    width: 111px;
-    height: 37px;
-    border: 1px solid black;
+    // width: 111px;
+    // height: 37px;
     top: 35px;
     left: 90px;
     background: purple;
+    border: 1px solid black;
     /* opacity: 0.7; */
 
     &:hover {

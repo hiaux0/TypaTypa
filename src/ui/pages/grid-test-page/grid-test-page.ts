@@ -5,9 +5,19 @@ import { clear } from "console";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
 import { getElementPositionAsNumber } from "../../../modules/htmlElements";
 
+interface GridPanel {
+  row: number;
+  col: number;
+  width?: number;
+  height?: number;
+  type: "button";
+}
+
+const CELL_HEIGHT = 32;
+const CELL_WIDTH = 64;
+
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
-  public testButtonRef: HTMLElement;
   public rowSize = 3;
   public columnSize = 5;
   // Drag and select
@@ -16,6 +26,12 @@ export class GridTestPage {
   public startRowIndex = NaN;
   public endRowIndex = NaN;
 
+  public gridPanels: GridPanel[] = [];
+  public CELL_HEIGHT = CELL_HEIGHT;
+  public CELL_WIDTH = CELL_WIDTH;
+  public START_PANEL_TOP = 32;
+  public START_PANEL_LEFT = 64;
+
   private isDragStart = false;
 
   constructor(
@@ -23,6 +39,11 @@ export class GridTestPage {
   ) {}
 
   attached() {
+    this.gridPanels = [
+      { row: 0, col: 0, type: "button" },
+      //{ row: 1, col: 1, width: 2, type: "button" },
+      //{ row: 2, col: 3, width: 2, type: "button" },
+    ];
     this.gridTestContainerRef.addEventListener("mouseup", () => {
       //this.iterateOverSelectedCells((columnIndex, rowIndex) => {
       //  if (this.isInArea(columnIndex, rowIndex)) {
