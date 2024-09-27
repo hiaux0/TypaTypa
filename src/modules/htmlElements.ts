@@ -65,6 +65,8 @@ export function findParentElement(
     | HTMLElement
     | ((parent: HTMLElement) => boolean),
 ): HTMLElement | null {
+  if (startingElement === selectorOrPredicateOrElement) return startingElement;
+
   let parent = startingElement.parentElement;
   while (parent != null) {
     let condition: boolean;

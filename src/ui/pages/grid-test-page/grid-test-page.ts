@@ -51,7 +51,7 @@ export class GridTestPage {
     this.gridPanels = [
       { row: 0, col: 0, type: "button" },
       //{ row: 1, col: 1, width: 2, type: "button" },
-      //{ row: 2, col: 3, width: 2, type: "button" },
+      { row: 2, col: 5, width: 4, height: 4, type: "button" },
     ];
     this.gridTestContainerRef.addEventListener("mouseup", () => {
       //this.unselectAllSelecedCells();

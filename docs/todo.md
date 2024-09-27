@@ -9,29 +9,9 @@
 
 # Todo
 
-## Grid
-
-- [ ] show coords in top left cell
-- [ ] bug: snapping
-- [ ] bug: when dragging panels, and mouse goes over another, then panel being dragged stops
-  - IDEA: add mouse events to container
-- [x] bug: dragging a panel inserts a new item --> FIXED: add mouseup to cell
-  - the way mouse events are handled
-    - cell:
-      - mousedown
-      - mousemove
-      - why over cell? To get the (col,row)
-    - container
-      - mouseup
-  - idea: check the mousedown target
-- [ ] control grid panels via css variables?
-- [ ] how to store column width - a width+height map?
-
-
 ## Typing
 - ui
   - [ ] make background darker when drawer open
-
 - data
   - [ ] reduce size of dictionary data
     - [ ] filter out a list of all words
@@ -54,13 +34,33 @@
 - typing
   - [ ] loop
 
+## Grid
+- [ ] feat: snapping
+- [ ] feat: control grid panels via css variables?
+- [ ] feat: how to store column width - a width+height map?
+- [ ] bug:
+
 # Done
 
-- grid test
+## Grid
+- [x] bug: cannot drag elements in column 0
+  - because, event.target not correct
+- [x] bug: when dragging panels, and mouse goes over another, then panel being dragged stops
+  - IDEA: add mouse events to container
+- [x] show coords in top left cell
+- [x] bug: dragging a panel inserts a new item --> FIXED: add mouseup to cell
+  - the way mouse events are handled
+    - cell:
+      - mousedown
+      - mousemove
+      - why over cell? To get the (col,row)
+    - container
+      - mouseup
+  - idea: check the mousedown target
   - [x] spreadsheet like headers
   - [x] rows and columns grid
 
-- Typing
+## Typing
   - [x] fix(topics): search bar appears again
   - [x] fix(topics): click inside also close
   - [x] close on outside click

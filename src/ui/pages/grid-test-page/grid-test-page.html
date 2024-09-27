@@ -35,17 +35,17 @@
     </section>
 
     <!-- Panels -->
-    <section class="panel-container">
+    <section ref="panelContainerRef" class="panel-container">
       <div
         class="panel-item-container"
         repeat.for="panel of gridPanels"
         style="
-          top: ${(panel.row) * CELL_HEIGHT - 1}px;
-          left: ${(panel.col) * CELL_WIDTH - 1}px;
-          width: ${ (panel.width ?? 1) * CELL_WIDTH }px;
-          height: ${ (panel.height ?? 1) * CELL_HEIGHT }px;
+          top: ${(panel.row) * CELL_HEIGHT}px;
+          left: ${(panel.col) * CELL_WIDTH}px;
+          width: ${(panel.width ?? 1) * CELL_WIDTH}px;
+          height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
         "
-        draggable
+        draggable="drag-container.bind: panelContainerRef; cell-width.bind: CELL_HEIGHT; cell-height.bind: CELL_HEIGHT;"
       >
         <button class="panel-item">Panel ${$index}</button>
       </div>

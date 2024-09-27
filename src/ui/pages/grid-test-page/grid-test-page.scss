@@ -63,8 +63,14 @@ $columnHeight: 32px;
 
   .panel-container {
     position: absolute;
-    top: $columnHeight;
-    left: $columnWidth;
+    // top: calc(#{$columnHeight}+1px);
+    // left: calc(#{$columnWidth}+1px);
+    // top: calc(#{$columnHeight} - 1px);
+    // left: calc(#{$columnWidth} - 1px);
+    top: calc(#{$columnHeight});
+    left: calc(#{$columnWidth});
+    // top: $columnHeight;
+    // left: $columnWidth;
 
     .panel-item-container {
       position: absolute;
