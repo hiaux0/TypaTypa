@@ -7,7 +7,7 @@
     <div class="function-bar"></div>
   </section>
 
-  <section class="spreadsheet-container">
+  <section ref="spreadsheetContainerRef" class="spreadsheet-container">
     <!-- Column Header -->
     <section class="column-container row-header">
       <div class="cell column-header-corner"></div>
@@ -45,9 +45,12 @@
           width: ${(panel.width ?? 1) * CELL_WIDTH}px;
           height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
         "
-        draggable="drag-container.bind: panelContainerRef; cell-width.bind: CELL_HEIGHT; cell-height.bind: CELL_HEIGHT;"
+        draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT;"
       >
         <button class="panel-item">Panel ${$index}</button>
+        <div class="options-container">
+          <button class="delete" click.trigger="deletePanel(panel)">x</button>
+        </div>
       </div>
     </section>
   </section>

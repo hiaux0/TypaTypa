@@ -88,6 +88,12 @@ $columnHeight: 32px;
       .panel-item {
         background: inherit;
       }
+
+      .options-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
     }
   }
 }

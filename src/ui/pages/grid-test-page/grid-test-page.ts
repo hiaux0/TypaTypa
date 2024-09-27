@@ -4,8 +4,10 @@ import { EV_CELL_SELECTED } from "../../../modules/eventMessages";
 import { clear } from "console";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
 import { getElementPositionAsNumber } from "../../../modules/htmlElements";
+import { generateId } from "../../../modules/random";
 
 interface GridPanel {
+  id: string;
   row: number;
   col: number;
   width?: number;
@@ -49,9 +51,9 @@ export class GridTestPage {
 
   attached() {
     this.gridPanels = [
-      { row: 0, col: 0, type: "button" },
+      { id: "1", row: 0, col: 0, type: "button" },
       //{ row: 1, col: 1, width: 2, type: "button" },
-      { row: 2, col: 5, width: 4, height: 4, type: "button" },
+      { id: "2", row: 2, col: 5, width: 4, height: 4, type: "button" },
     ];
     this.gridTestContainerRef.addEventListener("mouseup", () => {
       //this.unselectAllSelecedCells();
@@ -175,13 +177,18 @@ export class GridTestPage {
     return is;
   }
 
+  public deletePanel(panel: GridPanel): void {
+    const filtered = this.gridPanels.filter((p) => p !== panel);
+    this.gridPanels = filtered;
+  }
+
   private addGridPanelToSelection(): void {
     const selected = this.getSelectedArea();
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,201] selected: ", selected);
     const [[startColumn, startRow], [endColumn, endRow]] = selected;
     const width = endColumn - startColumn + 1;
     const height = endRow - startRow + 1;
     const newPanel: GridPanel = {
+      id: generateId(),
       row: startRow,
       col: startColumn,
       width,
