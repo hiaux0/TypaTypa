@@ -1,3 +1,4 @@
+
 # Goals
 
 - practice english
@@ -9,7 +10,6 @@
 # Todo
 
 ## Typing
-
 - ui
   - [ ] make background darker when drawer open
 - data
@@ -29,16 +29,17 @@
 - setting
   - not random words, but as the text is
 - topics
-  - [ ] fix(topics):
+  - [ ] fix(topics): 
   - [ ] topics: ctrl+v global -> add into "unsorted" topic
 - typing
   - [ ] loop
 
 ## Grid
-
 - [ ] feat:
+- [ ] feat: selection should include panels
+- [ ] feat: toolbar:
+- [x] feat: toolbar: add panel at seletion
 - [ ] feat: resize panels
-- [x] feat: delete panels
 - [ ] feat: layout edit mode
 - [ ] feat: control grid panels via css variables?
 - [ ] feat: how to store column width - a width+height map?
@@ -47,7 +48,7 @@
 # Done
 
 ## Grid
-
+- [x] feat: delete panels
 - [x] feat: snapping
 - [x] bug: cannot drag elements in column 0
   - because, event.target not correct
@@ -67,21 +68,21 @@
   - [x] rows and columns grid
 
 ## Typing
+  - [x] fix(topics): search bar appears again
+  - [x] fix(topics): click inside also close
+  - [x] close on outside click
+  - [x] look up: add highlight to current word in the history
+  - [x] "T" Topics
+  - [x] "R" Remember
+  - [x] "D" Dictionary
 
-- [x] fix(topics): search bar appears again
-- [x] fix(topics): click inside also close
-- [x] close on outside click
-- [x] look up: add highlight to current word in the history
-- [x] "T" Topics
-- [x] "R" Remember
-- [x] "D" Dictionary
+  - [x] add button
+  - [x] hook up "topics" with typing
+  - [x] "?" should switch to "dictionary" tab
+  - [x] add search bar
+  - [x] be able to lookup any words
+  - [x] show lookup history
 
-- [x] add button
-- [x] hook up "topics" with typing
-- [x] "?" should switch to "dictionary" tab
-- [x] add search bar
-- [x] be able to lookup any words
-- [x] show lookup history
 
 # Features
 

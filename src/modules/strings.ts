@@ -78,7 +78,9 @@ export function getValueFromPixelString(input: string): number {
  * ```
  */
 export function tokenize(text: string, option?: { lower?: boolean }): string[] {
-  const rawTokens = text.match(/[a-zA-ZAaĂăÂâEeÊêIiOoÔôƠơUuƯưYyÁáẮắẤấÉéẾếÍíÓóỐốỚớÚúỨứÝýÀàẰằẦầÈèỀềÌìÒòỒồỜờÙùỪừỲỳẢảẲẳẨẩẺẻỂểỈỉỎỏỔổỞởỦủỬửỶỷÃãẴẵẪẫẼẽỄễĨĩÕõỖỗỠỡŨũỮữỸỹẠạẶặẬậẸẹỆệỊịỌọỘộỢợỤụỰựỴỵĐđ]+/g);
+  const rawTokens = text.match(
+    /[a-zA-ZAaĂăÂâEeÊêIiOoÔôƠơUuƯưYyÁáẮắẤấÉéẾếÍíÓóỐốỚớÚúỨứÝýÀàẰằẦầÈèỀềÌìÒòỒồỜờÙùỪừỲỳẢảẲẳẨẩẺẻỂểỈỉỎỏỔổỞởỦủỬửỶỷÃãẴẵẪẫẼẽỄễĨĩÕõỖỗỠỡŨũỮữỸỹẠạẶặẬậẸẹỆệỊịỌọỘộỢợỤụỰựỴỵĐđ]+/g,
+  );
   if (!rawTokens) return [];
   let tokens = rawTokens as string[];
   if (option.lower) {
@@ -87,3 +89,6 @@ export function tokenize(text: string, option?: { lower?: boolean }): string[] {
   return tokens;
 }
 
+export function numberToAlphabet(num: number) {
+  return String.fromCharCode(65 + num);
+}

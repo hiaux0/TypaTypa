@@ -2,6 +2,12 @@
 
 <import from="./grid-cell/grid-cell"></import>
 <main ref="gridTestContainerRef" class="grid-test-container">
+  <!-- Toolbar -->
+  <section>
+    <button click.trigger="addPanel()">Add Panel</button>
+  </section>
+
+  <!-- Function Bar -->
   <section class="function-bar-container">
     <div class="cell-range-display">${orderedSelectedRangeToString}</div>
     <div class="function-bar"></div>
