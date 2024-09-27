@@ -1,6 +1,4 @@
 
-
-
 # Goals
 
 - practice english
@@ -13,8 +11,8 @@
 
 ## Grid
 
-- [ ] control grid panels via css variables?
-- [ ] how to store column width - a width+height map?
+- [ ] show coords in top left cell
+- [ ] bug: snapping
 - [ ] bug: when dragging panels, and mouse goes over another, then panel being dragged stops
   - IDEA: add mouse events to container
 - [x] bug: dragging a panel inserts a new item --> FIXED: add mouseup to cell
@@ -26,10 +24,9 @@
     - container
       - mouseup
   - idea: check the mousedown target
+- [ ] control grid panels via css variables?
+- [ ] how to store column width - a width+height map?
 
-- grid test
-  - [ ] spreadsheet like headers
-  - [ ] rows and columns grid
 
 ## Typing
 - ui
@@ -59,6 +56,11 @@
 
 # Done
 
+- grid test
+  - [x] spreadsheet like headers
+  - [x] rows and columns grid
+
+- Typing
   - [x] fix(topics): search bar appears again
   - [x] fix(topics): click inside also close
   - [x] close on outside click

@@ -1,45 +1,54 @@
 <!-- A B C D 1 2 3 4 -->
 
 <import from="./grid-cell/grid-cell"></import>
-
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <div repeat.for="panel of gridPanels">
-    <button
-      class="panel-item"
-      draggable
-      style="
-        top: ${START_PANEL_TOP + (panel.row) * CELL_HEIGHT - 1}px;
-        left: ${START_PANEL_LEFT + (panel.col) * CELL_WIDTH - 1}px;
-        width: ${ (panel.width ?? 1) * CELL_WIDTH }px;
-        height: ${ (panel.height ?? 1) * CELL_HEIGHT }px;
-      "
-    >
-      Panel ${$index}
-    </button>
-  </div>
-
-  <!-- Column Header -->
-  <section class="column-container row-header">
-    <div class="cell column-header-corner"></div>
-    <div class="cell-header" repeat.for="rowIndex of rowSize">${rowIndex}</div>
+  <section class="function-bar-container">
+    <div class="cell-range-display">${orderedSelectedRangeToString}</div>
+    <div class="function-bar"></div>
   </section>
 
-  <section class="column-container" repeat.for="columnIndex of columnSize">
-    <!-- Row Header -->
-    <div class="cell-header column-header">
-      <!-- ${numberToAlphabet(columnIndex)} -->
-      ${(columnIndex)}
-    </div>
-    <div class="row-container" repeat.for="rowIndex of rowSize">
-      <!-- Cell -->
-      <grid-cell
-        row.bind="rowIndex"
-        column.bind="columnIndex"
-        selected.bind="isInArea(columnIndex,rowIndex)"
-        mousedown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
-        mouseover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
-        mouseup.trigger="onMouseUpGridCell()"
-      ></grid-cell>
-    </div>
+  <section class="spreadsheet-container">
+    <!-- Column Header -->
+    <section class="column-container row-header">
+      <div class="cell column-header-corner"></div>
+      <div class="cell-header" repeat.for="rowIndex of rowSize">
+        ${rowIndex}
+      </div>
+    </section>
+
+    <section class="column-container" repeat.for="columnIndex of columnSize">
+      <div class="cell-header column-header">
+        <!-- ${numberToAlphabet(columnIndex)} -->
+        ${(columnIndex)}
+      </div>
+      <div class="row-container" repeat.for="rowIndex of rowSize">
+        <!-- Cell -->
+        <grid-cell
+          row.bind="rowIndex"
+          column.bind="columnIndex"
+          selected.bind="isInArea(columnIndex,rowIndex)"
+          pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
+          pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
+          pointerup.trigger="onMouseUpGridCell()"
+        ></grid-cell>
+      </div>
+    </section>
+
+    <!-- Panels -->
+    <section class="panel-container">
+      <div
+        class="panel-item-container"
+        repeat.for="panel of gridPanels"
+        style="
+          top: ${(panel.row) * CELL_HEIGHT - 1}px;
+          left: ${(panel.col) * CELL_WIDTH - 1}px;
+          width: ${ (panel.width ?? 1) * CELL_WIDTH }px;
+          height: ${ (panel.height ?? 1) * CELL_HEIGHT }px;
+        "
+        draggable
+      >
+        <button class="panel-item">Panel ${$index}</button>
+      </div>
+    </section>
   </section>
 </main>

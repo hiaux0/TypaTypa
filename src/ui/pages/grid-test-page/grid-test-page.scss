@@ -11,50 +11,78 @@ $columnHeight: 32px;
 
 .grid-test-container {
   margin: 8px;
-  user-select: none;
-  position: relative;
 
-  /* DEV  */
-  .panel-item {
+  .function-bar-container {
+    display: flex;
+    margin-bottom: 4px;
+    .cell-range-display {
+      border: 1px solid grey;
+      width: 160px;
+      padding: 6px;
+    }
+    .function-bar {
+      display: flex;
+      flex: 1;
+      border: 1px solid grey;
+      padding: 6px;
+    }
+  }
+
+  .spreadsheet-container {
+    user-select: none;
+    position: relative;
+
+    .cell {
+      @include cell();
+      &:hover {
+        background: red;
+      }
+      &.selected-cell {
+        background: orange;
+      }
+    }
+    .cell-header {
+      @include cell();
+      &:hover {
+        background: blue;
+      }
+    }
+
+    .column-container {
+      display: inline-block;
+      /* display: flex; */
+      /* position: relative; */
+    }
+
+    .row-header {
+      margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`)
+    }
+    .row-container {
+    }
+  }
+
+  .panel-container {
     position: absolute;
-    // width: 111px;
-    // height: 37px;
-    top: 35px;
-    left: 90px;
-    background: purple;
-    border: 1px solid black;
-    /* opacity: 0.7; */
+    top: $columnHeight;
+    left: $columnWidth;
 
-    &:hover {
-      background: yellow;
-      cursor: pointer;
-    }
-  }
+    .panel-item-container {
+      position: absolute;
+      top: 35px;
+      left: 90px;
+      background: purple;
+      border: 1px solid black;
 
-  .cell {
-    @include cell();
-    &:hover {
-      background: red;
-    }
-    &.selected-cell {
-      background: orange;
-    }
-  }
-  .cell-header {
-    @include cell();
-    &:hover {
-      background: blue;
-    }
-  }
+      &:hover {
+        background: yellow;
+        cursor: pointer;
+      }
 
-  .column-container {
-    display: inline-block;
-  }
-
-  .row-header {
-    margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`)
-  }
-  .row-container {
+      /* DEV  */
+      .panel-item {
+        background: inherit;
+      }
+    }
   }
 }
 

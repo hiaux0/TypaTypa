@@ -12,7 +12,7 @@ export class DraggableCustomAttribute {
   private draggedElementMouseDownY = NaN;
 
   constructor() {
-    this.element.addEventListener("mousedown", (event) => {
+    this.element.addEventListener("pointerdown", (event) => {
       this.isDraggedElement = true;
       this.draggedElement = event.target as HTMLElement;
       this.draggedElementStartX = getElementPositionAsNumber(
@@ -26,7 +26,7 @@ export class DraggableCustomAttribute {
       this.draggedElementMouseDownX = event.clientX;
       this.draggedElementMouseDownY = event.clientY;
     });
-    this.element.addEventListener("mousemove", (event) => {
+    this.element.addEventListener("pointermove", (event) => {
       if (!this.isDraggedElement) return;
       // Top
       const diffY = event.clientY - this.draggedElementMouseDownY;
@@ -37,7 +37,7 @@ export class DraggableCustomAttribute {
       const relativeX = this.draggedElementStartX + diffX;
       this.draggedElement.style.left = `${relativeX}px`;
     });
-    this.element.addEventListener("mouseup", () => {
+    this.element.addEventListener("pointerup", () => {
       this.isDraggedElement = false;
       this.draggedElement = null;
     });

@@ -18,22 +18,30 @@ const CELL_WIDTH = 64;
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
-  public rowSize = 3;
-  public columnSize = 5;
+  public rowSize = 12;
+  public columnSize = 13;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   // Drag and select //
   // Container needs to keep track of these values, because the grid cells are not aware of each other
-  public dragStartColumnIndex = NaN;
-  public dragEndColumnIndex = NaN;
-  public dragStartRowIndex = NaN;
-  public dragEndRowIndex = NaN;
+  public dragStartColumnIndex = 0;
+  public dragEndColumnIndex = 0;
+  public dragStartRowIndex = 0;
+  public dragEndRowIndex = 0;
 
   public gridPanels: GridPanel[] = [];
   public START_PANEL_TOP = 32;
   public START_PANEL_LEFT = 64;
 
   private isStartDragGridCell = false;
+
+  public get orderedSelectedRangeToString(): string {
+    const ordered = this.getSelectedArea();
+    const [[startColumn, startRow], [endColumn, endRow]] = ordered;
+    // const result = `${this.numberToAlphabet(startColumn)}${startRow + 1} - ${this.numberToAlphabet(endColumn)}${endRow + 1}`;
+    const result = `${startColumn},${startRow}:${endColumn},${endRow}`;
+    return result;
+  }
 
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
@@ -67,9 +75,10 @@ export class GridTestPage {
     this.unselectAllSelecedCells();
 
     this.isStartDragGridCell = true;
+
     this.dragStartColumnIndex = columnIndex;
-    this.dragEndColumnIndex = columnIndex;
     this.dragStartRowIndex = rowIndex;
+    this.dragEndColumnIndex = columnIndex;
     this.dragEndRowIndex = rowIndex;
 
     this.eventAggregator.publish(
@@ -84,7 +93,6 @@ export class GridTestPage {
 
   public onMouseOverGridCell = (columnIndex: number, rowIndex: number) => {
     if (!this.isStartDragGridCell) return;
-    clear();
     const before = this.getSelectedArea();
     this.dragEndColumnIndex = columnIndex;
     this.dragEndRowIndex = rowIndex;
@@ -169,6 +177,7 @@ export class GridTestPage {
 
   private addGridPanelToSelection(): void {
     const selected = this.getSelectedArea();
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,201] selected: ", selected);
     const [[startColumn, startRow], [endColumn, endRow]] = selected;
     const width = endColumn - startColumn + 1;
     const height = endRow - startRow + 1;
@@ -268,9 +277,9 @@ export class GridTestPage {
   private resetDrag() {
     this.isStartDragGridCell = false;
 
-    this.dragStartColumnIndex = NaN;
-    this.dragEndColumnIndex = NaN;
-    this.dragStartRowIndex = NaN;
-    this.dragEndRowIndex = NaN;
+    //this.dragStartColumnIndex = NaN;
+    //this.dragEndColumnIndex = NaN;
+    //this.dragStartRowIndex = NaN;
+    //this.dragEndRowIndex = NaN;
   }
 }
