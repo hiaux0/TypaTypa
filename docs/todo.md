@@ -36,9 +36,12 @@
 
 ## Grid
 - [ ] feat:
+- [ ] feat: panels--
+- [ ] feat: panels-- use shortcuts to move between panels
+- [ ] feat: panels-- grouping-- create groups for panels
+- [ ] feat: panels-- toolbar--- mini toolbar for panels
 - [ ] feat: selection should include panels
 - [ ] feat: toolbar:
-- [x] feat: toolbar: add panel at seletion
 - [ ] feat: resize panels
 - [ ] feat: layout edit mode
 - [ ] feat: control grid panels via css variables?
@@ -49,6 +52,7 @@
 
 ## Grid
 - [x] feat: delete panels
+- [x] feat: toolbar: add panel at seletion
 - [x] feat: snapping
 - [x] bug: cannot drag elements in column 0
   - because, event.target not correct

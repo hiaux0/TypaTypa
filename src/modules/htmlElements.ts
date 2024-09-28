@@ -5,6 +5,7 @@ export function getIsInputActive(): boolean | null {
     document.activeElement?.nodeName ?? "",
   );
 
+  /*prettier-ignore*/ console.log("[htmlElements.ts,9] isInputActive: ", isInputActive);
   return isInputActive;
 }
 

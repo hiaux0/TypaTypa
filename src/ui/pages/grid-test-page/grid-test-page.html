@@ -1,5 +1,6 @@
 <!-- A B C D 1 2 3 4 -->
 
+
 <import from="./grid-cell/grid-cell"></import>
 <main ref="gridTestContainerRef" class="grid-test-container">
   <!-- Toolbar -->
@@ -13,8 +14,9 @@
     <div class="function-bar"></div>
   </section>
 
+  <!-- Spreadsheet -->
   <section ref="spreadsheetContainerRef" class="spreadsheet-container">
-    <!-- Column Header -->
+    <!-- 1/3 Column Header -->
     <section class="column-container row-header">
       <div class="cell column-header-corner"></div>
       <div class="cell-header" repeat.for="rowIndex of rowSize">
@@ -22,6 +24,7 @@
       </div>
     </section>
 
+    <!-- 2/3 Columns and Rows -->
     <section class="column-container" repeat.for="columnIndex of columnSize">
       <div class="cell-header column-header">
         <!-- ${numberToAlphabet(columnIndex)} -->
@@ -40,7 +43,7 @@
       </div>
     </section>
 
-    <!-- Panels -->
+    <!-- 3/3 Panels -->
     <section ref="panelContainerRef" class="panel-container">
       <div
         class="panel-item-container"
@@ -53,7 +56,14 @@
         "
         draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT;"
       >
-        <button class="panel-item">Panel ${$index}</button>
+        <!-- <button class="panel-item">Panel ${$index}</button> -->
+        <textarea
+          style="
+            width: ${(panel.width ?? 1) * CELL_WIDTH}px;
+            height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
+          "
+          tabindex="${$index + 1}"
+        ></textarea>
         <div class="options-container">
           <button class="delete" click.trigger="deletePanel(panel)">x</button>
         </div>

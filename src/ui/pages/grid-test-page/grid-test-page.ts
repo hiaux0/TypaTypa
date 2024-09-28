@@ -95,7 +95,7 @@ export class GridTestPage {
       });
     }
 
-    iterateOverSelectedCells((columnIndex, rowIndex) => {
+    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
       if (!this.isInArea(columnIndex, rowIndex)) return;
       this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
         selected: true,
@@ -169,13 +169,29 @@ export class GridTestPage {
   }
 
   private unselectAllSelecedCells(): void {
-    iterateOverSelectedCells((columnIndex, rowIndex) => {
+    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
       if (this.isInArea(columnIndex, rowIndex)) {
         this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
           selected: false,
         });
       }
     });
+  }
+
+  private iterateOverSelectedCells(
+    callback: (columnIndex: number, rowIndex: number) => void,
+  ) {
+    const [[startColumn, startRow], [endColumn, endRow]] =
+      this.getSelectedArea();
+    for (
+      let columnIndex = startColumn;
+      columnIndex <= endColumn;
+      columnIndex++
+    ) {
+      for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
+        callback(columnIndex, rowIndex);
+      }
+    }
   }
 
   private resetDrag() {
@@ -217,17 +233,6 @@ function calculateDiff(
   }
 
   return diff;
-}
-
-function iterateOverSelectedCells(
-  callback: (columnIndex: number, rowIndex: number) => void,
-) {
-  const [[startColumn, startRow], [endColumn, endRow]] = this.getSelectedArea();
-  for (let columnIndex = startColumn; columnIndex <= endColumn; columnIndex++) {
-    for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-      callback(columnIndex, rowIndex);
-    }
-  }
 }
 
 function orderByMinMaxRange(
