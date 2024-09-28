@@ -2,7 +2,7 @@ import { bindable, INode, resolve } from "aurelia";
 import {
   findParentElement,
   getElementPositionAsNumber,
-} from "../../modules/htmlElements";
+} from "../../common/modules/htmlElements";
 
 export class DraggableCustomAttribute {
   @bindable() dragContainer: HTMLElement;

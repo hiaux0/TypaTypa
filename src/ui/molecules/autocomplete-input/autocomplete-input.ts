@@ -1,7 +1,7 @@
 import { bindable } from "aurelia";
 import "./autocomplete-input.scss";
-import { UiSuggestion } from "../../../types/uiTypes";
-import { translations } from "../../../modules/translations";
+import { UiSuggestion } from "../../../domain/types/uiTypes";
+import { translations } from "../../../common/modules/translations";
 
 export class AutocompleteInput {
   @bindable() value = "";

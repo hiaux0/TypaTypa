@@ -1,10 +1,10 @@
 import { inject } from "aurelia";
-import { APP_NAME, TABS } from "./modules/constants";
-import { initDebugShortcuts } from "./modules/debugging";
+import { APP_NAME, TABS } from "./common/modules/constants";
+import { initDebugShortcuts } from "./common/modules/debugging";
 import { route, Router } from "@aurelia/router-lite";
 import { TypingPage } from "./ui/pages/typing-page/typing-page";
 import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
-import { Store } from "./modules/store";
+import { Store } from "./common/modules/store";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
 

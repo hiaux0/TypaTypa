@@ -1,6 +1,6 @@
 import { EventAggregator, bindable, resolve } from "aurelia";
 import "./grid-cell.scss";
-import { EV_CELL_SELECTED } from "../../../../modules/eventMessages";
+import { EV_CELL_SELECTED } from "../../../../common/modules/eventMessages";
 
 export class GridCell {
   @bindable public column: number;

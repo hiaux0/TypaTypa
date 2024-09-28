@@ -1,18 +1,18 @@
 import { EventAggregator, inject, resolve } from "aurelia";
-import { Store } from "../../../modules/store";
+import { Store } from "../../../common/modules/store";
 import "./typing-page.scss";
-import { ShortcutService } from "../../../services/ShortcutService";
-import { getIsInputActive } from "../../../modules/htmlElements";
-import { database } from "../../../modules/database";
-import { AMOUNT_OF_WORDS, WORDS } from "../../../modules/constants";
+import { ShortcutService } from "../../../common/services/ShortcutService";
+import { getIsInputActive } from "../../../common/modules/htmlElements";
+import { database } from "../../../common/modules/database";
+import { AMOUNT_OF_WORDS, WORDS } from "../../../common/modules/constants";
 import {
   getIndexForwardUntil,
   getWordAtIndex,
   tokenize,
-} from "../../../modules/strings";
+} from "../../../common/modules/strings";
 import { Features, Topic } from "../../../types";
-import { getRandomWordsFromSetAndRemove } from "../../../modules/random";
-import { ON_TOPIC_CHANGE } from "../../../modules/eventMessages";
+import { getRandomWordsFromSetAndRemove } from "../../../common/modules/random";
+import { ON_TOPIC_CHANGE } from "../../../common/modules/eventMessages";
 
 // @inject(EventAggregator, Store)
 export class TypingPage {

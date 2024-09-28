@@ -1,13 +1,13 @@
 import { bindable } from "aurelia";
 import "./dictionary.scss";
-import { getDefinition } from "../../../modules/dictionary";
+import { getDefinition } from "../../../common/modules/dictionary";
 import {
   DictionaryLookUp,
   LabeledWordsData,
   WordMeaning,
   WordType,
 } from "../../../types";
-import { getValueFromPixelString } from "../../../modules/strings";
+import { getValueFromPixelString } from "../../../common/modules/strings";
 
 export class Dictionary {
   @bindable() public word = "";

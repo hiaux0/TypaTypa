@@ -12,7 +12,7 @@ import { Dictionary } from "./ui/organisms/dictionary/dictionary";
 import { TabDrawer } from "./ui/organisms/tab-drawer/tab-drawer";
 import { Topics } from "./ui/organisms/topics/topics";
 import { Scratch } from "./ui/scratch/scratch";
-import { Store } from "./modules/store";
+import { Store } from "./common/modules/store";
 import { CustomTable } from "./ui/organisms/custom-table/custom-table";
 import { DraggableCustomAttribute } from "./ui/attributes/draggable";
 

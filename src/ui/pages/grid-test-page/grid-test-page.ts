@@ -1,8 +1,8 @@
 import { EventAggregator, resolve } from "aurelia";
 import "./grid-test-page.scss";
-import { EV_CELL_SELECTED } from "../../../modules/eventMessages";
+import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
-import { generateId } from "../../../modules/random";
+import { generateId } from "../../../common/modules/random";
 
 interface GridPanel {
   id: string;

@@ -1,4 +1,4 @@
-import { DictionaryLookUp } from "../types";
+import { DictionaryLookUp } from "../../types";
 //import * as A from "../data/dictionary/a.json";
 //import * as B from "../data/dictionary/b.json";
 //import * as C from "../data/dictionary/c.json";
@@ -25,6 +25,7 @@ import { DictionaryLookUp } from "../types";
 //import * as X from "../data/dictionary/x.json";
 //import * as Y from "../data/dictionary/y.json";
 //import * as Z from "../data/dictionary/z.json";
+
 
 export async function getDefinition(
   word: string,

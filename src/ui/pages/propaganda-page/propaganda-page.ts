@@ -1,9 +1,9 @@
 import "./propaganda-page.scss";
 import * as Data from "./data/PropagandaData.json";
-import { PropagandaSchema } from "../../../types/propgandaTypes";
+import { PropagandaSchema } from "../../../domain/types/propgandaTypes";
 import { observable } from "aurelia";
-import { UiSuggestion } from "../../../types/uiTypes";
-import { translations } from "../../../modules/translations";
+import { UiSuggestion } from "../../../domain/types/uiTypes";
+import { translations } from "../../../common/modules/translations";
 
 const data = Data as PropagandaSchema;
 

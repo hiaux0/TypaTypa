@@ -1,9 +1,9 @@
 import { bindable } from "aurelia";
 import "./topics.scss";
-import { generateId } from "../../../modules/random";
-import { getTranslation } from "../../../modules/translations";
+import { generateId } from "../../../common/modules/random";
+import { getTranslation } from "../../../common/modules/translations";
 import { Topic } from "../../../types";
-import { database } from "../../../modules/database";
+import { database } from "../../../common/modules/database";
 
 const TOPICS: Topic[] = [
   {

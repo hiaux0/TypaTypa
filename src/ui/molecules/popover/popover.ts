@@ -1,4 +1,4 @@
-import { onOutsideClick } from "../../../modules/htmlElements";
+import { onOutsideClick } from "../../../common/modules/htmlElements";
 import "./popover.scss";
 
 export class Popover {
