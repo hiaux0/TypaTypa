@@ -35,7 +35,7 @@
         <grid-cell
           row.bind="rowIndex"
           column.bind="columnIndex"
-          selected.bind="isInArea(columnIndex,rowIndex)"
+          selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
           pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
           pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
           pointerup.trigger="onMouseUpGridCell()"
@@ -55,6 +55,7 @@
           height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
         "
         draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT;"
+        data-panel-id.bind="panel.id"
       >
         <!-- <button class="panel-item">Panel ${$index}</button> -->
         <textarea

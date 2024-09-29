@@ -6,9 +6,10 @@ import { VimUi } from "./vim-ui/VimUi";
 import { VimCore } from "./vimCore/VimCore";
 import { SelectionService } from "../../common/services/SelectionService";
 import { getIsInputActive } from "../../common/modules/htmlElements";
- 
+
 import { CursorUtils } from "../../common/modules/cursor/cursor-utils";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
+import { VIM_COMMAND } from "./vim-commands-repository";
 
 /**
  * - Takes in input from user
@@ -91,6 +92,17 @@ export class VimInputHandler {
     this.initFocus();
   }
 
+  public executeCommandSequence(sequence: string): void {
+    this.vimCore.executeCommandSequence(sequence);
+  }
+
+  public executeCommand(
+    commandName: VIM_COMMAND,
+    inputForCommand: string,
+  ): void {
+    this.vimCore.executeCommand(commandName, inputForCommand);
+  }
+
   public reload(vimState: IVimState) {
     this.updateVimState(vimState);
     this.vimCore.setVimState(vimState);
@@ -111,7 +123,7 @@ export class VimInputHandler {
     if (!container) return;
 
     container.addEventListener("click", () => {
-      console.clear();
+      // console.clear();
       const vimState = this.vimCore.getVimState();
       const updatedWithCursor = this.updateCursor(vimState);
       if (!updatedWithCursor) return;
@@ -130,7 +142,7 @@ export class VimInputHandler {
   }
 
   private handleKeydown = (event: KeyboardEvent) => {
-    console.clear();
+    // console.clear();
     if (getIsInputActive()) return;
 
     const mode = this.vimCore.getVimState().mode;

@@ -1,4 +1,4 @@
-import { NodeType } from "../../domain";
+import { NodeType } from "../../domain/types/types";
 
 export class HtmlService {
   public static isTextNode(node: Element | ChildNode | undefined): boolean {

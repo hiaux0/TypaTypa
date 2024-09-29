@@ -1,6 +1,10 @@
 import { ISnippet } from "../../common/modules/keybindings/snippets";
 import { getRandomId } from "../../common/modules/random/random";
 import { EditorId } from "../../domain/types/types";
+import { AbstractMode } from "./modes/AbstractMode";
+import { NormalMode } from "./modes/NormalMode";
+import { VisualLineMode } from "./modes/VisualLineMode";
+import { VisualMode } from "./modes/VisualMode";
 import {
   VimCommand,
   SynonymKey,
@@ -61,9 +65,9 @@ export type FoldMap = Record<string, boolean>;
 
 export interface IVimState {
   id: EditorId;
+  mode: VimMode;
   cursor?: Cursor;
   lines?: VimLine[];
-  mode?: VimMode;
   foldMap?: FoldMap;
   visualStartCursor?: Cursor;
   visualEndCursor?: Cursor;

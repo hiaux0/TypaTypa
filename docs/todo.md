@@ -6,6 +6,8 @@
     - improve typing speed
     - improve grammar
     - enhance recall of words
+- Grid
+  - be able to create a diary
 
 # Todo
 
@@ -34,23 +36,42 @@
 - typing
   - [ ] loop
 
+## Vim
+- [ ] refac: mapping-- `new KeyMappingService().init(` should be in `initVim`
+- [ ] feat: vim hydra, eg `<space>pn` `nnn` will repeat `<space>pn`
+  - keep track of "last" commandSequence
+  - if the last letter is the pressed Key, then repeat?
+
 ## Grid
+
 - [ ] feat:
-- [ ] feat: panels--
-- [ ] feat: panels-- use shortcuts to move between panels
-- [ ] feat: panels-- grouping-- create groups for panels
-- [ ] feat: panels-- toolbar--- mini toolbar for panels
+- [ ] feat: cells----
+- [ ] feat: panels---
+- [ ] feat: toolbar--
+
+- [ ] feat: panels--- tab should set "active"
+- [!] feat: panels--- use shortcuts to move between panels
+  - 1.
+    - <space>pn
+    - <space>pp
+  - 2. this is lower prio
+    - or by hjkl?
+- [ ] feat: save to local storage
+- [ ] feat: panels--- grouping-- create groups for panels
+- [ ] feat: panels--- toolbar--- mini toolbar for panels
 - [ ] feat: selection should include panels
-- [ ] feat: toolbar:
-- [ ] feat: resize panels
+- [ ] feat: toolbar--
 - [ ] feat: layout edit mode
 - [ ] feat: control grid panels via css variables?
 - [ ] feat: how to store column width - a width+height map?
+- [ ] feat: resize panels
+- [ ] feat: calendar
 - [ ] bug:
 
 # Done
-
 ## Grid
+
+- [x] feat: cells--- navigate with shortcuts
 - [x] feat: delete panels
 - [x] feat: toolbar: add panel at seletion
 - [x] feat: snapping

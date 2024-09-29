@@ -72,6 +72,7 @@ export class VimUi {
   }
 
   public update(vimState: IVimState): void {
+    if (!vimState) return
     this.setCursorMovement(vimState.cursor);
   }
 

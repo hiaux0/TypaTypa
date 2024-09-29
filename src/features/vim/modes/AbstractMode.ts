@@ -1,4 +1,3 @@
- 
 import { Logger } from "../../../common/logging/logging";
 import {
   ArrayUtils,
@@ -53,6 +52,7 @@ export abstract class AbstractMode {
     this.vimState = this.vimStateClass;
     // @ts-ignore
     const interim = this[commandName](inputForCommand) as VimStateClass;
+
     if (!interim) return;
 
     const result = structuredClone(interim.serialize());
@@ -420,12 +420,14 @@ export abstract class AbstractMode {
     if (!this.vimStateClass.cursor) return this.vimStateClass;
     const updaterCursorCol = this.vimStateClass.cursor.col + amount;
     const activeLine = this.vimStateClass.getActiveLine();
+
     if (!activeLine) return this.vimStateClass;
 
     const valid = isValidHorizontalPosition(
       updaterCursorCol + 1,
       activeLine.text,
     );
+
     if (!valid) {
       return this.vimStateClass;
     }
@@ -704,8 +706,8 @@ export abstract class AbstractMode {
   toggleFold(): VimStateClass {
     if (!this.vimState.cursor) return this.vimState;
     if (!this.vimState.lines) return this.vimState;
-    /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'darkblue'}`);
-    /* prettier-ignore */ const before_foldMap = JSON.parse(JSON.stringify(this.vimState.foldMap ?? {parseDefault: true}));
+    // /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'darkblue'}`);
+    // /* prettier-ignore */ const before_foldMap = JSON.parse(JSON.stringify(this.vimState.foldMap ?? {parseDefault: true}));
     const result = toggleFold(
       this.vimState.cursor.line,
       this.vimState.lines,

@@ -1,9 +1,4 @@
- 
-import {
-  VIM_COMMAND,
-  VIM_MODE_COMMANDS,
-  VimCommand,
-} from "../../vim-commands-repository";
+import { VIM_COMMAND, VIM_MODE_COMMANDS } from "../../vim-commands-repository";
 import {
   VimMode,
   IVimState,
@@ -82,10 +77,10 @@ export class VimCommandManager {
   ): Mode extends VimMode.NORMAL
     ? NormalMode
     : Mode extends VimMode.VISUAL
-    ? VisualMode
-    : Mode extends VimMode.VISUALLINE
-    ? VisualLineMode
-    : undefined {
+      ? VisualMode
+      : Mode extends VimMode.VISUALLINE
+        ? VisualLineMode
+        : undefined {
     let finalMode = undefined;
     switch (mode) {
       case VimMode.NORMAL: {

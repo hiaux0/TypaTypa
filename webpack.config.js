@@ -61,7 +61,7 @@ module.exports = function(env, { analyze }) {
       open: !process.env.CI,
       port: 9000,
       watchFiles: path.join(__dirname, 'src'),
-      hot: true,
+      hot: false,
     },
     module: {
       rules: [

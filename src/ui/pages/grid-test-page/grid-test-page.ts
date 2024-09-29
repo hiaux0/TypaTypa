@@ -3,6 +3,12 @@ import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
 import { generateId } from "../../../common/modules/random";
+import { VimInit } from "../../../features/vim/VimInit";
+import { VimMode, VimOptions } from "../../../features/vim/vim-types";
+import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
+import { cycleInRange } from "../../../common/modules/numbers";
+import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMappingService";
+import { findParentElement } from "../../../common/modules/htmlElements";
 
 interface GridPanel {
   id: string;
@@ -22,16 +28,20 @@ export class GridTestPage {
   public columnSize = 13;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
+  public EV_CELL_SELECTED = EV_CELL_SELECTED;
   // Drag and select //
   // Container needs to keep track of these values, because the grid cells are not aware of each other
-  public dragStartColumnIndex = 0;
-  public dragEndColumnIndex = 0;
-  public dragStartRowIndex = 0;
-  public dragEndRowIndex = 0;
+  public dragStartColumnIndex = 5;
+  public dragEndColumnIndex = 5;
+  public dragStartRowIndex = 5;
+  public dragEndRowIndex = 5;
+  public selectedMap = new Map<string, boolean>();
 
   public gridPanels: GridPanel[] = [];
   public START_PANEL_TOP = 32;
   public START_PANEL_LEFT = 64;
+  private activePanel: GridPanel;
+  private activePanelElement: HTMLElement;
 
   private isStartDragGridCell = false;
 
@@ -48,10 +58,16 @@ export class GridTestPage {
   ) {}
 
   attached() {
+    this.initGridNavigation();
+    this.selectedMap[
+      EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
+    ] = true;
+
     this.gridPanels = [
       // { id: "1", row: 0, col: 0, type: "button" },
       //{ row: 1, col: 1, width: 2, type: "button" },
-      // { id: "2", row: 2, col: 5, width: 4, height: 4, type: "button" },
+      { id: "2", col: 3, row: 4, width: 4, height: 4, type: "button" },
+      { id: "3", col: 8, row: 5, width: 2, height: 2, type: "button" },
     ];
     this.gridTestContainerRef.addEventListener("mouseup", () => {
       //this.unselectAllSelecedCells();
@@ -61,21 +77,13 @@ export class GridTestPage {
   }
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
-    this.unselectAllSelecedCells();
-
     this.isStartDragGridCell = true;
-
+    this.unselectAllSelecedCells();
     this.dragStartColumnIndex = columnIndex;
     this.dragStartRowIndex = rowIndex;
     this.dragEndColumnIndex = columnIndex;
     this.dragEndRowIndex = rowIndex;
-
-    this.eventAggregator.publish(
-      EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex),
-      {
-        selected: true,
-      },
-    );
+    this.updateAllSelecedCells();
   };
 
   public onMouseOverGridCell = (columnIndex: number, rowIndex: number) => {
@@ -89,17 +97,13 @@ export class GridTestPage {
     const diff = calculateDiff(before, after);
     if (diff.length) {
       diff.forEach(([columnIndex, rowIndex]) => {
-        this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
-          selected: false,
-        });
+        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
       });
     }
 
     this.iterateOverSelectedCells((columnIndex, rowIndex) => {
       if (!this.isInArea(columnIndex, rowIndex)) return;
-      this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
-        selected: true,
-      });
+      this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
     });
   };
 
@@ -129,9 +133,197 @@ export class GridTestPage {
     return is;
   }
 
+  private isCursorInsidePanel(panel: GridPanel): boolean {
+    const { col, row, width, height } = panel;
+    const endColumn = col + width;
+    const endRow = row + height;
+
+    const isInColumn =
+      this.dragStartColumnIndex >= col &&
+      this.dragStartColumnIndex <= endColumn;
+    const isInRow =
+      this.dragStartRowIndex >= row && this.dragStartRowIndex <= endRow;
+    const is = isInRow && isInColumn;
+    return is;
+  }
+
   public deletePanel(panel: GridPanel): void {
     const filtered = this.gridPanels.filter((p) => p !== panel);
     this.gridPanels = filtered;
+  }
+
+  private initGridNavigation(): void {
+    const vimInit = new VimInit();
+    new KeyMappingService().init(
+      {
+        Enter: () => {
+          console.log("enter");
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,164] this.gridPanels: ", this.gridPanels);
+          const targetPanel = this.getPanelUnderCursor();
+          if (!targetPanel) return;
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,166] targetPanel: ", targetPanel);
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,169] targetPanel.id: ", targetPanel.id);
+
+          this.activePanelElement = document.querySelector(
+            `[data-panel-id="${targetPanel.id}"] textarea`,
+          ) as HTMLElement;
+          this.activePanelElement.focus();
+        },
+        Escape: () => {
+          console.log("escape");
+          (document.activeElement as HTMLElement).blur();
+        },
+        Tab: () => {
+          return this.setActivePanel();
+        },
+
+        "<Shift>Tab": () => {
+          return this.setActivePanel();
+        },
+      },
+      {
+        [VimMode.NORMAL]: [],
+        [VimMode.VISUAL]: [
+          {
+            key: "<Space>pa",
+            execute: () => {
+              this.addPanel();
+              this.unselectAllSelecedCells();
+              this.dragEndColumnIndex = this.dragStartColumnIndex;
+              this.dragEndRowIndex = this.dragStartRowIndex;
+              this.updateAllSelecedCells();
+              vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+            },
+          },
+        ],
+      },
+    );
+
+    const mapping = {
+      [VimMode.NORMAL]: {
+        [VIM_COMMAND.cursorRight]: () => {
+          this.unselectAllSelecedCells();
+          const a = this.dragStartColumnIndex + 1;
+          this.dragStartColumnIndex = cycleInRange(0, this.columnSize, a);
+          const b = this.dragEndColumnIndex + 1;
+          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.cursorLeft]: () => {
+          this.unselectAllSelecedCells();
+          const a = this.dragStartColumnIndex - 1;
+          this.dragStartColumnIndex = cycleInRange(0, this.columnSize, a);
+          const b = this.dragEndColumnIndex - 1;
+          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.cursorUp]: () => {
+          this.unselectAllSelecedCells();
+          const a = this.dragStartRowIndex - 1;
+          this.dragStartRowIndex = cycleInRange(0, this.rowSize, a);
+          const b = this.dragEndRowIndex - 1;
+          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.cursorDown]: () => {
+          this.unselectAllSelecedCells();
+          const a = this.dragStartRowIndex + 1;
+          this.dragStartRowIndex = cycleInRange(0, this.rowSize, a);
+          const b = this.dragEndRowIndex + 1;
+          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.enterNormalMode]: () => {
+          this.unselectAllSelecedCells();
+          this.dragEndColumnIndex = this.dragStartColumnIndex;
+          this.dragEndRowIndex = this.dragStartRowIndex;
+          this.updateAllSelecedCells();
+        },
+      },
+      [VimMode.VISUAL]: {
+        [VIM_COMMAND.cursorRight]: () => {
+          console.log("VISUAL");
+          this.unselectAllSelecedCells();
+          const b = this.dragEndColumnIndex + 1;
+          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.cursorLeft]: () => {
+          this.unselectAllSelecedCells();
+          const b = this.dragEndColumnIndex - 1;
+          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.cursorUp]: () => {
+          this.unselectAllSelecedCells();
+          const b = this.dragEndRowIndex - 1;
+          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.cursorDown]: () => {
+          this.unselectAllSelecedCells();
+          const b = this.dragEndRowIndex + 1;
+          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.enterVisualMode]: () => {
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
+        },
+        // [VIM_COMMAND.]: () => {},
+      },
+    };
+    const vimOptions: VimOptions = {
+      container: this.gridTestContainerRef,
+      vimState: {
+        id: "grid-navigation",
+        mode: VimMode.NORMAL,
+        cursor: { line: 0, col: 0 },
+        lines: [{ text: "    " }],
+      },
+      hooks: {
+        commandListener: (result) => {
+          const mode = mapping[result.vimState.mode];
+          if (!mode) return;
+          const command = mode[result.targetCommand];
+          if (!command) return;
+          command();
+        },
+      },
+    };
+    vimInit.init(vimOptions);
+  }
+
+  private setActivePanel(): boolean {
+    window.setTimeout(() => {
+      const active = document.activeElement as HTMLElement;
+      const panelElement = findParentElement(
+        active,
+        (element) => !!element.dataset.panelId,
+      );
+      if (!panelElement) return;
+      const panelId = panelElement.dataset.panelId;
+      const targetPanel = this.gridPanels.find((p) => p.id === panelId);
+      this.setCursorAtPanel(targetPanel);
+      this.activePanel = targetPanel;
+    }, 100);
+    return false;
+  }
+
+  private setCursorAtPanel(panel: GridPanel): void {
+    this.unselectAllSelecedCells();
+    this.dragStartColumnIndex = panel.col;
+    this.dragEndColumnIndex = panel.col;
+    this.dragStartRowIndex = panel.row;
+    this.dragEndRowIndex = panel.row;
+    this.updateAllSelecedCells();
+  }
+
+  private getPanelUnderCursor(): GridPanel | undefined {
+    const target = this.gridPanels.find((p) => {
+      const is = this.isCursorInsidePanel(p);
+      return is;
+    });
+    return target;
   }
 
   private addGridPanelToSelection(): void {
@@ -168,12 +360,18 @@ export class GridTestPage {
     return result;
   }
 
+  private updateAllSelecedCells(): void {
+    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
+      if (this.isInArea(columnIndex, rowIndex)) {
+        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
+      }
+    });
+  }
+
   private unselectAllSelecedCells(): void {
     this.iterateOverSelectedCells((columnIndex, rowIndex) => {
       if (this.isInArea(columnIndex, rowIndex)) {
-        this.eventAggregator.publish(EV_CELL_SELECTED(columnIndex, rowIndex), {
-          selected: false,
-        });
+        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = false;
       }
     });
   }

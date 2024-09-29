@@ -7,6 +7,7 @@ export default defineConfig({
     open: !process.env.CI,
     port: 9000,
     host: true,
+    hmr: false,
   },
   esbuild: {
     target: "es2022",
@@ -16,5 +17,12 @@ export default defineConfig({
       useDev: true,
     }),
     nodePolyfills(),
+    {
+      name: "full-reload",
+      handleHotUpdate({ server }) {
+        server.ws.send({ type: "full-reload" });
+        return [];
+      },
+    },
   ],
 });

@@ -16,8 +16,13 @@ import { Logger } from "../../../../common/logging/logging";
 
 const logger = new Logger("KeyMappingService");
 
+/** Name from keydown event */
+type EventKeyName = string;
 interface IKeyMappingMapping {
-  [key: string]: () => void;
+  /**
+   * Return `false` to prevent default
+   */
+  [key: EventKeyName]: () => boolean | void;
 }
 
 /**
@@ -115,7 +120,8 @@ export class KeyMappingService {
       // console.clear();
       const finalKey = KeyMappingService.getKeyFromEvent(event);
       if (mappings[finalKey]) {
-        mappings[finalKey]();
+        const dontPrevent = mappings[finalKey]();
+        if (dontPrevent === false) return;
         event.preventDefault();
       }
     });

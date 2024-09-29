@@ -16,19 +16,19 @@ export class GridCell {
   ) {}
 
   attached() {
-    this.eventAggregator.subscribe(
-      EV_CELL_SELECTED(this.column, this.row),
-      (payload: any) => {
-        if (!payload) return;
-        const selected = payload.selected;
-        this.selected = selected;
-        //if (!selected) {
-        //  /*prettier-ignore*/ console.log("[grid-cell.ts,26] selected: ", selected);
-        //  const logMe = `${this.column},${this.row}`;
-        //  /*prettier-ignore*/ console.log("[grid-cell.ts,23] logMe: ", logMe);
-        //}
-        // /*prettier-ignore*/ console.log("[grid-cell.ts,25] this.selected: ", this.selected);
-      },
-    );
+    //this.eventAggregator.subscribe(
+    //  EV_CELL_SELECTED(this.column, this.row),
+    //  (payload: any) => {
+    //    if (!payload) return;
+    //    const selected = payload.selected;
+    //    this.selected = selected;
+    //    //if (!selected) {
+    //    //  /*prettier-ignore*/ console.log("[grid-cell.ts,26] selected: ", selected);
+    //    //  const logMe = `${this.column},${this.row}`;
+    //    //  /*prettier-ignore*/ console.log("[grid-cell.ts,23] logMe: ", logMe);
+    //    //}
+    //    // /*prettier-ignore*/ console.log("[grid-cell.ts,25] this.selected: ", this.selected);
+    //  },
+    //);
   }
 }

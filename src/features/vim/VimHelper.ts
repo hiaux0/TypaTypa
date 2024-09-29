@@ -3,13 +3,14 @@ import { NormalMode } from "./modes/NormalMode";
 import { IVimState, VimMode } from "./vim-types";
 
 interface SwitchModeOptions {
-  insert?: () => void;
   normal?: () => void;
+  insert?: () => void;
+  visual?: () => void;
 }
 
 export class VimHelper {
   static switchModes(mode: VimMode, switchModeOptions: SwitchModeOptions) {
-    const { insert, normal } = switchModeOptions;
+    const { insert, normal, visual } = switchModeOptions;
 
     switch (mode) {
       case VimMode.NORMAL: {
@@ -18,6 +19,10 @@ export class VimHelper {
       }
       case VimMode.INSERT: {
         if (insert) return insert();
+        break;
+      }
+      case VimMode.VISUAL: {
+        if (visual) return visual();
         break;
       }
       default: {

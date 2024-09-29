@@ -1,3 +1,4 @@
+import { VIM_COMMAND } from "./vim-commands-repository";
 import { IVimState, VimOptions } from "./vim-types";
 import { VimInputHandler } from "./VimInputHandler";
 
@@ -11,6 +12,17 @@ export class VimInit {
 
     if (!options) return;
     this.options = options;
+  }
+
+  public executeCommandSequence(sequence: string): void {
+    this.vimInputHandler.executeCommandSequence(sequence);
+  }
+
+  public executeCommand(
+    commandName: VIM_COMMAND,
+    inputForCommand: string,
+  ): void {
+    this.vimInputHandler.executeCommand(commandName, inputForCommand);
   }
 
   public reload(vimState: IVimState) {
