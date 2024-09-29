@@ -158,7 +158,6 @@ export class VimInputHandler {
       finalCommand = KeyMappingService.getLastCommand();
       finalPressedKey = KeyMappingService.getLastKey();
     }
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,157] finalCommand: ", finalCommand);
 
     if (finalCommand?.execute) {
       finalCommand.execute();
@@ -166,9 +165,9 @@ export class VimInputHandler {
       const vimState = this.vimCore.executeCommandSequence(commandSequence);
       if (!vimState) return;
       this.updateVimState(vimState);
-    } else if (commandName) {
+    } else if (finalCommand?.command) {
       const vimState = this.vimCore.executeCommand(
-        VIM_COMMAND[commandName],
+        VIM_COMMAND[finalCommand.command],
         finalPressedKey,
       );
       if (!vimState) return;
@@ -177,7 +176,7 @@ export class VimInputHandler {
       if (this.options?.hooks?.commandListener)
         this.options.hooks.commandListener({
           vimState,
-          targetCommand: VIM_COMMAND[commandName],
+          targetCommand: VIM_COMMAND[finalCommand.command],
           keys: finalKey,
         });
     }
