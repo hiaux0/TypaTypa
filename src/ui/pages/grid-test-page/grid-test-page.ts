@@ -4,7 +4,11 @@ import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
 import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
-import { VimMode, VimOptions } from "../../../features/vim/vim-types";
+import {
+  KeyBindingModes,
+  VimMode,
+  VimOptions,
+} from "../../../features/vim/vim-types";
 import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
 import { cycleInRange } from "../../../common/modules/numbers";
 import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMappingService";
@@ -112,6 +116,10 @@ export class GridTestPage {
     this.resetDrag();
   }
 
+  public onPanelClicked(panel: GridPanel): void {
+    this.setActivePanelFromHTMLElement();
+  }
+
   public addPanel(): void {
     this.unselectAllSelecedCells();
     this.addGridPanelToSelection();
@@ -154,52 +162,90 @@ export class GridTestPage {
 
   private initGridNavigation(): void {
     const vimInit = new VimInit();
-    new KeyMappingService().init(
-      {
-        Enter: () => {
-          console.log("enter");
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,164] this.gridPanels: ", this.gridPanels);
-          const targetPanel = this.getPanelUnderCursor();
-          if (!targetPanel) return;
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,166] targetPanel: ", targetPanel);
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,169] targetPanel.id: ", targetPanel.id);
-
-          this.activePanelElement = document.querySelector(
-            `[data-panel-id="${targetPanel.id}"] textarea`,
-          ) as HTMLElement;
-          this.activePanelElement.focus();
-        },
-        Escape: () => {
-          console.log("escape");
-          (document.activeElement as HTMLElement).blur();
-        },
-        Tab: () => {
-          return this.setActivePanel();
-        },
-
-        "<Shift>Tab": () => {
-          return this.setActivePanel();
-        },
+    const mappingByKey = {
+      Escape: () => {
+        (document.activeElement as HTMLElement).blur();
       },
-      {
-        [VimMode.NORMAL]: [],
-        [VimMode.VISUAL]: [
-          {
-            key: "<Space>pa",
-            execute: () => {
-              this.addPanel();
-              this.unselectAllSelecedCells();
-              this.dragEndColumnIndex = this.dragStartColumnIndex;
-              this.dragEndRowIndex = this.dragStartRowIndex;
-              this.updateAllSelecedCells();
-              vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-            },
+      Tab: () => {
+        return this.setActivePanelFromHTMLElement();
+      },
+
+      "<Shift>Tab": () => {
+        return this.setActivePanelFromHTMLElement();
+      },
+    };
+    const mappingByMode: KeyBindingModes = {
+      [VimMode.NORMAL]: [
+        {
+          key: "<Enter>",
+          desc: "Focus Panel at cursor",
+          execute: () => {
+            console.log("enter");
+            const targetPanel = this.getPanelUnderCursor();
+            if (!targetPanel) return;
+
+            this.activePanelElement = document.querySelector(
+              `[data-panel-id="${targetPanel.id}"] textarea`,
+            ) as HTMLElement;
+            this.activePanelElement.focus();
           },
-        ],
-      },
-    );
+        },
+        {
+          key: "<Space>pn",
+          desc: "[P]anel [N]ext",
+          execute: () => {
+            const activePanelId =
+              this.activePanel?.id ?? this.gridPanels[0]?.id;
 
-    const mapping = {
+            if (activePanelId === undefined) return;
+
+            const currentIndex = this.gridPanels.findIndex(
+              (p) => p.id === activePanelId,
+            );
+
+            const nextIndex = cycleInRange(
+              0,
+              this.gridPanels.length,
+              currentIndex + 1,
+            );
+            const nextPanel = this.gridPanels[nextIndex];
+
+            if (!nextPanel) return;
+            this.setActivePanel(nextPanel);
+          },
+        },
+        {
+          key: "a",
+          execute: () => {
+            console.log("enter");
+            const targetPanel = this.getPanelUnderCursor();
+            if (!targetPanel) return;
+
+            this.activePanelElement = document.querySelector(
+              `[data-panel-id="${targetPanel.id}"] textarea`,
+            ) as HTMLElement;
+            this.activePanelElement.focus();
+          },
+        },
+      ],
+      [VimMode.VISUAL]: [
+        {
+          key: "<Space>pa",
+          execute: () => {
+            console.log("space pa");
+            this.addPanel();
+            this.unselectAllSelecedCells();
+            this.dragEndColumnIndex = this.dragStartColumnIndex;
+            this.dragEndRowIndex = this.dragStartRowIndex;
+            this.updateAllSelecedCells();
+            vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+          },
+        },
+      ],
+    };
+    new KeyMappingService().init(mappingByKey, mappingByMode);
+
+    const mappingByCommandName = {
       [VimMode.NORMAL]: {
         [VIM_COMMAND.cursorRight]: () => {
           this.unselectAllSelecedCells();
@@ -282,7 +328,7 @@ export class GridTestPage {
       },
       hooks: {
         commandListener: (result) => {
-          const mode = mapping[result.vimState.mode];
+          const mode = mappingByCommandName[result.vimState.mode];
           if (!mode) return;
           const command = mode[result.targetCommand];
           if (!command) return;
@@ -293,7 +339,10 @@ export class GridTestPage {
     vimInit.init(vimOptions);
   }
 
-  private setActivePanel(): boolean {
+  /**
+   * When panel gets focused, set `activePanel` entity based on that element.
+   */
+  private setActivePanelFromHTMLElement(): boolean {
     window.setTimeout(() => {
       const active = document.activeElement as HTMLElement;
       const panelElement = findParentElement(
@@ -303,12 +352,19 @@ export class GridTestPage {
       if (!panelElement) return;
       const panelId = panelElement.dataset.panelId;
       const targetPanel = this.gridPanels.find((p) => p.id === panelId);
-      this.setCursorAtPanel(targetPanel);
-      this.activePanel = targetPanel;
+      this.setActivePanel(targetPanel);
     }, 100);
     return false;
   }
 
+  private setActivePanel(panel: GridPanel): void {
+    this.setCursorAtPanel(panel);
+    this.activePanel = panel;
+  }
+
+  /**
+   * Set cursor at panel, and update the selected cells.
+   */
   private setCursorAtPanel(panel: GridPanel): void {
     this.unselectAllSelecedCells();
     this.dragStartColumnIndex = panel.col;
@@ -405,7 +461,6 @@ export class GridTestPage {
     const start = `${this.dragStartColumnIndex}:${this.dragStartRowIndex}`;
     const end = `${this.dragEndColumnIndex}:${this.dragEndRowIndex}`;
     const all = `[${start}] - [${end}]`;
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,20] all: ", all);
   }
 }
 

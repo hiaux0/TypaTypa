@@ -37,6 +37,7 @@
   - [ ] loop
 
 ## Vim
+- [ ] fix: merging with same key, should overwrite existing
 - [ ] refac: mapping-- `new KeyMappingService().init(` should be in `initVim`
 - [ ] feat: vim hydra, eg `<space>pn` `nnn` will repeat `<space>pn`
   - keep track of "last" commandSequence
@@ -49,11 +50,7 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
-- [ ] feat: panels--- tab should set "active"
-- [!] feat: panels--- use shortcuts to move between panels
-  - 1.
-    - <space>pn
-    - <space>pp
+- [ ] feat: panels--- use shortcuts to move between panels
   - 2. this is lower prio
     - or by hjkl?
 - [ ] feat: save to local storage
@@ -71,6 +68,11 @@
 # Done
 ## Grid
 
+- [x] feat: panels--- use shortcuts to move between panels
+  - 1.
+    - <space>pn
+    - <space>pp
+- [x] feat: panels--- tab should set "active"
 - [x] feat: cells--- navigate with shortcuts
 - [x] feat: delete panels
 - [x] feat: toolbar: add panel at seletion

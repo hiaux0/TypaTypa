@@ -32,10 +32,10 @@ src/features/vim/VimInputHandler.ts
 %% Grid Vim
 docs/todo.md
 arrow
-src/ui/attributes/draggable.ts
+src/common/logging/logging.ts
 src/ui/pages/grid-test-page/grid-test-page.ts
 src/ui/pages/grid-test-page/grid-test-page.html
-src/ui/pages/grid-test-page/grid-features/grid-navigation.ts
+src/ui/attributes/draggable.ts
 src/features/vim/vimCore/VimCore.ts
 src/features/vim/vimCore/commands/VimCommandManager.ts
 src/features/vim/VimInputHandler.ts

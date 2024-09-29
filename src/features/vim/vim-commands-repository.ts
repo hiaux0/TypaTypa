@@ -124,6 +124,10 @@ export type VimCommandNames = keyof typeof VIM_COMMAND;
 export const VIM_COMMANDS_THAT_CHANGE_TO_NORMAL_MODE = ["visualDelete"];
 
 export interface VimCommand {
+  /**
+   * Modifiers: <mod>
+   * Full: <modA><modB>keyAkeyB
+   */
   key: string;
   command?: VimCommandNames;
   sequence?: string;

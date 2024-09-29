@@ -56,6 +56,7 @@
         "
         draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT;"
         data-panel-id.bind="panel.id"
+        pointerdown.trigger="onPanelClicked(panel)"
       >
         <!-- <button class="panel-item">Panel ${$index}</button> -->
         <textarea
