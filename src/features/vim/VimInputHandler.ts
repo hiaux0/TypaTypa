@@ -148,23 +148,35 @@ export class VimInputHandler {
     const mode = this.vimCore.getVimState().mode;
     if (!mode) return;
     const finalKey = KeyMappingService.getKeyFromEvent(event);
-    const { commandName, commandSequence } =
+    const { command, commandName, commandSequence } =
       KeyMappingService.prepareCommand(finalKey, mode) ?? {};
     const pressedKey = ShortcutService.getPressedKey(event);
 
-    if (commandSequence) {
+    let finalCommand = command;
+    let finalPressedKey = pressedKey;
+    if (commandName === VIM_COMMAND.repeatLastCommand) {
+      finalCommand = KeyMappingService.getLastCommand();
+      finalPressedKey = KeyMappingService.getLastKey();
+    }
+
+    if (finalCommand?.execute) {
+      finalCommand.execute();
+    } else if (commandSequence) {
       const vimState = this.vimCore.executeCommandSequence(commandSequence);
       if (!vimState) return;
       this.updateVimState(vimState);
     } else if (commandName) {
-      const vimState = this.vimCore.executeCommand(commandName, pressedKey);
+      const vimState = this.vimCore.executeCommand(
+        VIM_COMMAND[commandName],
+        finalPressedKey,
+      );
       if (!vimState) return;
       this.updateVimState(vimState);
 
       if (this.options?.hooks?.commandListener)
         this.options.hooks.commandListener({
           vimState,
-          targetCommand: commandName,
+          targetCommand: VIM_COMMAND[commandName],
           keys: finalKey,
         });
     }
@@ -174,12 +186,19 @@ export class VimInputHandler {
         // event.preventDefault();
       },
       normal: () => {
-        if (commandName) event.preventDefault();
+        if (commandName) {
+          event.preventDefault();
+        }
       },
     });
 
     if (pressedKey === SPACE) {
       event.preventDefault();
+    }
+    if (commandName !== VIM_COMMAND.repeatLastCommand) {
+      KeyMappingService.setLastKey(finalKey);
+      KeyMappingService.setLastCommand(command);
+      /*prettier-ignore*/ console.log("[VimInputHandler.ts,202] commandName: ", commandName);
     }
   };
 

@@ -38,6 +38,7 @@ export enum VIM_COMMAND {
   "paste" = "paste",
   "pasteVim" = "pasteVim",
   "redo" = "redo",
+  "repeatLastCommand" = "repeatLastCommand",
   "replace" = "replace",
   "snippet" = "snippet",
   "space" = "space",
@@ -58,6 +59,7 @@ export enum VIM_COMMAND {
   "toggleCheckbox" = "toggleCheckbox",
   "hint" = "hint",
   "shift" = "shift",
+  "customExecute" = "customExecute",
   "nothing" = "nothing",
 }
 
@@ -135,6 +137,7 @@ export interface VimCommand {
   args?: {
     text?: string;
   };
+  desc?: string;
 }
 
 export interface SynonymKey {

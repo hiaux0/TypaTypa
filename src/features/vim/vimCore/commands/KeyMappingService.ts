@@ -98,11 +98,14 @@ interface IPrepareCommandReturn {
   commandName: VIM_COMMAND;
   commandSequence?: string;
   keySequence: string;
+  command?: VimCommand;
 }
 
 export class KeyMappingService {
-  static keyBindings: KeyBindingModes = keyBindings;
+  private static keyBindings: KeyBindingModes = keyBindings;
   private static potentialCommands: VimCommand[] = [];
+  private static lastCommand: VimCommand;
+  private static lastKey: string;
   /** If a command did not trigger, save key */
   private static queuedKeys: string[] = [];
 
@@ -132,20 +135,38 @@ export class KeyMappingService {
 
     const merged = {
       ...this.keyBindings,
-      [VimMode.NORMAL]: [
-        ...(this.keyBindings[VimMode.NORMAL] ?? []),
-        ...(additionalKeyBindings[VimMode.NORMAL] ?? []),
-      ],
+      [VimMode.NORMAL]: this.overwriteExistingKeyBindings(
+        this.keyBindings[VimMode.NORMAL],
+        additionalKeyBindings[VimMode.NORMAL],
+      ),
       [VimMode.INSERT]: [
-        ...(this.keyBindings[VimMode.INSERT] ?? []),
         ...(additionalKeyBindings[VimMode.INSERT] ?? []),
+        ...(this.keyBindings[VimMode.INSERT] ?? []),
       ],
       [VimMode.VISUAL]: [
-        ...(this.keyBindings[VimMode.VISUAL] ?? []),
         ...(additionalKeyBindings[VimMode.VISUAL] ?? []),
+        ...(this.keyBindings[VimMode.VISUAL] ?? []),
       ],
     };
     this.keyBindings = merged;
+  }
+
+  private static overwriteExistingKeyBindings(
+    existing: VimCommand[],
+    additional: VimCommand[],
+  ): VimCommand[] {
+    additional.forEach((additionalBinding) => {
+      const foundIndex = existing.findIndex((existingBinding) => {
+        const okay = existingBinding.key === additionalBinding.key;
+        return okay;
+      });
+      if (foundIndex > 0) {
+        existing[foundIndex] = additionalBinding;
+        return;
+      }
+      existing.push(additionalBinding);
+    });
+    return existing;
   }
 
   /**
@@ -165,22 +186,14 @@ export class KeyMappingService {
     key: string,
     mode: VimMode,
   ): IPrepareCommandReturn | undefined {
-    const { potentialCommands, targetCommand } = this.findPotentialCommand(
-      key,
-      [],
-      mode,
-    );
-    if (potentialCommands?.length) {
-      /* prettier-ignore */ logger.culogger.debug(['Awaiting potential commands: %o', potentialCommands], {}, (...r) => console.log(...r));
-    } else {
-      /* prettier-ignore */ logger.culogger.debug([ 'No command for key: %s in Mode: %s ((vim.ts-getCommandName))', key, mode ], { isError: false }, (...r) => console.log(...r));
-    }
+    const { targetCommand } = this.findPotentialCommand(key, [], mode);
 
     if (!targetCommand) return;
 
     /** Sequence mapping */
     if (targetCommand.sequence) {
       return {
+        command: targetCommand,
         commandName: targetCommand.command as any,
         commandSequence: targetCommand.sequence,
         keySequence: key,
@@ -189,14 +202,17 @@ export class KeyMappingService {
 
     /** Sequence mapping */
     if (targetCommand.execute) {
-      targetCommand.execute();
-      return;
+      return {
+        command: targetCommand,
+        commandName: VIM_COMMAND.customExecute,
+        keySequence: key,
+      };
     }
 
     /** Standard command */
-
     if (targetCommand) {
       return {
+        command: targetCommand,
         commandName: targetCommand.command as any,
         keySequence: key,
       };
@@ -206,8 +222,12 @@ export class KeyMappingService {
     const commandName = command?.command;
     /* prettier-ignore */ logger.culogger.debug(['command', command], {}, (...r)=>console.log(...r));
 
-    // @ts-ignore
-    return { commandName, keySequence: finalKey };
+    return {
+      command: targetCommand,
+      // @ts-ignore -- TODO: adjust type
+      commandName,
+      keySequence: key,
+    };
   }
 
   public static getKeyFromEvent(event: KeyboardEvent) {
@@ -271,6 +291,8 @@ export class KeyMappingService {
       } else if (this.potentialCommands.length === 1) {
         this.potentialCommands = [];
       }
+
+      /*prettier-ignore*/ logPotentialCommands(this.potentialCommands, input, mode);
       return commandAwaitingNextInput;
     }
 
@@ -330,6 +352,7 @@ export class KeyMappingService {
       this.potentialCommands = potentialCommands;
     }
 
+    /*prettier-ignore*/ logPotentialCommands(potentialCommands, input, mode);
     return { targetCommand, potentialCommands, keySequence };
   }
 
@@ -345,6 +368,22 @@ export class KeyMappingService {
   //   });
   //   return has;
   // }
+
+  public static getLastCommand(): VimCommand {
+    return this.lastCommand;
+  }
+
+  public static setLastCommand(lastCommand: VimCommand): void {
+    this.lastCommand = lastCommand;
+  }
+
+  public static getLastKey(): string {
+    return this.lastKey;
+  }
+
+  public static setLastKey(lastKey: string): void {
+    this.lastKey = lastKey;
+  }
 
   private static emptyQueuedKeys() {
     this.queuedKeys = [];
@@ -365,6 +404,18 @@ export class KeyMappingService {
   public static isEnter(event: KeyboardEvent): boolean {
     const is = event.key === "Enter";
     return is;
+  }
+}
+
+function logPotentialCommands(
+  potentialCommands: VimCommand[],
+  key: string,
+  mode: VimMode,
+): void {
+  if (potentialCommands?.length) {
+    /* prettier-ignore */ logger.culogger.debug(['Awaiting potential commands: %o', potentialCommands], {}, (...r) => console.log(...r));
+  } else {
+    /* prettier-ignore */ logger.culogger.debug([ 'No command for key: %s in Mode: %s ((vim.ts-getCommandName))', key, mode ], { isError: false }, (...r) => console.log(...r));
   }
 }
 
