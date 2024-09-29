@@ -158,6 +158,7 @@ export class VimInputHandler {
       finalCommand = KeyMappingService.getLastCommand();
       finalPressedKey = KeyMappingService.getLastKey();
     }
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,157] finalCommand: ", finalCommand);
 
     if (finalCommand?.execute) {
       finalCommand.execute();
@@ -195,10 +196,13 @@ export class VimInputHandler {
     if (pressedKey === SPACE) {
       event.preventDefault();
     }
-    if (commandName !== VIM_COMMAND.repeatLastCommand) {
+
+    const saveLast =
+      commandName !== VIM_COMMAND.repeatLastCommand &&
+      !VimHelper.isModeChangingCommand(commandName);
+    if (saveLast) {
       KeyMappingService.setLastKey(finalKey);
       KeyMappingService.setLastCommand(command);
-      /*prettier-ignore*/ console.log("[VimInputHandler.ts,202] commandName: ", commandName);
     }
   };
 

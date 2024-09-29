@@ -1,5 +1,6 @@
 import { StringUtil } from "../../common/modules/string/string";
 import { NormalMode } from "./modes/NormalMode";
+import { VIM_COMMAND, VIM_MODE_COMMANDS } from "./vim-commands-repository";
 import { IVimState, VimMode } from "./vim-types";
 
 interface SwitchModeOptions {
@@ -43,6 +44,12 @@ export class VimHelper {
 
     const changed = oldMode !== newMode;
     return changed;
+  }
+
+  public static isModeChangingCommand(commandName: VIM_COMMAND): boolean {
+    const modeChangingCommands = VIM_MODE_COMMANDS;
+    const is = modeChangingCommands.includes(commandName);
+    return is;
   }
 
   public static getWordUnderCursor(

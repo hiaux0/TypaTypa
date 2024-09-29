@@ -11,6 +11,7 @@ import { VimStateClass } from "../../vim-state";
 import { StringUtil } from "../../../../common/modules/string/string";
 import { VisualLineMode } from "../../modes/VisualLineMode";
 import { Logger } from "../../../../common/logging/logging";
+import { VimHelper } from "../../VimHelper";
 
 const logger = new Logger("VimCommandManagerv3");
 
@@ -39,7 +40,7 @@ export class VimCommandManager {
     const previousMode = vimState.mode;
 
     /** Changed Mode */
-    if (this.isModeChangingCommand(commandName)) {
+    if (VimHelper.isModeChangingCommand(commandName)) {
       const result = this.executeModeChange(commandName);
       return result;
     }
@@ -107,12 +108,6 @@ export class VimCommandManager {
 
     // @ts-ignore
     return finalMode;
-  }
-
-  private isModeChangingCommand(commandName: VIM_COMMAND): boolean {
-    const modeChangingCommands = VIM_MODE_COMMANDS;
-    const is = modeChangingCommands.includes(commandName);
-    return is;
   }
 
   private executeModeChange(commandName: VIM_COMMAND): IVimState | undefined {
