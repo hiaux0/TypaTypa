@@ -119,9 +119,10 @@ export class GridTestPage {
     this.setActivePanelFromHTMLElement();
   }
 
-  public addPanel(): void {
+  public addPanel(): GridPanel {
     this.unselectAllSelecedCells();
-    this.addGridPanelToSelection();
+    const newPanel = this.addGridPanelToSelection();
+    return newPanel;
   }
 
   public updatePanelCoords = (panel: GridPanel): ((a, b) => void) => {
@@ -194,10 +195,25 @@ export class GridTestPage {
           key: "<Enter>",
           desc: "Focus Panel at cursor",
           execute: () => {
-            console.log("enter");
             const targetPanel = this.getPanelUnderCursor();
-            if (!targetPanel) return;
+            if (!targetPanel) {
+              // Add new panel
+              const newPanel = this.addPanel();
+              this.unselectAllSelecedCells();
+              this.dragEndColumnIndex = this.dragStartColumnIndex;
+              this.dragEndRowIndex = this.dragStartRowIndex;
+              this.updateAllSelecedCells();
+              this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
 
+              // Focus new panel
+              this.activePanelElement = document.querySelector(
+                `[data-panel-id="${newPanel.id}"] textarea`,
+              ) as HTMLElement;
+              this.activePanelElement.focus();
+              return;
+            }
+
+            // Focus panel
             this.activePanelElement = document.querySelector(
               `[data-panel-id="${targetPanel.id}"] textarea`,
             ) as HTMLElement;
@@ -253,6 +269,25 @@ export class GridTestPage {
             this.dragEndRowIndex = this.dragStartRowIndex;
             this.updateAllSelecedCells();
             this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+          },
+        },
+        {
+          key: "<Enter>",
+          execute: () => {
+            // Add new panel
+            const newPanel = this.addPanel();
+            this.unselectAllSelecedCells();
+            this.dragEndColumnIndex = this.dragStartColumnIndex;
+            this.dragEndRowIndex = this.dragStartRowIndex;
+            this.updateAllSelecedCells();
+            this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+
+            // Focus new panel
+            this.activePanelElement = document.querySelector(
+              `[data-panel-id="${newPanel.id}"] textarea`,
+            ) as HTMLElement;
+            this.activePanelElement.focus();
+            return true;
           },
         },
       ],
@@ -396,7 +431,7 @@ export class GridTestPage {
     return target;
   }
 
-  private addGridPanelToSelection(): void {
+  private addGridPanelToSelection(): GridPanel {
     const selected = this.getSelectedArea();
     const [[startColumn, startRow], [endColumn, endRow]] = selected;
     const width = endColumn - startColumn + 1;
@@ -410,6 +445,7 @@ export class GridTestPage {
       type: "button",
     };
     this.gridPanels.push(newPanel);
+    return newPanel;
   }
 
   private getSelectedArea() {

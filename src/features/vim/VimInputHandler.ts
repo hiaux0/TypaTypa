@@ -159,8 +159,13 @@ export class VimInputHandler {
       finalPressedKey = KeyMappingService.getLastKey();
     }
 
+    let preventDefault = false;
     if (finalCommand?.execute) {
-      finalCommand.execute();
+      const response = finalCommand.execute();
+      /*prettier-ignore*/ console.log("[VimInputHandler.ts,165] response: ", response);
+      if (typeof response === "boolean") {
+        preventDefault = response;
+      }
     } else if (commandSequence) {
       const vimState = this.vimCore.executeCommandSequence(commandSequence);
       if (!vimState) return;
@@ -187,6 +192,13 @@ export class VimInputHandler {
       },
       normal: () => {
         if (commandName) {
+          if (!preventDefault) return;
+          event.preventDefault();
+        }
+      },
+      visual: () => {
+        if (commandName) {
+          if (!preventDefault) return;
           event.preventDefault();
         }
       },

@@ -1,4 +1,3 @@
-
 # Goals
 
 - practice english
@@ -12,6 +11,7 @@
 # Todo
 
 ## Typing
+
 - ui
   - [ ] make background darker when drawer open
 - data
@@ -31,12 +31,13 @@
 - setting
   - not random words, but as the text is
 - topics
-  - [ ] fix(topics): 
+  - [ ] fix(topics):
   - [ ] topics: ctrl+v global -> add into "unsorted" topic
 - typing
   - [ ] loop
 
 ## Vim
+
 - [ ] refac: mapping-- `new KeyMappingService().init(` should be in `initVim`
 
 ## Grid
@@ -46,6 +47,8 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
+- [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
+- [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
 - [ ] feat: panels--- should autoexpand when textarea also growth
   - check "autoinput?" there is a component or custom attribute
 - [ ] feat: panels--- use shortcuts to move between panels
@@ -55,17 +58,19 @@
 - [ ] feat: panels--- grouping-- create groups for panels
 - [ ] feat: panels--- toolbar--- mini toolbar for panels
 - [ ] feat: selection should include panels
-- [ ] feat: toolbar--
-- [ ] feat: layout edit mode
-- [ ] feat: control grid panels via css variables?
-- [ ] feat: how to store column width - a width+height map?
+- [ ] feat: toolbar-- layout edit mode
+- [ ] feat: control grid headers and panels via css variables? (on resize)
+  - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: resize panels
 - [ ] feat: calendar
 - [ ] bug:
-- [ ] bug: cells: selection does not adjust correctl
+
 # Done
+
 ## Grid
 
+- [x] feat: panels--- add new panel on enter
+- [x] bug: cells: selection does not adjust correctl
 - [x] bug: cells---- dragging should go into visual mode
 - [x] bug: panels--- update coords in `panel` entity after dragging
 - [x] feat: panels--- use shortcuts to move between panels
@@ -95,21 +100,23 @@
   - [x] rows and columns grid
 
 ## Typing
-  - [x] fix(topics): search bar appears again
-  - [x] fix(topics): click inside also close
-  - [x] close on outside click
-  - [x] look up: add highlight to current word in the history
-  - [x] "T" Topics
-  - [x] "R" Remember
-  - [x] "D" Dictionary
-  - [x] add button
-  - [x] hook up "topics" with typing
-  - [x] "?" should switch to "dictionary" tab
-  - [x] add search bar
-  - [x] be able to lookup any words
-  - [x] show lookup history
+
+- [x] fix(topics): search bar appears again
+- [x] fix(topics): click inside also close
+- [x] close on outside click
+- [x] look up: add highlight to current word in the history
+- [x] "T" Topics
+- [x] "R" Remember
+- [x] "D" Dictionary
+- [x] add button
+- [x] hook up "topics" with typing
+- [x] "?" should switch to "dictionary" tab
+- [x] add search bar
+- [x] be able to lookup any words
+- [x] show lookup history
 
 ## Vim
+
 - [x] fix: merging with same key, should overwrite existing
 - [x] feat: vim hydra, eg `<space>pn` `nnn` will repeat `<space>pn`
   - keep track of "last" commandSequence

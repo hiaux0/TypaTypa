@@ -133,7 +133,10 @@ export interface VimCommand {
   key: string;
   command?: VimCommandNames;
   sequence?: string;
-  execute?: () => void;
+  /**
+   * Return `false` to prevent default
+   */
+  execute?: () => boolean | void;
   args?: {
     text?: string;
   };
