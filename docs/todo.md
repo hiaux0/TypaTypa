@@ -37,11 +37,7 @@
   - [ ] loop
 
 ## Vim
-- [ ] fix: merging with same key, should overwrite existing
 - [ ] refac: mapping-- `new KeyMappingService().init(` should be in `initVim`
-- [ ] feat: vim hydra, eg `<space>pn` `nnn` will repeat `<space>pn`
-  - keep track of "last" commandSequence
-  - if the last letter is the pressed Key, then repeat?
 
 ## Grid
 
@@ -50,6 +46,8 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
+- [ ] feat: panels--- should autoexpand when textarea also growth
+  - check "autoinput?" there is a component or custom attribute
 - [ ] feat: panels--- use shortcuts to move between panels
   - 2. this is lower prio
     - or by hjkl?
@@ -64,10 +62,12 @@
 - [ ] feat: resize panels
 - [ ] feat: calendar
 - [ ] bug:
+- [ ] bug: cells---- dragging should go into visual mode
 
 # Done
 ## Grid
 
+- [x] bug: panels--- update coords in `panel` entity after dragging
 - [x] feat: panels--- use shortcuts to move between panels
   - 1.
     - <space>pn
@@ -102,7 +102,6 @@
   - [x] "T" Topics
   - [x] "R" Remember
   - [x] "D" Dictionary
-
   - [x] add button
   - [x] hook up "topics" with typing
   - [x] "?" should switch to "dictionary" tab
@@ -110,6 +109,11 @@
   - [x] be able to lookup any words
   - [x] show lookup history
 
+## Vim
+- [x] fix: merging with same key, should overwrite existing
+- [x] feat: vim hydra, eg `<space>pn` `nnn` will repeat `<space>pn`
+  - keep track of "last" commandSequence
+  - if the last letter is the pressed Key, then repeat?
 
 # Features
 

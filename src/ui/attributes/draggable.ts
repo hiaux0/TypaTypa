@@ -8,6 +8,7 @@ export class DraggableCustomAttribute {
   @bindable() dragContainer: HTMLElement;
   @bindable() cellWidth: number;
   @bindable() cellHeight: number;
+  @bindable() onDragEnd: (moveByX: number, moveByY: number) => {};
 
   private element = resolve(INode) as HTMLElement;
 
@@ -27,6 +28,8 @@ export class DraggableCustomAttribute {
   private draggedElementMouseDownY = NaN;
   private draggedElementSoFarX = NaN;
   private draggedElementSoFarY = NaN;
+  private movedByY = 0;
+  private movedByX = 0;
 
   attached(): void {
     this.addPointerEventListeners();
@@ -106,11 +109,11 @@ export class DraggableCustomAttribute {
       const diffYInCells = diffY / this.cellHeight;
       if (diffYInCells !== 0) {
         if (diffYInCells < 0) {
-          const moveBy = Math.ceil(diffYInCells);
-          this.moveGridCell(Math.abs(moveBy), "up");
+          this.movedByY = Math.ceil(diffYInCells);
+          this.moveGridCell(this.movedByY, "y");
         } else {
-          const moveBy = Math.floor(diffYInCells);
-          this.moveGridCell(moveBy, "down");
+          this.movedByY = Math.floor(diffYInCells);
+          this.moveGridCell(this.movedByY, "y");
         }
       }
       // Left
@@ -119,42 +122,35 @@ export class DraggableCustomAttribute {
       const diffXInCells = diffX / this.cellWidth;
       if (diffXInCells !== 0) {
         if (diffXInCells < 0) {
-          const moveBy = Math.ceil(diffXInCells);
-          this.moveGridCell(Math.abs(moveBy), "left");
+          this.movedByX = Math.ceil(diffXInCells);
+          this.moveGridCell(this.movedByX, "x");
         } else {
-          const moveBy = Math.floor(diffXInCells);
-          this.moveGridCell(moveBy, "right");
+          this.movedByX = Math.floor(diffXInCells);
+          this.moveGridCell(this.movedByX, "x");
         }
       }
     });
 
     this.dragContainer.addEventListener("pointerup", () => {
+      if (!this.draggedElement) return;
+      if (!this.isDraggedElement) return;
+
       this.isDraggedElement = false;
       this.draggedElement = null;
+      if (typeof this.onDragEnd === "function") {
+        this.onDragEnd(this.movedByX, this.movedByY);
+      }
     });
   };
 
-  private moveGridCell = (
-    amount: number,
-    direction: "up" | "down" | "left" | "right",
-  ) => {
+  private moveGridCell = (amount: number, direction: "x" | "y") => {
     switch (direction) {
-      case "up": {
-        const relativeY = this.draggedElementStartY - amount * this.cellHeight;
-        this.draggedElement.style.top = `${relativeY}px`;
-        break;
-      }
-      case "down": {
+      case "y": {
         const relativeY = this.draggedElementStartY + amount * this.cellHeight;
         this.draggedElement.style.top = `${relativeY}px`;
         break;
       }
-      case "left": {
-        const relativeX = this.draggedElementStartX - amount * this.cellWidth;
-        this.draggedElement.style.left = `${relativeX}px`;
-        break;
-      }
-      case "right": {
+      case "x": {
         const relativeX = this.draggedElementStartX + amount * this.cellWidth;
         this.draggedElement.style.left = `${relativeX}px`;
         break;

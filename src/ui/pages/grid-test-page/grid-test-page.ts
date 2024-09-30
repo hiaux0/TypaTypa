@@ -59,6 +59,7 @@ export class GridTestPage {
 
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
+    private vimInit: VimInit = resolve(VimInit),
   ) {}
 
   attached() {
@@ -125,6 +126,19 @@ export class GridTestPage {
     this.addGridPanelToSelection();
   }
 
+  public updatePanelCoords = (panel: GridPanel): ((a, b) => void) => {
+    return (moveByX, moveByY) => {
+      const updatedCol = panel.col + moveByX;
+      panel.col = updatedCol;
+      const updatedRow = panel.row + moveByY;
+      panel.row = updatedRow;
+
+      this.unselectAllSelecedCells();
+      this.setCursorAtPanel(panel);
+      this.updateAllSelecedCells();
+    };
+  };
+
   /**
    * A1 - C3
    * B2 ok
@@ -161,7 +175,9 @@ export class GridTestPage {
   }
 
   private initGridNavigation(): void {
-    const vimInit = new VimInit();
+    // const vimInit = new VimInit();
+    // this.vimInit = vimInit;
+
     const mappingByKey = {
       Escape: () => {
         (document.activeElement as HTMLElement).blur();
@@ -238,7 +254,7 @@ export class GridTestPage {
             this.dragEndColumnIndex = this.dragStartColumnIndex;
             this.dragEndRowIndex = this.dragStartRowIndex;
             this.updateAllSelecedCells();
-            vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+            this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
           },
         },
       ],
@@ -336,7 +352,7 @@ export class GridTestPage {
         },
       },
     };
-    vimInit.init(vimOptions);
+    this.vimInit.init(vimOptions);
   }
 
   /**

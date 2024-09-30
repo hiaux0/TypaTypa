@@ -1,6 +1,5 @@
 <!-- A B C D 1 2 3 4 -->
 
-
 <import from="./grid-cell/grid-cell"></import>
 <main ref="gridTestContainerRef" class="grid-test-container">
   <!-- Toolbar -->
@@ -54,7 +53,7 @@
           width: ${(panel.width ?? 1) * CELL_WIDTH}px;
           height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
         "
-        draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT;"
+        draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT; on-drag-end.bind: updatePanelCoords(panel);"
         data-panel-id.bind="panel.id"
         pointerdown.trigger="onPanelClicked(panel)"
       >
