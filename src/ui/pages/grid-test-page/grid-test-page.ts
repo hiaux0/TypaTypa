@@ -39,7 +39,7 @@ export class GridTestPage {
   public dragEndColumnIndex = 5;
   public dragStartRowIndex = 5;
   public dragEndRowIndex = 5;
-  public selectedMap = new Map<string, boolean>();
+  public selectedMap: Record<string, boolean> = {};
 
   public gridPanels: GridPanel[] = [];
   public START_PANEL_TOP = 32;
@@ -64,6 +64,7 @@ export class GridTestPage {
 
   attached() {
     this.initGridNavigation();
+
     this.selectedMap[
       EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
     ] = true;
@@ -74,11 +75,6 @@ export class GridTestPage {
       { id: "2", col: 3, row: 4, width: 4, height: 4, type: "button" },
       { id: "3", col: 8, row: 5, width: 2, height: 2, type: "button" },
     ];
-    this.gridTestContainerRef.addEventListener("mouseup", () => {
-      //this.unselectAllSelecedCells();
-      //this.addGridPanelToSelection();
-      //this.resetDrag();
-    });
   }
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
@@ -95,6 +91,7 @@ export class GridTestPage {
     if (!this.isStartDragGridCell) return;
     const before = this.getSelectedArea();
     this.dragEndColumnIndex = columnIndex;
+
     this.dragEndRowIndex = rowIndex;
 
     const after = this.getSelectedArea();
@@ -102,7 +99,7 @@ export class GridTestPage {
     const diff = calculateDiff(before, after);
     if (diff.length) {
       diff.forEach(([columnIndex, rowIndex]) => {
-        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
+        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = false;
       });
     }
 
@@ -115,6 +112,7 @@ export class GridTestPage {
   public onMouseUpGridCell(): void {
     // this.addGridPanelToSelection();
     this.resetDrag();
+    this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
   }
 
   public onPanelClicked(panel: GridPanel): void {
@@ -451,8 +449,8 @@ export class GridTestPage {
   private iterateOverSelectedCells(
     callback: (columnIndex: number, rowIndex: number) => void,
   ) {
-    const [[startColumn, startRow], [endColumn, endRow]] =
-      this.getSelectedArea();
+    const selected = this.getSelectedArea();
+    const [[startColumn, startRow], [endColumn, endRow]] = selected;
     for (
       let columnIndex = startColumn;
       columnIndex <= endColumn;

@@ -7,7 +7,7 @@ export default defineConfig({
     open: !process.env.CI,
     port: 9000,
     host: true,
-    hmr: false,
+    hmr: true,
   },
   esbuild: {
     target: "es2022",

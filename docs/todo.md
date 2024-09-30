@@ -62,11 +62,11 @@
 - [ ] feat: resize panels
 - [ ] feat: calendar
 - [ ] bug:
-- [ ] bug: cells---- dragging should go into visual mode
-
+- [ ] bug: cells: selection does not adjust correctl
 # Done
 ## Grid
 
+- [x] bug: cells---- dragging should go into visual mode
 - [x] bug: panels--- update coords in `panel` entity after dragging
 - [x] feat: panels--- use shortcuts to move between panels
   - 1.

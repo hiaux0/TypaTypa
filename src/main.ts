@@ -43,10 +43,10 @@ Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
 (<any>window).Slicker = SlickerModule?.Slicker ?? SlickerModule;
 
 // @ts-ignore
-if (import.meta.hot) {
-  // @ts-ignore
-  import.meta.hot.accept(() => {
-    // @ts-ignore
-    import.meta.hot.invalidate();
-  });
-}
+//if (import.meta.hot) {
+//  // @ts-ignore
+//  import.meta.hot.accept(() => {
+//    // @ts-ignore
+//    import.meta.hot.invalidate();
+//  });
+//}
