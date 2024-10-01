@@ -28,17 +28,17 @@ const CELL_WIDTH = 64;
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
-  public rowSize = 12;
-  public columnSize = 13;
+  public rowSize = 10;
+  public columnSize = 8;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
   // Drag and select //
   // Container needs to keep track of these values, because the grid cells are not aware of each other
-  public dragStartColumnIndex = 5;
-  public dragEndColumnIndex = 5;
-  public dragStartRowIndex = 5;
-  public dragEndRowIndex = 5;
+  public dragStartColumnIndex = 3;
+  public dragEndColumnIndex = 3;
+  public dragStartRowIndex = 3;
+  public dragEndRowIndex = 3;
   public selectedMap: Record<string, boolean> = {};
 
   public gridPanels: GridPanel[] = [];
@@ -72,8 +72,9 @@ export class GridTestPage {
     this.gridPanels = [
       // { id: "1", row: 0, col: 0, type: "button" },
       //{ row: 1, col: 1, width: 2, type: "button" },
-      { id: "2", col: 3, row: 4, width: 4, height: 4, type: "button" },
-      { id: "3", col: 8, row: 5, width: 2, height: 2, type: "button" },
+      // { id: "2", col: 3, row: 4, width: 4, height: 4, type: "button" },
+      // { id: "3", col: 8, row: 5, width: 2, height: 2, type: "button" },
+      { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
     ];
   }
 
@@ -137,6 +138,20 @@ export class GridTestPage {
       this.updateAllSelecedCells();
     };
   };
+
+  public onTextareaWidthChanged(panel: GridPanel): (a) => void {
+    return (newWidth: number) => {
+      const adjustedWidth = Math.floor(newWidth / CELL_WIDTH);
+      panel.width = adjustedWidth;
+    };
+  }
+
+  public onTextareaHeightChanged(panel: GridPanel): (a) => void {
+    return (newHeight: number) => {
+      const adjustedHeight = Math.floor(newHeight / CELL_HEIGHT);
+      panel.height = adjustedHeight;
+    };
+  }
 
   /**
    * A1 - C3

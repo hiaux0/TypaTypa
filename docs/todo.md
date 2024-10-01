@@ -47,9 +47,9 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
+- [!] feat: panels--- should autoexpand when textarea also growth
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
-- [ ] feat: panels--- should autoexpand when textarea also growth
   - check "autoinput?" there is a component or custom attribute
 - [ ] feat: panels--- use shortcuts to move between panels
   - 2. this is lower prio

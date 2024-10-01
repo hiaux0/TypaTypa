@@ -62,8 +62,12 @@
           style="
             width: ${(panel.width ?? 1) * CELL_WIDTH}px;
             height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
+            overflow: hidden;
           "
           tabindex="${$index + 1}"
+          autofocus
+          autosize="width-step.bind: CELL_WIDTH; height-step.bind: CELL_HEIGHT; on-width-autosize.bind: onTextareaWidthChanged(panel); on-height-autosize.bind: onTextareaHeightChanged(panel);"
+          wrap="off"
         ></textarea>
         <div class="options-container">
           <button class="delete" click.trigger="deletePanel(panel)">x</button>

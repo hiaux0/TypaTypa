@@ -94,3 +94,12 @@ export function getElementPositionAsNumber(
   const result = getValueFromPixelString(leftString);
   return result;
 }
+
+export function getElementStyleAsNumber(
+  element: HTMLElement,
+  style: keyof CSSStyleDeclaration,
+): number {
+  const styleString = window.getComputedStyle(element)[style] as string;
+  const result = getValueFromPixelString(styleString);
+  return result;
+}
