@@ -225,7 +225,7 @@ export class GridTestPage {
                 `[data-panel-id="${newPanel.id}"] textarea`,
               ) as HTMLElement;
               this.activePanelElement.focus();
-              return;
+              return true;
             }
 
             // Focus panel
@@ -233,6 +233,7 @@ export class GridTestPage {
               `[data-panel-id="${targetPanel.id}"] textarea`,
             ) as HTMLElement;
             this.activePanelElement.focus();
+            return true;
           },
         },
         {
