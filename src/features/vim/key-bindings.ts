@@ -157,6 +157,11 @@ export const keyBindings: KeyBindingModes = {
     ...cursorAllModes,
     ...cursorNormalAndVisual,
   ],
+  [VimMode.CUSTOM]: [
+    ...commandsAllModes,
+    ...cursorAllModes,
+    ...cursorNormalAndVisual,
+  ],
   synonyms: {
     "<esc>": "<Escape>",
     escape: "<Escape>",

@@ -100,6 +100,11 @@ export class VimCommandManager {
         /** Handle insert in input for now (maybe later for snippets) */
         break;
       }
+      case VimMode.CUSTOM: {
+        finalMode = new NormalMode(this.internalVimState);
+        finalMode.mode = VimMode.CUSTOM;
+        break;
+      }
       default: {
         console.log(`Mode not supported: ${mode}`);
         break;
@@ -149,6 +154,14 @@ export class VimCommandManager {
       line: vimState.cursor.line,
     };
     return vimState;
+  }
+
+  private enterCustomMode(vimState: IVimState) {
+    const mode = new NormalMode(vimState);
+    const updated = mode.cancelAll().serialize();
+    updated.mode = VimMode.CUSTOM;
+
+    return updated;
   }
 
   private visualStartLineWise(vimState: IVimState) {

@@ -12,6 +12,7 @@ export class VimInit {
 
     if (!options) return;
     this.options = options;
+    this.vimInputHandler
   }
 
   public executeCommandSequence(sequence: string): void {

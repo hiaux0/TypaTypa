@@ -7,11 +7,12 @@ interface SwitchModeOptions {
   normal?: () => void;
   insert?: () => void;
   visual?: () => void;
+  custom?: () => void;
 }
 
 export class VimHelper {
   static switchModes(mode: VimMode, switchModeOptions: SwitchModeOptions) {
-    const { insert, normal, visual } = switchModeOptions;
+    const { insert, normal, visual, custom } = switchModeOptions;
 
     switch (mode) {
       case VimMode.NORMAL: {
@@ -24,6 +25,10 @@ export class VimHelper {
       }
       case VimMode.VISUAL: {
         if (visual) return visual();
+        break;
+      }
+      case VimMode.CUSTOM: {
+        if (custom) return custom();
         break;
       }
       default: {

@@ -48,6 +48,7 @@ export class GridTestPage {
   private activePanelElement: HTMLElement;
 
   private isStartDragGridCell = false;
+  private mode: VimMode | "Move" = VimMode.NORMAL;
 
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
@@ -195,6 +196,7 @@ export class GridTestPage {
     const mappingByKey = {
       Escape: () => {
         (document.activeElement as HTMLElement).blur();
+        // this.mode = VimMode.NORMAL;
       },
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
@@ -206,6 +208,14 @@ export class GridTestPage {
     };
     const mappingByMode: KeyBindingModes = {
       [VimMode.NORMAL]: [
+        {
+          key: "m",
+          desc: "Enter [M]ove mode",
+          execute: () => {
+            this.vimInit.executeCommand(VIM_COMMAND.enterCustomMode, "");
+            this.mode = "Move";
+          },
+        },
         {
           key: "<Enter>",
           desc: "Focus Panel at cursor",
@@ -307,6 +317,7 @@ export class GridTestPage {
           },
         },
       ],
+      [VimMode.CUSTOM]: [],
     };
     new KeyMappingService().init(mappingByKey, mappingByMode);
 
@@ -382,6 +393,28 @@ export class GridTestPage {
         },
         // [VIM_COMMAND.]: () => {},
       },
+      [VimMode.CUSTOM]: {
+        [VIM_COMMAND.cursorRight]: () => {
+          const panel = this.getPanelUnderCursor();
+          panel.col += 1;
+          this.setCursorAtPanel(panel);
+        },
+        [VIM_COMMAND.cursorLeft]: () => {
+          const panel = this.getPanelUnderCursor();
+          panel.col -= 1;
+          this.setCursorAtPanel(panel);
+        },
+        [VIM_COMMAND.cursorUp]: () => {
+          const panel = this.getPanelUnderCursor();
+          panel.row -= 1;
+          this.setCursorAtPanel(panel);
+        },
+        [VIM_COMMAND.cursorDown]: () => {
+          const panel = this.getPanelUnderCursor();
+          panel.row += 1;
+          this.setCursorAtPanel(panel);
+        },
+      },
     };
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
@@ -392,6 +425,10 @@ export class GridTestPage {
         lines: [{ text: "    " }],
       },
       hooks: {
+        modeChanged: (payload) => {
+          this.mode = payload.vimState.mode;
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,408] this.mode: ", this.mode);
+        },
         commandListener: (result) => {
           const mode = mappingByCommandName[result.vimState.mode];
           if (!mode) return;

@@ -26,6 +26,7 @@ export enum VIM_COMMAND {
   "enterInsertModeStart" = "enterInsertModeStart",
   "enterNormalMode" = "enterNormalMode",
   "enterVisualMode" = "enterVisualMode",
+  "enterCustomMode" = "enterCustomMode",
   "toggleFold" = "toggleFold",
   "goToFirstLine" = "goToFirstLine",
   "goToLastLine" = "goToLastLine",
@@ -73,6 +74,7 @@ export const VIM_MODE_COMMANDS = [
   VIM_COMMAND["createNewLineAbove"],
   VIM_COMMAND["enterInsertAfterModeEnd"],
   VIM_COMMAND["enterInsertAfterMode"],
+  VIM_COMMAND["enterCustomMode"],
 ];
 
 export const VIM_COMMANDS = [

@@ -1,4 +1,3 @@
- 
 import { VimOptions, IVimState } from "../vim-types";
 import { VimCommandManager as VimCommandManager } from "./commands/VimCommandManager";
 import { VIM_COMMAND } from "../vim-commands-repository";

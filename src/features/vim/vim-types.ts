@@ -24,6 +24,8 @@ export interface KeyBindingModes {
   [VimMode.VISUAL]?: VimCommand[];
   visualline?: VimCommand[];
   [VimMode.VISUALLINE]?: VimCommand[];
+  custom?: [];
+  [VimMode.CUSTOM]?: VimCommand[];
   synonyms?: SynonymKey;
 }
 
@@ -104,6 +106,7 @@ export enum VimMode {
   "INSERT" = "INSERT",
   "VISUAL" = "VISUAL",
   "VISUALLINE" = "VISUALLINE",
+  "CUSTOM" = "CUSTOM",
 }
 export type VimModeKeys = keyof typeof VimMode;
 

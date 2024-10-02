@@ -44,7 +44,6 @@ export class VimInputHandler {
           ) {
             return;
           }
-
           VimHelper.switchModes(newVimState.mode, {
             insert: () => {
               this.vimUi.enterInsertMode(newVimState.cursor);
@@ -162,7 +161,6 @@ export class VimInputHandler {
     let preventDefault = false;
     if (finalCommand?.execute) {
       const response = finalCommand.execute();
-      /*prettier-ignore*/ console.log("[VimInputHandler.ts,165] response: ", response);
       if (typeof response === "boolean") {
         preventDefault = response;
       }

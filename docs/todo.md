@@ -47,7 +47,6 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
-- [!] feat: panels--- should autoexpand when textarea also growth
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
   - check "autoinput?" there is a component or custom attribute
@@ -66,9 +65,10 @@
 - [ ] bug:
 
 # Done
-
 ## Grid
 
+- [x] feat: panels--- move mode
+- [x] feat: panels--- should autoexpand when textarea also growth
 - [x] feat: panels--- add new panel on enter
 - [x] bug: cells: selection does not adjust correctl
 - [x] bug: cells---- dragging should go into visual mode
