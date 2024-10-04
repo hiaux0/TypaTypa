@@ -1,13 +1,19 @@
- 
 import generateId from "../modules/random/random";
 
 type Id = string;
 
+/**
+ * const abcCRUD = new CRUDService(items)
+ */
 export class CRUDService<T extends { id: string }> {
   private items: T[] = [];
   private activeItemId: Id;
 
-  constructor(public defaultItem?: T) {}
+  constructor(public defaultItems?: T[]) {
+    if (defaultItems) {
+      this.items = defaultItems;
+    }
+  }
 
   /** CREATE */
   public create(
@@ -17,7 +23,7 @@ export class CRUDService<T extends { id: string }> {
     // @ts-ignore instantiated
     const finalItem: T = {
       id: generateId(),
-      ...this.defaultItem,
+      ...this.defaultItems,
       ...item,
     };
     const { allowDuplicate, uniqueByKey } = options;
@@ -119,7 +125,9 @@ export class CRUDService<T extends { id: string }> {
   /** DELETE */
 
   public delete(id: Id): void {
+    /*prettier-ignore*/ console.log("[CRUDService.ts,123] this.items: ", this.items);
     const indexToDelete = this.items.findIndex((item) => item.id === id);
+    /*prettier-ignore*/ console.log("[CRUDService.ts,123] indexToDelete: ", indexToDelete);
     if (indexToDelete !== -1) {
       this.items.splice(indexToDelete, 1);
     }

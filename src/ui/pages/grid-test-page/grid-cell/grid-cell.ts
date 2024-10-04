@@ -6,6 +6,7 @@ export class GridCell {
   @bindable public column: number;
   @bindable public row: number;
   @bindable public selected: boolean = false;
+  @bindable public content: string;
 
   selectedChanged(newSelected) {
     // /*prettier-ignore*/ console.log("[grid-cell.ts,11] newSelected: ", newSelected);

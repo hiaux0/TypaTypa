@@ -147,7 +147,6 @@ export const keyBindings: KeyBindingModes = {
     ...cursorAllModes,
     ...cursorNormalAndVisual,
   ],
-
   visualline: [],
   [VimMode.VISUALLINE]: [
     { key: "d", command: "visualDelete" },
@@ -158,6 +157,7 @@ export const keyBindings: KeyBindingModes = {
     ...cursorNormalAndVisual,
   ],
   [VimMode.CUSTOM]: [
+    { key: "x", command: "delete" },
     ...commandsAllModes,
     ...cursorAllModes,
     ...cursorNormalAndVisual,

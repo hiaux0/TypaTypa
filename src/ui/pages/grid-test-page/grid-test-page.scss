@@ -1,3 +1,5 @@
+@import "../../mixins.scss";
+
 $columnWidth: 64px;
 $columnHeight: 32px;
 
@@ -31,6 +33,7 @@ $columnHeight: 32px;
   .spreadsheet-container {
     user-select: none;
     position: relative;
+    display: flex;
 
     .cell {
       @include cell();
@@ -55,7 +58,7 @@ $columnHeight: 32px;
     }
 
     .row-header {
-      margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`)
+      /* margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`) */
     }
     .row-container {
     }
@@ -76,12 +79,19 @@ $columnHeight: 32px;
       position: absolute;
       top: 35px;
       left: 90px;
-      background: purple;
+      /* background: purple; */
       border: 1px solid black;
 
       &:hover {
         background: yellow;
         cursor: pointer;
+      }
+
+      textarea {
+        @include reset();
+        /* opacity: 0.2; */
+        padding: 1px; // based the cell
+        font-size: 16px;
       }
 
       /* DEV  */

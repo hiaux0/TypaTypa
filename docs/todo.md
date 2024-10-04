@@ -38,6 +38,13 @@
 
 ## Vim
 
+- [ ] refac: 
+- [ ] refac: don't just merge custom mappings,
+  - but somehow mark them as custom
+  - so, that they don't trigger the default implementations
+    - maybe make that optional
+- [ ] refac: fuse mappings [VimMode.Normal]: <commandName> and object
+  - helps to reduce ambiguity, and know in ONE place, which keys are assigned
 - [ ] refac: mapping-- `new KeyMappingService().init(` should be in `initVim`
 
 ## Grid
@@ -49,26 +56,26 @@
 
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
-  - check "autoinput?" there is a component or custom attribute
 - [ ] feat: panels--- use shortcuts to move between panels
   - 2. this is lower prio
     - or by hjkl?
-- [ ] feat: save to local storage
 - [ ] feat: panels--- grouping-- create groups for panels
 - [ ] feat: panels--- toolbar--- mini toolbar for panels
 - [ ] feat: selection should include panels
 - [ ] feat: toolbar-- layout edit mode
 - [ ] feat: control grid headers and panels via css variables? (on resize)
   - [ ] feat: how to store column width - a width+height map?
-- [ ] feat: resize panels
 - [ ] feat: calendar
+- [1] feat: save to local storage
 - [ ] bug:
 
 # Done
 ## Grid
 
+- [x] feat: panels--- x and p
 - [x] feat: panels--- move mode
 - [x] feat: panels--- should autoexpand when textarea also growth
+  - check "autoinput?" there is a component or custom attribute
 - [x] feat: panels--- add new panel on enter
 - [x] bug: cells: selection does not adjust correctl
 - [x] bug: cells---- dragging should go into visual mode
@@ -121,6 +128,10 @@
 - [x] feat: vim hydra, eg `<space>pn` `nnn` will repeat `<space>pn`
   - keep track of "last" commandSequence
   - if the last letter is the pressed Key, then repeat?
+
+# On Hold
+## Grid
+- [ ] feat: resize panels --> partially done via autosize
 
 # Features
 

@@ -13,6 +13,10 @@ import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
 import { cycleInRange } from "../../../common/modules/numbers";
 import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMappingService";
 import { findParentElement } from "../../../common/modules/htmlElements";
+import { CRUDService } from "../../../common/services/CRUDService";
+import { CELL_COORDS } from "../../../common/modules/constants";
+
+type GridPanelTypes = "button" | "text";
 
 interface GridPanel {
   id: string;
@@ -20,8 +24,20 @@ interface GridPanel {
   col: number;
   width?: number;
   height?: number;
-  type: "button";
+  isEdit?: boolean;
+  type: GridPanelTypes;
+  content?: string;
 }
+
+interface TextPanel {
+  text: string;
+  id: string;
+  panelId: string;
+}
+
+const gridPanelMap = {
+  ["panelId"]: { id: "text-panel" },
+};
 
 const CELL_HEIGHT = 32;
 const CELL_WIDTH = 64;
@@ -33,12 +49,14 @@ export class GridTestPage {
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
+  public CELL_COORDS = CELL_COORDS;
   // Drag and select //
   // Container needs to keep track of these values, because the grid cells are not aware of each other
-  public dragStartColumnIndex = 3;
-  public dragEndColumnIndex = 3;
-  public dragStartRowIndex = 3;
-  public dragEndRowIndex = 3;
+  public dragStartColumnIndex = 0;
+  public dragEndColumnIndex = 0;
+  public dragStartRowIndex = 0;
+  public dragEndRowIndex = 0;
+  public contentMap: Record<string, string> = {};
   public selectedMap: Record<string, boolean> = {};
 
   public gridPanels: GridPanel[] = [];
@@ -46,9 +64,11 @@ export class GridTestPage {
   public START_PANEL_LEFT = 64;
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
+  private lastGridPanel: GridPanel | undefined = undefined;
 
   private isStartDragGridCell = false;
   private mode: VimMode | "Move" = VimMode.NORMAL;
+  private panelCRUD: CRUDService<GridPanel>;
 
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
@@ -70,13 +90,19 @@ export class GridTestPage {
       EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
     ] = true;
 
+    this.contentMap[this.CELL_COORDS(0, 0)] = "Hi";
+    this.contentMap[this.CELL_COORDS(1, 0)] = "Bye";
+
     this.gridPanels = [
-      // { id: "1", row: 0, col: 0, type: "button" },
+      // { id: "1", row: 0, col: 0, type: "button", content: "Hi" },
       //{ row: 1, col: 1, width: 2, type: "button" },
       // { id: "2", col: 3, row: 4, width: 4, height: 4, type: "button" },
       // { id: "3", col: 8, row: 5, width: 2, height: 2, type: "button" },
-      { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
+      // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
+      // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
+
+    this.panelCRUD = new CRUDService(this.gridPanels);
   }
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
@@ -172,8 +198,8 @@ export class GridTestPage {
 
   private isCursorInsidePanel(panel: GridPanel): boolean {
     const { col, row, width, height } = panel;
-    const endColumn = col + width;
-    const endRow = row + height;
+    const endColumn = col + width - 1; // one cell should have same end columns
+    const endRow = row + height - 1; // one cell should have same end row
 
     const isInColumn =
       this.dragStartColumnIndex >= col &&
@@ -196,6 +222,8 @@ export class GridTestPage {
     const mappingByKey = {
       Escape: () => {
         (document.activeElement as HTMLElement).blur();
+        this.activePanel.isEdit = false;
+        this.activePanel = undefined;
         // this.mode = VimMode.NORMAL;
       },
       Tab: () => {
@@ -224,6 +252,8 @@ export class GridTestPage {
             if (!targetPanel) {
               // Add new panel
               const newPanel = this.addPanel();
+              this.activePanel = newPanel;
+              newPanel.isEdit = true;
               this.unselectAllSelecedCells();
               this.dragEndColumnIndex = this.dragStartColumnIndex;
               this.dragEndRowIndex = this.dragStartRowIndex;
@@ -239,6 +269,8 @@ export class GridTestPage {
             }
 
             // Focus panel
+            targetPanel.isEdit = true;
+            this.activePanel = targetPanel;
             this.activePanelElement = document.querySelector(
               `[data-panel-id="${targetPanel.id}"] textarea`,
             ) as HTMLElement;
@@ -354,6 +386,15 @@ export class GridTestPage {
           const b = this.dragEndRowIndex + 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
           this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.delete]: () => {
+          const panel = this.getPanelUnderCursor();
+          this.lastGridPanel = panel;
+          this.panelCRUD.delete(panel.id);
+          this.gridPanels = this.panelCRUD.readAll();
+        },
+        [VIM_COMMAND.pasteVim]: () => {
+          this.addPanelAtCursor(this.lastGridPanel);
         },
         [VIM_COMMAND.enterNormalMode]: () => {
           this.unselectAllSelecedCells();
@@ -482,6 +523,14 @@ export class GridTestPage {
       return is;
     });
     return target;
+  }
+
+  private addPanelAtCursor(panel: GridPanel): void {
+    this.unselectAllSelecedCells();
+    panel.col = this.dragStartColumnIndex;
+    panel.row = this.dragStartRowIndex;
+    this.panelCRUD.create(panel);
+    this.updateAllSelecedCells();
   }
 
   private addGridPanelToSelection(): GridPanel {

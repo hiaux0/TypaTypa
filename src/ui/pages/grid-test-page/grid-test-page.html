@@ -25,54 +25,59 @@
     </section>
 
     <!-- 2/3 Columns and Rows -->
-    <section class="column-container" repeat.for="columnIndex of columnSize">
-      <div class="cell-header column-header">
-        <!-- ${numberToAlphabet(columnIndex)} -->
-        ${(columnIndex)}
-      </div>
-      <div class="row-container" repeat.for="rowIndex of rowSize">
-        <!-- Cell -->
-        <grid-cell
-          row.bind="rowIndex"
-          column.bind="columnIndex"
-          selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
-          pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
-          pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
-          pointerup.trigger="onMouseUpGridCell()"
-        ></grid-cell>
-      </div>
-    </section>
+    <section class="cells-container">
+      <section class="column-container" repeat.for="columnIndex of columnSize">
+        <div class="cell-header column-header">
+          <!-- ${numberToAlphabet(columnIndex)} -->
+          ${(columnIndex)}
+        </div>
+        <div class="row-container" repeat.for="rowIndex of rowSize">
+          <!-- Cell -->
+          <grid-cell
+            row.bind="rowIndex"
+            column.bind="columnIndex"
+            selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+            pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
+            pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
+            pointerup.trigger="onMouseUpGridCell()"
+            content.bind="contentMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+          ></grid-cell>
+        </div>
+      </section>
 
-    <!-- 3/3 Panels -->
-    <section ref="panelContainerRef" class="panel-container">
-      <div
-        class="panel-item-container"
-        repeat.for="panel of gridPanels"
-        style="
+      <!-- 3/3 Panels -->
+      <section ref="panelContainerRef" class="panel-container">
+        <div
+          class="panel-item-container"
+          repeat.for="panel of gridPanels"
+          if.bind="panel.isEdit"
+          style="
           top: ${(panel.row) * CELL_HEIGHT}px;
           left: ${(panel.col) * CELL_WIDTH}px;
           width: ${(panel.width ?? 1) * CELL_WIDTH}px;
           height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
         "
-        draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT; on-drag-end.bind: updatePanelCoords(panel);"
-        data-panel-id.bind="panel.id"
-        pointerdown.trigger="onPanelClicked(panel)"
-      >
-        <!-- <button class="panel-item">Panel ${$index}</button> -->
-        <textarea
-          style="
+          draggable="drag-container.bind: spreadsheetContainerRef; cell-width.bind: CELL_WIDTH; cell-height.bind: CELL_HEIGHT; on-drag-end.bind: updatePanelCoords(panel);"
+          data-panel-id.bind="panel.id"
+          pointerdown.trigger="onPanelClicked(panel)"
+        >
+          <!-- <button class="panel-item">Panel ${$index}</button> -->
+          <textarea
+            style="
             width: ${(panel.width ?? 1) * CELL_WIDTH}px;
             height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
             overflow: hidden;
           "
-          tabindex="${$index + 1}"
-          autosize="width-step.bind: CELL_WIDTH; height-step.bind: CELL_HEIGHT; on-width-autosize.bind: onTextareaWidthChanged(panel); on-height-autosize.bind: onTextareaHeightChanged(panel);"
-          wrap="off"
-        ></textarea>
-        <div class="options-container">
-          <button class="delete" click.trigger="deletePanel(panel)">x</button>
+            tabindex="${$index + 1}"
+            autosize="width-step.bind: CELL_WIDTH; height-step.bind: CELL_HEIGHT; on-width-autosize.bind: onTextareaWidthChanged(panel); on-height-autosize.bind: onTextareaHeightChanged(panel);"
+            wrap="off"
+            value.bind="contentMap[EV_CELL_SELECTED(panel.col, panel.row)]"
+          ></textarea>
+          <div class="options-container">
+            <!-- <button class="delete" click.trigger="deletePanel(panel)">x</button> -->
+          </div>
         </div>
-      </div>
+      </section>
     </section>
   </section>
 </main>

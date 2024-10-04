@@ -26,3 +26,7 @@
   // &:hover {
   // }
 }
+
+@mixin reset() {
+  padding: unset;
+}

@@ -41,7 +41,19 @@ src/features/vim/vimCore/commands/VimCommandManager.ts
 src/features/vim/VimInputHandler.ts
 src/features/vim-html/VimHtmlMovement.ts
 src/features/vim/vim-types.ts
+src/features/vim/key-bindings.ts
+src/features/vim/vimCore/commands/KeyMappingService.ts
 
+%% Grid Cell Content
+docs/todo.md
+arrow
+src/common/logging/logging.ts
+src/ui/pages/grid-test-page/grid-test-page.ts
+src/ui/pages/grid-test-page/grid-test-page.html
+src/ui/pages/grid-test-page/grid-test-page.scss
+src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
+src/ui/pages/grid-test-page/grid-cell/grid-cell.html
+src/ui/pages/grid-test-page/grid-cell/grid-cell.scss
 
 
 src/my-app.ts

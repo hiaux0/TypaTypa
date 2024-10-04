@@ -1,5 +1,5 @@
-import { DatabaseType, Topic } from "../types";
-import { Tabs } from "../ui/organisms/tab-drawer/tab-drawer";
+import { DatabaseType, Topic } from "../../types";
+import { Tabs } from "../../ui/organisms/tab-drawer/tab-drawer";
 import { generateId } from "./random";
 import { getTranslation } from "./translations";
 
@@ -47,7 +47,7 @@ This app has 2 purposes:
 1. Improve your typing speed.
 2. Improve your vocabulary.
 `,
-     },
+      },
     ],
   },
 ];
@@ -62,3 +62,7 @@ export const defaultDatabaseType: DatabaseType = {
 // /*prettier-ignore*/ export const WORDS = [ "live", "chat", "is", "unavailable", "for", "this", "stream", "it", "may", "have", "been", "disabled", "by", "the", "uploader", ]
 // /*prettier-ignore*/ export const WORDS = ["are", "after"]
 /*prettier-ignore*/ export const WORDS = []
+
+export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
+  // `cell-selected[${columnIndex}:${rowIndex}]`;
+  `${columnIndex}:${rowIndex}`;
