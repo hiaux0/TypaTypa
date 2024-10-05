@@ -1,5 +1,5 @@
-import { TypingDatabaseType, Topic } from "../../types";
-import { defaultDatabaseType } from "./constants";
+import { TypingDatabaseType, Topic } from "../../../types";
+import { defaultDatabaseType } from "../constants";
 
 export class Database<T> {
   public storageKey = "";
