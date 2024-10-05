@@ -58,6 +58,7 @@ export class GridTestPage {
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
   private lastGridPanel: GridPanel | undefined = undefined;
+  private lastCellContent: string | undefined = undefined;
 
   private isStartDragGridCell = false;
   private mode: VimMode | "Move" = VimMode.NORMAL;
@@ -407,12 +408,19 @@ export class GridTestPage {
         },
         [VIM_COMMAND.delete]: () => {
           const panel = this.getPanelUnderCursor();
+          if (!panel) {
+            this.lastCellContent = this.getCurrentCellContent();
+            this.clearCurrentCellContent();
+            return;
+          }
+
           this.lastGridPanel = panel;
           this.panelCRUD.delete(panel.id);
           this.gridPanels = this.panelCRUD.readAll();
         },
         [VIM_COMMAND.pasteVim]: () => {
-          this.addPanelAtCursor(this.lastGridPanel);
+          this.setCurrentCellContent(this.lastCellContent);
+          // this.addPanelAtCursor(this.lastGridPanel);
         },
         [VIM_COMMAND.enterNormalMode]: () => {
           this.unselectAllSelecedCells();
@@ -498,6 +506,26 @@ export class GridTestPage {
       },
     };
     this.vimInit.init(vimOptions);
+  }
+
+  private getCurrentCellContent(): string {
+    const content =
+      this.contentMap[
+        CELL_COORDS(this.dragStartColumnIndex, this.dragStartRowIndex)
+      ];
+    return content;
+  }
+
+  private setCurrentCellContent(content: string) {
+    this.contentMap[
+      CELL_COORDS(this.dragStartColumnIndex, this.dragStartRowIndex)
+    ] = content;
+  }
+
+  private clearCurrentCellContent(): void {
+    this.contentMap[
+      CELL_COORDS(this.dragStartColumnIndex, this.dragStartRowIndex)
+    ] = undefined;
   }
 
   /**
