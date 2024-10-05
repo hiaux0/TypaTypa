@@ -9,7 +9,10 @@ import {
   VimMode,
   VimOptions,
 } from "../../../features/vim/vim-types";
-import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
+import {
+  VIM_COMMAND,
+  VIM_COMMANDS,
+} from "../../../features/vim/vim-commands-repository";
 import { cycleInRange } from "../../../common/modules/numbers";
 import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMappingService";
 import { findParentElement } from "../../../common/modules/htmlElements";
@@ -57,7 +60,9 @@ export class GridTestPage {
   public dragStartRowIndex = 0;
   public dragEndRowIndex = 0;
   public contentMap: Record<string, string> = {};
+  public editMap: Record<string, string> = {};
   public selectedMap: Record<string, boolean> = {};
+  public textareaValue = "";
 
   public gridPanels: GridPanel[] = [];
   public START_PANEL_TOP = 32;
@@ -69,6 +74,7 @@ export class GridTestPage {
   private isStartDragGridCell = false;
   private mode: VimMode | "Move" = VimMode.NORMAL;
   private panelCRUD: CRUDService<GridPanel>;
+  private isCellEditMode = false;
 
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
@@ -85,13 +91,15 @@ export class GridTestPage {
 
   attached() {
     this.initGridNavigation();
+    // @ts-ignore
+    window.test = this;
 
     this.selectedMap[
       EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
     ] = true;
 
-    this.contentMap[this.CELL_COORDS(0, 0)] = "Hi";
-    this.contentMap[this.CELL_COORDS(1, 0)] = "Bye";
+    // this.contentMap[this.CELL_COORDS(0, 0)] = "Hi";
+    // this.contentMap[this.CELL_COORDS(1, 0)] = "Bye";
 
     this.gridPanels = [
       // { id: "1", row: 0, col: 0, type: "button", content: "Hi" },
@@ -220,11 +228,29 @@ export class GridTestPage {
     // this.vimInit = vimInit;
 
     const mappingByKey = {
+      Enter: () => {
+        if (this.mode === VimMode.NORMAL) return;
+
+        (document.activeElement as HTMLElement).blur();
+        if (this.activePanel) {
+          this.activePanel.isEdit = false;
+          this.contentMap[
+            CELL_COORDS(this.activePanel.col, this.activePanel.row)
+          ] = this.textareaValue;
+        }
+        this.activePanel = undefined;
+        this.isCellEditMode = false;
+        window.setTimeout(() => {
+          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        }, 0);
+      },
       Escape: () => {
         (document.activeElement as HTMLElement).blur();
-        this.activePanel.isEdit = false;
+        if (this.activePanel) {
+          this.activePanel.isEdit = false;
+        }
         this.activePanel = undefined;
-        // this.mode = VimMode.NORMAL;
+        this.isCellEditMode = false;
       },
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
@@ -249,11 +275,14 @@ export class GridTestPage {
           desc: "Focus Panel at cursor",
           execute: () => {
             const targetPanel = this.getPanelUnderCursor();
+            /*prettier-ignore*/ console.log("[grid-test-page.ts,257] targetPanel: ", targetPanel);
             if (!targetPanel) {
               // Add new panel
               const newPanel = this.addPanel();
               this.activePanel = newPanel;
               newPanel.isEdit = true;
+              this.textareaValue =
+                this.contentMap[CELL_COORDS(newPanel.col, newPanel.row)];
               this.unselectAllSelecedCells();
               this.dragEndColumnIndex = this.dragStartColumnIndex;
               this.dragEndRowIndex = this.dragStartRowIndex;
@@ -265,16 +294,21 @@ export class GridTestPage {
                 `[data-panel-id="${newPanel.id}"] textarea`,
               ) as HTMLElement;
               this.activePanelElement.focus();
+              this.vimInit.executeCommand(VIM_COMMAND.enterCustomMode, "");
               return true;
             }
 
             // Focus panel
+            console.log("Enter focus");
             targetPanel.isEdit = true;
+            this.textareaValue =
+              this.contentMap[CELL_COORDS(targetPanel.col, targetPanel.row)];
             this.activePanel = targetPanel;
             this.activePanelElement = document.querySelector(
               `[data-panel-id="${targetPanel.id}"] textarea`,
             ) as HTMLElement;
             this.activePanelElement.focus();
+            this.vimInit.executeCommand(VIM_COMMAND.enterCustomMode, "");
             return true;
           },
         },
@@ -344,7 +378,8 @@ export class GridTestPage {
             this.activePanelElement = document.querySelector(
               `[data-panel-id="${newPanel.id}"] textarea`,
             ) as HTMLElement;
-            this.activePanelElement.focus();
+            this.activePanelElement?.focus();
+            this.isCellEditMode = true;
             return true;
           },
         },

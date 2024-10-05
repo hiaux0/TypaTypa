@@ -1,4 +1,4 @@
-import { DatabaseType, Topic } from "../types";
+import { DatabaseType, Topic } from "../../types";
 import { defaultDatabaseType } from "./constants";
 
 const storageKey = "typing-app-v0.1";

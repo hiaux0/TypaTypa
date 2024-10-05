@@ -40,7 +40,7 @@
             pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
             pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
             pointerup.trigger="onMouseUpGridCell()"
-            content.bind="contentMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+            content.bind="contentMap[CELL_COORDS(columnIndex, rowIndex)]"
           ></grid-cell>
         </div>
       </section>
@@ -64,15 +64,16 @@
           <!-- <button class="panel-item">Panel ${$index}</button> -->
           <textarea
             style="
-            width: ${(panel.width ?? 1) * CELL_WIDTH}px;
-            height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
-            overflow: hidden;
-          "
+              width: ${(panel.width ?? 1) * CELL_WIDTH}px;
+              height: ${(panel.height ?? 1) * CELL_HEIGHT}px;
+              overflow: hidden;
+            "
             tabindex="${$index + 1}"
             autosize="width-step.bind: CELL_WIDTH; height-step.bind: CELL_HEIGHT; on-width-autosize.bind: onTextareaWidthChanged(panel); on-height-autosize.bind: onTextareaHeightChanged(panel);"
             wrap="off"
-            value.bind="contentMap[EV_CELL_SELECTED(panel.col, panel.row)]"
+            value.bind="textareaValue"
           ></textarea>
+            <!-- value.bind="panel.isEdit ? editMap[CELL_COORDS(panel.col, panel.row)] : contentMap[CELL_COORDS(panel.col, panel.row)]" -->
           <div class="options-container">
             <!-- <button class="delete" click.trigger="deletePanel(panel)">x</button> -->
           </div>

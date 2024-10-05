@@ -66,7 +66,7 @@
 - [ ] feat: control grid headers and panels via css variables? (on resize)
   - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: calendar
-- [1] feat: save to local storage
+- [!] feat: save to local storage
 - [ ] bug:
 
 # Done
