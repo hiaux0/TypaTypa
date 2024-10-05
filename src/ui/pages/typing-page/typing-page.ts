@@ -3,7 +3,7 @@ import { Store } from "../../../common/modules/store";
 import "./typing-page.scss";
 import { ShortcutService } from "../../../common/services/ShortcutService";
 import { getIsInputActive } from "../../../common/modules/htmlElements";
-import { database } from "../../../common/modules/database";
+import { typingDatabase } from "../../../common/modules/database";
 import { AMOUNT_OF_WORDS, WORDS } from "../../../common/modules/constants";
 import {
   getIndexForwardUntil,
@@ -33,9 +33,9 @@ export class TypingPage {
   ) {}
 
   attached() {
-    const dbData = database.getItem();
+    const dbData = typingDatabase.getItem();
     this.rememberList = new Set(dbData.rememberList);
-    const selectedTopic = database.getSelectedTopic();
+    const selectedTopic = typingDatabase.getSelectedTopic();
     this.onTopicChange(selectedTopic);
     this.ea.subscribe(ON_TOPIC_CHANGE, this.onTopicChange);
 
@@ -88,7 +88,7 @@ export class TypingPage {
       }
       case "+": {
         this.rememberList.add(wordAtIndex);
-        database.setItem({ rememberList: Array.from(this.rememberList) });
+        typingDatabase.setItem({ rememberList: Array.from(this.rememberList) });
         break;
       }
       case "-": {

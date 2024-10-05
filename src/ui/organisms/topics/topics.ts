@@ -3,7 +3,7 @@ import "./topics.scss";
 import { generateId } from "../../../common/modules/random";
 import { getTranslation } from "../../../common/modules/translations";
 import { Topic } from "../../../types";
-import { database } from "../../../common/modules/database";
+import { typingDatabase } from "../../../common/modules/database";
 
 const TOPICS: Topic[] = [
   {
@@ -26,10 +26,10 @@ export class Topics {
   public isEditTopicTitle = false;
 
   attached() {
-    const dbData = database.getItem();
+    const dbData = typingDatabase.getItem();
     this.topics = dbData.topics ?? TOPICS;
 
-    const targetTopic = database.getSelectedTopic();
+    const targetTopic = typingDatabase.getSelectedTopic();
     if (targetTopic) {
       this.selectedTopic = targetTopic;
     } else {
@@ -53,7 +53,7 @@ export class Topics {
     this.topics = [newTopic, ...this.topics];
     this.selectTopic(title);
 
-    database.setItem({ topics: this.topics });
+    typingDatabase.setItem({ topics: this.topics });
   }
 
   public isEmptyTopic(topic: Topic): boolean {
@@ -85,13 +85,13 @@ export class Topics {
     // To have Aurelia re-render the component, first remove, then add the topic again
     this.topics = this.topics.filter((t) => t.id !== topic.id);
     this.topics = [topic, ...this.topics];
-    database.setItem({ topics: this.topics });
+    typingDatabase.setItem({ topics: this.topics });
   }
 
   public addContent(topic: Topic): void {
     const newContent = { id: generateId(), text: "" };
     topic.content = [newContent, ...topic.content];
-    database.setItem({ topics: this.topics });
+    typingDatabase.setItem({ topics: this.topics });
   }
 
   public selectTopic(topicTitle: string): void {
@@ -99,14 +99,14 @@ export class Topics {
     this.selectedTopic = found ?? null;
     this.onTopicChange(this.selectedTopic);
 
-    database.setItem({ selectedTopicId: this.selectedTopic?.id });
+    typingDatabase.setItem({ selectedTopicId: this.selectedTopic?.id });
   }
 
   public refreshTopic(): void {
-    const dbData = database.getItem();
+    const dbData = typingDatabase.getItem();
     this.topics = dbData.topics ?? TOPICS;
 
-    const targetTopic = database.getSelectedTopic();
+    const targetTopic = typingDatabase.getSelectedTopic();
     if (targetTopic) {
       this.selectedTopic = targetTopic;
     } else {
@@ -120,7 +120,7 @@ export class Topics {
       (content) => content.id === contentId,
     );
     targetContent.text = contentText;
-    database.setItem({ topics: this.topics });
+    typingDatabase.setItem({ topics: this.topics });
     this.refreshTopic();
     this.onTopicChange(targetTopic);
   }

@@ -3,15 +3,15 @@ import { defaultDatabaseType } from "./constants";
 
 const storageKey = "typing-app-v0.1";
 
-class Database {
-  public getItem(): TypingDatabaseType {
+class Database<T> {
+  public getItem(): T {
     const data =
       localStorage.getItem(storageKey) ?? JSON.stringify(defaultDatabaseType);
-    const asJson = JSON.parse(data) as unknown as TypingDatabaseType;
+    const asJson = JSON.parse(data) as unknown as T;
     return asJson;
   }
 
-  public setItem(data: Partial<TypingDatabaseType>): void {
+  public setItem(data: Partial<T>): void {
     const existingData = this.getItem();
     const finalData = {
       ...existingData,
@@ -19,12 +19,17 @@ class Database {
     };
     localStorage.setItem(storageKey, JSON.stringify(finalData));
   }
+}
 
+class TypingDatabase extends Database<TypingDatabaseType> {
+  constructor() {
+    super();
+  }
   public getSelectedTopic(): Topic | undefined {
-    const { topics, selectedTopicId } = this.getItem();
+    const { topics, selectedTopicId } = super.getItem();
     const targetTopic = topics.find((topic) => topic.id === selectedTopicId);
     return targetTopic;
   }
 }
 
-export const database = new Database();
+export const typingDatabase = new TypingDatabase();
