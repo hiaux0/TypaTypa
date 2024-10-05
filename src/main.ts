@@ -15,9 +15,10 @@ import { Scratch } from "./ui/scratch/scratch";
 import { Store } from "./common/modules/store";
 import { CustomTable } from "./ui/organisms/custom-table/custom-table";
 import { DraggableCustomAttribute } from "./ui/attributes/draggable";
+import { OrTabs } from "./ui/molecules/or-tabs/or-tabs";
 
 const attributes = [AutosizeCustomAttribute, DraggableCustomAttribute];
-const molecules = [AutocompleteInput, LabeledWordList, Popover];
+const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
 const organisms = [CustomTable, Dictionary, TabDrawer, Topics];
 
 Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))

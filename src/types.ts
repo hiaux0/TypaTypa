@@ -42,3 +42,18 @@ export type GridSelectionCoord = [number, number];
 export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];
 
 export type ContentMap = Record<string, string>;
+export interface Sheet {
+  id: string;
+  title: string;
+  content: ContentMap;
+}
+
+export interface GridDatabaseType {
+  sheets: Sheet[];
+  selectedSheetId?: string;
+}
+
+export const defaultGridDatabaseType: GridDatabaseType = {
+  sheets: [{ id: "1", title: "Sheet 1", content: {} }],
+  selectedSheetId: "1",
+};

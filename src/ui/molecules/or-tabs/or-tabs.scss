@@ -1,0 +1,78 @@
+@import '../../colors.scss';
+
+.or-tabs {
+  .tabs-container {
+    display: flex;
+
+    .plus-button-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .active {
+      padding: 1rem;
+    }
+  }
+
+  .scrollbox {
+    white-space: nowrap;
+    /* Prevent content from wrapping to the next line */
+    overflow-y: scroll;
+    max-width: 95%; /* max-w-[95%] */
+    overflow-x: auto; /* Assuming 'scrollbox' implies horizontal scrolling */
+
+    background:
+      linear-gradient(rgba(255, 255, 255, 0), grey 30%),
+      linear-gradient(grey 70%, rgba(255, 255, 255, 0)) 100% 0,
+      radial-gradient(
+        farthest-side at 0 50%,
+        rgba(255, 255, 255, 0.2),
+        rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+          farthest-side at 100% 50%,
+          rgba(255, 255, 255, 0.2),
+          rgba(0, 0, 0, 0)
+        )
+        100% 0;
+    background-repeat: no-repeat;
+    background-size:
+      14px 100%,
+      14px 100%,
+      14px 100%,
+      14px 100%;
+
+    background-attachment: local, local, scroll, scroll;
+
+    .tabs-one {
+      height: 40px;
+    }
+
+    .tab {
+      &.tab-lifted {
+        padding-right: 7px;
+      }
+      &.tab-active {
+        background: $primary2;
+      }
+
+      .input-container {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  .tab-button-text {
+    padding: 0.5rem; /* p-2 */
+    padding-bottom: 0.75rem; /* pb-3 */
+    height: 1rem; /* h-4 */
+    line-height: 0; /* leading-[0] */
+    margin-left: 0.25rem; /* ml-1 */
+    border-radius: 0.125rem; /* rounded-sm */
+
+    &:hover {
+      background-color: #64748b; /* hover:bg-slate-500 */
+    }
+  }
+}

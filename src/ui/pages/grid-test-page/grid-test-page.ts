@@ -1,7 +1,11 @@
-import { resolve } from "aurelia";
+import { observable, resolve } from "aurelia";
 import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
-import { GridSelectionCoord, GridSelectionRange } from "../../../types";
+import {
+  GridDatabaseType,
+  GridSelectionCoord,
+  GridSelectionRange,
+} from "../../../types";
 import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
 import {
@@ -16,6 +20,7 @@ import { findParentElement } from "../../../common/modules/htmlElements";
 import { CRUDService } from "../../../common/services/CRUDService";
 import { CELL_COORDS } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
+import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
 
 type GridPanelTypes = "button" | "text";
 
@@ -64,6 +69,21 @@ export class GridTestPage {
   private mode: VimMode | "Move" = VimMode.NORMAL;
   private panelCRUD: CRUDService<GridPanel>;
 
+  public activeContent = "initial";
+  public sheetTabHooks: ITabHooks;
+  @observable activeSheetId = "";
+  private sheetTabs: ITab[] = [];
+  private sheetsData: GridDatabaseType;
+
+  activeSheetIdChanged() {
+    if (!this.activeSheetId) return;
+    const activeIndex = this.sheetTabs.findIndex(
+      (sheet) => sheet.id === this.activeSheetId,
+    );
+    this.contentMap = this.sheetsData.sheets[activeIndex].content;
+    this.sheetsData.selectedSheetId = this.activeSheetId;
+  }
+
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
     const [[startColumn, startRow], [endColumn, endRow]] = ordered;
@@ -73,6 +93,29 @@ export class GridTestPage {
   }
 
   constructor(private vimInit: VimInit = resolve(VimInit)) {}
+
+  attaching() {
+    this.panelCRUD = new CRUDService(this.gridPanels);
+
+    this.sheetTabHooks = {
+      newTabAdded: (newTab) => {
+        this.sheetsData.sheets.push({
+          id: newTab.id,
+          title: newTab.name,
+          content: {},
+        });
+        console.log("newTabAdded", newTab);
+      },
+    };
+    this.sheetsData = gridDatabase.getItem();
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,110] this.sheetsData: ", this.sheetsData);
+
+    this.sheetTabs = this.sheetsData.sheets.map((sheet) => ({
+      id: sheet.id,
+      name: sheet.title,
+    }));
+    this.autosave();
+  }
 
   attached() {
     this.initGridNavigation();
@@ -94,10 +137,6 @@ export class GridTestPage {
       // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
       // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
-
-    this.panelCRUD = new CRUDService(this.gridPanels);
-    this.contentMap = gridDatabase.getItem();
-    this.autosave();
   }
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
@@ -260,7 +299,6 @@ export class GridTestPage {
           desc: "Focus Panel at cursor",
           execute: () => {
             const targetPanel = this.getPanelUnderCursor();
-            /*prettier-ignore*/ console.log("[grid-test-page.ts,257] targetPanel: ", targetPanel);
             if (!targetPanel) {
               // Add new panel
               const newPanel = this.addPanel();
@@ -494,7 +532,6 @@ export class GridTestPage {
       hooks: {
         modeChanged: (payload) => {
           this.mode = payload.vimState.mode;
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,408] this.mode: ", this.mode);
         },
         commandListener: (result) => {
           const mode = mappingByCommandName[result.vimState.mode];
@@ -664,7 +701,7 @@ export class GridTestPage {
 
   private autosave(): void {
     gridDatabase.autosave(() => {
-      gridDatabase.setItem(this.contentMap);
+      gridDatabase.setItem(this.sheetsData);
     });
   }
 }

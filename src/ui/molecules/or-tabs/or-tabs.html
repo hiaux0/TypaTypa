@@ -1,0 +1,53 @@
+<template as-custom-element="tab-button" style="display: inline-block">
+  <bindable name="text"></bindable>
+  <div
+    class="tab-button-text p-2 pb-3 h-4 leading-[0] ml-1 rounded-sm hover:bg-slate-500"
+    role="button"
+  >
+    ${text}
+  </div>
+</template>
+
+<div class="or-tabs">
+  <!-- Tabs -->
+  <!-- overflow-hidden overflow-x-scroll -->
+  <section class="tabs-container">
+    <div class="scrollbox">
+      <section class="tabs-one">
+        <template repeat.for="tab of finalTabs">
+          <button
+            class="tab tab-lifted [--tab-border-color:transparent]"
+            class.bind="activeTabId === tab.id ? 'tab-active [--tab-bg:hsl(var(--n))] [--tab-border-color:hsl(var(--n))] [--tab-color:hsl(var(--nc))]' : ''"
+            click.trigger="setActiveTab(tab)"
+          >
+            <div class="input-container">
+              <input
+                if.bind="componentState.isRename && activeTabId === tab.id"
+                focus.bind="componentState.isRename && activeTabId === tab.id"
+                value.bind="componentState.renameValue"
+                keyup.trigger="rename($event)"
+              />
+              <div else>${tab.name}</div>
+              <tab-button text="x" click.trigger="deleteTab(tab)"></tab-button>
+            </div>
+          </button>
+        </template>
+      </section>
+    </div>
+    <p class="plus-button-container">
+      <tab-button text="+" click.trigger="createTab()"></tab-button>
+    </p>
+  </section>
+
+  <!-- Content -->
+  <section class="active bg-secondary p-4"><au-slot></au-slot></section>
+</div>
+
+<!-- Debug -->
+<div if.bind="debug">
+  <div class="divider"></div>
+  <div>
+    <div>History</div>
+    <div repeat.for="tab of tabHistoryStack">${tab.name}</div>
+  </div>
+</div>

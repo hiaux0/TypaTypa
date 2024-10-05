@@ -73,7 +73,7 @@
             wrap="off"
             value.bind="textareaValue"
           ></textarea>
-            <!-- value.bind="panel.isEdit ? editMap[CELL_COORDS(panel.col, panel.row)] : contentMap[CELL_COORDS(panel.col, panel.row)]" -->
+          <!-- value.bind="panel.isEdit ? editMap[CELL_COORDS(panel.col, panel.row)] : contentMap[CELL_COORDS(panel.col, panel.row)]" -->
           <div class="options-container">
             <!-- <button class="delete" click.trigger="deletePanel(panel)">x</button> -->
           </div>
@@ -81,4 +81,6 @@
       </section>
     </section>
   </section>
+
+  <or-tabs tabs.bind="sheetTabs" active-tab-id.two-way="activeSheetId" tab-hooks.bind="sheetTabHooks"></or-tabs>
 </main>

@@ -54,6 +54,10 @@ src/ui/pages/grid-test-page/grid-test-page.scss
 src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.html
 src/ui/pages/grid-test-page/grid-cell/grid-cell.scss
+src/ui/molecules/or-tabs/or-tabs.ts
+src/ui/molecules/or-tabs/or-tabs.html
+src/ui/molecules/or-tabs/or-tabs.scss
+src/common/modules/database/gridDatabase.ts
 
 
 src/my-app.ts
