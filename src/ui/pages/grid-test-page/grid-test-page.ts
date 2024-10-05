@@ -1,4 +1,4 @@
-import { EventAggregator, resolve } from "aurelia";
+import { resolve } from "aurelia";
 import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import { GridSelectionCoord, GridSelectionRange } from "../../../types";
@@ -9,10 +9,7 @@ import {
   VimMode,
   VimOptions,
 } from "../../../features/vim/vim-types";
-import {
-  VIM_COMMAND,
-  VIM_COMMANDS,
-} from "../../../features/vim/vim-commands-repository";
+import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
 import { cycleInRange } from "../../../common/modules/numbers";
 import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMappingService";
 import { findParentElement } from "../../../common/modules/htmlElements";
@@ -31,16 +28,6 @@ interface GridPanel {
   type: GridPanelTypes;
   content?: string;
 }
-
-interface TextPanel {
-  text: string;
-  id: string;
-  panelId: string;
-}
-
-const gridPanelMap = {
-  ["panelId"]: { id: "text-panel" },
-};
 
 const CELL_HEIGHT = 32;
 const CELL_WIDTH = 64;
@@ -74,7 +61,6 @@ export class GridTestPage {
   private isStartDragGridCell = false;
   private mode: VimMode | "Move" = VimMode.NORMAL;
   private panelCRUD: CRUDService<GridPanel>;
-  private isCellEditMode = false;
 
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
@@ -84,10 +70,7 @@ export class GridTestPage {
     return result;
   }
 
-  constructor(
-    private eventAggregator: EventAggregator = resolve(EventAggregator),
-    private vimInit: VimInit = resolve(VimInit),
-  ) {}
+  constructor(private vimInit: VimInit = resolve(VimInit)) {}
 
   attached() {
     this.initGridNavigation();
@@ -239,7 +222,6 @@ export class GridTestPage {
           ] = this.textareaValue;
         }
         this.activePanel = undefined;
-        this.isCellEditMode = false;
         window.setTimeout(() => {
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         }, 0);
@@ -250,7 +232,6 @@ export class GridTestPage {
           this.activePanel.isEdit = false;
         }
         this.activePanel = undefined;
-        this.isCellEditMode = false;
       },
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
@@ -379,7 +360,6 @@ export class GridTestPage {
               `[data-panel-id="${newPanel.id}"] textarea`,
             ) as HTMLElement;
             this.activePanelElement?.focus();
-            this.isCellEditMode = true;
             return true;
           },
         },
@@ -648,6 +628,7 @@ export class GridTestPage {
     const start = `${this.dragStartColumnIndex}:${this.dragStartRowIndex}`;
     const end = `${this.dragEndColumnIndex}:${this.dragEndRowIndex}`;
     const all = `[${start}] - [${end}]`;
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,631] all: ", all);
   }
 }
 

@@ -39,4 +39,4 @@ export interface Features {
 }
 
 export type GridSelectionCoord = [number, number];
-export type GridSelectionRange = [GridSelectionCoord, number, number];
+export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];
