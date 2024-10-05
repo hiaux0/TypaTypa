@@ -4,7 +4,11 @@ import "./typing-page.scss";
 import { ShortcutService } from "../../../common/services/ShortcutService";
 import { getIsInputActive } from "../../../common/modules/htmlElements";
 import { typingDatabase } from "../../../common/modules/database/typingDatabase";
-import { AMOUNT_OF_WORDS, WORDS } from "../../../common/modules/constants";
+import {
+  AMOUNT_OF_WORDS,
+  TABS,
+  WORDS,
+} from "../../../common/modules/constants";
 import {
   getIndexForwardUntil,
   getWordAtIndex,
@@ -26,6 +30,7 @@ export class TypingPage {
   public remainingWordsToType: Set<string> = new Set(WORDS);
   public nextWordsToType: Set<string> = new Set();
   public rememberList: Features["remember"] = new Set();
+  public topics = TABS;
 
   constructor(
     private ea: EventAggregator = resolve(EventAggregator),

@@ -4,7 +4,7 @@ import {
   SELECTED_TAB_TITLE,
   WORD_TO_LOOK_UP,
 } from "./constants";
-import { Topic } from "../types";
+import { Topic } from "../../types";
 import { ON_TOPIC_CHANGE } from "./eventMessages";
 
 //export type IStore = Store;

@@ -25,3 +25,29 @@
     />
   </div>
 </section>
+
+<!-- Tab Drawer -->
+<tab-drawer
+  active-tab.two-way="activeTopic"
+  active-tab-name.bind="store.activeTabName"
+  tabs.bind="topics"
+  is-drawer-open.two-way="store.isDrawerOpen"
+>
+  <template au-slot="content" if.bind="activeTopic.title === 'Topics'">
+    <topics on-topic-change.bind="store.onTopicChange" />
+  </template>
+  <template au-slot="content" if.bind="activeTopic.title === 'Dictionary'">
+    <dictionary
+      word.bind="store.wordToLookUp"
+      look-up-history.bind="Array.from(store.dictionaryLookedUpList)"
+    />
+  </template>
+  <div au-slot="content" if.bind="activeTopic.title === 'Remember'">
+    <div class="remember-container">
+      <h4>Remember</h4>
+      <template repeat.for="word of rememberList">
+        <span class="remember-word">${word}</span>
+      </template>
+    </div>
+  </div>
+</tab-drawer>
