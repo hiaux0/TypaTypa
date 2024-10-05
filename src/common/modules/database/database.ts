@@ -1,17 +1,17 @@
+const AUTO_SAVE_INTERVAL = 1000;
 
 export class Database<T> {
   public storageKey = "";
-  public defaultData = "";
+  public defaultData: any;
 
   constructor(key: string, defaultData: Record<string, unknown> = {}) {
     this.storageKey = key;
-    this.defaultData = JSON.stringify(defaultData);
+    this.defaultData = defaultData;
   }
 
   public getItem(): T {
     const data =
-      localStorage.getItem(this.storageKey) ??
-      JSON.stringify(this.defaultData);
+      localStorage.getItem(this.storageKey) ?? JSON.stringify(this.defaultData);
     const asJson = JSON.parse(data) as unknown as T;
     return asJson;
   }
@@ -23,5 +23,11 @@ export class Database<T> {
       ...data,
     };
     localStorage.setItem(this.storageKey, JSON.stringify(finalData));
+  }
+
+  public autosave(callback: () => void): void {
+    window.setInterval(() => {
+      callback();
+    }, AUTO_SAVE_INTERVAL);
   }
 }

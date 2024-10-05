@@ -15,6 +15,7 @@ import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMap
 import { findParentElement } from "../../../common/modules/htmlElements";
 import { CRUDService } from "../../../common/services/CRUDService";
 import { CELL_COORDS } from "../../../common/modules/constants";
+import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 
 type GridPanelTypes = "button" | "text";
 
@@ -94,6 +95,8 @@ export class GridTestPage {
     ];
 
     this.panelCRUD = new CRUDService(this.gridPanels);
+    this.contentMap = gridDatabase.getItem();
+    this.autosave();
   }
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
@@ -629,6 +632,12 @@ export class GridTestPage {
     const end = `${this.dragEndColumnIndex}:${this.dragEndRowIndex}`;
     const all = `[${start}] - [${end}]`;
     /*prettier-ignore*/ console.log("[grid-test-page.ts,631] all: ", all);
+  }
+
+  private autosave(): void {
+    gridDatabase.autosave(() => {
+      gridDatabase.setItem(this.contentMap);
+    });
   }
 }
 
