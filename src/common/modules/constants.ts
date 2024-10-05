@@ -1,4 +1,4 @@
-import { DatabaseType, Topic } from "../../types";
+import { TypingDatabaseType, Topic } from "../../types";
 import { Tabs } from "../../ui/organisms/tab-drawer/tab-drawer";
 import { generateId } from "./random";
 import { getTranslation } from "./translations";
@@ -52,7 +52,7 @@ This app has 2 purposes:
   },
 ];
 
-export const defaultDatabaseType: DatabaseType = {
+export const defaultDatabaseType: TypingDatabaseType = {
   topics: DEFAULT_TOPICS,
   selectedTopicId: DEFAULT_TOPICS[0].id,
   rememberList: [],

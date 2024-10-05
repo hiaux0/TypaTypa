@@ -23,7 +23,7 @@ export interface Topic {
     text: string;
   }[];
 }
-export interface DatabaseType {
+export interface TypingDatabaseType {
   topics: Topic[];
   selectedTopicId?: string;
   rememberList: string[];
@@ -39,4 +39,4 @@ export interface Features {
 }
 
 export type GridSelectionCoord = [number, number];
-export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];
+export type GridSelectionRange = [GridSelectionCoord, number, number];
