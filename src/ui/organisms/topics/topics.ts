@@ -3,7 +3,7 @@ import "./topics.scss";
 import { generateId } from "../../../common/modules/random";
 import { getTranslation } from "../../../common/modules/translations";
 import { Topic } from "../../../types";
-import { typingDatabase } from "../../../common/modules/database/database";
+import { typingDatabase } from "../../../common/modules/database/typingDatabase";
 
 const TOPICS: Topic[] = [
   {
