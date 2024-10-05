@@ -1,12 +1,17 @@
 import { TypingDatabaseType, Topic } from "../../types";
 import { defaultDatabaseType } from "./constants";
 
-const storageKey = "typing-app-v0.1";
+export class Database<T> {
+  public storageKey = "";
 
-class Database<T> {
+  constructor(key: string) {
+    this.storageKey = key;
+  }
+
   public getItem(): T {
     const data =
-      localStorage.getItem(storageKey) ?? JSON.stringify(defaultDatabaseType);
+      localStorage.getItem(this.storageKey) ??
+      JSON.stringify(defaultDatabaseType);
     const asJson = JSON.parse(data) as unknown as T;
     return asJson;
   }
@@ -17,13 +22,13 @@ class Database<T> {
       ...existingData,
       ...data,
     };
-    localStorage.setItem(storageKey, JSON.stringify(finalData));
+    localStorage.setItem(this.storageKey, JSON.stringify(finalData));
   }
 }
 
 class TypingDatabase extends Database<TypingDatabaseType> {
-  constructor() {
-    super();
+  constructor(storageKey: string) {
+    super(storageKey);
   }
   public getSelectedTopic(): Topic | undefined {
     const { topics, selectedTopicId } = super.getItem();
@@ -32,4 +37,5 @@ class TypingDatabase extends Database<TypingDatabaseType> {
   }
 }
 
-export const typingDatabase = new TypingDatabase();
+const typingStorageKey = "typing-app-v0.1";
+export const typingDatabase = new TypingDatabase(typingStorageKey);
