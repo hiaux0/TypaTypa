@@ -132,7 +132,7 @@ export interface VimCommand {
    * Modifiers: <mod>
    * Full: <modA><modB>keyAkeyB
    */
-  key: string;
+  key?: string;
   command?: VimCommandNames;
   sequence?: string;
   /**

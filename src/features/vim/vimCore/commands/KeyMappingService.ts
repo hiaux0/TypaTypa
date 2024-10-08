@@ -139,16 +139,17 @@ export class KeyMappingService {
         this.keyBindings[VimMode.NORMAL],
         additionalKeyBindings[VimMode.NORMAL],
       ),
-      [VimMode.INSERT]: [
-        ...(additionalKeyBindings[VimMode.INSERT] ?? []),
-        ...(this.keyBindings[VimMode.INSERT] ?? []),
-      ],
-      [VimMode.VISUAL]: [
-        ...(additionalKeyBindings[VimMode.VISUAL] ?? []),
-        ...(this.keyBindings[VimMode.VISUAL] ?? []),
-      ],
+      [VimMode.INSERT]: this.overwriteExistingKeyBindings(
+        this.keyBindings[VimMode.INSERT],
+        additionalKeyBindings[VimMode.INSERT],
+      ),
+      [VimMode.VISUAL]: this.overwriteExistingKeyBindings(
+        this.keyBindings[VimMode.VISUAL],
+        additionalKeyBindings[VimMode.VISUAL],
+      ),
     };
     this.keyBindings = merged;
+    /*prettier-ignore*/ console.log("[KeyMappingService.ts,152] this.keyBindings: ", this.keyBindings);
   }
 
   private static overwriteExistingKeyBindings(
@@ -157,7 +158,10 @@ export class KeyMappingService {
   ): VimCommand[] {
     additional.forEach((additionalBinding) => {
       const foundIndex = existing.findIndex((existingBinding) => {
-        const okay = existingBinding.key === additionalBinding.key;
+        const okayKey = existingBinding.key === additionalBinding.key;
+        const okayCommand = false;
+        // existingBinding.command === additionalBinding.command;
+        const okay = okayKey || okayCommand;
         return okay;
       });
       if (foundIndex > 0) {
