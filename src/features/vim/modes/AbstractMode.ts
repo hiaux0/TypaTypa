@@ -138,7 +138,7 @@ export abstract class AbstractMode {
     const newActiveLine = this.vimState.lines[adjustedCursorLine];
     const isValidHorizontalAfterMovedVertically = isValidHorizontalPosition(
       this.vimState.cursor.col + 1,
-      newActiveLine.text,
+      newActiveLine?.text,
     );
 
     if (!isValidHorizontalAfterMovedVertically) {

@@ -2,7 +2,15 @@
 
 <import from="./grid-cell/grid-cell"></import>
 <main ref="gridTestContainerRef" class="grid-test-container">
-  Mode: ${mode}
+  <section class="data-container">
+    <button click.trigger="downloadData()" style="height: 30px">
+      Download data
+    </button>
+    <button click.trigger="uploadData()" style="height: 30px">
+      Upload data
+    </button>
+  </section>
+  <div>Mode: ${mode}</div>
   <!-- Toolbar -->
   <section>
     <button click.trigger="addPanel()">Add Panel</button>
@@ -40,8 +48,9 @@
             pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
             pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
             pointerup.trigger="onMouseUpGridCell()"
-            content.bind="contentMap[CELL_COORDS(columnIndex, rowIndex)]"
+            content.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
           ></grid-cell>
+          <!-- content.bind="contentMap[columnIndex][rowIndex]" -->
         </div>
       </section>
 
@@ -82,5 +91,9 @@
     </section>
   </section>
 
-  <or-tabs tabs.bind="sheetTabs" active-tab-id.two-way="activeSheetId" tab-hooks.bind="sheetTabHooks"></or-tabs>
+  <or-tabs
+    tabs.bind="sheetTabs"
+    active-tab-id.two-way="activeSheetId"
+    tab-hooks.bind="sheetTabHooks"
+  ></or-tabs>
 </main>

@@ -54,6 +54,7 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
+- [ ] feat: cells---- merge cells
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
 - [ ] feat: panels--- use shortcuts to move between panels
@@ -67,12 +68,18 @@
   - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: calendar
 - [ ] bug:
-- [ ] feat: cells---- typing any character should enter edit mode
 - [ ] feat: download and upload state
+- [ ] feat: {, }
+- [ ] feat: g, G
 
 # Done
 ## Grid
 
+- [x] feat: cc
+- [x] feat: o, O
+- [x] feat: dd
+- [x] feat: $ and ^
+- [x] feat: cells---- typing any character should enter edit mode
 - [x] feat: cells---- enter should go into next cell
 - [x] feat: save to local storage
 - [x] feat: panels--- x and p

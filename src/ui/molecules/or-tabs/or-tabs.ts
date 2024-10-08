@@ -79,8 +79,6 @@ export class OrTabs {
       },
       ...this.tabHooks,
     };
-
-    /*prettier-ignore*/ console.log("[or-tabs.ts,60] this.tabs: ", this.tabs);
   }
 
   private initKeys() {

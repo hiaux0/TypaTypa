@@ -149,7 +149,6 @@ export class KeyMappingService {
       ),
     };
     this.keyBindings = merged;
-    /*prettier-ignore*/ console.log("[KeyMappingService.ts,152] this.keyBindings: ", this.keyBindings);
   }
 
   private static overwriteExistingKeyBindings(

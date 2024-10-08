@@ -2,9 +2,11 @@ import { observable, resolve } from "aurelia";
 import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import {
+  ContentMap,
   GridDatabaseType,
   GridSelectionCoord,
   GridSelectionRange,
+  Sheet,
 } from "../../../types";
 import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
@@ -26,6 +28,7 @@ import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
 import { SPACE } from "../../../common/modules/keybindings/app-keys";
 import { isArrowMovement } from "../../../features/vim/key-bindings";
+import { downloadText } from "../../../common/modules/downloadText";
 
 type GridPanelTypes = "button" | "text";
 
@@ -67,10 +70,12 @@ export class GridTestPage {
   public dragEndColumnIndex = 0;
   public dragStartRowIndex = 0;
   public dragEndRowIndex = 0;
-  public contentMap: Record<string, string> = {};
-  public editMap: Record<string, string> = {};
+  // public contentMap: Record<string, string> = {};
+  public contentMap: ContentMap = [];
+  public contentMapForView: {};
   public selectedMap: Record<string, boolean> = {};
   public textareaValue = "";
+  public downloadData = () => downloadText(this.sheetsData);
 
   public gridPanels: GridPanel[] = [];
   public START_PANEL_TOP = 32;
@@ -100,6 +105,16 @@ export class GridTestPage {
     this.sheetsData.selectedSheetId = this.activeSheetId;
   }
 
+  updateContentMapChangedForView() {
+    const converted = {};
+    this.contentMap.forEach((col, colIndex) => {
+      col.forEach((cell, cellIndex) => {
+        converted[CELL_COORDS(colIndex, cellIndex)] = cell;
+      });
+    });
+    this.contentMapForView = converted;
+  }
+
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
     const [[startColumn, startRow], [endColumn, endRow]] = ordered;
@@ -108,7 +123,19 @@ export class GridTestPage {
     return result;
   }
 
-  constructor(private vimInit: VimInit = resolve(VimInit)) {}
+  constructor(private vimInit: VimInit = resolve(VimInit)) {
+    this.sheetsData = gridDatabase.getItem();
+    this.sheetTabs = this.sheetsData.sheets.map((sheet) => ({
+      id: sheet.id,
+      name: sheet.title,
+    }));
+    const sheetId = this.sheetsData.selectedSheetId;
+    const activeIndex = this.sheetTabs.findIndex(
+      (sheet) => sheet.id === sheetId,
+    );
+    this.contentMap = this.sheetsData.sheets[activeIndex].content;
+    this.updateContentMapChangedForView();
+  }
 
   attaching() {
     this.panelCRUD = new CRUDService(this.gridPanels);
@@ -118,17 +145,15 @@ export class GridTestPage {
         this.sheetsData.sheets.push({
           id: newTab.id,
           title: newTab.name,
-          content: {},
+          content: [],
         });
         console.log("newTabAdded", newTab);
       },
     };
-    this.sheetsData = gridDatabase.getItem();
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,160] this.sheetsData: ", this.sheetsData);
+    this.contentMap;
+    // this.sheetsData.sheets[this.sheetsData.selectedSheetId].content;
 
-    this.sheetTabs = this.sheetsData.sheets.map((sheet) => ({
-      id: sheet.id,
-      name: sheet.title,
-    }));
     this.autosave();
   }
 
@@ -185,6 +210,14 @@ export class GridTestPage {
       this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
     });
   };
+
+  private getActiveSheet(): Sheet {
+    const sheetId = this.sheetsData.selectedSheetId;
+    const activeIndex = this.sheetTabs.findIndex(
+      (sheet) => sheet.id === sheetId,
+    );
+    return this.sheetsData.sheets[activeIndex];
+  }
 
   public onMouseUpGridCell(): void {
     // this.addGridPanelToSelection();
@@ -276,9 +309,11 @@ export class GridTestPage {
           (document.activeElement as HTMLElement).blur();
           if (this.activePanel) {
             this.activePanel.isEdit = false;
-            this.contentMap[
-              CELL_COORDS(this.activePanel.col, this.activePanel.row)
-            ] = this.textareaValue;
+            this.setCurrentCellContent(
+              this.textareaValue,
+              this.activePanel.col,
+              this.activePanel.row,
+            );
           }
           this.activePanel = undefined;
           this.moveSelectedCellBy(1, "y");
@@ -325,7 +360,8 @@ export class GridTestPage {
               [prevCol, prevRow],
               (col, row) => {
                 if (nextColWithContent) return;
-                const content = this.contentMap[CELL_COORDS(col, row)];
+                this.textareaValue;
+                const content = this.getCurrentCellContent(col, row);
                 if (content) {
                   nextColWithContent = col;
                   nextRowWithContent = row;
@@ -346,6 +382,27 @@ export class GridTestPage {
           },
         },
         {
+          key: "cc",
+          desc: "Clear cell and go into Insert",
+          execute: () => {
+            this.clearCurrentCellContent();
+            mappingByMode[VimMode.NORMAL]
+              .find((mapping) => mapping.key === "<Enter>")
+              .execute();
+            /*prettier-ignore*/ console.log("[grid-test-page.ts,385] this.textareaValue: ", this.textareaValue);
+            return true;
+          },
+        },
+        {
+          key: "dd",
+          desc: "Delete current row",
+          execute: () => {
+            this.contentMap.splice(this.dragStartRowIndex, 1);
+            this.updateContentMapChangedForView();
+            return true;
+          },
+        },
+        {
           key: "e",
           execute: () => {
             let nextColWithContent = NaN;
@@ -354,7 +411,7 @@ export class GridTestPage {
             this.iterateOverAllCells(
               (col, row) => {
                 if (nextColWithContent) return;
-                const content = this.contentMap[CELL_COORDS(col, row)];
+                const content = this.getCurrentCellContent(col, row);
                 if (content) {
                   nextColWithContent = col;
                   nextRowWithContent = row;
@@ -395,18 +452,46 @@ export class GridTestPage {
           },
         },
         {
+          key: "o",
+          desc: "Insert one row below",
+          execute: () => {
+            this.contentMap.splice(this.dragStartRowIndex + 1, 0, []);
+            this.updateContentMapChangedForView();
+            this.moveSelectedCellBy(1, "y");
+            mappingByMode[VimMode.NORMAL]
+              .find((mapping) => mapping.key === "<Enter>")
+              .execute();
+            return true;
+          },
+        },
+        {
+          key: "<Shift>O",
+          desc: "Insert one row above",
+          execute: () => {
+            this.contentMap.splice(
+              Math.max(0, this.dragStartRowIndex - 1),
+              0,
+              [],
+            );
+            this.updateContentMapChangedForView();
+            this.moveSelectedCellBy(-1, "y");
+            mappingByMode[VimMode.NORMAL]
+              .find((mapping) => mapping.key === "<Enter>")
+              .execute();
+            return true;
+          },
+        },
+        {
           key: "<Enter>",
           desc: "Focus Panel at cursor",
           execute: () => {
             const targetPanel = this.getPanelUnderCursor();
             if (!targetPanel) {
               // Add new panel
-              console.log("1. Add new panel");
               const newPanel = this.addPanel();
               this.activePanel = newPanel;
               newPanel.isEdit = true;
-              this.textareaValue =
-                this.contentMap[CELL_COORDS(newPanel.col, newPanel.row)] ?? "";
+              this.textareaValue = this.getCurrentCellContent();
 
               this.unselectAllSelecedCells();
               this.dragEndColumnIndex = this.dragStartColumnIndex;
@@ -424,11 +509,11 @@ export class GridTestPage {
             }
 
             // Focus panel
-            console.log("2. Enter focus");
             targetPanel.isEdit = true;
-            this.textareaValue =
-              this.contentMap[CELL_COORDS(targetPanel.col, targetPanel.row)] ??
-              "";
+            this.textareaValue = this.getCurrentCellContent(
+              targetPanel.col,
+              targetPanel.row,
+            );
 
             this.activePanel = targetPanel;
             this.activePanelElement = document.querySelector(
@@ -463,19 +548,15 @@ export class GridTestPage {
             this.setActivePanel(nextPanel);
           },
         },
-        //{
-        //  key: "a",
-        //  execute: () => {
-        //    console.log("enter");
-        //    const targetPanel = this.getPanelUnderCursor();
-        //    if (!targetPanel) return;
-        //
-        //    this.activePanelElement = document.querySelector(
-        //      `[data-panel-id="${targetPanel.id}"] textarea`,
-        //    ) as HTMLElement;
-        //    this.activePanelElement?.focus();
-        //  },
-        //},
+        {
+          key: "<Space>ecla",
+          desc: "[E]ditor [Cl]ear [A]ll",
+          execute: () => {
+            this.contentMap = [];
+            this.contentMapForView = {};
+            this.getActiveSheet().content = [];
+          },
+        },
       ],
       [VimMode.VISUAL]: [
         {
@@ -517,6 +598,12 @@ export class GridTestPage {
 
     const mappingByCommandName = {
       [VimMode.NORMAL]: {
+        [VIM_COMMAND.cursorLineEnd]: () => {
+          this.setAndUpdateCells(this.columnSize - 1, this.dragStartRowIndex);
+        },
+        [VIM_COMMAND.cursorLineStart]: () => {
+          this.setAndUpdateCells(0, this.dragStartRowIndex);
+        },
         [VIM_COMMAND.cursorRight]: () => {
           this.unselectAllSelecedCells();
           const a = this.dragStartColumnIndex + 1;
@@ -743,24 +830,29 @@ export class GridTestPage {
     return [prevCol, prevRow];
   }
 
-  private getCurrentCellContent(): string {
-    const content =
-      this.contentMap[
-        CELL_COORDS(this.dragStartColumnIndex, this.dragStartRowIndex)
-      ];
-    return content;
+  private getCurrentCellContent(
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+  ): string {
+    const content = this.contentMap[row]?.[col];
+    return content ?? "";
   }
 
-  private setCurrentCellContent(content: string) {
-    this.contentMap[
-      CELL_COORDS(this.dragStartColumnIndex, this.dragStartRowIndex)
-    ] = content;
+  private setCurrentCellContent(
+    content: string,
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+  ) {
+    if (this.contentMap[row] === undefined) {
+      this.contentMap[row] = [];
+    }
+    this.contentMap[row][col] = content;
+    this.updateContentMapChangedForView();
   }
 
   private clearCurrentCellContent(): void {
-    this.contentMap[
-      CELL_COORDS(this.dragStartColumnIndex, this.dragStartRowIndex)
-    ] = undefined;
+    this.setCurrentCellContent(undefined);
+    this.updateContentMapChangedForView();
   }
 
   /**
