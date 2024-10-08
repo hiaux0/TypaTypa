@@ -56,7 +56,7 @@ export const commandsThatWaitForNextInput: VimCommand[] = [
   // { key: `${Modifier['<Space>']}tc`, command: VIM_COMMAND.space },
 ];
 
-const cursorAllModes: VimCommand[] = [
+export const cursorAllModes: VimCommand[] = [
   { key: "<ArrowLeft>", command: "cursorLeft" },
   { key: "<ArrowUp>", command: "cursorUp" },
   { key: "<ArrowRight>", command: "cursorRight" },
@@ -182,6 +182,11 @@ export function isArrowLeft(newInput: string) {
 }
 export function isArrowRight(newInput: string) {
   return newInput === ARROW_RIGHT || newInput === Modifier["<ArrowRight>"];
+}
+export function isArrowMovement(newInput: string): boolean {
+  const func = [isArrowUp, isArrowDown, isArrowLeft, isArrowRight];
+  const is = !!func.find((fun) => fun(newInput));
+  return is;
 }
 export function isBackspace(newInput: string) {
   return newInput === BACKSPACE || newInput === Modifier["<Backspace>"];

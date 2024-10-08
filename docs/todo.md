@@ -66,12 +66,15 @@
 - [ ] feat: control grid headers and panels via css variables? (on resize)
   - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: calendar
-- [!] feat: save to local storage
 - [ ] bug:
+- [ ] feat: cells---- typing any character should enter edit mode
+- [ ] feat: download and upload state
 
 # Done
 ## Grid
 
+- [x] feat: cells---- enter should go into next cell
+- [x] feat: save to local storage
 - [x] feat: panels--- x and p
 - [x] feat: panels--- move mode
 - [x] feat: panels--- should autoexpand when textarea also growth

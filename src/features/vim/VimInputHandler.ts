@@ -10,6 +10,7 @@ import { getIsInputActive } from "../../common/modules/htmlElements";
 import { CursorUtils } from "../../common/modules/cursor/cursor-utils";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
 import { VIM_COMMAND } from "./vim-commands-repository";
+import { cursorAllModes } from "./key-bindings";
 
 /**
  * - Takes in input from user
@@ -141,17 +142,22 @@ export class VimInputHandler {
   }
 
   private handleKeydown = (event: KeyboardEvent) => {
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,144] event: ", event);
     // console.clear();
     if (getIsInputActive()) return;
 
     const mode = this.vimCore.getVimState().mode;
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,149] mode: ", mode);
     if (!mode) return;
     const finalKey = KeyMappingService.getKeyFromEvent(event);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
     const { command, commandName, commandSequence } =
       KeyMappingService.prepareCommand(finalKey, mode) ?? {};
     const pressedKey = ShortcutService.getPressedKey(event);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,156] pressedKey: ", pressedKey);
 
     let finalCommand = command;
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,159] finalCommand: ", finalCommand);
     let finalPressedKey = pressedKey;
     if (commandName === VIM_COMMAND.repeatLastCommand) {
       finalCommand = KeyMappingService.getLastCommand();
@@ -173,20 +179,36 @@ export class VimInputHandler {
         VIM_COMMAND[finalCommand.command],
         finalPressedKey,
       );
-      if (!vimState) return;
-      this.updateVimState(vimState);
+      // if (!vimState) return; // issue: space in insert got too early returned
 
-      if (this.options?.hooks?.commandListener)
-        this.options.hooks.commandListener({
-          vimState,
-          targetCommand: VIM_COMMAND[finalCommand.command],
-          keys: finalKey,
-        });
+      if (vimState) {
+        this.updateVimState(vimState);
+
+        if (this.options?.hooks?.commandListener)
+          this.options.hooks.commandListener({
+            vimState,
+            targetCommand: VIM_COMMAND[finalCommand.command],
+            keys: finalKey,
+          });
+      }
     }
 
     VimHelper.switchModes(mode, {
       insert: () => {
-        // event.preventDefault();
+        if (!this.options.hooks.onInsertInput) return; // mostly for custom insert mode, do this early return. In normal vim editor, insert should just be inside input/textarea thing
+        const isCursorMovementCommand = cursorAllModes.find(
+          (command) => command.command === finalCommand?.command,
+        );
+        if (
+          finalCommand &&
+          finalCommand?.command !== VIM_COMMAND["space"] &&
+          !isCursorMovementCommand
+        )
+          return;
+        const response = this.options.hooks.onInsertInput(finalPressedKey);
+        if (response === true) {
+          event.preventDefault();
+        }
       },
       normal: () => {
         if (commandName) {
