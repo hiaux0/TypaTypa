@@ -68,12 +68,18 @@
   - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: calendar
 - [ ] bug:
-- [ ] feat: download and upload state
+- [ ] feat: upload state
 - [ ] feat: {, }
+
+- [ ] feat: grid----- vim ------
+- [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
+- [ ] feat: grid----- vim ------ improve scripting capabilities
+  - [ ] iterateOverCell
 
 # Done
 ## Grid
 
+- [x] feat: download state
 - [x] feat: <<, >>
 - [x] feat: gg, G
 - [x] feat: scrolling

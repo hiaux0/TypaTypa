@@ -738,7 +738,11 @@ export abstract class AbstractMode {
     return this.vimState;
   }
 
-  async paste(clipboardTextSplit: string[]): Promise<VimStateClass> {
+  yank(): VimStateClass {
+    return this.vimState;
+  }
+
+  paste(clipboardTextSplit: string[]): VimStateClass {
     if (!this.vimState.cursor) return this.vimState;
     const line = this.vimState.getActiveLine();
     if (!line) return this.vimState;
@@ -826,6 +830,10 @@ export abstract class AbstractMode {
       this.vimState.cursor.line = nextCurLine;
     }
 
+    return this.vimState;
+  }
+
+  pasteVimBefore(): VimStateClass {
     return this.vimState;
   }
 

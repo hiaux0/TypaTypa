@@ -286,7 +286,7 @@ export class KeyMappingService {
     const commandAwaitingNextInput = getCommandAwaitingNextInput(
       input,
       this.queuedKeys,
-      this.potentialCommands,
+      this.potentialCommands
     );
     if (commandAwaitingNextInput !== undefined) {
       if (this.potentialCommands.length === 0) {

@@ -13,6 +13,7 @@ import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
 import {
   KeyBindingModes,
+  QueueInputReturn,
   VimMode,
   VimOptions,
 } from "../../../features/vim/vim-types";
@@ -31,6 +32,7 @@ import { SPACE } from "../../../common/modules/keybindings/app-keys";
 import { isArrowMovement } from "../../../features/vim/key-bindings";
 import { downloadText } from "../../../common/modules/downloadText";
 import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
+import { getClipboardContent } from "../../../common/modules/platform/clipboard";
 
 type GridPanelTypes = "button" | "text";
 
@@ -61,7 +63,7 @@ const CELL_WIDTH = 64;
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 20;
+  public rowSize = 100;
   public columnSize = 20;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
@@ -100,12 +102,16 @@ export class GridTestPage {
   private sheetsData: GridDatabaseType;
 
   activeSheetIdChanged() {
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,105] this.activeSheetId: ", this.activeSheetId);
     if (!this.activeSheetId) return;
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === this.activeSheetId,
     );
-    this.contentMap = this.sheetsData.sheets[activeIndex].content;
     this.sheetsData.selectedSheetId = this.activeSheetId;
+    const activeSheet = this.sheetsData.sheets[activeIndex];
+    this.contentMap = activeSheet.content;
+    this.setSelectionFromRange(activeSheet.selectedRange);
+    this.updateContentMapChangedForView();
   }
 
   updateContentMapChangedForView() {
@@ -138,20 +144,23 @@ export class GridTestPage {
     );
     const activeSheet = this.sheetsData.sheets[activeIndex];
     this.contentMap = activeSheet.content;
-    const selectedRange = activeSheet.selectedRange;
-    //const selectedRange = [
+    this.setSelectionFromRange(activeSheet.selectedRange);
+    this.updateContentMapChangedForView();
+  }
+
+  private setSelectionFromRange(range: GridSelectionRange | undefined) {
+    //range = [
     //  [0, 9],
     //  [0, 9],
     //];
-    if (selectedRange) {
-      /*prettier-ignore*/ console.log("[grid-test-page.ts,142] selectedRange: ", selectedRange);
-      const [start, end] = selectedRange;
-      this.dragStartColumnIndex = start[0];
-      this.dragStartRowIndex = start[1];
-      this.dragEndColumnIndex = end[0];
-      this.dragEndRowIndex = end[1];
-    }
-    this.updateContentMapChangedForView();
+    if (!range) return;
+    this.unselectAllSelecedCells();
+    const [start, end] = range;
+    this.dragStartColumnIndex = start[0];
+    this.dragStartRowIndex = start[1];
+    this.dragEndColumnIndex = end[0];
+    this.dragEndRowIndex = end[1];
+    this.updateAllSelecedCells();
   }
 
   attaching() {
@@ -165,6 +174,16 @@ export class GridTestPage {
           content: [],
         });
         console.log("newTabAdded", newTab);
+      },
+      tabRenamed: (tab) => {
+        const sheet = this.sheetsData.sheets.find((s) => s.id === tab.id);
+        if (!sheet) return;
+        sheet.title = tab.name;
+      },
+      tabDeleted: (tab) => {
+        this.sheetsData.sheets = this.sheetsData.sheets.filter(
+          (s) => s.id !== tab.id,
+        );
       },
     };
     /*prettier-ignore*/ console.log("[grid-test-page.ts,160] this.sheetsData: ", this.sheetsData);
@@ -194,7 +213,10 @@ export class GridTestPage {
       // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
       // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
+    this.addEventListeners();
   }
+
+  private addEventListeners() {}
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
     this.isStartDragGridCell = true;
@@ -450,6 +472,12 @@ export class GridTestPage {
           },
         },
         {
+          key: "<Control>k",
+          execute: () => {
+            // this.scrollEditor("up", 1);
+          },
+        },
+        {
           key: "gg",
           execute: () => {
             this.setAndUpdateCells(0, 0);
@@ -460,10 +488,7 @@ export class GridTestPage {
           key: "<Shift>G",
           execute: () => {
             this.setAndUpdateCells(0, this.rowSize - 1);
-            const height = getComputedValueFromPixelString(
-              this.spreadsheetContainerRef,
-              "height",
-            );
+            const height = this.rowSize * CELL_HEIGHT;
             this.spreadsheetContainerRef.scrollTop = height;
           },
         },
@@ -564,7 +589,7 @@ export class GridTestPage {
           desc: "Move cell right",
           execute: () => {
             console.log("indent right >>");
-            this.addCellBeforeCurrent(0);
+            this.addCellAt(0);
           },
         },
         {
@@ -717,8 +742,6 @@ export class GridTestPage {
           if (!panel) {
             this.lastCellContent = this.getCurrentCellContent();
             this.removeCellAt();
-            /*prettier-ignore*/ console.log("[grid-test-page.ts,719] this.contentMap: ", this.contentMap);
-            // this.clearCurrentCellContent();
             return;
           }
 
@@ -727,9 +750,26 @@ export class GridTestPage {
           this.gridPanels = this.panelCRUD.readAll();
         },
         [VIM_COMMAND.pasteVim]: () => {
-          console.log("pasteVim");
+          if (!this.lastCellContent) return;
+          const nextCol = this.dragStartColumnIndex + 1;
+          this.addCellAt(nextCol);
+          this.setCurrentCellContent(this.lastCellContent, nextCol);
+        },
+        [VIM_COMMAND.pasteVimBefore]: () => {
+          if (!this.lastCellContent) return;
+          this.addCellAt();
           this.setCurrentCellContent(this.lastCellContent);
-          // this.addPanelAtCursor(this.lastGridPanel);
+        },
+        [VIM_COMMAND.paste]: async () => {
+          const text = await getClipboardContent();
+          const split = text.trim().split("\n");
+          const len = split.length;
+          this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
+          this.iterateOverSelectedCells((col, row) => {
+            const content = split.shift();
+            this.setCurrentCellContent(content, col, row);
+          });
+          this.dragEndRowIndex = this.dragStartRowIndex;
         },
         [VIM_COMMAND.enterNormalMode]: () => {
           this.unselectAllSelecedCells();
@@ -765,6 +805,11 @@ export class GridTestPage {
         },
         [VIM_COMMAND.enterVisualMode]: () => {
           /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
+        },
+        [VIM_COMMAND.yank]: () => {
+          const content = this.getCurrentCellContent();
+          this.lastCellContent = content;
+          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         },
         // [VIM_COMMAND.]: () => {},
       },
@@ -819,7 +864,7 @@ export class GridTestPage {
           if (!mode) return;
           const command = mode[result.targetCommand];
           if (!command) return;
-          command();
+          command(result);
         },
         //onInsertInput: (key) => {
         //  mappingByMode[VimMode.NORMAL]
@@ -928,10 +973,13 @@ export class GridTestPage {
     this.updateContentMapChangedForView();
   }
 
-  private addCellBeforeCurrent(
+  private addCellAt(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ) {
+    if (this.contentMap[row] === undefined) {
+      this.contentMap[row] = [];
+    }
     this.contentMap[row].splice(col, 0, "");
     this.updateContentMapChangedForView();
   }
@@ -940,6 +988,9 @@ export class GridTestPage {
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ) {
+    if (this.contentMap[row] === undefined) {
+      this.contentMap[row] = [];
+    }
     this.contentMap[row].splice(col, 1);
     this.updateContentMapChangedForView();
   }
@@ -1091,6 +1142,33 @@ export class GridTestPage {
       [options.startCol, options.startRow],
       [this.columnSize - 1, this.rowSize - 1],
       callback,
+      options,
+    );
+  }
+
+  /**
+   * Enhanced with more data and methods
+   */
+  private iterateOverAllCellsEnhanced(
+    callback: (
+      columnIndex: number,
+      rowIndex: number,
+      options: { content: string; set: Function },
+    ) => void,
+    options: GridIteratorOptions = defaultGridIteratorOptions,
+  ) {
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,1138] callback: ", callback);
+    iterateOverRange(
+      [options.startCol, options.startRow],
+      [this.columnSize - 1, this.rowSize - 1],
+      (columnIndex, rowIndex) => {
+        const content = this.getCurrentCellContent(columnIndex, rowIndex);
+        callback(columnIndex, rowIndex, {
+          content,
+          set: (newContent: string) =>
+            this.setCurrentCellContent(newContent, columnIndex, rowIndex),
+        });
+      },
       options,
     );
   }
