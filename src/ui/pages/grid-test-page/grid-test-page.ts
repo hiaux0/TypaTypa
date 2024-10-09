@@ -333,10 +333,10 @@ export class GridTestPage {
             );
           }
           this.activePanel = undefined;
-          this.moveSelectedCellBy(1, "y");
-          mappingByMode[VimMode.NORMAL]
-            .find((mapping) => mapping.key === "<Enter>")
-            .execute();
+          // this.moveSelectedCellBy(1, "y");
+          //mappingByMode[VimMode.NORMAL]
+          //  .find((mapping) => mapping.key === "<Enter>")
+          //  .execute();
         } else {
           mappingByMode[VimMode.NORMAL]
             .find((mapping) => mapping.key === "<Enter>")
@@ -344,8 +344,8 @@ export class GridTestPage {
         }
 
         window.setTimeout(() => {
-          if (this.mode === VimMode.INSERT) return; // stay in insert mode
-          if (this.lastMode === VimMode.INSERT) return; // stay in insert mode
+          //if (this.mode === VimMode.INSERT) return; // stay in insert mode
+          //if (this.lastMode === VimMode.INSERT) return; // stay in insert mode
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         }, 0);
       },
@@ -560,6 +560,21 @@ export class GridTestPage {
           },
         },
         {
+          key: "<Shift>><Shift>>",
+          desc: "Move cell right",
+          execute: () => {
+            console.log("indent right >>");
+            this.addCellBeforeCurrent(0);
+          },
+        },
+        {
+          key: "<Shift><<Shift><",
+          desc: "Move cell left",
+          execute: () => {
+            this.removeCellAtStart(0);
+          },
+        },
+        {
           key: "<Space>pn",
           desc: "[P]anel [N]ext",
           execute: () => {
@@ -635,9 +650,12 @@ export class GridTestPage {
       [VimMode.NORMAL]: {
         [VIM_COMMAND.cursorLineEnd]: () => {
           this.setAndUpdateCells(this.columnSize - 1, this.dragStartRowIndex);
+          this.spreadsheetContainerRef.scrollLeft =
+            this.columnSize * CELL_WIDTH;
         },
         [VIM_COMMAND.cursorLineStart]: () => {
           this.setAndUpdateCells(0, this.dragStartRowIndex);
+          this.spreadsheetContainerRef.scrollLeft = 0;
         },
         [VIM_COMMAND.cursorRight]: () => {
           this.unselectAllSelecedCells();
@@ -646,7 +664,11 @@ export class GridTestPage {
           const b = this.dragEndColumnIndex + 1;
           this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
           this.updateAllSelecedCells();
-          this.scrollEditor("right", 1);
+          if (this.dragStartColumnIndex === 0) {
+            this.spreadsheetContainerRef.scrollLeft = 0;
+          } else {
+            this.scrollEditor("right", 1);
+          }
         },
         [VIM_COMMAND.cursorLeft]: () => {
           this.unselectAllSelecedCells();
@@ -655,7 +677,12 @@ export class GridTestPage {
           const b = this.dragEndColumnIndex - 1;
           this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
           this.updateAllSelecedCells();
-          this.scrollEditor("left", 1);
+          if (this.dragStartColumnIndex === this.columnSize - 1) {
+            this.spreadsheetContainerRef.scrollLeft =
+              this.columnSize * CELL_WIDTH;
+          } else {
+            this.scrollEditor("left", 1);
+          }
         },
         [VIM_COMMAND.cursorUp]: () => {
           this.unselectAllSelecedCells();
@@ -664,7 +691,11 @@ export class GridTestPage {
           const b = this.dragEndRowIndex - 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
           this.updateAllSelecedCells();
-          this.scrollEditor("up", 1);
+          if (this.dragStartRowIndex === this.rowSize - 1) {
+            this.spreadsheetContainerRef.scrollTop = this.rowSize * CELL_HEIGHT;
+          } else {
+            this.scrollEditor("up", 1);
+          }
         },
         [VIM_COMMAND.cursorDown]: () => {
           this.unselectAllSelecedCells();
@@ -673,7 +704,11 @@ export class GridTestPage {
           const b = this.dragEndRowIndex + 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
           this.updateAllSelecedCells();
-          this.scrollEditor("down", 1);
+          if (this.dragStartRowIndex === 0) {
+            this.spreadsheetContainerRef.scrollTop = 0;
+          } else {
+            this.scrollEditor("down", 1);
+          }
         },
         [VIM_COMMAND.delete]: () => {
           const panel = this.getPanelUnderCursor();
@@ -889,6 +924,24 @@ export class GridTestPage {
     this.updateContentMapChangedForView();
   }
 
+  private addCellBeforeCurrent(
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+  ) {
+    this.contentMap[row].splice(col, 0, "");
+    this.updateContentMapChangedForView();
+  }
+
+  private removeCellAtStart(
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+  ) {
+    const content = this.getCurrentCellContent(col, row);
+    if (content) return;
+    this.contentMap[row].splice(col, 1);
+    this.updateContentMapChangedForView();
+  }
+
   private clearCurrentCellContent(): void {
     this.setCurrentCellContent(undefined);
     this.updateContentMapChangedForView();
@@ -993,7 +1046,6 @@ export class GridTestPage {
         this.dragEndColumnIndex += amount;
       }
     }
-    this.dragStartRowIndex;
     this.updateAllSelecedCells();
   }
 

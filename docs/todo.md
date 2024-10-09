@@ -70,13 +70,14 @@
 - [ ] bug:
 - [ ] feat: download and upload state
 - [ ] feat: {, }
-- [!] feat: gg, G
-- [ ] feat: scrolling -- offset to the top
 
 # Done
 ## Grid
 
+- [x] feat: <<, >>
+- [x] feat: gg, G
 - [x] feat: scrolling
+  - [x] feat: scrolling -- offset to the top
 - [x] feat: cc
 - [x] feat: o, O
 - [x] feat: dd

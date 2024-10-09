@@ -143,7 +143,7 @@ export abstract class AbstractMode {
 
     if (!isValidHorizontalAfterMovedVertically) {
       // TODO: Call "$" to put cursor to end of line
-      this.setCursorCol(Math.max(newActiveLine.text.length - 1, 0));
+      this.setCursorCol(Math.max(newActiveLine?.text?.length - 1, 0));
     }
 
     const newActiveText = this.vimState.lines[adjustedCursorLine];

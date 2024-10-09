@@ -86,6 +86,8 @@ const cursorNormalAndVisual: VimCommand[] = [
   { key: "}", command: "jumpNextBlock" },
   { key: "<Shift>{", command: "jumpPreviousBlock" },
   { key: "{", command: "jumpPreviousBlock" },
+  { key: "<Shift>><Shift>>", command: "indentRight" },
+  { key: "<Shift><<Shift><", command: "indentLeft" },
   ...commandsThatWaitForNextInput,
 ];
 

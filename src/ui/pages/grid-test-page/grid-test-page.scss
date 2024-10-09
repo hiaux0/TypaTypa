@@ -49,6 +49,11 @@ $columnHeight: 32px;
     }
     .cell-header {
       @include cell();
+      position: sticky;
+      top: 0;
+      z-index: 2000;
+      background: $secondaryLight0;
+
       &:hover {
         background: blue;
       }
@@ -67,6 +72,10 @@ $columnHeight: 32px;
 
     .row-header {
       /* margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`) */
+      position: sticky;
+      left: 0;
+      background: $secondaryLight0;
+      z-index: 2000;
     }
     .row-container {
     }
