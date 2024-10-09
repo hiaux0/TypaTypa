@@ -571,7 +571,9 @@ export class GridTestPage {
           key: "<Shift><<Shift><",
           desc: "Move cell left",
           execute: () => {
-            this.removeCellAtStart(0);
+            const content = this.getCurrentCellContent(0);
+            if (content) return;
+            this.removeCellAt(0);
           },
         },
         {
@@ -714,7 +716,9 @@ export class GridTestPage {
           const panel = this.getPanelUnderCursor();
           if (!panel) {
             this.lastCellContent = this.getCurrentCellContent();
-            this.clearCurrentCellContent();
+            this.removeCellAt();
+            /*prettier-ignore*/ console.log("[grid-test-page.ts,719] this.contentMap: ", this.contentMap);
+            // this.clearCurrentCellContent();
             return;
           }
 
@@ -932,12 +936,10 @@ export class GridTestPage {
     this.updateContentMapChangedForView();
   }
 
-  private removeCellAtStart(
+  private removeCellAt(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ) {
-    const content = this.getCurrentCellContent(col, row);
-    if (content) return;
     this.contentMap[row].splice(col, 1);
     this.updateContentMapChangedForView();
   }

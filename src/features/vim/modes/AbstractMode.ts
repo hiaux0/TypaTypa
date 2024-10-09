@@ -113,7 +113,7 @@ export abstract class AbstractMode {
 
     // this.vimState.updateActiveLine(newActiveText);
     this.setCursorLine(newCurLine);
-    this.reTokenizeInput(newActiveText.text);
+    this.reTokenizeInput(newActiveText?.text);
 
     return this.vimState;
   }
@@ -149,7 +149,7 @@ export abstract class AbstractMode {
     const newActiveText = this.vimState.lines[adjustedCursorLine];
 
     this.setCursorLine(adjustedCursorLine);
-    this.reTokenizeInput(newActiveText.text);
+    this.reTokenizeInput(newActiveText?.text);
 
     return this.vimState;
   }

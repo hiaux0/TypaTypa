@@ -57,7 +57,21 @@ export interface GridDatabaseType {
   selectedSheetId?: string;
 }
 
+//export const defaultGridDatabaseType: GridDatabaseType = {
+//  sheets: [{ id: "1", title: "Sheet 1", content: [] }],
+//  selectedSheetId: "1",
+//};
 export const defaultGridDatabaseType: GridDatabaseType = {
-  sheets: [{ id: "1", title: "Sheet 1", content: [] }],
+  sheets: [
+    {
+      id: "1",
+      title: "Sheet 1",
+      content: [["okay"], ["0", "1", "2", "3", "4"], ["okayo"], ["hello"]],
+      selectedRange: [
+        [2, 1],
+        [2, 1],
+      ],
+    },
+  ],
   selectedSheetId: "1",
 };
