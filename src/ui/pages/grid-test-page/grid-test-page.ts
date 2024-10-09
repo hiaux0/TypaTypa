@@ -261,7 +261,7 @@ export class GridTestPage {
   public onMouseUpGridCell(): void {
     // this.addGridPanelToSelection();
     this.resetDrag();
-    this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
+    // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
   }
 
   public onPanelClicked(panel: GridPanel): void {
@@ -395,7 +395,7 @@ export class GridTestPage {
             let nextRowWithContent = NaN;
             const [prevCol, prevRow] = this.getPreviousCellCoords();
 
-            iterateOverRangeBackwards(
+            iterateOverGridBackwards(
               [prevCol, prevRow],
               (col, row) => {
                 if (nextColWithContent) return;
@@ -811,6 +811,35 @@ export class GridTestPage {
           this.lastCellContent = content;
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         },
+        [VIM_COMMAND.jumpPreviousBlock]: () => {
+          let nextEmptyRow = NaN;
+          this.iterateOverColBackwards(
+            (col, row) => {
+              const content = this.getCurrentCellContent(col, row);
+              const empty = !content;
+              nextEmptyRow = row;
+              return empty;
+            },
+            { startRow: this.dragStartRowIndex },
+          );
+          this.dragEndRowIndex = nextEmptyRow + 1;
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.jumpNextBlock]: () => {
+          let nextEmptyRow = NaN;
+          this.iterateOverCol(
+            (col, row) => {
+              const content = this.getCurrentCellContent(col, row);
+              const empty = !content;
+              nextEmptyRow = row;
+              return empty;
+            },
+            { startRow: this.dragStartRowIndex },
+          );
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,821] nextEmptyRow: ", nextEmptyRow);
+          this.dragEndRowIndex = nextEmptyRow - 1;
+          this.updateAllSelecedCells();
+        },
         // [VIM_COMMAND.]: () => {},
       },
       [VimMode.INSERT]: {
@@ -1138,7 +1167,7 @@ export class GridTestPage {
     callback: (columnIndex: number, rowIndex: number) => void,
     options: GridIteratorOptions = defaultGridIteratorOptions,
   ) {
-    iterateOverRange(
+    iterateOverGrid(
       [options.startCol, options.startRow],
       [this.columnSize - 1, this.rowSize - 1],
       callback,
@@ -1158,7 +1187,7 @@ export class GridTestPage {
     options: GridIteratorOptions = defaultGridIteratorOptions,
   ) {
     /*prettier-ignore*/ console.log("[grid-test-page.ts,1138] callback: ", callback);
-    iterateOverRange(
+    iterateOverGrid(
       [options.startCol, options.startRow],
       [this.columnSize - 1, this.rowSize - 1],
       (columnIndex, rowIndex) => {
@@ -1173,10 +1202,29 @@ export class GridTestPage {
     );
   }
 
-  private iterateOverAllCellsBackwards(
+  private iterateOverCol(
     callback: (columnIndex: number, rowIndex: number) => void,
-    options: GridIteratorOptions = defaultGridIteratorOptions,
-  ) {}
+    options?: GridIteratorOptions,
+  ) {
+    iterateOverRange(
+      [this.dragStartColumnIndex, 0],
+      [this.dragStartColumnIndex, this.rowSize - 1],
+      callback,
+      options,
+    );
+  }
+
+  private iterateOverColBackwards(
+    callback: (columnIndex: number, rowIndex: number) => void,
+    options?: GridIteratorOptions,
+  ) {
+    iterateOverRangeBackwards(
+      [this.dragStartColumnIndex, 0],
+      [this.dragStartColumnIndex, this.rowSize - 1],
+      callback,
+      options,
+    );
+  }
 
   private resetDrag() {
     this.isStartDragGridCell = false;
@@ -1323,10 +1371,35 @@ function iterateOverRange(
   start: GridSelectionCoord,
   end: GridSelectionCoord,
   callback: (columnIndex: number, rowIndex: number) => boolean | void,
-  options: GridIteratorOptions,
+  options?: GridIteratorOptions,
 ) {
-  const startRow = options.startRow ?? start[1];
-  let startCol = options.startCol ?? start[0];
+  let startCol = options?.startCol ?? start[0];
+  const startRow = options?.startRow ?? start[1];
+
+  let stopAll = false;
+  for (let rowIndex = startRow; rowIndex <= end[1]; rowIndex++) {
+    if (stopAll) break;
+    for (let columnIndex = startCol; columnIndex <= end[0]; columnIndex++) {
+      stopAll = !!callback(columnIndex, rowIndex);
+      if (stopAll) {
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * Iterate row first.
+ * Loop back through start of column
+ */
+function iterateOverGrid(
+  start: GridSelectionCoord,
+  end: GridSelectionCoord,
+  callback: (columnIndex: number, rowIndex: number) => boolean | void,
+  options?: GridIteratorOptions,
+) {
+  let startCol = options?.startCol ?? start[0];
+  const startRow = options?.startRow ?? start[1];
 
   let stopAll = false;
   for (let rowIndex = startRow; rowIndex <= end[1]; rowIndex++) {
@@ -1347,6 +1420,30 @@ function iterateOverRange(
  * Iterate row first
  */
 function iterateOverRangeBackwards(
+  start: GridSelectionCoord,
+  end: GridSelectionCoord,
+  callback: (columnIndex: number, rowIndex: number) => boolean | void,
+  options: GridIteratorOptions,
+) {
+  let endCol = options?.startCol ?? end[0];
+  const endRow = options?.startRow ?? end[1];
+
+  let stopAll = false;
+  for (let rowIndex = endRow; rowIndex >= start[1]; rowIndex--) {
+    if (stopAll) break;
+    for (let columnIndex = endCol; columnIndex >= start[0]; columnIndex--) {
+      stopAll = !!callback(columnIndex, rowIndex);
+      if (stopAll) {
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * Iterate row first
+ */
+function iterateOverGridBackwards(
   end: GridSelectionCoord,
   callback: (columnIndex: number, rowIndex: number) => boolean | void,
   options: GridIteratorOptions,

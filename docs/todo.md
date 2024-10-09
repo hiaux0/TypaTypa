@@ -73,12 +73,12 @@
 
 - [ ] feat: grid----- vim ------
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
-- [ ] feat: grid----- vim ------ improve scripting capabilities
-  - [ ] iterateOverCell
 
 # Done
 ## Grid
 
+- [x] feat: grid----- vim ------ improve scripting capabilities
+  - [x] iterateOverCell
 - [x] feat: download state
 - [x] feat: <<, >>
 - [x] feat: gg, G
