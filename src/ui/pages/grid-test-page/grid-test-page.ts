@@ -149,10 +149,10 @@ export class GridTestPage {
   }
 
   private setSelectionFromRange(range: GridSelectionRange | undefined) {
-    //range = [
-    //  [0, 9],
-    //  [0, 9],
-    //];
+    range = [
+      [6, 3],
+      [6, 3],
+    ];
     if (!range) return;
     this.unselectAllSelecedCells();
     const [start, end] = range;
@@ -775,6 +775,36 @@ export class GridTestPage {
           this.unselectAllSelecedCells();
           this.dragEndColumnIndex = this.dragStartColumnIndex;
           this.dragEndRowIndex = this.dragStartRowIndex;
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.jumpPreviousBlock]: () => {
+          let nextEmptyRow = NaN;
+          this.iterateOverColBackwards(
+            (col, row) => {
+              const content = this.getCurrentCellContent(col, row);
+              const empty = !content;
+              nextEmptyRow = row;
+              return empty;
+            },
+            { startRow: this.dragStartRowIndex - 1 },
+          );
+          if (Number.isNaN(nextEmptyRow)) return;
+          this.setAndUpdateCells(this.dragStartColumnIndex, nextEmptyRow);
+          this.updateAllSelecedCells();
+        },
+        [VIM_COMMAND.jumpNextBlock]: () => {
+          let nextEmptyRow = NaN;
+          this.iterateOverCol(
+            (col, row) => {
+              const content = this.getCurrentCellContent(col, row);
+              const empty = !content;
+              nextEmptyRow = row;
+              return empty;
+            },
+            { startRow: this.dragStartRowIndex + 1 },
+          );
+          if (Number.isNaN(nextEmptyRow)) return;
+          this.setAndUpdateCells(this.dragStartColumnIndex, nextEmptyRow);
           this.updateAllSelecedCells();
         },
       },

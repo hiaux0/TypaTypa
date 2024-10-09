@@ -69,14 +69,15 @@
 - [ ] feat: calendar
 - [ ] bug:
 - [ ] feat: upload state
-- [ ] feat: {, }
 
-- [ ] feat: grid----- vim ------
+- [ ] refac: grid----- vim ------ use existing vimCore logic
+  - convert columns/rows into lines, and update cell coords based on vimState
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
 
 # Done
 ## Grid
 
+- [x] feat: {, }
 - [x] feat: grid----- vim ------ improve scripting capabilities
   - [x] iterateOverCell
 - [x] feat: download state
