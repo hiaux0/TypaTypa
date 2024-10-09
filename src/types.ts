@@ -1,3 +1,5 @@
+export type Direction = "up" | "down" | "left" | "right" | "none";
+
 export type WordType = "Noun";
 export type OtherSynonyms = string[];
 export type ExamplePhrases = string[];
@@ -47,6 +49,7 @@ export interface Sheet {
   id: string;
   title: string;
   content: ContentMap;
+  selectedRange?: GridSelectionRange;
 }
 
 export interface GridDatabaseType {

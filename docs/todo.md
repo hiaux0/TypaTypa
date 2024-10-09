@@ -38,7 +38,7 @@
 
 ## Vim
 
-- [ ] refac: 
+- [ ] refac:
 - [ ] refac: don't just merge custom mappings,
   - but somehow mark them as custom
   - so, that they don't trigger the default implementations
@@ -70,11 +70,13 @@
 - [ ] bug:
 - [ ] feat: download and upload state
 - [ ] feat: {, }
-- [ ] feat: g, G
+- [!] feat: gg, G
+- [ ] feat: scrolling -- offset to the top
 
 # Done
 ## Grid
 
+- [x] feat: scrolling
 - [x] feat: cc
 - [x] feat: o, O
 - [x] feat: dd
@@ -140,7 +142,9 @@
   - if the last letter is the pressed Key, then repeat?
 
 # On Hold
+
 ## Grid
+
 - [ ] feat: resize panels --> partially done via autosize
 
 # Features

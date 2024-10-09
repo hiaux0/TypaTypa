@@ -101,12 +101,12 @@ export abstract class AbstractMode {
     const newActiveLine = this.vimState.lines[newCurLine];
     const isValidHorizontalAfterMovedVertically = isValidHorizontalPosition(
       this.vimState.cursor.col + 1,
-      newActiveLine.text,
+      newActiveLine?.text,
     );
 
     if (!isValidHorizontalAfterMovedVertically) {
       // TODO: Call "$" to put cursor to end of line
-      this.setCursorCol(Math.max(newActiveLine.text.length - 1, 0));
+      this.setCursorCol(Math.max(newActiveLine?.text?.length - 1, 0));
     }
 
     const newActiveText = this.vimState.lines[newCurLine];
@@ -894,6 +894,7 @@ export function isValidHorizontalPosition(
   cursorCol: number,
   activeInput: string,
 ) {
+  if (!activeInput) return false;
   if (cursorCol === activeInput.length + 1) return true;
 
   const isBigger = cursorCol > activeInput.length;

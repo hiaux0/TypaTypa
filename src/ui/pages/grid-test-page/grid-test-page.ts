@@ -3,6 +3,7 @@ import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import {
   ContentMap,
+  Direction,
   GridDatabaseType,
   GridSelectionCoord,
   GridSelectionRange,
@@ -29,6 +30,7 @@ import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
 import { SPACE } from "../../../common/modules/keybindings/app-keys";
 import { isArrowMovement } from "../../../features/vim/key-bindings";
 import { downloadText } from "../../../common/modules/downloadText";
+import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
 
 type GridPanelTypes = "button" | "text";
 
@@ -58,8 +60,9 @@ const CELL_WIDTH = 64;
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
-  public rowSize = 10;
-  public columnSize = 8;
+  public spreadsheetContainerRef: HTMLElement;
+  public rowSize = 20;
+  public columnSize = 20;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -133,7 +136,21 @@ export class GridTestPage {
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === sheetId,
     );
-    this.contentMap = this.sheetsData.sheets[activeIndex].content;
+    const activeSheet = this.sheetsData.sheets[activeIndex];
+    this.contentMap = activeSheet.content;
+    const selectedRange = activeSheet.selectedRange;
+    //const selectedRange = [
+    //  [0, 9],
+    //  [0, 9],
+    //];
+    if (selectedRange) {
+      /*prettier-ignore*/ console.log("[grid-test-page.ts,142] selectedRange: ", selectedRange);
+      const [start, end] = selectedRange;
+      this.dragStartColumnIndex = start[0];
+      this.dragStartRowIndex = start[1];
+      this.dragEndColumnIndex = end[0];
+      this.dragEndRowIndex = end[1];
+    }
     this.updateContentMapChangedForView();
   }
 
@@ -433,6 +450,24 @@ export class GridTestPage {
           },
         },
         {
+          key: "gg",
+          execute: () => {
+            this.setAndUpdateCells(0, 0);
+            this.spreadsheetContainerRef.scrollTop = 0;
+          },
+        },
+        {
+          key: "<Shift>G",
+          execute: () => {
+            this.setAndUpdateCells(0, this.rowSize - 1);
+            const height = getComputedValueFromPixelString(
+              this.spreadsheetContainerRef,
+              "height",
+            );
+            this.spreadsheetContainerRef.scrollTop = height;
+          },
+        },
+        {
           key: "i",
           command: VIM_COMMAND.enterInsertMode,
           execute: () => {
@@ -611,6 +646,7 @@ export class GridTestPage {
           const b = this.dragEndColumnIndex + 1;
           this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
           this.updateAllSelecedCells();
+          this.scrollEditor("right", 1);
         },
         [VIM_COMMAND.cursorLeft]: () => {
           this.unselectAllSelecedCells();
@@ -619,6 +655,7 @@ export class GridTestPage {
           const b = this.dragEndColumnIndex - 1;
           this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
           this.updateAllSelecedCells();
+          this.scrollEditor("left", 1);
         },
         [VIM_COMMAND.cursorUp]: () => {
           this.unselectAllSelecedCells();
@@ -627,6 +664,7 @@ export class GridTestPage {
           const b = this.dragEndRowIndex - 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
           this.updateAllSelecedCells();
+          this.scrollEditor("up", 1);
         },
         [VIM_COMMAND.cursorDown]: () => {
           this.unselectAllSelecedCells();
@@ -635,6 +673,7 @@ export class GridTestPage {
           const b = this.dragEndRowIndex + 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
           this.updateAllSelecedCells();
+          this.scrollEditor("down", 1);
         },
         [VIM_COMMAND.delete]: () => {
           const panel = this.getPanelUnderCursor();
@@ -923,7 +962,7 @@ export class GridTestPage {
     return newPanel;
   }
 
-  private getSelectedArea() {
+  private getSelectedArea(): GridSelectionRange {
     const minColumnIndex = Math.min(
       this.dragStartColumnIndex,
       this.dragEndColumnIndex,
@@ -1024,9 +1063,79 @@ export class GridTestPage {
 
   private autosave(): void {
     gridDatabase.autosave(() => {
+      this.getActiveSheet().selectedRange = this.getSelectedArea();
       gridDatabase.setItem(this.sheetsData);
     });
   }
+
+  private readonly scrollEditor = (
+    direction: Direction,
+    delta: number,
+  ): void => {
+    const activeElement = document.querySelector(".selected-cell");
+
+    const cursor = activeElement;
+    if (!cursor) return;
+    const editor = this.spreadsheetContainerRef;
+    if (!editor) return;
+    const containerRect = editor.getBoundingClientRect();
+
+    /** Relative to container */
+    const cursorRect = cursor.getBoundingClientRect();
+    const lineHeight = CELL_HEIGHT;
+    const cursorWidth = cursorRect.width;
+    const relCursorTop = cursorRect.top; // - containerRect.top;
+    const relCursorLeft = cursorRect.left; // - containerRect.top;
+    const relCursorBottom = cursorRect.bottom; //  - containerRect.top;
+    const relCursorRight = cursorRect.right; //  - containerRect.top;
+
+    const THRESHOLD_VALUE = 70; // - 40: 40 away from <direction>, then should scroll
+    // bottom = right, up = left
+
+    const bottomThreshold = containerRect.bottom - THRESHOLD_VALUE;
+    const shouldScrollDown = relCursorBottom > bottomThreshold;
+    const topThreshold = containerRect.top + THRESHOLD_VALUE;
+    const shouldScrollUp = relCursorTop < topThreshold;
+
+    const rightThreshold = containerRect.right - THRESHOLD_VALUE;
+    const shouldScrollRight = relCursorRight > rightThreshold;
+    const leftThreshold = containerRect.left + THRESHOLD_VALUE;
+    const shouldScrollLeft = relCursorLeft < leftThreshold;
+
+    const horiChange = delta * lineHeight;
+    const vertiChange = delta * cursorWidth;
+    switch (direction) {
+      case "up":
+        if (shouldScrollUp) {
+          editor.scrollTop -= horiChange;
+        }
+        break;
+      case "down":
+        if (shouldScrollDown) {
+          editor.scrollTop += horiChange;
+        }
+        break;
+      case "left":
+        if (shouldScrollLeft) {
+          editor.scrollLeft -= vertiChange;
+        }
+        break;
+      case "right":
+        if (shouldScrollRight) {
+          editor.scrollLeft += vertiChange;
+        }
+        break;
+      default: {
+        break;
+      }
+    }
+
+    // cursor.scrollIntoView({
+    //   behavior: 'smooth',
+    //   block: 'nearest',
+    //   inline: 'nearest',
+    // });
+  };
 }
 
 function calculateDiff(
