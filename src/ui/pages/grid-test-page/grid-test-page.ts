@@ -49,8 +49,11 @@ interface GridPanel {
 
 interface GridIteratorOptions {
   startCol?: number;
-  colSize?: number;
+  endCol?: number;
   startRow?: number;
+  endRow?: number;
+  colSize?: number;
+  rowSize?: number;
 }
 const defaultGridIteratorOptions: GridIteratorOptions = {
   startCol: 0,
@@ -88,10 +91,10 @@ export class GridTestPage {
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
   private lastGridPanel: GridPanel | undefined = undefined;
-  private lastCellContent: string | undefined = undefined;
+  private lastCellContentArray: string[] = [];
 
   private isStartDragGridCell = false;
-  private mode: VimMode | "Move" = VimMode.NORMAL;
+  private mode: VimMode | "Move" = VimMode.VISUAL;
   private lastMode: VimMode | "Move" = VimMode.NORMAL;
   private panelCRUD: CRUDService<GridPanel>;
 
@@ -149,10 +152,10 @@ export class GridTestPage {
   }
 
   private setSelectionFromRange(range: GridSelectionRange | undefined) {
-    range = [
-      [6, 3],
-      [6, 3],
-    ];
+    //range = [
+    //  [6, 3],
+    //  [6, 3],
+    //];
     if (!range) return;
     this.unselectAllSelecedCells();
     const [start, end] = range;
@@ -214,6 +217,7 @@ export class GridTestPage {
       // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
     this.addEventListeners();
+    this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
   }
 
   private addEventListeners() {}
@@ -590,6 +594,7 @@ export class GridTestPage {
           execute: () => {
             console.log("indent right >>");
             this.addCellAt(0);
+            this.updateContentMapChangedForView();
           },
         },
         {
@@ -686,10 +691,12 @@ export class GridTestPage {
         },
         [VIM_COMMAND.cursorRight]: () => {
           this.unselectAllSelecedCells();
-          const a = this.dragStartColumnIndex + 1;
-          this.dragStartColumnIndex = cycleInRange(0, this.columnSize, a);
-          const b = this.dragEndColumnIndex + 1;
-          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+          const a = Math.min(
+            this.columnSize - 1,
+            this.dragStartColumnIndex + 1,
+          );
+          this.dragStartColumnIndex = a;
+          this.dragEndColumnIndex = a;
           this.updateAllSelecedCells();
           if (this.dragStartColumnIndex === 0) {
             this.spreadsheetContainerRef.scrollLeft = 0;
@@ -699,10 +706,9 @@ export class GridTestPage {
         },
         [VIM_COMMAND.cursorLeft]: () => {
           this.unselectAllSelecedCells();
-          const a = this.dragStartColumnIndex - 1;
-          this.dragStartColumnIndex = cycleInRange(0, this.columnSize, a);
-          const b = this.dragEndColumnIndex - 1;
-          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+          const a = Math.max(0, this.dragStartColumnIndex - 1);
+          this.dragStartColumnIndex = a;
+          this.dragEndColumnIndex = a;
           this.updateAllSelecedCells();
           if (this.dragStartColumnIndex === this.columnSize - 1) {
             this.spreadsheetContainerRef.scrollLeft =
@@ -713,10 +719,9 @@ export class GridTestPage {
         },
         [VIM_COMMAND.cursorUp]: () => {
           this.unselectAllSelecedCells();
-          const a = this.dragStartRowIndex - 1;
-          this.dragStartRowIndex = cycleInRange(0, this.rowSize, a);
-          const b = this.dragEndRowIndex - 1;
-          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+          const a = Math.max(0, this.dragStartRowIndex - 1);
+          this.dragStartRowIndex = a;
+          this.dragEndRowIndex = a;
           this.updateAllSelecedCells();
           if (this.dragStartRowIndex === this.rowSize - 1) {
             this.spreadsheetContainerRef.scrollTop = this.rowSize * CELL_HEIGHT;
@@ -726,10 +731,9 @@ export class GridTestPage {
         },
         [VIM_COMMAND.cursorDown]: () => {
           this.unselectAllSelecedCells();
-          const a = this.dragStartRowIndex + 1;
-          this.dragStartRowIndex = cycleInRange(0, this.rowSize, a);
-          const b = this.dragEndRowIndex + 1;
-          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+          const a = Math.min(this.rowSize - 1, this.dragStartRowIndex - 1);
+          this.dragStartRowIndex = a;
+          this.dragEndRowIndex = a;
           this.updateAllSelecedCells();
           if (this.dragStartRowIndex === 0) {
             this.spreadsheetContainerRef.scrollTop = 0;
@@ -740,7 +744,7 @@ export class GridTestPage {
         [VIM_COMMAND.delete]: () => {
           const panel = this.getPanelUnderCursor();
           if (!panel) {
-            this.lastCellContent = this.getCurrentCellContent();
+            this.lastCellContentArray = [this.getCurrentCellContent()];
             this.removeCellAt();
             return;
           }
@@ -750,15 +754,48 @@ export class GridTestPage {
           this.gridPanels = this.panelCRUD.readAll();
         },
         [VIM_COMMAND.pasteVim]: () => {
-          if (!this.lastCellContent) return;
+          if (this.lastCellContentArray.length === 0) return;
           const nextCol = this.dragStartColumnIndex + 1;
-          this.addCellAt(nextCol);
-          this.setCurrentCellContent(this.lastCellContent, nextCol);
+          let index = 0;
+          this.iterateOverCol(
+            (col, row) => {
+              console.log("pasteVim", col, row);
+              this.addCellAt(col, row);
+              const content = this.lastCellContentArray[index++];
+              this.setCurrentCellContent(content, col, row, {
+                skipUpdate: true,
+              });
+            },
+            {
+              startCol: nextCol,
+              startRow: this.dragStartRowIndex,
+              endCol: nextCol,
+              endRow:
+                this.dragStartRowIndex + this.lastCellContentArray.length - 1,
+            },
+          );
+          this.updateContentMapChangedForView();
         },
         [VIM_COMMAND.pasteVimBefore]: () => {
-          if (!this.lastCellContent) return;
-          this.addCellAt();
-          this.setCurrentCellContent(this.lastCellContent);
+          if (this.lastCellContentArray.length === 0) return;
+          let index = 0;
+          this.iterateOverCol(
+            (col, row) => {
+              console.log("pasteVim", col, row);
+              this.addCellAt(col, row);
+              const content = this.lastCellContentArray[index++];
+              this.setCurrentCellContent(content, col, row, {
+                skipUpdate: true,
+              });
+            },
+            {
+              startRow: this.dragStartRowIndex,
+              endCol: this.dragStartColumnIndex,
+              endRow:
+                this.dragStartRowIndex + this.lastCellContentArray.length - 1,
+            },
+          );
+          this.updateContentMapChangedForView();
         },
         [VIM_COMMAND.paste]: async () => {
           const text = await getClipboardContent();
@@ -833,12 +870,29 @@ export class GridTestPage {
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
           this.updateAllSelecedCells();
         },
+        [VIM_COMMAND.visualDelete]: () => {
+          const collectDeleted = [];
+          this.iterateOverCol(
+            (col, row) => {
+              collectDeleted.push(this.getCurrentCellContent(col, row));
+              this.clearCurrentCellContent(col, row, { skipUpdate: true });
+            },
+            { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
+          );
+          this.lastCellContentArray = collectDeleted;
+          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+          this.setAndUpdateCells(
+            this.dragStartColumnIndex,
+            this.dragStartRowIndex,
+          );
+          this.updateContentMapChangedForView();
+        },
         [VIM_COMMAND.enterVisualMode]: () => {
           /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
         },
         [VIM_COMMAND.yank]: () => {
           const content = this.getCurrentCellContent();
-          this.lastCellContent = content;
+          this.lastCellContentArray = [content];
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         },
         [VIM_COMMAND.jumpPreviousBlock]: () => {
@@ -852,6 +906,7 @@ export class GridTestPage {
             },
             { startRow: this.dragStartRowIndex },
           );
+          this.unselectAllSelecedCells();
           this.dragEndRowIndex = nextEmptyRow + 1;
           this.updateAllSelecedCells();
         },
@@ -866,7 +921,7 @@ export class GridTestPage {
             },
             { startRow: this.dragStartRowIndex },
           );
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,821] nextEmptyRow: ", nextEmptyRow);
+          this.unselectAllSelecedCells();
           this.dragEndRowIndex = nextEmptyRow - 1;
           this.updateAllSelecedCells();
         },
@@ -1024,11 +1079,13 @@ export class GridTestPage {
     content: string,
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
+    option?: { skipUpdate: boolean },
   ) {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
     this.contentMap[row][col] = content;
+    if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
   }
 
@@ -1040,7 +1097,6 @@ export class GridTestPage {
       this.contentMap[row] = [];
     }
     this.contentMap[row].splice(col, 0, "");
-    this.updateContentMapChangedForView();
   }
 
   private removeCellAt(
@@ -1054,9 +1110,12 @@ export class GridTestPage {
     this.updateContentMapChangedForView();
   }
 
-  private clearCurrentCellContent(): void {
-    this.setCurrentCellContent(undefined);
-    this.updateContentMapChangedForView();
+  private clearCurrentCellContent(
+    col?: number,
+    row?: number,
+    option?: { skipUpdate: boolean },
+  ): void {
+    this.setCurrentCellContent(undefined, col, row, option);
   }
 
   /**
@@ -1403,13 +1462,19 @@ function iterateOverRange(
   callback: (columnIndex: number, rowIndex: number) => boolean | void,
   options?: GridIteratorOptions,
 ) {
-  let startCol = options?.startCol ?? start[0];
+  const startCol = options?.startCol ?? start[0];
+  /*prettier-ignore*/ console.log("[grid-test-page.ts,1460] startCol: ", startCol);
   const startRow = options?.startRow ?? start[1];
+  /*prettier-ignore*/ console.log("[grid-test-page.ts,1462] startRow: ", startRow);
+  const endCol = options?.endCol ?? end[0];
+  /*prettier-ignore*/ console.log("[grid-test-page.ts,1464] endCol: ", endCol);
+  const endRow = options?.endRow ?? end[1];
+  /*prettier-ignore*/ console.log("[grid-test-page.ts,1466] endRow: ", endRow);
 
   let stopAll = false;
-  for (let rowIndex = startRow; rowIndex <= end[1]; rowIndex++) {
+  for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
     if (stopAll) break;
-    for (let columnIndex = startCol; columnIndex <= end[0]; columnIndex++) {
+    for (let columnIndex = startCol; columnIndex <= endCol; columnIndex++) {
       stopAll = !!callback(columnIndex, rowIndex);
       if (stopAll) {
         break;
