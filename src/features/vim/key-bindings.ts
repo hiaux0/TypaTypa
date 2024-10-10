@@ -40,7 +40,7 @@ export const Modifier = {
 const commandsAllModes: VimCommand[] = [
   { key: "<Control>c", command: "copy" },
   { key: "<Control>z", command: "undo" },
-  { key: "<Control><Shift>z", command: "redo" },
+  { key: "<Control><Shift>Z", command: "redo" },
   { key: "<Escape>", command: "enterNormalMode" },
 ];
 /**

@@ -11,8 +11,8 @@ export class Database<T> {
 
   public getItem(): T {
     const data =
-      // localStorage.getItem(this.storageKey) ?? JSON.stringify(this.defaultData);
-    JSON.stringify(this.defaultData);
+      localStorage.getItem(this.storageKey) ?? JSON.stringify(this.defaultData);
+    // JSON.stringify(this.defaultData);
     const asJson = JSON.parse(data) as unknown as T;
     return asJson;
   }

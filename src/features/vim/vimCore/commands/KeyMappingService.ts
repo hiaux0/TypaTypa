@@ -235,8 +235,11 @@ export class KeyMappingService {
 
   public static getKeyFromEvent(event: KeyboardEvent) {
     const { collectedModifiers } = ShortcutService.assembleModifiers(event);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] collectedModifiers: ", collectedModifiers);
     const pressedKey = ShortcutService.getPressedKey(event);
-    const finalKey = collectedModifiers.join() + pressedKey;
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] pressedKey: ", pressedKey);
+    const finalKey = collectedModifiers.join('') + pressedKey;
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] finalKey: ", finalKey);
     /* prettier-ignore */ logger.culogger.debug(['finalKey', finalKey], {}, (...r)=>console.log(...r));
     return finalKey;
   }

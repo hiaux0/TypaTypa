@@ -44,6 +44,7 @@ src/features/vim/vim-types.ts
 src/features/vim/key-bindings.ts
 src/features/vim/vimCore/commands/KeyMappingService.ts
 src/common/modules/database/gridDatabase.ts
+src/common/modules/undoRedo.ts
 
 %% Grid Cell Content
 docs/todo.md

@@ -33,6 +33,7 @@ import { isArrowMovement } from "../../../features/vim/key-bindings";
 import { downloadText } from "../../../common/modules/downloadText";
 import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
 import { getClipboardContent } from "../../../common/modules/platform/clipboard";
+import { UndoRedo } from "../../../common/modules/undoRedo";
 
 type GridPanelTypes = "button" | "text";
 
@@ -62,6 +63,8 @@ const defaultGridIteratorOptions: GridIteratorOptions = {
 
 const CELL_HEIGHT = 32;
 const CELL_WIDTH = 64;
+
+const gridUndoRedo = new UndoRedo<ContentMap>();
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
@@ -94,7 +97,7 @@ export class GridTestPage {
   private lastCellContentArray: string[] = [];
 
   private isStartDragGridCell = false;
-  private mode: VimMode | "Move" = VimMode.VISUAL;
+  private mode: VimMode | "Move" = VimMode.NORMAL;
   private lastMode: VimMode | "Move" = VimMode.NORMAL;
   private panelCRUD: CRUDService<GridPanel>;
 
@@ -105,7 +108,6 @@ export class GridTestPage {
   private sheetsData: GridDatabaseType;
 
   activeSheetIdChanged() {
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,105] this.activeSheetId: ", this.activeSheetId);
     if (!this.activeSheetId) return;
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === this.activeSheetId,
@@ -189,7 +191,7 @@ export class GridTestPage {
         );
       },
     };
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,160] this.sheetsData: ", this.sheetsData);
+
     this.contentMap;
     // this.sheetsData.sheets[this.sheetsData.selectedSheetId].content;
 
@@ -216,8 +218,10 @@ export class GridTestPage {
       // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
       // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
+    /*prettier-ignore*/ console.log("0. [grid-test-page.ts,152] this.contentMap: ", this.contentMap);
+    gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
-    this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
+    // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
   }
 
   private addEventListeners() {}
@@ -432,7 +436,7 @@ export class GridTestPage {
             mappingByMode[VimMode.NORMAL]
               .find((mapping) => mapping.key === "<Enter>")
               .execute();
-            /*prettier-ignore*/ console.log("[grid-test-page.ts,385] this.textareaValue: ", this.textareaValue);
+
             return true;
           },
         },
@@ -731,7 +735,7 @@ export class GridTestPage {
         },
         [VIM_COMMAND.cursorDown]: () => {
           this.unselectAllSelecedCells();
-          const a = Math.min(this.rowSize - 1, this.dragStartRowIndex - 1);
+          const a = Math.min(this.rowSize - 1, this.dragStartRowIndex + 1);
           this.dragStartRowIndex = a;
           this.dragEndRowIndex = a;
           this.updateAllSelecedCells();
@@ -759,7 +763,6 @@ export class GridTestPage {
           let index = 0;
           this.iterateOverCol(
             (col, row) => {
-              console.log("pasteVim", col, row);
               this.addCellAt(col, row);
               const content = this.lastCellContentArray[index++];
               this.setCurrentCellContent(content, col, row, {
@@ -844,6 +847,18 @@ export class GridTestPage {
           this.setAndUpdateCells(this.dragStartColumnIndex, nextEmptyRow);
           this.updateAllSelecedCells();
         },
+        [VIM_COMMAND.undo]: () => {
+          const undone = gridUndoRedo.undo();
+          if (!undone) return;
+          this.contentMap = undone;
+          this.updateContentMapChangedForView();
+        },
+        [VIM_COMMAND.redo]: () => {
+          const redone = gridUndoRedo.redo();
+          if (!redone) return;
+          this.contentMap = redone;
+          this.updateContentMapChangedForView();
+        },
       },
       [VimMode.VISUAL]: {
         [VIM_COMMAND.cursorRight]: () => {
@@ -891,9 +906,19 @@ export class GridTestPage {
           /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
         },
         [VIM_COMMAND.yank]: () => {
-          const content = this.getCurrentCellContent();
-          this.lastCellContentArray = [content];
+          const collectDeleted = [];
+          this.iterateOverCol(
+            (col, row) => {
+              collectDeleted.push(this.getCurrentCellContent(col, row));
+            },
+            { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
+          );
+          this.lastCellContentArray = collectDeleted;
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+          this.setAndUpdateCells(
+            this.dragStartColumnIndex,
+            this.dragStartRowIndex,
+          );
         },
         [VIM_COMMAND.jumpPreviousBlock]: () => {
           let nextEmptyRow = NaN;
@@ -979,15 +1004,24 @@ export class GridTestPage {
           const command = mode[result.targetCommand];
           if (!command) return;
           command(result);
+          window.setTimeout(() => {
+            if (!this.contentMap) return;
+            if (
+              result.targetCommand === VIM_COMMAND.redo ||
+              result.targetCommand === VIM_COMMAND.undo
+            )
+              return;
+            gridUndoRedo.setState(structuredClone(this.contentMap));
+          }, 0);
         },
         //onInsertInput: (key) => {
         //  mappingByMode[VimMode.NORMAL]
         //    .find((mapping) => mapping.key === "<Enter>")
         //    .execute();
         //
-        //  /*prettier-ignore*/ console.log("[grid-test-page.ts,561] key: ", key);
+
         //  const isArrow = isArrowMovement(key);
-        //  /*prettier-ignore*/ console.log("[grid-test-page.ts,563] isArrow: ", isArrow);
+
         //  const asht = {
         //    [VIM_COMMAND.cursorRight]: () => {
         //      console.log("hi");
@@ -1275,7 +1309,6 @@ export class GridTestPage {
     ) => void,
     options: GridIteratorOptions = defaultGridIteratorOptions,
   ) {
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1138] callback: ", callback);
     iterateOverGrid(
       [options.startCol, options.startRow],
       [this.columnSize - 1, this.rowSize - 1],
@@ -1463,13 +1496,9 @@ function iterateOverRange(
   options?: GridIteratorOptions,
 ) {
   const startCol = options?.startCol ?? start[0];
-  /*prettier-ignore*/ console.log("[grid-test-page.ts,1460] startCol: ", startCol);
   const startRow = options?.startRow ?? start[1];
-  /*prettier-ignore*/ console.log("[grid-test-page.ts,1462] startRow: ", startRow);
   const endCol = options?.endCol ?? end[0];
-  /*prettier-ignore*/ console.log("[grid-test-page.ts,1464] endCol: ", endCol);
   const endRow = options?.endRow ?? end[1];
-  /*prettier-ignore*/ console.log("[grid-test-page.ts,1466] endRow: ", endRow);
 
   let stopAll = false;
   for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {

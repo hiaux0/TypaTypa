@@ -66,23 +66,10 @@ export const defaultGridDatabaseType: GridDatabaseType = {
     {
       id: "1",
       title: "Sheet 1",
-      content: [
-        ["okay", "", null, null, null, null, null, "hôm nay mình làm gì v"],
-        ["0", "1", "2", "3", "4", null, null, "để thế nào mới biết là vậy"],
-        ["okayo", null, null, null, null, null, null],
-        ["hello"],
-        [null, null, null, null, null, null, "khẽ"],
-        [null, null, null, null, null, null, "hớn hở"],
-        [null, null, null, null, null, null, "lộ vẻ"],
-        [null, null, null, null, null, null, "xẹt"],
-        [null, null, null, null, null, null, "thình lình"],
-        [null, null, null, null, null, null, "chừng nào"],
-        [null, null, null, null, null, null, "bàng hoàng"],
-        [null, null, null, null, null, null, "ngẩn ngơ"],
-      ],
+      content: [["00", "10", "20"], ["01"]],
       selectedRange: [
-        [6, 4],
-        [6, 11],
+        [0, 0],
+        [0, 0],
       ],
     },
     {
