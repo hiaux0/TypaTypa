@@ -17,6 +17,7 @@ export enum VIM_COMMAND {
   "cursorBackwordsStartWord" = "cursorBackwordsStartWord",
   "cursorLineEnd" = "cursorLineEnd",
   "cursorLineStart" = "cursorLineStart",
+  "cut" = "cut",
   "delete" = "delete",
   "deleteInnerWord" = "deleteInnerWord",
   "deleteLine" = "deleteLine",

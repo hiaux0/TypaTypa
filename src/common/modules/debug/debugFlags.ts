@@ -6,4 +6,8 @@ export const debugFlags = {
   vimUi: {
     enableScrollEditor: false,
   },
+  grid: {
+    enterIntoNewLine: false,
+  },
 };
+

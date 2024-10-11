@@ -9,16 +9,15 @@ export class GridCell {
   @bindable public column: number;
   @bindable public row: number;
   @bindable public selected: boolean = false;
-  @bindable public content: string;
 
   public cellContentRef: HTMLElement;
   public contentWidth = NaN;
-
   public PADDING = PADDING;
   public CELL_WIDTH = CELL_WIDTH;
 
   get widthPx() {
     if (!this.cell?.colOfNextText) return "unset";
+    this.cell.colOfNextText;
     const diff = this.cell.colOfNextText - this.column;
     const width = diff * CELL_WIDTH - PADDING;
     const asPx = `${width}px`;
@@ -32,6 +31,8 @@ export class GridCell {
   attached() {
     if (this.cell) {
       this.cell.scrollWidth = this.cellContentRef.scrollWidth;
+      this.cell.col = this.column;
+      this.cell.row = this.row;
     }
   }
 }

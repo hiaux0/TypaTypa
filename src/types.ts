@@ -46,6 +46,8 @@ export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];
 // export type ContentMap = Record<string, string>;
 export interface Cell {
   text: string;
+  col?: number;
+  row?: number;
   colOfNextText?: number;
   scrollWidth?: number;
 }

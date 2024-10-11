@@ -36,7 +36,10 @@ import {
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
 import { downloadText } from "../../../common/modules/downloadText";
-import { getClipboardContent } from "../../../common/modules/platform/clipboard";
+import {
+  getClipboardContent,
+  setClipboardContent,
+} from "../../../common/modules/platform/clipboard";
 import { UndoRedo } from "../../../common/modules/undoRedo";
 import { runGridMigrations } from "../../../common/modules/migrations/gridMigrations";
 import {
@@ -49,6 +52,7 @@ import {
   iterateOverRange,
   iterateOverRangeBackwards,
 } from "./grid-modules/gridModules";
+import { debugFlags } from "../../../common/modules/debug/debugFlags";
 
 type GridPanelTypes = "button" | "text";
 
@@ -68,8 +72,8 @@ const gridUndoRedo = new UndoRedo<ContentMap>();
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 100;
-  public columnSize = 20;
+  public rowSize = 10;
+  public columnSize = 10;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -122,7 +126,7 @@ export class GridTestPage {
     this.contentMap.forEach((col, colIndex) => {
       col.forEach((cell, cellIndex) => {
         if (!cell) return;
-        converted[CELL_COORDS(colIndex, cellIndex)] = cell.text;
+        converted[CELL_COORDS(colIndex, cellIndex)] = cell;
       });
     });
     this.contentMapForView = converted;
@@ -158,7 +162,6 @@ export class GridTestPage {
     );
     const activeSheet = updatedSheetData.sheets[activeIndex];
     this.contentMap = activeSheet.content;
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,154] this.contentMap: ", this.contentMap);
     this.sheetsData = updatedSheetData;
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
@@ -373,10 +376,12 @@ export class GridTestPage {
             );
           }
           this.activePanel = undefined;
-          this.moveSelectedCellBy(1, "y");
-          mappingByMode[VimMode.NORMAL]
-            .find((mapping) => mapping.key === "<Enter>")
-            .execute();
+          if (debugFlags.grid.enterIntoNewLine) {
+            this.moveSelectedCellBy(1, "y");
+            mappingByMode[VimMode.NORMAL]
+              .find((mapping) => mapping.key === "<Enter>")
+              .execute();
+          }
         } else {
           mappingByMode[VimMode.NORMAL]
             .find((mapping) => mapping.key === "<Enter>")
@@ -384,8 +389,10 @@ export class GridTestPage {
         }
 
         window.setTimeout(() => {
-          if (this.mode === VimMode.INSERT) return; // stay in insert mode
-          if (this.lastMode === VimMode.INSERT) return; // stay in insert mode
+          if (debugFlags.grid.enterIntoNewLine) {
+            if (this.mode === VimMode.INSERT) return; // stay in insert mode
+            if (this.lastMode === VimMode.INSERT) return; // stay in insert mode
+          }
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         }, 0);
       },
@@ -557,6 +564,15 @@ export class GridTestPage {
               .find((mapping) => mapping.key === "<Enter>")
               .execute();
             return true;
+          },
+        },
+        {
+          key: "<Control>x",
+          execute: () => {
+            const text = this.getCurrentCell()?.text ?? "";
+            this.lastCellContentArray = [text];
+            setClipboardContent(text);
+            this.clearCurrentCellContent();
           },
         },
         {
@@ -770,6 +786,7 @@ export class GridTestPage {
           let index = 0;
           this.iterateOverCol(
             (col, row) => {
+              console.log("1. add cell at", col, row);
               this.addCellAt(col, row);
               const content = this.lastCellContentArray[index++];
               this.setCurrentCellContent(content, col, row, {
@@ -1131,10 +1148,7 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    if (this.contentMap[row][col] == null) {
-      this.contentMap[row][col] = {} as any;
-    }
-    this.contentMap[row][col].text = content;
+    this.contentMap[row][col] = { text: content, col, row };
     this.onCellContentChanged(col, row);
 
     if (option?.skipUpdate) return;
@@ -1144,11 +1158,13 @@ export class GridTestPage {
   private addCellAt(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
+    content?: string,
   ) {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
     this.contentMap[row].splice(col, 0, undefined);
+    // this.onCellContentChanged(col, row);
   }
 
   private removeCellAt(
@@ -1385,7 +1401,7 @@ export class GridTestPage {
   ) {
     iterateOverRangeBackwards(
       [0, this.dragStartRowIndex],
-      [this.dragStartColumnIndex - 1, this.dragStartRowIndex],
+      [this.dragStartColumnIndex, this.dragStartRowIndex],
       callback,
       options,
     );
@@ -1482,33 +1498,72 @@ export class GridTestPage {
   };
 
   private onCellContentChanged(col: number, row: number): void {
-    // Update overflow
+    this.updateCellOverflow(col, row);
+  }
+
+  private updateCellOverflow(col: number, row: number) {
+    console.log("0. updateCellOverflow", col, row);
+    const cell = this.getCurrentCell(col, row);
+    /*prettier-ignore*/ console.log("1. [grid-test-page.ts,1492] cell: ",cell?.col, cell?.row, cell?.text);
     let previousCellInRow: Cell | undefined;
-    this.iterateOverRowBackwards((col, row) => {
-      const cell = this.getCurrentCell(col, row);
-      const content = cell?.text;
-      if (content) {
-        previousCellInRow = cell;
-      }
-      return content;
-    });
-
     let nextColInRow: number | undefined;
-    this.iterateOverRow((col, row) => {
-      console.log("col,row", col, row);
-      const cell = this.getCurrentCell(col, row);
-      const content = cell?.text;
-      if (content) {
-        /*prettier-ignore*/ console.log("2.[grid-test-page.ts,1501] content: ", content);
-        nextColInRow = col;
-      }
-      return content;
-    });
+    // 1. If cell has content, then update the overflow of PREVIOUS and NEXT cell
+    if (cell?.text) {
+      // 1.1 PREVIOUS cell
+      this.iterateOverRowBackwards(
+        (col, row) => {
+          const cell = this.getCurrentCell(col, row);
+          const content = cell?.text;
+          if (content) {
+            previousCellInRow = cell;
+          }
+          return content;
+        },
+        { endCol: col - 1, endRow: row },
+      );
 
-    /*prettier-ignore*/ console.log("3.1[grid-test-page.ts,1507] previousCellInRow: ", previousCellInRow);
-    /*prettier-ignore*/ console.log("3.2[grid-test-page.ts,1509] nextColInRow: ", nextColInRow);
-    if (previousCellInRow) {
+      // 1.2 NEXT cell
+      this.iterateOverRow(
+        (col, row) => {
+          const cell = this.getCurrentCell(col, row);
+          const content = cell?.text;
+          if (content) {
+            nextColInRow = col;
+          }
+          return content;
+        },
+        { startCol: col + 1, startRow: row },
+      );
+    } else {
+      this.iterateOverRowBackwards(
+        (col, row) => {
+          const cell = this.getCurrentCell(col, row);
+          const content = cell?.text;
+          if (content) {
+            previousCellInRow = cell;
+          }
+          return content;
+        },
+        { endCol: col - 1, endRow: row },
+      );
+      this.iterateOverRow(
+        (col, row) => {
+          const cell = this.getCurrentCell(col, row);
+          const content = cell?.text;
+          if (content) {
+            nextColInRow = col;
+          }
+          return content;
+        },
+        { startCol: col + 1, startRow: row },
+      );
+    }
+    /*prettier-ignore*/ console.log("2.1 [grid-test-page.ts,1493] previousCellInRow: ",previousCellInRow?.col, previousCellInRow?.row, previousCellInRow?.text);
+    /*prettier-ignore*/ console.log("2.2 [grid-test-page.ts,1504] nextColInRow: ", nextColInRow);
+
+    if (previousCellInRow && nextColInRow !== null) {
       previousCellInRow.colOfNextText = nextColInRow;
+      /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
     }
   }
 }

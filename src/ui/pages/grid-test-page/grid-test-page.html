@@ -34,16 +34,14 @@
         <div class="row-container" repeat.for="rowIndex of rowSize">
           <!-- Cell -->
           <grid-cell
-            cell.bind="contentMap[rowIndex][columnIndex]"
+            cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
             row.bind="rowIndex"
             column.bind="columnIndex"
             selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
             pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
             pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
             pointerup.trigger="onMouseUpGridCell()"
-            content.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
           ></grid-cell>
-          <!-- content.bind="contentMap[columnIndex][rowIndex]" -->
         </div>
       </section>
 

@@ -6,7 +6,7 @@ export function initDebugShortcuts() {
     switch (key) {
       case "c": {
         if (getIsInputActive()) return;
-        // console.clear();
+        console.clear();
       }
     }
   });

@@ -130,13 +130,13 @@ export function iterateOverRangeBackwards(
   options: GridIteratorOptions,
 ) {
   const startCol = options?.startCol ?? start[0];
-  /*prettier-ignore*/ console.log("[gridModules.ts,133] startCol: ", startCol);
+  // /*prettier-ignore*/ console.log("[gridModules.ts,133] startCol: ", startCol);
   const startRow = options?.startRow ?? start[1];
-  /*prettier-ignore*/ console.log("[gridModules.ts,135] startRow: ", startRow);
+  // /*prettier-ignore*/ console.log("[gridModules.ts,135] startRow: ", startRow);
   const endCol = options?.endCol ?? end[0];
-  /*prettier-ignore*/ console.log("[gridModules.ts,137] endCol: ", endCol);
+  // /*prettier-ignore*/ console.log("[gridModules.ts,137] endCol: ", endCol);
   const endRow = options?.endRow ?? end[1];
-  /*prettier-ignore*/ console.log("[gridModules.ts,139] endRow: ", endRow);
+  // /*prettier-ignore*/ console.log("[gridModules.ts,139] endRow: ", endRow);
 
 
   let stopAll = false;

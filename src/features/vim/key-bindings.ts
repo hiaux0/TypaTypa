@@ -38,10 +38,11 @@ export const Modifier = {
 };
 
 const commandsAllModes: VimCommand[] = [
-  { key: "<Control>c", command: "copy" },
-  { key: "<Control>z", command: "undo" },
-  { key: "<Control><Shift>Z", command: "redo" },
-  { key: "<Escape>", command: "enterNormalMode" },
+  { key: "<Control>c", command: VIM_COMMAND["copy"] },
+  { key: "<Control>x", command: VIM_COMMAND["cut"] },
+  { key: "<Control>z", command: VIM_COMMAND["undo"] },
+  { key: "<Control><Shift>Z", command: VIM_COMMAND["redo"] },
+  { key: "<Escape>", command: VIM_COMMAND["enterNormalMode"] },
 ];
 /**
  * The very next input
