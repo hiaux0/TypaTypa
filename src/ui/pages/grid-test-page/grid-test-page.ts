@@ -34,6 +34,7 @@ import { downloadText } from "../../../common/modules/downloadText";
 import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
 import { getClipboardContent } from "../../../common/modules/platform/clipboard";
 import { UndoRedo } from "../../../common/modules/undoRedo";
+import { runGridMigrations } from "../../../common/modules/migrations/gridMigrations";
 
 type GridPanelTypes = "button" | "text";
 
@@ -114,6 +115,7 @@ export class GridTestPage {
     );
     this.sheetsData.selectedSheetId = this.activeSheetId;
     const activeSheet = this.sheetsData.sheets[activeIndex];
+    if (!activeSheet) return;
     this.contentMap = activeSheet.content;
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
@@ -123,7 +125,8 @@ export class GridTestPage {
     const converted = {};
     this.contentMap.forEach((col, colIndex) => {
       col.forEach((cell, cellIndex) => {
-        converted[CELL_COORDS(colIndex, cellIndex)] = cell;
+        if (!cell) return;
+        converted[CELL_COORDS(colIndex, cellIndex)] = cell.text;
       });
     });
     this.contentMapForView = converted;
@@ -139,16 +142,21 @@ export class GridTestPage {
 
   constructor(private vimInit: VimInit = resolve(VimInit)) {
     this.sheetsData = gridDatabase.getItem();
-    this.sheetTabs = this.sheetsData.sheets.map((sheet) => ({
+    this.initSheets(this.sheetsData);
+  }
+
+  private initSheets(sheetsData: GridDatabaseType): void {
+    this.sheetsData = runGridMigrations(sheetsData);
+    this.sheetTabs = sheetsData.sheets.map((sheet) => ({
       id: sheet.id,
       name: sheet.title,
     }));
-    const sheetId = this.sheetsData.selectedSheetId;
+    const sheetId = sheetsData.selectedSheetId;
     this.activeSheetId = sheetId;
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === sheetId,
     );
-    const activeSheet = this.sheetsData.sheets[activeIndex];
+    const activeSheet = sheetsData.sheets[activeIndex];
     this.contentMap = activeSheet.content;
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
@@ -1111,7 +1119,7 @@ export class GridTestPage {
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ): string {
-    const content = this.contentMap[row]?.[col];
+    const content = this.contentMap[row]?.[col]?.text;
     return content ?? "";
   }
 
@@ -1124,7 +1132,10 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row][col] = content;
+    if (this.contentMap[row][col] === undefined) {
+      this.contentMap[row][col] = {} as any;
+    }
+    this.contentMap[row][col].text = content;
     if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
   }
@@ -1136,7 +1147,7 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row].splice(col, 0, "");
+    this.contentMap[row].splice(col, 0, {} as any);
   }
 
   private removeCellAt(
@@ -1446,7 +1457,8 @@ export class GridTestPage {
   };
 
   public onUpload = (result: string) => {
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1449] result: ", result);
+    const asObj = JSON.parse(result);
+    this.initSheets(asObj);
   };
 }
 

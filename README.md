@@ -19,3 +19,9 @@ Run unit tests in watch mode.
 
     npm run test:watch
 
+# Data Schemas
+
+# Grid
+v0.0.2
+- change content
+    - items `string` -> `Cell` object

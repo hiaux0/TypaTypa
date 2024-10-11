@@ -2,17 +2,11 @@
 
 <import from="./grid-cell/grid-cell"></import>
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <section class="data-container">
-    <button click.trigger="downloadData()" style="height: 30px">
-      Download data
-    </button>
-    <upload-button on-upload.bind="onUpload" />
-  </section>
   <div>Mode: ${mode}</div>
   <!-- Toolbar -->
-  <section>
-    <button click.trigger="addPanel()">Add Panel</button>
-  </section>
+  <!--<section>-->
+  <!--  <button click.trigger="addPanel()">Add Panel</button>-->
+  <!--</section>-->
 
   <!-- Function Bar -->
   <section class="function-bar-container">
@@ -94,4 +88,14 @@
     active-tab-id.two-way="activeSheetId"
     tab-hooks.bind="sheetTabHooks"
   ></or-tabs>
+
+  <br>
+  <br>
+  <br>
+  <section class="data-container">
+    <button click.trigger="downloadData()" style="height: 30px">
+      Download data
+    </button>
+    <upload-button on-upload.bind="onUpload" />
+  </section>
 </main>
