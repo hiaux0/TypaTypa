@@ -182,6 +182,7 @@ export function checkCellOverflow(
 ) {
   sheetsData.sheets.forEach((sheet) => {
     sheet.content.forEach((row) => {
+      if (!row) return;
       let lastCell: Cell | undefined = undefined;
       let lastCellIndex = 0;
       row.forEach((cell, col) => {

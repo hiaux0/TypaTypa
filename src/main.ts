@@ -17,8 +17,13 @@ import { CustomTable } from "./ui/organisms/custom-table/custom-table";
 import { DraggableCustomAttribute } from "./ui/attributes/draggable";
 import { OrTabs } from "./ui/molecules/or-tabs/or-tabs";
 import { UploadButton } from "./ui/atoms/upload-button/upload-button";
+import { ResizeCustomAttribute } from "./ui/attributes/resize";
 
-const attributes = [AutosizeCustomAttribute, DraggableCustomAttribute];
+const attributes = [
+  AutosizeCustomAttribute,
+  DraggableCustomAttribute,
+  ResizeCustomAttribute,
+];
 const atoms = [UploadButton];
 const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
 const organisms = [CustomTable, Dictionary, TabDrawer, Topics];

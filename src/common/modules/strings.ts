@@ -64,6 +64,7 @@ export function getIndexForwardUntil(
 
 export function getValueFromPixelString(input: string): number {
   const value = parseInt(input.replace("px", ""));
+  if (Number.isNaN(value)) return 0;
   return value;
 }
 

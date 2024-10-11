@@ -62,10 +62,20 @@ $columnHeight: 32px;
     .cells-container {
       width: 100vw;
       /* overflow: scroll; */
+      .column-container {
+        .column-header {
+          display: flex;
+          justify-content: space-between;
+
+          .resize-handler {
+            cursor: col-resize;
+          }
+        }
+      }
     }
     .column-container {
-      /* display: inline-block; */
-      display: table-cell;
+      display: inline-block;
+      /* display: table-cell; */
       /* display: flex; */
       /* position: relative; */
     }

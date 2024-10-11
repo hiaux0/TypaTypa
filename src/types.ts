@@ -52,11 +52,18 @@ export interface Cell {
   scrollWidth?: number;
 }
 export type ContentMap = Cell[][];
+export type ColHeaderMap = Record<
+  string,
+  {
+    colWidth: number;
+  }
+>;
 export interface Sheet {
   id: string;
   title: string;
   content: ContentMap;
   selectedRange?: GridSelectionRange;
+  colHeaderMap?: ColHeaderMap;
 }
 
 export interface GridDatabaseType {

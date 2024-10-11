@@ -26,11 +26,25 @@
 
     <!-- 2/3 Columns and Rows -->
     <section class="cells-container">
-      <section class="column-container" repeat.for="columnIndex of columnSize">
-        <div class="cell-header column-header">
+      <section
+        class="column-container"
+        repeat.for="columnIndex of columnSize"
+        css="width: ${activeSheet.colHeaderMap?.[columnIndex]?.colWidth ? `${activeSheet.colHeaderMap?.[columnIndex].colWidth}px` : 'unset'};"
+      >
+        <div
+          class="cell-header column-header"
+          click.trigger="selectColumn(columnIndex)"
+        >
           <!-- ${numberToAlphabet(columnIndex)} -->
-          ${(columnIndex)}
+          <div>${(columnIndex)}</div>
+          <div
+            class="resize-handler"
+            resize="resize-container.bind: spreadsheetContainerRef; on-resize.bind: onResizeColumns(columnIndex); on-resize-end.bind: updateResizeColumns;"
+          >
+            &nbsp
+          </div>
         </div>
+
         <div class="row-container" repeat.for="rowIndex of rowSize">
           <!-- Cell -->
           <grid-cell

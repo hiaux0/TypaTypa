@@ -68,22 +68,30 @@
   - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: calendar
 - [ ] bug:
+- [ ] feat:
+- [ ] refac:
+
 - [ ] bug: undo needs to be hit twice
 - [ ] feat: upload state
 - [ ] feat: search
-
-- [ ] refac: improve selection and scroll position (scrollTop, scrollLeft)
-- [ ] refac: grid----- vim ------ use existing vimCore logic
-  - convert columns/rows into lines, and update cell coords based on vimState
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
-
-- [ ] feat: grid----- overflow: add overflow support
-- [ ] feat: grid----- overflow: update scrollWidth on content change
-- [ ] feat: grid----- overflow: ENTER on long content (eg. paste, or typing long)
+- [ ] refac: grid----- vim ------ use existing vimCore logic
+- [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
+  - convert columns/rows into lines, and update cell coords based on vimState
+- [ ] bug: overflow and adjusted col widths
+- [ ] bug: test data with column adjust
+  - 01 x P
+  - BUG: overflow of 02 wrong
+- [!] bug: undo redo on column delete. BUG: does not undo properly
 
 # Done
 ## Grid
 
+- [x] bug: x should delete whole col, BUG: but clears only first
+- [x] feat: click on col, should select whole col
+- [x] feat: grid----- overflow: add overflow support
+- [x] feat: grid----- overflow: update scrollWidth on content change
+- [x] feat: grid----- overflow: ENTER on long content (eg. paste, or typing long)
 - [x] feat: grid vim ctrl+x
 - [x] feat: {, }
 - [x] feat: grid----- vim ------ improve scripting capabilities
