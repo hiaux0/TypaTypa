@@ -6,9 +6,7 @@
     <button click.trigger="downloadData()" style="height: 30px">
       Download data
     </button>
-    <button click.trigger="uploadData()" style="height: 30px">
-      Upload data
-    </button>
+    <upload-button on-upload.bind="onUpload" />
   </section>
   <div>Mode: ${mode}</div>
   <!-- Toolbar -->

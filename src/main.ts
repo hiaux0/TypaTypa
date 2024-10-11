@@ -16,13 +16,15 @@ import { Store } from "./common/modules/store";
 import { CustomTable } from "./ui/organisms/custom-table/custom-table";
 import { DraggableCustomAttribute } from "./ui/attributes/draggable";
 import { OrTabs } from "./ui/molecules/or-tabs/or-tabs";
+import { UploadButton } from "./ui/atoms/upload-button/upload-button";
 
 const attributes = [AutosizeCustomAttribute, DraggableCustomAttribute];
+const atoms = [UploadButton];
 const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
 const organisms = [CustomTable, Dictionary, TabDrawer, Topics];
 
 Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
-  .register([...attributes, ...molecules, ...organisms, Scratch])
+  .register([...atoms, ...attributes, ...molecules, ...organisms, Scratch])
   .register(Registration.singleton(Store, Store))
   // .register()
   .register(

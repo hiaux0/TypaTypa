@@ -144,6 +144,7 @@ export class GridTestPage {
       name: sheet.title,
     }));
     const sheetId = this.sheetsData.selectedSheetId;
+    this.activeSheetId = sheetId;
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === sheetId,
     );
@@ -218,7 +219,6 @@ export class GridTestPage {
       // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
       // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
-    /*prettier-ignore*/ console.log("0. [grid-test-page.ts,152] this.contentMap: ", this.contentMap);
     gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
     // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
@@ -363,10 +363,10 @@ export class GridTestPage {
             );
           }
           this.activePanel = undefined;
-          // this.moveSelectedCellBy(1, "y");
-          //mappingByMode[VimMode.NORMAL]
-          //  .find((mapping) => mapping.key === "<Enter>")
-          //  .execute();
+          this.moveSelectedCellBy(1, "y");
+          mappingByMode[VimMode.NORMAL]
+            .find((mapping) => mapping.key === "<Enter>")
+            .execute();
         } else {
           mappingByMode[VimMode.NORMAL]
             .find((mapping) => mapping.key === "<Enter>")
@@ -374,8 +374,8 @@ export class GridTestPage {
         }
 
         window.setTimeout(() => {
-          //if (this.mode === VimMode.INSERT) return; // stay in insert mode
-          //if (this.lastMode === VimMode.INSERT) return; // stay in insert mode
+          if (this.mode === VimMode.INSERT) return; // stay in insert mode
+          if (this.lastMode === VimMode.INSERT) return; // stay in insert mode
           this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         }, 0);
       },
@@ -831,6 +831,7 @@ export class GridTestPage {
           if (Number.isNaN(nextEmptyRow)) return;
           this.setAndUpdateCells(this.dragStartColumnIndex, nextEmptyRow);
           this.updateAllSelecedCells();
+          this.spreadsheetContainerRef.scrollTop = nextEmptyRow * CELL_HEIGHT;
         },
         [VIM_COMMAND.jumpNextBlock]: () => {
           let nextEmptyRow = NaN;
@@ -846,6 +847,8 @@ export class GridTestPage {
           if (Number.isNaN(nextEmptyRow)) return;
           this.setAndUpdateCells(this.dragStartColumnIndex, nextEmptyRow);
           this.updateAllSelecedCells();
+          this.spreadsheetContainerRef.scrollTop =
+            (nextEmptyRow - 5) * CELL_HEIGHT;
         },
         [VIM_COMMAND.undo]: () => {
           const undone = gridUndoRedo.undo();
@@ -934,6 +937,7 @@ export class GridTestPage {
           this.unselectAllSelecedCells();
           this.dragEndRowIndex = nextEmptyRow + 1;
           this.updateAllSelecedCells();
+          this.spreadsheetContainerRef.scrollTop = nextEmptyRow * CELL_HEIGHT;
         },
         [VIM_COMMAND.jumpNextBlock]: () => {
           let nextEmptyRow = NaN;
@@ -949,6 +953,8 @@ export class GridTestPage {
           this.unselectAllSelecedCells();
           this.dragEndRowIndex = nextEmptyRow - 1;
           this.updateAllSelecedCells();
+          this.spreadsheetContainerRef.scrollTop =
+            (nextEmptyRow - 5) * CELL_HEIGHT;
         },
         // [VIM_COMMAND.]: () => {},
       },
@@ -1437,6 +1443,10 @@ export class GridTestPage {
     //   block: 'nearest',
     //   inline: 'nearest',
     // });
+  };
+
+  public onUpload = (result: string) => {
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,1449] result: ", result);
   };
 }
 

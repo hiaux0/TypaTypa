@@ -69,7 +69,9 @@
 - [ ] feat: calendar
 - [ ] bug:
 - [ ] feat: upload state
+- [ ] feat: search
 
+- [ ] refac: improve selection and scroll position (scrollTop, scrollLeft)
 - [ ] refac: grid----- vim ------ use existing vimCore logic
   - convert columns/rows into lines, and update cell coords based on vimState
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
