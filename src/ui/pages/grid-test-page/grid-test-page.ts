@@ -13,7 +13,6 @@ import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
 import {
   KeyBindingModes,
-  QueueInputReturn,
   VimMode,
   VimOptions,
 } from "../../../features/vim/vim-types";
@@ -28,13 +27,20 @@ import { CRUDService } from "../../../common/services/CRUDService";
 import { CELL_COORDS } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
-import { SPACE } from "../../../common/modules/keybindings/app-keys";
-import { isArrowMovement } from "../../../features/vim/key-bindings";
 import { downloadText } from "../../../common/modules/downloadText";
-import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
 import { getClipboardContent } from "../../../common/modules/platform/clipboard";
 import { UndoRedo } from "../../../common/modules/undoRedo";
 import { runGridMigrations } from "../../../common/modules/migrations/gridMigrations";
+import {
+  GridIteratorOptions,
+  calculateDiff,
+  checkCellOverflow,
+  defaultGridIteratorOptions,
+  iterateOverGrid,
+  iterateOverGridBackwards,
+  iterateOverRange,
+  iterateOverRangeBackwards,
+} from "./grid-modules/gridModules";
 
 type GridPanelTypes = "button" | "text";
 
@@ -48,19 +54,6 @@ interface GridPanel {
   type: GridPanelTypes;
   content?: string;
 }
-
-interface GridIteratorOptions {
-  startCol?: number;
-  endCol?: number;
-  startRow?: number;
-  endRow?: number;
-  colSize?: number;
-  rowSize?: number;
-}
-const defaultGridIteratorOptions: GridIteratorOptions = {
-  startCol: 0,
-  startRow: 0,
-};
 
 const CELL_HEIGHT = 32;
 const CELL_WIDTH = 64;
@@ -82,7 +75,6 @@ export class GridTestPage {
   public dragEndColumnIndex = 0;
   public dragStartRowIndex = 0;
   public dragEndRowIndex = 0;
-  // public contentMap: Record<string, string> = {};
   public contentMap: ContentMap = [];
   public contentMapForView: {};
   public selectedMap: Record<string, boolean> = {};
@@ -94,7 +86,6 @@ export class GridTestPage {
   public START_PANEL_LEFT = 64;
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
-  private lastGridPanel: GridPanel | undefined = undefined;
   private lastCellContentArray: string[] = [];
 
   private isStartDragGridCell = false;
@@ -146,18 +137,20 @@ export class GridTestPage {
   }
 
   private initSheets(sheetsData: GridDatabaseType): void {
-    this.sheetsData = runGridMigrations(sheetsData);
-    this.sheetTabs = sheetsData.sheets.map((sheet) => ({
+    let updatedSheetData = runGridMigrations(sheetsData);
+    updatedSheetData = checkCellOverflow(updatedSheetData);
+    this.sheetTabs = updatedSheetData.sheets.map((sheet) => ({
       id: sheet.id,
       name: sheet.title,
     }));
-    const sheetId = sheetsData.selectedSheetId;
+    const sheetId = updatedSheetData.selectedSheetId;
     this.activeSheetId = sheetId;
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === sheetId,
     );
-    const activeSheet = sheetsData.sheets[activeIndex];
+    const activeSheet = updatedSheetData.sheets[activeIndex];
     this.contentMap = activeSheet.content;
+    this.sheetsData = updatedSheetData;
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
   }
@@ -761,7 +754,6 @@ export class GridTestPage {
             return;
           }
 
-          this.lastGridPanel = panel;
           this.panelCRUD.delete(panel.id);
           this.gridPanels = this.panelCRUD.readAll();
         },
@@ -1132,7 +1124,7 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    if (this.contentMap[row][col] === undefined) {
+    if (this.contentMap[row][col] == null) {
       this.contentMap[row][col] = {} as any;
     }
     this.contentMap[row][col].text = content;
@@ -1147,7 +1139,7 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row].splice(col, 0, {} as any);
+    this.contentMap[row].splice(col, 0, undefined);
   }
 
   private removeCellAt(
@@ -1448,166 +1440,10 @@ export class GridTestPage {
         break;
       }
     }
-
-    // cursor.scrollIntoView({
-    //   behavior: 'smooth',
-    //   block: 'nearest',
-    //   inline: 'nearest',
-    // });
   };
 
   public onUpload = (result: string) => {
     const asObj = JSON.parse(result);
     this.initSheets(asObj);
   };
-}
-
-function calculateDiff(
-  before: GridSelectionRange,
-  after: GridSelectionRange,
-): GridSelectionRange {
-  const diff: any = [];
-
-  const [beforeStartColumn, beforeStartRow] = before[0]; // Top-left corner of first rectangle
-  const [beforeEndColumn, beforeEndRow] = before[1]; // Bottom-right corner of first rectangle
-  const [x2Start, y2Start] = after[0]; // Top-left corner of second rectangle
-  const [afterEndColumn, afterEndRow] = after[1]; // Bottom-right corner of second rectangle
-
-  // Iterate over the first rectangle's selection
-  for (let col = beforeStartColumn; col <= beforeEndColumn; col++) {
-    for (let row = beforeStartRow; row <= beforeEndRow; row++) {
-      // If the current point is not within the bounds of the second rectangle, add it to the diff
-      if (
-        col < x2Start ||
-        col > afterEndColumn ||
-        row < y2Start ||
-        row > afterEndRow
-      ) {
-        diff.push([col, row]);
-      }
-    }
-  }
-
-  return diff;
-}
-
-function orderByMinMaxRange(
-  startCol: number,
-  startRow: number,
-  endCol: number,
-  endRow: number,
-): GridSelectionRange {
-  const minColumnIndex = Math.min(startCol, endCol);
-  const maxColumnIndex = Math.max(startCol, endCol);
-  const minRowIndex = Math.min(startRow, endRow);
-  const maxRowIndex = Math.max(startRow, endRow);
-  const result: GridSelectionRange = [
-    [minColumnIndex, minRowIndex],
-    [maxColumnIndex, maxRowIndex],
-  ];
-  return result;
-}
-
-/**
- * Iterate row first
- */
-function iterateOverRange(
-  start: GridSelectionCoord,
-  end: GridSelectionCoord,
-  callback: (columnIndex: number, rowIndex: number) => boolean | void,
-  options?: GridIteratorOptions,
-) {
-  const startCol = options?.startCol ?? start[0];
-  const startRow = options?.startRow ?? start[1];
-  const endCol = options?.endCol ?? end[0];
-  const endRow = options?.endRow ?? end[1];
-
-  let stopAll = false;
-  for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-    if (stopAll) break;
-    for (let columnIndex = startCol; columnIndex <= endCol; columnIndex++) {
-      stopAll = !!callback(columnIndex, rowIndex);
-      if (stopAll) {
-        break;
-      }
-    }
-  }
-}
-
-/**
- * Iterate row first.
- * Loop back through start of column
- */
-function iterateOverGrid(
-  start: GridSelectionCoord,
-  end: GridSelectionCoord,
-  callback: (columnIndex: number, rowIndex: number) => boolean | void,
-  options?: GridIteratorOptions,
-) {
-  let startCol = options?.startCol ?? start[0];
-  const startRow = options?.startRow ?? start[1];
-
-  let stopAll = false;
-  for (let rowIndex = startRow; rowIndex <= end[1]; rowIndex++) {
-    if (stopAll) break;
-    if (rowIndex > startRow) {
-      startCol = 0;
-    }
-    for (let columnIndex = startCol; columnIndex <= end[0]; columnIndex++) {
-      stopAll = !!callback(columnIndex, rowIndex);
-      if (stopAll) {
-        break;
-      }
-    }
-  }
-}
-
-/**
- * Iterate row first
- */
-function iterateOverRangeBackwards(
-  start: GridSelectionCoord,
-  end: GridSelectionCoord,
-  callback: (columnIndex: number, rowIndex: number) => boolean | void,
-  options: GridIteratorOptions,
-) {
-  let endCol = options?.startCol ?? end[0];
-  const endRow = options?.startRow ?? end[1];
-
-  let stopAll = false;
-  for (let rowIndex = endRow; rowIndex >= start[1]; rowIndex--) {
-    if (stopAll) break;
-    for (let columnIndex = endCol; columnIndex >= start[0]; columnIndex--) {
-      stopAll = !!callback(columnIndex, rowIndex);
-      if (stopAll) {
-        break;
-      }
-    }
-  }
-}
-
-/**
- * Iterate row first
- */
-function iterateOverGridBackwards(
-  end: GridSelectionCoord,
-  callback: (columnIndex: number, rowIndex: number) => boolean | void,
-  options: GridIteratorOptions,
-) {
-  let startCol = options.startCol ?? end[0];
-  const startRow = options.startRow ?? end[1];
-
-  let stopAll = false;
-  for (let rowIndex = startRow; rowIndex >= 0; rowIndex--) {
-    if (stopAll) break;
-    if (rowIndex < end[1]) {
-      startCol = options.colSize;
-    }
-    for (let columnIndex = startCol; columnIndex >= 0; columnIndex--) {
-      stopAll = !!callback(columnIndex, rowIndex);
-      if (stopAll) {
-        break;
-      }
-    }
-  }
 }
