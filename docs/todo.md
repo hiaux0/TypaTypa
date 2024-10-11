@@ -68,6 +68,7 @@
   - [ ] feat: how to store column width - a width+height map?
 - [ ] feat: calendar
 - [ ] bug:
+- [ ] bug: undo needs to be hit twice
 - [ ] feat: upload state
 - [ ] feat: search
 

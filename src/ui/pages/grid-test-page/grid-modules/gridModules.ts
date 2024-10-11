@@ -138,7 +138,6 @@ export function iterateOverRangeBackwards(
   const endRow = options?.endRow ?? end[1];
   // /*prettier-ignore*/ console.log("[gridModules.ts,139] endRow: ", endRow);
 
-
   let stopAll = false;
   for (let rowIndex = endRow; rowIndex >= startRow; rowIndex--) {
     if (stopAll) break;
@@ -181,7 +180,6 @@ export function checkCellOverflow(
   sheetsData: GridDatabaseType,
   options: { cellWidth: number } = { cellWidth: CELL_WIDTH },
 ) {
-  console.log(JSON.parse(JSON.stringify(sheetsData)));
   sheetsData.sheets.forEach((sheet) => {
     sheet.content.forEach((row) => {
       let lastCell: Cell | undefined = undefined;
@@ -191,11 +189,8 @@ export function checkCellOverflow(
           const hasCellText = cell?.text;
           if (hasCellText) {
             const lastCellWidth = lastCell.scrollWidth || 0;
-            lastCellWidth;
             const colDiff = col - lastCellIndex;
-            colDiff;
             const overflowWidth = colDiff * options.cellWidth;
-            overflowWidth;
             if (lastCellWidth > overflowWidth) {
               lastCell.colOfNextText = col;
             }
@@ -210,7 +205,5 @@ export function checkCellOverflow(
     });
   });
 
-  const log = sheetsData.sheets[0].content[0][0];
-  log;
   return sheetsData;
 }

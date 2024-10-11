@@ -19,7 +19,8 @@ export class GridCell {
     if (!this.cell?.colOfNextText) return "unset";
     this.cell.colOfNextText;
     const diff = this.cell.colOfNextText - this.column;
-    const width = diff * CELL_WIDTH - PADDING;
+    const borderWidthAdjust = diff - 1;
+    const width = diff * CELL_WIDTH - PADDING - borderWidthAdjust;
     const asPx = `${width}px`;
     return asPx;
   }

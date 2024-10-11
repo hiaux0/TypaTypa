@@ -72,8 +72,8 @@ const gridUndoRedo = new UndoRedo<ContentMap>();
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 10;
-  public columnSize = 10;
+  public rowSize = 200;
+  public columnSize = 20;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -455,6 +455,14 @@ export class GridTestPage {
               .execute();
 
             return true;
+          },
+        },
+        {
+          key: "<Control>c",
+          execute: () => {
+            const text = this.getCurrentCell()?.text ?? "";
+            this.lastCellContentArray = [text];
+            setClipboardContent(text);
           },
         },
         {
@@ -1534,7 +1542,20 @@ export class GridTestPage {
         },
         { startCol: col + 1, startRow: row },
       );
+
+      /*prettier-ignore*/ console.log("2.1 [grid-test-page.ts,1493] previousCellInRow: ",previousCellInRow?.col, previousCellInRow?.row, previousCellInRow?.text);
+      /*prettier-ignore*/ console.log("2.2 [grid-test-page.ts,1504] nextColInRow: ", nextColInRow);
+
+      if (previousCellInRow) {
+        previousCellInRow.colOfNextText = col;
+        /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+      }
+      if (nextColInRow !== null) {
+        cell.colOfNextText = nextColInRow;
+        /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+      }
     } else {
+      // 2. Just previous, but also check if content to long for next
       this.iterateOverRowBackwards(
         (col, row) => {
           const cell = this.getCurrentCell(col, row);
@@ -1557,13 +1578,14 @@ export class GridTestPage {
         },
         { startCol: col + 1, startRow: row },
       );
-    }
-    /*prettier-ignore*/ console.log("2.1 [grid-test-page.ts,1493] previousCellInRow: ",previousCellInRow?.col, previousCellInRow?.row, previousCellInRow?.text);
-    /*prettier-ignore*/ console.log("2.2 [grid-test-page.ts,1504] nextColInRow: ", nextColInRow);
 
-    if (previousCellInRow && nextColInRow !== null) {
-      previousCellInRow.colOfNextText = nextColInRow;
-      /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+      /*prettier-ignore*/ console.log("2.1 [grid-test-page.ts,1493] previousCellInRow: ",previousCellInRow?.col, previousCellInRow?.row, previousCellInRow?.text);
+      /*prettier-ignore*/ console.log("2.2 [grid-test-page.ts,1504] nextColInRow: ", nextColInRow);
+
+      if (previousCellInRow && nextColInRow !== null) {
+        previousCellInRow.colOfNextText = nextColInRow;
+        /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+      }
     }
   }
 }
