@@ -1,4 +1,6 @@
+import { CELL_WIDTH } from "../../../../common/modules/constants";
 import {
+  Cell,
   GridDatabaseType,
   GridSelectionCoord,
   GridSelectionRange,
@@ -127,13 +129,20 @@ export function iterateOverRangeBackwards(
   callback: (columnIndex: number, rowIndex: number) => boolean | void,
   options: GridIteratorOptions,
 ) {
-  let endCol = options?.startCol ?? end[0];
-  const endRow = options?.startRow ?? end[1];
+  const startCol = options?.startCol ?? start[0];
+  /*prettier-ignore*/ console.log("[gridModules.ts,133] startCol: ", startCol);
+  const startRow = options?.startRow ?? start[1];
+  /*prettier-ignore*/ console.log("[gridModules.ts,135] startRow: ", startRow);
+  const endCol = options?.endCol ?? end[0];
+  /*prettier-ignore*/ console.log("[gridModules.ts,137] endCol: ", endCol);
+  const endRow = options?.endRow ?? end[1];
+  /*prettier-ignore*/ console.log("[gridModules.ts,139] endRow: ", endRow);
+
 
   let stopAll = false;
-  for (let rowIndex = endRow; rowIndex >= start[1]; rowIndex--) {
+  for (let rowIndex = endRow; rowIndex >= startRow; rowIndex--) {
     if (stopAll) break;
-    for (let columnIndex = endCol; columnIndex >= start[0]; columnIndex--) {
+    for (let columnIndex = endCol; columnIndex >= startCol; columnIndex--) {
       stopAll = !!callback(columnIndex, rowIndex);
       if (stopAll) {
         break;
@@ -168,12 +177,40 @@ export function iterateOverGridBackwards(
   }
 }
 
-export function checkCellOverflow(sheetsData: GridDatabaseType) {
+export function checkCellOverflow(
+  sheetsData: GridDatabaseType,
+  options: { cellWidth: number } = { cellWidth: CELL_WIDTH },
+) {
+  console.log(JSON.parse(JSON.stringify(sheetsData)));
   sheetsData.sheets.forEach((sheet) => {
-    sheet.content.forEach((row, rowIndex) => {
-      console.log(row);
+    sheet.content.forEach((row) => {
+      let lastCell: Cell | undefined = undefined;
+      let lastCellIndex = 0;
+      row.forEach((cell, col) => {
+        if (lastCell) {
+          const hasCellText = cell?.text;
+          if (hasCellText) {
+            const lastCellWidth = lastCell.scrollWidth || 0;
+            lastCellWidth;
+            const colDiff = col - lastCellIndex;
+            colDiff;
+            const overflowWidth = colDiff * options.cellWidth;
+            overflowWidth;
+            if (lastCellWidth > overflowWidth) {
+              lastCell.colOfNextText = col;
+            }
+          }
+        }
+
+        if (cell) {
+          lastCell = cell;
+          lastCellIndex = col;
+        }
+      });
     });
   });
 
+  const log = sheetsData.sheets[0].content[0][0];
+  log;
   return sheetsData;
 }

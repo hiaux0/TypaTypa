@@ -2,11 +2,7 @@ import { bindable } from "aurelia";
 import "./tab-drawer.scss";
 import { onOutsideClick } from "../../../common/modules/htmlElements";
 import { SELECTED_TAB_INDEX } from "../../../common/modules/constants";
-
-export interface Tabs {
-  title: string;
-  shortcut?: string;
-}
+import { Tabs } from "../../../types";
 
 export class TabDrawer {
   @bindable() public tabs: Tabs[] = [];

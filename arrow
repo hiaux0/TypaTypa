@@ -45,6 +45,21 @@ src/features/vim/key-bindings.ts
 src/features/vim/vimCore/commands/KeyMappingService.ts
 src/common/modules/database/gridDatabase.ts
 src/common/modules/undoRedo.ts
+src/common/modules/migrations/gridMigrations.ts
+src/ui/pages/grid-test-page/grid-modules/gridModules.ts
+
+%% Grid focus
+docs/todo.md
+arrow
+src/common/logging/logging.ts
+src/ui/pages/grid-test-page/grid-test-page.ts
+src/ui/pages/grid-test-page/grid-test-page.html
+src/features/vim/key-bindings.ts
+src/common/modules/database/gridDatabase.ts
+src/ui/pages/grid-test-page/grid-modules/gridModules.ts
+test/sheets/gridModules.spec.ts
+src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
+src/ui/pages/grid-test-page/grid-cell/grid-cell.html
 
 %% Grid Cell Content
 docs/todo.md

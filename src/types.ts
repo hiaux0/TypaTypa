@@ -46,7 +46,8 @@ export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];
 // export type ContentMap = Record<string, string>;
 export interface Cell {
   text: string;
-  rowOfNextText?: number;
+  colOfNextText?: number;
+  scrollWidth?: number;
 }
 export type ContentMap = Cell[][];
 export interface Sheet {
@@ -79,21 +80,6 @@ export const defaultGridDatabaseType: GridDatabaseType = {
       selectedRange: [
         [0, 0],
         [0, 0],
-      ],
-    },
-    {
-      id: "gezk7yo-b84jfg8dl1",
-      title: "Vn-dict",
-      content: [
-        [
-          {
-            text: "khẽ\nhớn hở\nlộ vẻ\nxẹt\nthình lình\nchừng nào\nbàng hoàng\nngẩn ngơ\n",
-          },
-        ],
-      ],
-      selectedRange: [
-        [6, 3],
-        [6, 3],
       ],
     },
   ],

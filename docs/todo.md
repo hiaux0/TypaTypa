@@ -75,6 +75,8 @@
 - [ ] refac: grid----- vim ------ use existing vimCore logic
   - convert columns/rows into lines, and update cell coords based on vimState
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
+- [ ] feat: grid----- overflow: add overflow support
+- [ ] feat: grid----- overflow: update scrollWidth on content change
 
 # Done
 ## Grid

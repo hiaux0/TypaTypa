@@ -1,5 +1,5 @@
 <div class="cell ${selected ? 'selected-cell' : ''}">
   <!-- (${numberToAlphabet(columnIndex)};${rowIndex}) -->
   <!-- (${(column)};${row}) -->
-  <div class="content">${content}</div>
+  <div ref="cellContentRef" class="content" css="width: ${widthPx};">${content}</div>
 </div>

@@ -1,7 +1,11 @@
-import { observable, resolve } from "aurelia";
+import { EventAggregator, observable, resolve } from "aurelia";
 import "./grid-test-page.scss";
-import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import {
+  EV_CELL_CHANGED,
+  EV_CELL_SELECTED,
+} from "../../../common/modules/eventMessages";
+import {
+  Cell,
   ContentMap,
   Direction,
   GridDatabaseType,
@@ -24,7 +28,11 @@ import {
   getIsInputActive,
 } from "../../../common/modules/htmlElements";
 import { CRUDService } from "../../../common/services/CRUDService";
-import { CELL_COORDS } from "../../../common/modules/constants";
+import {
+  CELL_COORDS,
+  CELL_HEIGHT,
+  CELL_WIDTH,
+} from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
 import { downloadText } from "../../../common/modules/downloadText";
@@ -54,9 +62,6 @@ interface GridPanel {
   type: GridPanelTypes;
   content?: string;
 }
-
-const CELL_HEIGHT = 32;
-const CELL_WIDTH = 64;
 
 const gridUndoRedo = new UndoRedo<ContentMap>();
 
@@ -131,7 +136,10 @@ export class GridTestPage {
     return result;
   }
 
-  constructor(private vimInit: VimInit = resolve(VimInit)) {
+  constructor(
+    private eventAggregator: EventAggregator = resolve(EventAggregator),
+    private vimInit: VimInit = resolve(VimInit),
+  ) {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
   }
@@ -150,6 +158,7 @@ export class GridTestPage {
     );
     const activeSheet = updatedSheetData.sheets[activeIndex];
     this.contentMap = activeSheet.content;
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,154] this.contentMap: ", this.contentMap);
     this.sheetsData = updatedSheetData;
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
@@ -409,7 +418,7 @@ export class GridTestPage {
               (col, row) => {
                 if (nextColWithContent) return;
                 this.textareaValue;
-                const content = this.getCurrentCellContent(col, row);
+                const content = this.getCurrentCell(col, row)?.text ?? "";
                 if (content) {
                   nextColWithContent = col;
                   nextRowWithContent = row;
@@ -459,7 +468,7 @@ export class GridTestPage {
             this.iterateOverAllCells(
               (col, row) => {
                 if (nextColWithContent) return;
-                const content = this.getCurrentCellContent(col, row);
+                const content = this.getCurrentCell(col, row)?.text ?? "";
                 if (content) {
                   nextColWithContent = col;
                   nextRowWithContent = row;
@@ -560,7 +569,7 @@ export class GridTestPage {
               const newPanel = this.addPanel();
               this.activePanel = newPanel;
               newPanel.isEdit = true;
-              this.textareaValue = this.getCurrentCellContent();
+              this.textareaValue = this.getCurrentCell()?.text ?? "";
 
               this.unselectAllSelecedCells();
               this.dragEndColumnIndex = this.dragStartColumnIndex;
@@ -579,10 +588,8 @@ export class GridTestPage {
 
             // Focus panel
             targetPanel.isEdit = true;
-            this.textareaValue = this.getCurrentCellContent(
-              targetPanel.col,
-              targetPanel.row,
-            );
+            this.textareaValue =
+              this.getCurrentCell(targetPanel.col, targetPanel.row)?.text ?? "";
 
             this.activePanel = targetPanel;
             this.activePanelElement = document.querySelector(
@@ -606,7 +613,7 @@ export class GridTestPage {
           key: "<Shift><<Shift><",
           desc: "Move cell left",
           execute: () => {
-            const content = this.getCurrentCellContent(0);
+            const content = this.getCurrentCell(0)?.text ?? "";
             if (content) return;
             this.removeCellAt(0);
           },
@@ -749,7 +756,7 @@ export class GridTestPage {
         [VIM_COMMAND.delete]: () => {
           const panel = this.getPanelUnderCursor();
           if (!panel) {
-            this.lastCellContentArray = [this.getCurrentCellContent()];
+            this.lastCellContentArray = [this.getCurrentCell()?.text ?? ""];
             this.removeCellAt();
             return;
           }
@@ -821,7 +828,7 @@ export class GridTestPage {
           let nextEmptyRow = NaN;
           this.iterateOverColBackwards(
             (col, row) => {
-              const content = this.getCurrentCellContent(col, row);
+              const content = this.getCurrentCell(col, row)?.text ?? "";
               const empty = !content;
               nextEmptyRow = row;
               return empty;
@@ -837,7 +844,7 @@ export class GridTestPage {
           let nextEmptyRow = NaN;
           this.iterateOverCol(
             (col, row) => {
-              const content = this.getCurrentCellContent(col, row);
+              const content = this.getCurrentCell(col, row)?.text ?? "";
               const empty = !content;
               nextEmptyRow = row;
               return empty;
@@ -892,7 +899,7 @@ export class GridTestPage {
           const collectDeleted = [];
           this.iterateOverCol(
             (col, row) => {
-              collectDeleted.push(this.getCurrentCellContent(col, row));
+              collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
               this.clearCurrentCellContent(col, row, { skipUpdate: true });
             },
             { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
@@ -912,7 +919,7 @@ export class GridTestPage {
           const collectDeleted = [];
           this.iterateOverCol(
             (col, row) => {
-              collectDeleted.push(this.getCurrentCellContent(col, row));
+              collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
             },
             { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
           );
@@ -927,7 +934,7 @@ export class GridTestPage {
           let nextEmptyRow = NaN;
           this.iterateOverColBackwards(
             (col, row) => {
-              const content = this.getCurrentCellContent(col, row);
+              const content = this.getCurrentCell(col, row)?.text ?? "";
               const empty = !content;
               nextEmptyRow = row;
               return empty;
@@ -943,7 +950,7 @@ export class GridTestPage {
           let nextEmptyRow = NaN;
           this.iterateOverCol(
             (col, row) => {
-              const content = this.getCurrentCellContent(col, row);
+              const content = this.getCurrentCell(col, row)?.text ?? "";
               const empty = !content;
               nextEmptyRow = row;
               return empty;
@@ -1107,12 +1114,12 @@ export class GridTestPage {
     return [prevCol, prevRow];
   }
 
-  private getCurrentCellContent(
+  private getCurrentCell(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
-  ): string {
-    const content = this.contentMap[row]?.[col]?.text;
-    return content ?? "";
+  ): Cell {
+    const cell = this.contentMap[row]?.[col];
+    return cell;
   }
 
   private setCurrentCellContent(
@@ -1128,6 +1135,8 @@ export class GridTestPage {
       this.contentMap[row][col] = {} as any;
     }
     this.contentMap[row][col].text = content;
+    this.onCellContentChanged(col, row);
+
     if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
   }
@@ -1150,6 +1159,7 @@ export class GridTestPage {
       this.contentMap[row] = [];
     }
     this.contentMap[row].splice(col, 1);
+    this.onCellContentChanged(col, row);
     this.updateContentMapChangedForView();
   }
 
@@ -1322,7 +1332,7 @@ export class GridTestPage {
       [options.startCol, options.startRow],
       [this.columnSize - 1, this.rowSize - 1],
       (columnIndex, rowIndex) => {
-        const content = this.getCurrentCellContent(columnIndex, rowIndex);
+        const content = this.getCurrentCell(columnIndex, rowIndex)?.text ?? "";
         callback(columnIndex, rowIndex, {
           content,
           set: (newContent: string) =>
@@ -1345,6 +1355,18 @@ export class GridTestPage {
     );
   }
 
+  private iterateOverRow(
+    callback: (columnIndex: number, rowIndex: number) => void,
+    options?: GridIteratorOptions,
+  ) {
+    iterateOverRange(
+      [this.dragStartColumnIndex, this.dragStartRowIndex],
+      [this.columnSize - 1, this.dragStartRowIndex],
+      callback,
+      options,
+    );
+  }
+
   private iterateOverColBackwards(
     callback: (columnIndex: number, rowIndex: number) => void,
     options?: GridIteratorOptions,
@@ -1352,6 +1374,18 @@ export class GridTestPage {
     iterateOverRangeBackwards(
       [this.dragStartColumnIndex, 0],
       [this.dragStartColumnIndex, this.rowSize - 1],
+      callback,
+      options,
+    );
+  }
+
+  private iterateOverRowBackwards(
+    callback: (columnIndex: number, rowIndex: number) => void,
+    options?: GridIteratorOptions,
+  ) {
+    iterateOverRangeBackwards(
+      [0, this.dragStartRowIndex],
+      [this.dragStartColumnIndex - 1, this.dragStartRowIndex],
       callback,
       options,
     );
@@ -1446,4 +1480,35 @@ export class GridTestPage {
     const asObj = JSON.parse(result);
     this.initSheets(asObj);
   };
+
+  private onCellContentChanged(col: number, row: number): void {
+    // Update overflow
+    let previousCellInRow: Cell | undefined;
+    this.iterateOverRowBackwards((col, row) => {
+      const cell = this.getCurrentCell(col, row);
+      const content = cell?.text;
+      if (content) {
+        previousCellInRow = cell;
+      }
+      return content;
+    });
+
+    let nextColInRow: number | undefined;
+    this.iterateOverRow((col, row) => {
+      console.log("col,row", col, row);
+      const cell = this.getCurrentCell(col, row);
+      const content = cell?.text;
+      if (content) {
+        /*prettier-ignore*/ console.log("2.[grid-test-page.ts,1501] content: ", content);
+        nextColInRow = col;
+      }
+      return content;
+    });
+
+    /*prettier-ignore*/ console.log("3.1[grid-test-page.ts,1507] previousCellInRow: ", previousCellInRow);
+    /*prettier-ignore*/ console.log("3.2[grid-test-page.ts,1509] nextColInRow: ", nextColInRow);
+    if (previousCellInRow) {
+      previousCellInRow.colOfNextText = nextColInRow;
+    }
+  }
 }

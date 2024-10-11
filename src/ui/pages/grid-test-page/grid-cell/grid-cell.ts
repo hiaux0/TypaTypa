@@ -1,15 +1,28 @@
 import { EventAggregator, bindable, resolve } from "aurelia";
 import "./grid-cell.scss";
-import { EV_CELL_SELECTED } from "../../../../common/modules/eventMessages";
+import { Cell } from "../../../../types";
+import { CELL_WIDTH } from "../../../../common/modules/constants";
+const PADDING = 8;
 
 export class GridCell {
+  @bindable public cell: Cell;
   @bindable public column: number;
   @bindable public row: number;
   @bindable public selected: boolean = false;
   @bindable public content: string;
 
-  selectedChanged(newSelected) {
-    // /*prettier-ignore*/ console.log("[grid-cell.ts,11] newSelected: ", newSelected);
+  public cellContentRef: HTMLElement;
+  public contentWidth = NaN;
+
+  public PADDING = PADDING;
+  public CELL_WIDTH = CELL_WIDTH;
+
+  get widthPx() {
+    if (!this.cell?.colOfNextText) return "unset";
+    const diff = this.cell.colOfNextText - this.column;
+    const width = diff * CELL_WIDTH - PADDING;
+    const asPx = `${width}px`;
+    return asPx;
   }
 
   constructor(
@@ -17,19 +30,8 @@ export class GridCell {
   ) {}
 
   attached() {
-    //this.eventAggregator.subscribe(
-    //  EV_CELL_SELECTED(this.column, this.row),
-    //  (payload: any) => {
-    //    if (!payload) return;
-    //    const selected = payload.selected;
-    //    this.selected = selected;
-    //    //if (!selected) {
-    //    //  /*prettier-ignore*/ console.log("[grid-cell.ts,26] selected: ", selected);
-    //    //  const logMe = `${this.column},${this.row}`;
-    //    //  /*prettier-ignore*/ console.log("[grid-cell.ts,23] logMe: ", logMe);
-    //    //}
-    //    // /*prettier-ignore*/ console.log("[grid-cell.ts,25] this.selected: ", this.selected);
-    //  },
-    //);
+    if (this.cell) {
+      this.cell.scrollWidth = this.cellContentRef.scrollWidth;
+    }
   }
 }

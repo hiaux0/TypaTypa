@@ -1,5 +1,4 @@
-import { TypingDatabaseType, Topic } from "../../types";
-import { Tabs } from "../../ui/organisms/tab-drawer/tab-drawer";
+import { TypingDatabaseType, Topic, Tabs } from "../../types";
 import { generateId } from "./random";
 import { getTranslation } from "./translations";
 
@@ -63,6 +62,10 @@ export const defaultDatabaseType: TypingDatabaseType = {
 // /*prettier-ignore*/ export const WORDS = ["are", "after"]
 /*prettier-ignore*/ export const WORDS = []
 
+export const _gridSection = "";
+
 export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
   // `cell-selected[${columnIndex}:${rowIndex}]`;
   `${columnIndex}:${rowIndex}`;
+export const CELL_HEIGHT = 32;
+export const CELL_WIDTH = 64;

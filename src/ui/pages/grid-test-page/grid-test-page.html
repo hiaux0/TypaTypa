@@ -34,6 +34,7 @@
         <div class="row-container" repeat.for="rowIndex of rowSize">
           <!-- Cell -->
           <grid-cell
+            cell.bind="contentMap[rowIndex][columnIndex]"
             row.bind="rowIndex"
             column.bind="columnIndex"
             selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
@@ -89,9 +90,9 @@
     tab-hooks.bind="sheetTabHooks"
   ></or-tabs>
 
-  <br>
-  <br>
-  <br>
+  <br />
+  <br />
+  <br />
   <section class="data-container">
     <button click.trigger="downloadData()" style="height: 30px">
       Download data

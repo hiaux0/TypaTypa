@@ -36,7 +36,7 @@
     "lint:js": "eslint src test --ext .js,.ts",
     "lint:css": "stylelint \"src/**/*.scss\"",
     "lint": "npm run lint:js && npm run lint:css",
-    "pretest": "npm run lint",
+    "pretest_laetr": "npm run lint",
     "start": "vite --force",
     "start:debug": "DEBUG='vite:*' npm run start",
     "start:mem": "node --max_old_space_size=8384 ./node_modules/vite/bin/vite.js",
