@@ -82,7 +82,7 @@ export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
   public rowSize = 5;
-  public columnSize = 7;
+  public columnSize = 5;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -1195,6 +1195,7 @@ export class GridTestPage {
     row = this.dragStartRowIndex,
   ): Cell {
     const cell = this.contentMap[row]?.[col];
+    // const cell = this.sheetsData.sheets[1].content[row]?.[col];
     return cell;
   }
 
@@ -1484,6 +1485,7 @@ export class GridTestPage {
   }
 
   private autosave(): void {
+    return;
     gridDatabase.autosave(() => {
       this.getActiveSheet().selectedRange = this.getSelectedArea();
       gridDatabase.setItem(this.sheetsData);
@@ -1563,26 +1565,51 @@ export class GridTestPage {
   }
 
   private updateCellOverflow(col: number, row: number) {
+    console.log("0000000. updateCellOverflow", col, row);
     const cell = this.getCurrentCell(col, row);
-    // /*prettier-ignore*/ console.log("1. [grid-test-page.ts,1492] cell: ",cell?.col, cell?.row, cell?.text);
     let previousCellInRow: Cell | undefined;
+    let previousCellInRowCol: number;
     let nextColInRow: number | undefined;
     // 1. If cell has content, then update the overflow of PREVIOUS and NEXT cell
+    {
+      //const log = [
+      //  this.sheetsData.sheets[1].content[0]?.[0]?.text,
+      //  this.sheetsData.sheets[1].content[0]?.[1]?.text,
+      //  this.sheetsData.sheets[1].content[0]?.[2]?.text,
+      //  this.sheetsData.sheets[1].content[0]?.[3]?.text,
+      //];
+      ///*prettier-ignore*/ console.log("0.1 [grid-test-page.ts,1492] cell: ",cell?.col, cell?.row,'"', cell?.text);
+      ///*prettier-ignore*/ console.log("0.2 [grid-test-page.ts,1575] log: ", log);
+      //const log_cell = [
+      //  this.getCurrentCell(0, 0)?.text,
+      //  this.getCurrentCell(1, 0)?.text,
+      //  this.getCurrentCell(2, 0)?.text,
+      //  this.getCurrentCell(3, 0)?.text,
+      //];
+      ///*prettier-ignore*/ console.log("[grid-test-page.ts,1583] log_cell: ", log_cell);
+    }
     if (cell?.text) {
+      console.log("11111111.");
       // 1.1 PREVIOUS cell
+      console.log("1.0 col", col);
+      console.log("1.1 Previous cell");
       this.iterateOverRowBackwards(
         (col, row) => {
           const cell = this.getCurrentCell(col, row);
           const content = cell?.text;
+          /*prettier-ignore*/ console.log("1.1.0 [grid-test-page.ts,1580] content: ", content);
           if (content) {
             previousCellInRow = cell;
+            previousCellInRowCol = col;
           }
           return content;
         },
         { endCol: col - 1, endRow: row },
       );
+      /*prettier-ignore*/ console.log("1.1.1 [grid-test-page.ts] previousCellInRow: ",previousCellInRowCol, previousCellInRow?.row, previousCellInRow?.text);
 
       // 1.2 NEXT cell
+      console.log("1.2 Next cell");
       this.iterateOverRow(
         (col, row) => {
           const cell = this.getCurrentCell(col, row);
@@ -1594,19 +1621,23 @@ export class GridTestPage {
         },
         { startCol: col + 1, startRow: row },
       );
+      /*prettier-ignore*/ console.log("1.2.1 [grid-test-page.ts,1602] nextColInRow: ", nextColInRow);
 
-      ///*prettier-ignore*/ console.log("2.1 [grid-test-page.ts,1493] previousCellInRow: ",previousCellInRow?.col, previousCellInRow?.row, previousCellInRow?.text);
-      // /*prettier-ignore*/ console.log("2.2 [grid-test-page.ts,1504] nextColInRow: ", nextColInRow);
-
+      console.log("1.3 Adjust");
       if (previousCellInRow) {
-        previousCellInRow.colOfNextText = col;
-        // /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+        const toNext = col - previousCellInRowCol;
+        /*prettier-ignore*/ console.log("1.3.1 [grid-test-page.ts] previousCellInRow: ",previousCellInRowCol, previousCellInRow?.row, previousCellInRow?.text);
+        /*prettier-ignore*/ console.log("1.3.2 [grid-test-page.ts,1609] toNext: ", toNext);
+        previousCellInRow.colsToNextText = toNext;
       }
       if (nextColInRow !== null) {
-        cell.colOfNextText = nextColInRow;
-        // /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+        const toNext = nextColInRow - col;
+        /*prettier-ignore*/ console.log("1.3.3 [grid-test-page.ts,1492] cell: ",cell?.col, cell?.row,'"', cell?.text);
+        /*prettier-ignore*/ console.log("1.3.4 [grid-test-page.ts,1615] toNext: ", toNext);
+        cell.colsToNextText = toNext;
       }
     } else {
+      console.log("2222222.");
       // 2. Just previous, but also check if content to long for next
       this.iterateOverRowBackwards(
         (col, row) => {
@@ -1614,6 +1645,7 @@ export class GridTestPage {
           const content = cell?.text;
           if (content) {
             previousCellInRow = cell;
+            previousCellInRowCol = col;
           }
           return content;
         },
@@ -1631,12 +1663,8 @@ export class GridTestPage {
         { startCol: col + 1, startRow: row },
       );
 
-      // /*prettier-ignore*/ console.log("2.1 [grid-test-page.ts,1493] previousCellInRow: ",previousCellInRow?.col, previousCellInRow?.row, previousCellInRow?.text);
-      // /*prettier-ignore*/ console.log("2.2 [grid-test-page.ts,1504] nextColInRow: ", nextColInRow);
-
       if (previousCellInRow && nextColInRow !== null) {
-        previousCellInRow.colOfNextText = nextColInRow;
-        // /*prettier-ignore*/ console.log("3 [grid-test-page.ts,1546] previousCellInRow: ",previousCellInRow.col, previousCellInRow.row, previousCellInRow?.text);
+        previousCellInRow.colsToNextText = nextColInRow - previousCellInRowCol;
       }
     }
   }

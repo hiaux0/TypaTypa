@@ -71,24 +71,24 @@
 - [ ] feat:
 - [ ] refac:
 
-- [ ] bug: undo needs to be hit twice
+- [ ] bug: fix layout of col and row and css uuugh
 - [ ] feat: upload state
 - [ ] feat: search
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
 - [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
-- [ ] bug: overflow and adjusted col widths
-- [ ] bug: test data with column adjust
-  - 01 x P
-  - BUG: overflow of 02 wrong
-- [ ] bug: fix layout of col and row and css uuugh
+- [!] bug: overflow and adjusted col widths
 
 # Done
 ## Grid
 
+- [x] bug: test data with column adjust
+  - 01 x P
+  - BUG: overflow of 02 wrong
 - [x] bug: undo redo on column delete. BUG: does not undo properly
   - 2024-10-12 15:51: cursor movements also gets recorded
+  - [x] bug: undo needs to be hit twice
 - [x] bug: x should delete whole col, BUG: but clears only first
 - [x] feat: click on col, should select whole col
 - [x] feat: grid----- overflow: add overflow support

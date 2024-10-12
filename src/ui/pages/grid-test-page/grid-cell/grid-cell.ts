@@ -16,13 +16,16 @@ export class GridCell {
   public CELL_WIDTH = CELL_WIDTH;
 
   get widthPx() {
-    if (!this.cell?.colOfNextText) return "unset";
-    this.cell.colOfNextText;
-    const diff = this.cell.colOfNextText - this.column;
-    const borderWidthAdjust = diff - 1;
+    if (!this.cell?.colsToNextText) return "unset";
+    const diff = this.cell.colsToNextText;
+    const borderWidthAdjust = diff;
     const width = diff * CELL_WIDTH - PADDING - borderWidthAdjust;
     const asPx = `${width}px`;
     return asPx;
+  }
+
+  cellChanged(neww, oldd) {
+    this.updateCell();
   }
 
   constructor(
@@ -30,10 +33,15 @@ export class GridCell {
   ) {}
 
   attached() {
-    if (this.cell) {
-      this.cell.scrollWidth = this.cellContentRef.scrollWidth;
-      this.cell.col = this.column;
-      this.cell.row = this.row;
+    if (this.cell?.text) {
+      this.updateCell();
     }
+  }
+
+  private updateCell() {
+    if (!this.cell) return;
+    this.cell.scrollWidth = this.cellContentRef.scrollWidth;
+    this.cell.col = this.column;
+    this.cell.row = this.row;
   }
 }

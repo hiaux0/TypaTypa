@@ -182,6 +182,7 @@ export function checkCellOverflow(
 ) {
   sheetsData.sheets.forEach((sheet) => {
     sheet.content.forEach((row) => {
+      // /*prettier-ignore*/ console.log("[gridModules.ts,185] row: ", row);
       if (!row) return;
       let lastCell: Cell | undefined = undefined;
       let lastCellIndex = 0;
@@ -189,11 +190,17 @@ export function checkCellOverflow(
         if (lastCell) {
           const hasCellText = cell?.text;
           if (hasCellText) {
+            // /*prettier-ignore*/ console.log("----------------------------");
+            // /*prettier-ignore*/ console.log("1. [gridModules.ts,191] hasCellText: ", hasCellText);
             const lastCellWidth = lastCell.scrollWidth || 0;
+            // /*prettier-ignore*/ console.log("1.1 [gridModules.ts,194] lastCellWidth: ", lastCellWidth);
             const colDiff = col - lastCellIndex;
+            // /*prettier-ignore*/ console.log("1.2 [gridModules.ts,196] colDiff: ", colDiff);
             const overflowWidth = colDiff * options.cellWidth;
+            // /*prettier-ignore*/ console.log("1.3 [gridModules.ts,198] overflowWidth: ", overflowWidth);
             if (lastCellWidth > overflowWidth) {
-              lastCell.colOfNextText = col;
+              // /*prettier-ignore*/ console.log("1.4 [gridModules.ts,201] col: ", col);
+              lastCell.colsToNextText = colDiff;
             }
           }
         }

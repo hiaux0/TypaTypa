@@ -48,7 +48,7 @@ export interface Cell {
   text: string;
   col?: number;
   row?: number;
-  colOfNextText?: number;
+  colsToNextText?: number;
   scrollWidth?: number;
 }
 export type ContentMap = Cell[][];
@@ -58,12 +58,16 @@ export type ColHeaderMap = Record<
     colWidth: number;
   }
 >;
+export interface SheetSettings {
+  autosave?: boolean;
+}
 export interface Sheet {
   id: string;
   title: string;
   content: ContentMap;
   selectedRange?: GridSelectionRange;
   colHeaderMap?: ColHeaderMap;
+  settings?: SheetSettings;
 }
 
 export interface GridDatabaseType {
@@ -77,20 +81,197 @@ export interface GridDatabaseType {
 //  selectedSheetId: "1",
 //};
 export const defaultGridDatabaseType: GridDatabaseType = {
-  version: "0.0.2",
+  version: "v0.0.2",
   sheets: [
     {
       id: "1",
       title: "Sheet 1",
       content: [
-        [{ text: "00" }, { text: "10" }, { text: "20" }],
-        [{ text: "01" }],
+        [
+          {
+            text: "00",
+          },
+          {
+            text: "10",
+          },
+          {
+            text: "20",
+          },
+        ],
+        [
+          {
+            text: "01",
+          },
+        ],
       ],
       selectedRange: [
-        [0, 0],
-        [0, 0],
+        [1, 0],
+        [1, 0],
       ],
     },
+    {
+      id: "gezk7yo-b84jfg8dl1",
+      title: "Vn-dict",
+      content: [
+        [
+          {
+            text: "mục",
+            scrollWidth: 118,
+            col: 0,
+            row: 0,
+            colsToNextText: 2,
+          },
+          {
+            text: "",
+            col: 1,
+            row: 0,
+          },
+          {
+            text: "head; section / item / column",
+            col: 2,
+            row: 0,
+            colsToNextText: 3,
+            scrollWidth: 283,
+          },
+          {
+            text: "",
+            col: 3,
+            row: 0,
+          },
+          {
+            text: "mục",
+            col: 4,
+            row: 0,
+            colsToNextText: 1,
+            scrollWidth: 55,
+          },
+          {
+            text: "nghiệp chướng",
+            scrollWidth: 127,
+            col: 5,
+            row: 0,
+            colsToNextText: null,
+          },
+        ],
+        [
+          {
+            text: "linh cảm",
+            scrollWidth: 78,
+            col: 0,
+            row: 1,
+          },
+          {
+            text: "",
+            col: 1,
+            row: 1,
+            scrollWidth: 0,
+          },
+          {
+            text: "hunch; feeling; premonition",
+            col: 2,
+            row: 1,
+            scrollWidth: 263,
+          },
+          {
+            text: null,
+            scrollWidth: 0,
+            col: 3,
+            row: 1,
+          },
+          {
+            text: null,
+            scrollWidth: 0,
+            col: 4,
+            row: 1,
+          },
+          {
+            text: null,
+            scrollWidth: 0,
+            col: 5,
+            row: 1,
+          },
+          {
+            text: "ngây",
+            col: 6,
+            row: 1,
+            scrollWidth: 39,
+          },
+        ],
+        [
+          {
+            text: "chật vật",
+            scrollWidth: 78,
+            col: 0,
+            row: 2,
+          },
+          {
+            text: "",
+            col: 1,
+            row: 2,
+            scrollWidth: 0,
+          },
+          {
+            text: "tough; strenuous; requiring a lot of exertion / hard; difficult",
+            col: 2,
+            row: 2,
+            scrollWidth: 614,
+          },
+          {
+            text: "",
+            col: 3,
+            row: 2,
+            scrollWidth: 0,
+          },
+          {
+            text: null,
+            scrollWidth: 0,
+            col: 4,
+            row: 2,
+          },
+          {
+            text: null,
+            scrollWidth: 0,
+            col: 5,
+            row: 2,
+          },
+          {
+            text: "phổ biến",
+            scrollWidth: 78,
+            col: 6,
+            row: 2,
+          },
+        ],
+        [null],
+        [],
+      ],
+      selectedRange: [
+        [3, 0],
+        [3, 0],
+      ],
+      colHeaderMap: {
+        "0": {
+          colWidth: 64,
+        },
+        "1": {
+          colWidth: 64,
+        },
+        "2": {
+          colWidth: 64,
+        },
+        "3": {
+          colWidth: 64,
+        },
+        "4": {
+          colWidth: 64,
+        },
+        "5": {
+          colWidth: 64,
+        },
+        "6": {
+          colWidth: 64,
+        },
+      },
+    },
   ],
-  selectedSheetId: "1",
+  selectedSheetId: "gezk7yo-b84jfg8dl1",
 };

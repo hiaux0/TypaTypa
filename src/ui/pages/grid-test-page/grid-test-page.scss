@@ -53,7 +53,8 @@ $columnHeight: 32px;
         background: red;
       }
       &.selected-cell {
-        background: orange;
+        background: #ffa5008a;
+        /* opacity: 0.5; */
       }
     }
     .cell-header {
