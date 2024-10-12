@@ -6,8 +6,8 @@ $columnHeight: 32px;
 
 @mixin cell() {
   padding: 4px;
-  border-right: 1px solid $white1;
-  border-bottom: 1px solid $white1;
+  border-right: 1px solid $borderColor;
+  border-bottom: 1px solid $borderColor;
   min-width: $columnWidth;
   min-height: $columnHeight;
 }

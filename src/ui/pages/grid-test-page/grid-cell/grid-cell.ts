@@ -28,7 +28,7 @@ export class GridCell {
     // const width = colsToNextText * CELL_WIDTH - PADDING - borderWidthAdjust;
 
     const colHeaderWidth =
-      this.columnSettings.colWidth - PADDING - borderWidthAdjust;
+      this.columnSettings?.colWidth - PADDING - borderWidthAdjust;
     const widthOfCurrentCell = Math.min(colHeaderWidth, this.cell.scrollWidth);
     const otherColsToConsiderForWidth = this.wholeRow.slice(
       this.column + 1,

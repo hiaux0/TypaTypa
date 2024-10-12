@@ -54,6 +54,7 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
+- [ ] feat: dark mode
 - [ ] feat: cells---- merge cells
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
@@ -78,11 +79,12 @@
 - [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
-- [!] bug: overflow and adjusted col widths
+- [!] bug: textarea input out of place
 
 # Done
 ## Grid
 
+- [x] bug: overflow and adjusted col widths
 - [x] bug: test data with column adjust
   - 01 x P
   - BUG: overflow of 02 wrong

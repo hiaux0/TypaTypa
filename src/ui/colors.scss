@@ -1,35 +1,80 @@
+// Define theme variable
+$theme: dark;
+
+// Light theme colors
+$light-primary0: #d5dcbc; // sage (green)
+$light-primary: #ccd5ae; // sage (green)
+$light-primary1: #bcc794; // sage (green)
+$light-primary2: #94aa7d; // sage (green)
+$light-primaryDark0: #3e403b; // lighter black olive
+$light-primaryDark: #343531; // black olive
+$light-primaryDark1: #292a27; // darker black olive
+$light-primaryDark2: #1f201d; // darker black olive
+$light-secondaryLight0: #fcfbef; // lighter beige
+$light-secondaryLight: #fefae0; // beige
+$light-secondary: #faedce; // beige
+$light-black0: #252815; // lighter
+$light-black: #181b0e; // main black
+$light-black05: #181b0e78; // main black 05
+$light-black1: #0c0d07; // darker
+$light-white0: #ffffff; // lighter white
+$light-white: #f7f8f2; // main white
+$light-white1: #eff1e4; // darker white
+$light-grey0: #9da093; // lighter grey
+$light-grey: #7f8177; // main grey
+$light-red: #f06449; // tomato
+
+// Dark theme colors
+$dark-primary0: #4a5d55; // dark sage (green)
+$dark-primary: #6b7f66; // sage (green)
+$dark-primary1: #7a8c7e; // sage (green)
+$dark-primary2: #3b5c4e; // sage (green)
+$dark-primaryDark0: #2b2e2b; // charcoal
+$dark-primaryDark: #1c1f1d; // dark charcoal
+$dark-primaryDark1: #101212; // deeper charcoal
+$dark-primaryDark2: #0a0b0a; // black charcoal
+$dark-secondaryLight0: #222; // dark beige
+$dark-secondaryLight: #2e2d26; // beige
+$dark-secondary: #4a3e33; // dark beige
+$dark-black0: #101010; // deep black
+$dark-black: #0b0b0b; // main black
+$dark-black05: #0b0b0b78; // main black 05
+$dark-black1: #020202; // darker black
+$dark-white0: #e5e5e5; // light grey
+$dark-white: #dcdcdc; // main grey
+$dark-white1: #c5c5c5; // darker grey
+$dark-grey0: #6b6b6b; // light grey
+$dark-grey: #4a4a4a; // main grey
+$dark-red: #c54a4a; // dark tomato
+
 /* $primary: #bfd6a7; */
 
-$primary0: #d5dcbc; //          sage (green)
-$primary: #ccd5ae; //           sage (green)
-/* $primary1: #c4cea1; //           sage (green) */ // Note: one step less than below (#bcc794), but too light imo
-$primary1: #bcc794; //          sage (green)
-$primary2: #94aa7d; //          sage (green)
-$primaryDark0: #3e403b; //      lighter black olive
-$primaryDark: #343531; //       black olive
-$primaryDark1: #292a27; //      darker black olive
-$primaryDark2: #1f201d; //      darker black olive
+$primary0: if($theme == dark, $dark-primary0, $light-primary0);
+$primary: if($theme == dark, $dark-primary, $light-primary);
+$primary1: if($theme == dark, $dark-primary1, $light-primary1);
+$primary2: if($theme == dark, $dark-primary2, $light-primary2);
+$primaryDark0: if($theme == dark, $dark-primaryDark0, $light-primaryDark0);
+$primaryDark: if($theme == dark, $dark-primaryDark, $light-primaryDark);
+$primaryDark1: if($theme == dark, $dark-primaryDark1, $light-primaryDark1);
+$primaryDark2: if($theme == dark, $dark-primaryDark2, $light-primaryDark2);
+$secondaryLight0: if($theme == dark, $dark-secondaryLight0, $light-secondaryLight0);
+$secondaryLight: if($theme == dark, $dark-secondaryLight, $light-secondaryLight);
+$secondary: if($theme == dark, $dark-secondary, $light-secondary);
+$black0: if($theme == dark, $dark-black0, $light-black0);
+$black: if($theme == dark, $dark-black, $light-black);
+$black05: if($theme == dark, $dark-black05, $light-black05);
+$black1: if($theme == dark, $dark-black1, $light-black1);
+$white0: if($theme == dark, $dark-white0, $light-white0);
+$white: if($theme == dark, $dark-white, $light-white);
+$white1: if($theme == dark, $dark-white1, $light-white1);
+$grey0: if($theme == dark, $dark-grey0, $light-grey0);
+$grey: if($theme == dark, $dark-grey, $light-grey);
+$red: if($theme == dark, $dark-red, $light-red);
+// Apply theme colors
+$textColor: if($theme == dark, $light-white1, $dark-white1);
+$borderColor: if($theme == dark, $light-black, $dark-black1);
 
-$secondaryLight0: #fcfbef; //   lighter beige
-$secondaryLight: #fefae0; //    beige
-$secondary: #faedce; //         beige
-
-$black0: #252815; //            lighter
-$black: #181b0e; //             main black
-$black05: #181b0e78; //         main black 05
-$black1: #0c0d07; //            darker
-
-$white0: #ffffff; //            lighter white
-$white: #f7f8f2; //             main white
-$white1: #eff1e4; //            darker white
-
-$grey0: #9da093; //             lighter grey
-$grey: #7f8177; //              main grey
-
-$red: #F06449; //               tomato
-
-$textColor: $primaryDark2;
-$borderColor: $black;
+// Other variables
 $borderRadius0: 0.1rem;
 $borderRadius: 0.2rem;
 
