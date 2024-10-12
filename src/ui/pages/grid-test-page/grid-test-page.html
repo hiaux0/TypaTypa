@@ -64,8 +64,11 @@
           <grid-cell
             cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
             row.bind="rowIndex"
+            whole-row.bind="activeSheet.content[rowIndex]"
             column.bind="columnIndex"
             selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+            sheet-settings.bind="activeSheet.settings"
+            column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
             pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
             pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
             pointerup.trigger="onMouseUpGridCell()"

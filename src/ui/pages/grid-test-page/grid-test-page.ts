@@ -82,7 +82,7 @@ export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
   public rowSize = 5;
-  public columnSize = 5;
+  public columnSize = 7;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -1571,23 +1571,6 @@ export class GridTestPage {
     let previousCellInRowCol: number;
     let nextColInRow: number | undefined;
     // 1. If cell has content, then update the overflow of PREVIOUS and NEXT cell
-    {
-      //const log = [
-      //  this.sheetsData.sheets[1].content[0]?.[0]?.text,
-      //  this.sheetsData.sheets[1].content[0]?.[1]?.text,
-      //  this.sheetsData.sheets[1].content[0]?.[2]?.text,
-      //  this.sheetsData.sheets[1].content[0]?.[3]?.text,
-      //];
-      ///*prettier-ignore*/ console.log("0.1 [grid-test-page.ts,1492] cell: ",cell?.col, cell?.row,'"', cell?.text);
-      ///*prettier-ignore*/ console.log("0.2 [grid-test-page.ts,1575] log: ", log);
-      //const log_cell = [
-      //  this.getCurrentCell(0, 0)?.text,
-      //  this.getCurrentCell(1, 0)?.text,
-      //  this.getCurrentCell(2, 0)?.text,
-      //  this.getCurrentCell(3, 0)?.text,
-      //];
-      ///*prettier-ignore*/ console.log("[grid-test-page.ts,1583] log_cell: ", log_cell);
-    }
     if (cell?.text) {
       console.log("11111111.");
       // 1.1 PREVIOUS cell

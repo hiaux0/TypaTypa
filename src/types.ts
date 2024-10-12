@@ -49,6 +49,7 @@ export interface Cell {
   col?: number;
   row?: number;
   colsToNextText?: number;
+  /* Note, that width is based on border-box */
   scrollWidth?: number;
 }
 export type ContentMap = Cell[][];
@@ -66,6 +67,7 @@ export interface Sheet {
   title: string;
   content: ContentMap;
   selectedRange?: GridSelectionRange;
+  /* TODO: rename to columnSettingsMap */
   colHeaderMap?: ColHeaderMap;
   settings?: SheetSettings;
 }
