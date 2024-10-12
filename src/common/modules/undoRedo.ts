@@ -3,9 +3,9 @@
  * - [ ] limit undo redo stack size
  */
 export class UndoRedo<T> {
-  undoStack: T[];
-  redoStack: T[];
-  currentState: T;
+  public undoStack: T[];
+  public redoStack: T[];
+  public currentState: T;
 
   constructor(initialState?: T) {
     this.undoStack = [];
@@ -42,7 +42,6 @@ export class UndoRedo<T> {
   }
 
   public init(newState: T) {
-    this.undoStack = [newState];
     this.currentState = newState;
   }
 }

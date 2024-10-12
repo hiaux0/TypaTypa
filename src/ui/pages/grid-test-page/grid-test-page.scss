@@ -15,6 +15,15 @@ $columnHeight: 32px;
 .grid-test-container {
   margin: 8px;
 
+  .toolbar-container {
+    .redo-button,
+    .undo-button {
+      &.inactive {
+        opacity: 0.4;
+      }
+    }
+  }
+
   .function-bar-container {
     display: flex;
     margin-bottom: 4px;

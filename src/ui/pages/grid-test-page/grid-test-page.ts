@@ -17,6 +17,7 @@ import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
 import {
   KeyBindingModes,
+  QueueInputReturn,
   VimMode,
   VimOptions,
 } from "../../../features/vim/vim-types";
@@ -56,6 +57,16 @@ import { debugFlags } from "../../../common/modules/debug/debugFlags";
 
 type GridPanelTypes = "button" | "text";
 
+type MappingByCommandName = Record<
+  VimMode,
+  Record<
+    VIM_COMMAND,
+    (
+      result?: QueueInputReturn,
+    ) => void | Promise<void> | { preventUndoRedoTrace: boolean }
+  >
+>;
+
 interface GridPanel {
   id: string;
   row: number;
@@ -66,8 +77,6 @@ interface GridPanel {
   type: GridPanelTypes;
   content?: string;
 }
-
-const gridUndoRedo = new UndoRedo<ContentMap>();
 
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
@@ -108,6 +117,343 @@ export class GridTestPage {
   @observable activeSheetId = "";
   private sheetTabs: ITab[] = [];
   private sheetsData: GridDatabaseType;
+  public gridUndoRedo: UndoRedo<ContentMap>;
+
+  private mappingByCommandName: MappingByCommandName = {
+    // @ts-ignore
+    [VimMode.NORMAL]: {
+      [VIM_COMMAND.cursorLineEnd]: () => {
+        this.setAndUpdateSingleCell(
+          this.columnSize - 1,
+          this.dragStartRowIndex,
+        );
+        this.spreadsheetContainerRef.scrollLeft = this.columnSize * CELL_WIDTH;
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorLineStart]: () => {
+        this.setAndUpdateSingleCell(0, this.dragStartRowIndex);
+        this.spreadsheetContainerRef.scrollLeft = 0;
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorRight]: () => {
+        this.unselectAllSelecedCells();
+        const a = Math.min(this.columnSize - 1, this.dragStartColumnIndex + 1);
+        this.dragStartColumnIndex = a;
+        this.dragEndColumnIndex = a;
+        this.updateAllSelecedCells();
+        if (this.dragStartColumnIndex === 0) {
+          this.spreadsheetContainerRef.scrollLeft = 0;
+        } else {
+          this.scrollEditor("right", 1);
+        }
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorLeft]: () => {
+        this.unselectAllSelecedCells();
+        const a = Math.max(0, this.dragStartColumnIndex - 1);
+        this.dragStartColumnIndex = a;
+        this.dragEndColumnIndex = a;
+        this.updateAllSelecedCells();
+        if (this.dragStartColumnIndex === this.columnSize - 1) {
+          this.spreadsheetContainerRef.scrollLeft =
+            this.columnSize * CELL_WIDTH;
+        } else {
+          this.scrollEditor("left", 1);
+        }
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorUp]: () => {
+        this.unselectAllSelecedCells();
+        const a = Math.max(0, this.dragStartRowIndex - 1);
+        this.dragStartRowIndex = a;
+        this.dragEndRowIndex = a;
+        this.updateAllSelecedCells();
+        if (this.dragStartRowIndex === this.rowSize - 1) {
+          this.spreadsheetContainerRef.scrollTop = this.rowSize * CELL_HEIGHT;
+        } else {
+          this.scrollEditor("up", 1);
+        }
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorDown]: () => {
+        this.unselectAllSelecedCells();
+        const a = Math.min(this.rowSize - 1, this.dragStartRowIndex + 1);
+        this.dragStartRowIndex = a;
+        this.dragEndRowIndex = a;
+        this.updateAllSelecedCells();
+        if (this.dragStartRowIndex === 0) {
+          this.spreadsheetContainerRef.scrollTop = 0;
+        } else {
+          this.scrollEditor("down", 1);
+        }
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.delete]: () => {
+        const panel = this.getPanelUnderCursor();
+        if (!panel) {
+          this.lastCellContentArray = [this.getCurrentCell()?.text ?? ""];
+          this.removeCellAt();
+          return;
+        }
+
+        this.panelCRUD.delete(panel.id);
+        this.gridPanels = this.panelCRUD.readAll();
+      },
+      [VIM_COMMAND.pasteVim]: () => {
+        if (this.lastCellContentArray.length === 0) return;
+        const nextCol = this.dragStartColumnIndex + 1;
+        let index = 0;
+        this.iterateOverCol(
+          (col, row) => {
+            console.log("1. add cell at", col, row);
+            this.addCellAt(col, row);
+            const content = this.lastCellContentArray[index++];
+            this.setCurrentCellContent(content, col, row, {
+              skipUpdate: true,
+            });
+          },
+          {
+            startCol: nextCol,
+            startRow: this.dragStartRowIndex,
+            endCol: nextCol,
+            endRow:
+              this.dragStartRowIndex + this.lastCellContentArray.length - 1,
+          },
+        );
+        this.updateContentMapChangedForView();
+      },
+      [VIM_COMMAND.pasteVimBefore]: () => {
+        if (this.lastCellContentArray.length === 0) return;
+        let index = 0;
+        this.iterateOverCol(
+          (col, row) => {
+            console.log("pasteVim", col, row);
+            this.addCellAt(col, row);
+            const content = this.lastCellContentArray[index++];
+            this.setCurrentCellContent(content, col, row, {
+              skipUpdate: true,
+            });
+          },
+          {
+            startRow: this.dragStartRowIndex,
+            endCol: this.dragStartColumnIndex,
+            endRow:
+              this.dragStartRowIndex + this.lastCellContentArray.length - 1,
+          },
+        );
+        this.updateContentMapChangedForView();
+      },
+      [VIM_COMMAND.paste]: async () => {
+        const text = await getClipboardContent();
+        const split = text.trim().split("\n");
+        const len = split.length;
+        this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
+        this.iterateOverSelectedCells((col, row) => {
+          const content = split.shift();
+          this.setCurrentCellContent(content, col, row);
+        });
+        this.dragEndRowIndex = this.dragStartRowIndex;
+      },
+      [VIM_COMMAND.enterNormalMode]: () => {
+        this.unselectAllSelecedCells();
+        this.dragEndColumnIndex = this.dragStartColumnIndex;
+        this.dragEndRowIndex = this.dragStartRowIndex;
+        this.updateAllSelecedCells();
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.jumpPreviousBlock]: () => {
+        let nextEmptyRow = NaN;
+        this.iterateOverColBackwards(
+          (col, row) => {
+            const content = this.getCurrentCell(col, row)?.text ?? "";
+            const empty = !content;
+            nextEmptyRow = row;
+            return empty;
+          },
+          { startRow: this.dragStartRowIndex - 1 },
+        );
+        if (Number.isNaN(nextEmptyRow)) return;
+        this.setAndUpdateSingleCell(this.dragStartColumnIndex, nextEmptyRow);
+        this.updateAllSelecedCells();
+        this.spreadsheetContainerRef.scrollTop = nextEmptyRow * CELL_HEIGHT;
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.jumpNextBlock]: () => {
+        let nextEmptyRow = NaN;
+        this.iterateOverCol(
+          (col, row) => {
+            const content = this.getCurrentCell(col, row)?.text ?? "";
+            const empty = !content;
+            nextEmptyRow = row;
+            return empty;
+          },
+          { startRow: this.dragStartRowIndex + 1 },
+        );
+        if (Number.isNaN(nextEmptyRow)) return;
+        this.setAndUpdateSingleCell(this.dragStartColumnIndex, nextEmptyRow);
+        this.updateAllSelecedCells();
+        this.spreadsheetContainerRef.scrollTop =
+          (nextEmptyRow - 5) * CELL_HEIGHT;
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.undo]: () => {
+        const undone = this.gridUndoRedo.undo();
+        if (!undone) return;
+        this.contentMap = undone;
+        this.updateContentMapChangedForView();
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.redo]: () => {
+        const redone = this.gridUndoRedo.redo();
+        if (!redone) return;
+        this.contentMap = redone;
+        this.updateContentMapChangedForView();
+        return { preventUndoRedoTrace: true };
+      },
+    },
+    // @ts-ignore
+    [VimMode.VISUAL]: {
+      [VIM_COMMAND.cursorRight]: () => {
+        this.unselectAllSelecedCells();
+        const b = this.dragEndColumnIndex + 1;
+        this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+        this.updateAllSelecedCells();
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorLeft]: () => {
+        this.unselectAllSelecedCells();
+        const b = this.dragEndColumnIndex - 1;
+        this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+        this.updateAllSelecedCells();
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorUp]: () => {
+        this.unselectAllSelecedCells();
+        const b = this.dragEndRowIndex - 1;
+        this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+        this.updateAllSelecedCells();
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorDown]: () => {
+        this.unselectAllSelecedCells();
+        const b = this.dragEndRowIndex + 1;
+        this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
+        this.updateAllSelecedCells();
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.visualDelete]: () => {
+        const collectDeleted = [];
+        this.iterateOverCol(
+          (col, row) => {
+            console.log("delete", col, row);
+            collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
+            this.removeCellAt(col, row, { skipUpdate: true });
+          },
+          { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
+        );
+        this.lastCellContentArray = collectDeleted;
+        this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        this.setAndUpdateSingleCell(
+          this.dragStartColumnIndex,
+          this.dragStartRowIndex,
+        );
+        this.updateContentMapChangedForView();
+      },
+      [VIM_COMMAND.enterVisualMode]: () => {
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.yank]: () => {
+        const collectDeleted = [];
+        this.iterateOverCol(
+          (col, row) => {
+            collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
+          },
+          { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
+        );
+        this.lastCellContentArray = collectDeleted;
+        this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        this.setAndUpdateSingleCell(
+          this.dragStartColumnIndex,
+          this.dragStartRowIndex,
+        );
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.jumpPreviousBlock]: () => {
+        let nextEmptyRow = NaN;
+        this.iterateOverColBackwards(
+          (col, row) => {
+            const content = this.getCurrentCell(col, row)?.text ?? "";
+            const empty = !content;
+            nextEmptyRow = row;
+            return empty;
+          },
+          { startRow: this.dragStartRowIndex },
+        );
+        this.unselectAllSelecedCells();
+        this.dragEndRowIndex = nextEmptyRow + 1;
+        this.updateAllSelecedCells();
+        this.spreadsheetContainerRef.scrollTop = nextEmptyRow * CELL_HEIGHT;
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.jumpNextBlock]: () => {
+        let nextEmptyRow = NaN;
+        this.iterateOverCol(
+          (col, row) => {
+            const content = this.getCurrentCell(col, row)?.text ?? "";
+            const empty = !content;
+            nextEmptyRow = row;
+            return empty;
+          },
+          { startRow: this.dragStartRowIndex },
+        );
+        this.unselectAllSelecedCells();
+        this.dragEndRowIndex = nextEmptyRow - 1;
+        this.updateAllSelecedCells();
+        this.spreadsheetContainerRef.scrollTop =
+          (nextEmptyRow - 5) * CELL_HEIGHT;
+        return { preventUndoRedoTrace: true };
+      },
+      // [VIM_COMMAND.]: () => {},
+    },
+    // @ts-ignore
+    [VimMode.INSERT]: {
+      //[VIM_COMMAND.enterInsertMode]: () => {
+      //  console.log("iiiii");
+      //  mappingByMode[VimMode.NORMAL]
+      //    .find((mapping) => mapping.key === "<Enter>")
+      //    .execute();
+      //  return true;
+      //},
+    },
+    // @ts-ignore
+    [VimMode.CUSTOM]: {
+      [VIM_COMMAND.cursorRight]: () => {
+        const panel = this.getPanelUnderCursor();
+        panel.col += 1;
+        this.setCursorAtPanel(panel);
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorLeft]: () => {
+        const panel = this.getPanelUnderCursor();
+        panel.col -= 1;
+        this.setCursorAtPanel(panel);
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorUp]: () => {
+        const panel = this.getPanelUnderCursor();
+        panel.row -= 1;
+        this.setCursorAtPanel(panel);
+        return { preventUndoRedoTrace: true };
+      },
+      [VIM_COMMAND.cursorDown]: () => {
+        const panel = this.getPanelUnderCursor();
+        panel.row += 1;
+        this.setCursorAtPanel(panel);
+        return { preventUndoRedoTrace: true };
+      },
+    },
+  };
 
   activeSheetIdChanged() {
     if (!this.activeSheetId) return;
@@ -141,6 +487,7 @@ export class GridTestPage {
   ) {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
+    this.gridUndoRedo = new UndoRedo<ContentMap>();
   }
 
   private initSheets(sheetsData: GridDatabaseType): void {
@@ -236,7 +583,7 @@ export class GridTestPage {
       // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
       // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
     ];
-    gridUndoRedo.init(structuredClone(this.contentMap));
+    this.gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
     // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
   }
@@ -724,318 +1071,6 @@ export class GridTestPage {
     };
     new KeyMappingService().init(mappingByKey, mappingByMode);
 
-    const mappingByCommandName = {
-      [VimMode.NORMAL]: {
-        [VIM_COMMAND.cursorLineEnd]: () => {
-          this.setAndUpdateSingleCell(
-            this.columnSize - 1,
-            this.dragStartRowIndex,
-          );
-          this.spreadsheetContainerRef.scrollLeft =
-            this.columnSize * CELL_WIDTH;
-        },
-        [VIM_COMMAND.cursorLineStart]: () => {
-          this.setAndUpdateSingleCell(0, this.dragStartRowIndex);
-          this.spreadsheetContainerRef.scrollLeft = 0;
-        },
-        [VIM_COMMAND.cursorRight]: () => {
-          this.unselectAllSelecedCells();
-          const a = Math.min(
-            this.columnSize - 1,
-            this.dragStartColumnIndex + 1,
-          );
-          this.dragStartColumnIndex = a;
-          this.dragEndColumnIndex = a;
-          this.updateAllSelecedCells();
-          if (this.dragStartColumnIndex === 0) {
-            this.spreadsheetContainerRef.scrollLeft = 0;
-          } else {
-            this.scrollEditor("right", 1);
-          }
-        },
-        [VIM_COMMAND.cursorLeft]: () => {
-          this.unselectAllSelecedCells();
-          const a = Math.max(0, this.dragStartColumnIndex - 1);
-          this.dragStartColumnIndex = a;
-          this.dragEndColumnIndex = a;
-          this.updateAllSelecedCells();
-          if (this.dragStartColumnIndex === this.columnSize - 1) {
-            this.spreadsheetContainerRef.scrollLeft =
-              this.columnSize * CELL_WIDTH;
-          } else {
-            this.scrollEditor("left", 1);
-          }
-        },
-        [VIM_COMMAND.cursorUp]: () => {
-          this.unselectAllSelecedCells();
-          const a = Math.max(0, this.dragStartRowIndex - 1);
-          this.dragStartRowIndex = a;
-          this.dragEndRowIndex = a;
-          this.updateAllSelecedCells();
-          if (this.dragStartRowIndex === this.rowSize - 1) {
-            this.spreadsheetContainerRef.scrollTop = this.rowSize * CELL_HEIGHT;
-          } else {
-            this.scrollEditor("up", 1);
-          }
-        },
-        [VIM_COMMAND.cursorDown]: () => {
-          this.unselectAllSelecedCells();
-          const a = Math.min(this.rowSize - 1, this.dragStartRowIndex + 1);
-          this.dragStartRowIndex = a;
-          this.dragEndRowIndex = a;
-          this.updateAllSelecedCells();
-          if (this.dragStartRowIndex === 0) {
-            this.spreadsheetContainerRef.scrollTop = 0;
-          } else {
-            this.scrollEditor("down", 1);
-          }
-        },
-        [VIM_COMMAND.delete]: () => {
-          const panel = this.getPanelUnderCursor();
-          if (!panel) {
-            this.lastCellContentArray = [this.getCurrentCell()?.text ?? ""];
-            this.removeCellAt();
-            return;
-          }
-
-          this.panelCRUD.delete(panel.id);
-          this.gridPanels = this.panelCRUD.readAll();
-        },
-        [VIM_COMMAND.pasteVim]: () => {
-          if (this.lastCellContentArray.length === 0) return;
-          const nextCol = this.dragStartColumnIndex + 1;
-          let index = 0;
-          this.iterateOverCol(
-            (col, row) => {
-              console.log("1. add cell at", col, row);
-              this.addCellAt(col, row);
-              const content = this.lastCellContentArray[index++];
-              this.setCurrentCellContent(content, col, row, {
-                skipUpdate: true,
-              });
-            },
-            {
-              startCol: nextCol,
-              startRow: this.dragStartRowIndex,
-              endCol: nextCol,
-              endRow:
-                this.dragStartRowIndex + this.lastCellContentArray.length - 1,
-            },
-          );
-          this.updateContentMapChangedForView();
-        },
-        [VIM_COMMAND.pasteVimBefore]: () => {
-          if (this.lastCellContentArray.length === 0) return;
-          let index = 0;
-          this.iterateOverCol(
-            (col, row) => {
-              console.log("pasteVim", col, row);
-              this.addCellAt(col, row);
-              const content = this.lastCellContentArray[index++];
-              this.setCurrentCellContent(content, col, row, {
-                skipUpdate: true,
-              });
-            },
-            {
-              startRow: this.dragStartRowIndex,
-              endCol: this.dragStartColumnIndex,
-              endRow:
-                this.dragStartRowIndex + this.lastCellContentArray.length - 1,
-            },
-          );
-          this.updateContentMapChangedForView();
-        },
-        [VIM_COMMAND.paste]: async () => {
-          const text = await getClipboardContent();
-          const split = text.trim().split("\n");
-          const len = split.length;
-          this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
-          this.iterateOverSelectedCells((col, row) => {
-            const content = split.shift();
-            this.setCurrentCellContent(content, col, row);
-          });
-          this.dragEndRowIndex = this.dragStartRowIndex;
-        },
-        [VIM_COMMAND.enterNormalMode]: () => {
-          this.unselectAllSelecedCells();
-          this.dragEndColumnIndex = this.dragStartColumnIndex;
-          this.dragEndRowIndex = this.dragStartRowIndex;
-          this.updateAllSelecedCells();
-        },
-        [VIM_COMMAND.jumpPreviousBlock]: () => {
-          let nextEmptyRow = NaN;
-          this.iterateOverColBackwards(
-            (col, row) => {
-              const content = this.getCurrentCell(col, row)?.text ?? "";
-              const empty = !content;
-              nextEmptyRow = row;
-              return empty;
-            },
-            { startRow: this.dragStartRowIndex - 1 },
-          );
-          if (Number.isNaN(nextEmptyRow)) return;
-          this.setAndUpdateSingleCell(this.dragStartColumnIndex, nextEmptyRow);
-          this.updateAllSelecedCells();
-          this.spreadsheetContainerRef.scrollTop = nextEmptyRow * CELL_HEIGHT;
-        },
-        [VIM_COMMAND.jumpNextBlock]: () => {
-          let nextEmptyRow = NaN;
-          this.iterateOverCol(
-            (col, row) => {
-              const content = this.getCurrentCell(col, row)?.text ?? "";
-              const empty = !content;
-              nextEmptyRow = row;
-              return empty;
-            },
-            { startRow: this.dragStartRowIndex + 1 },
-          );
-          if (Number.isNaN(nextEmptyRow)) return;
-          this.setAndUpdateSingleCell(this.dragStartColumnIndex, nextEmptyRow);
-          this.updateAllSelecedCells();
-          this.spreadsheetContainerRef.scrollTop =
-            (nextEmptyRow - 5) * CELL_HEIGHT;
-        },
-        [VIM_COMMAND.undo]: () => {
-          const undone = gridUndoRedo.undo();
-          if (!undone) return;
-          this.contentMap = undone;
-          this.updateContentMapChangedForView();
-        },
-        [VIM_COMMAND.redo]: () => {
-          const redone = gridUndoRedo.redo();
-          if (!redone) return;
-          this.contentMap = redone;
-          this.updateContentMapChangedForView();
-        },
-      },
-      [VimMode.VISUAL]: {
-        [VIM_COMMAND.cursorRight]: () => {
-          this.unselectAllSelecedCells();
-          const b = this.dragEndColumnIndex + 1;
-          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
-          this.updateAllSelecedCells();
-        },
-        [VIM_COMMAND.cursorLeft]: () => {
-          this.unselectAllSelecedCells();
-          const b = this.dragEndColumnIndex - 1;
-          this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
-          this.updateAllSelecedCells();
-        },
-        [VIM_COMMAND.cursorUp]: () => {
-          this.unselectAllSelecedCells();
-          const b = this.dragEndRowIndex - 1;
-          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
-          this.updateAllSelecedCells();
-        },
-        [VIM_COMMAND.cursorDown]: () => {
-          this.unselectAllSelecedCells();
-          const b = this.dragEndRowIndex + 1;
-          this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
-          this.updateAllSelecedCells();
-        },
-        [VIM_COMMAND.visualDelete]: () => {
-          const collectDeleted = [];
-          this.iterateOverCol(
-            (col, row) => {
-              console.log("delete", col, row);
-              collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
-              this.removeCellAt(col, row, { skipUpdate: true });
-            },
-            { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
-          );
-          this.lastCellContentArray = collectDeleted;
-          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-          this.setAndUpdateSingleCell(
-            this.dragStartColumnIndex,
-            this.dragStartRowIndex,
-          );
-          this.updateContentMapChangedForView();
-        },
-        [VIM_COMMAND.enterVisualMode]: () => {
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
-        },
-        [VIM_COMMAND.yank]: () => {
-          const collectDeleted = [];
-          this.iterateOverCol(
-            (col, row) => {
-              collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
-            },
-            { startRow: this.dragStartRowIndex, endRow: this.dragEndRowIndex },
-          );
-          this.lastCellContentArray = collectDeleted;
-          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-          this.setAndUpdateSingleCell(
-            this.dragStartColumnIndex,
-            this.dragStartRowIndex,
-          );
-        },
-        [VIM_COMMAND.jumpPreviousBlock]: () => {
-          let nextEmptyRow = NaN;
-          this.iterateOverColBackwards(
-            (col, row) => {
-              const content = this.getCurrentCell(col, row)?.text ?? "";
-              const empty = !content;
-              nextEmptyRow = row;
-              return empty;
-            },
-            { startRow: this.dragStartRowIndex },
-          );
-          this.unselectAllSelecedCells();
-          this.dragEndRowIndex = nextEmptyRow + 1;
-          this.updateAllSelecedCells();
-          this.spreadsheetContainerRef.scrollTop = nextEmptyRow * CELL_HEIGHT;
-        },
-        [VIM_COMMAND.jumpNextBlock]: () => {
-          let nextEmptyRow = NaN;
-          this.iterateOverCol(
-            (col, row) => {
-              const content = this.getCurrentCell(col, row)?.text ?? "";
-              const empty = !content;
-              nextEmptyRow = row;
-              return empty;
-            },
-            { startRow: this.dragStartRowIndex },
-          );
-          this.unselectAllSelecedCells();
-          this.dragEndRowIndex = nextEmptyRow - 1;
-          this.updateAllSelecedCells();
-          this.spreadsheetContainerRef.scrollTop =
-            (nextEmptyRow - 5) * CELL_HEIGHT;
-        },
-        // [VIM_COMMAND.]: () => {},
-      },
-      [VimMode.INSERT]: {
-        //[VIM_COMMAND.enterInsertMode]: () => {
-        //  console.log("iiiii");
-        //  mappingByMode[VimMode.NORMAL]
-        //    .find((mapping) => mapping.key === "<Enter>")
-        //    .execute();
-        //  return true;
-        //},
-      },
-      [VimMode.CUSTOM]: {
-        [VIM_COMMAND.cursorRight]: () => {
-          const panel = this.getPanelUnderCursor();
-          panel.col += 1;
-          this.setCursorAtPanel(panel);
-        },
-        [VIM_COMMAND.cursorLeft]: () => {
-          const panel = this.getPanelUnderCursor();
-          panel.col -= 1;
-          this.setCursorAtPanel(panel);
-        },
-        [VIM_COMMAND.cursorUp]: () => {
-          const panel = this.getPanelUnderCursor();
-          panel.row -= 1;
-          this.setCursorAtPanel(panel);
-        },
-        [VIM_COMMAND.cursorDown]: () => {
-          const panel = this.getPanelUnderCursor();
-          panel.row += 1;
-          this.setCursorAtPanel(panel);
-        },
-      },
-    };
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
       vimState: {
@@ -1051,11 +1086,11 @@ export class GridTestPage {
           this.mode = payload.vimState.mode;
         },
         commandListener: (result) => {
-          const mode = mappingByCommandName[result.vimState.mode];
+          const mode = this.mappingByCommandName[result.vimState.mode];
           if (!mode) return;
           const command = mode[result.targetCommand];
           if (!command) return;
-          command(result);
+          const response = command(result);
           window.setTimeout(() => {
             if (!this.contentMap) return;
             if (
@@ -1063,7 +1098,9 @@ export class GridTestPage {
               result.targetCommand === VIM_COMMAND.undo
             )
               return;
-            gridUndoRedo.setState(structuredClone(this.contentMap));
+            if (!(response as any)?.preventUndoRedoTrace) {
+              this.gridUndoRedo.setState(structuredClone(this.contentMap));
+            }
           }, 0);
         },
         //onInsertInput: (key) => {
@@ -1632,4 +1669,12 @@ export class GridTestPage {
       [col, this.rowSize - 1],
     ]);
   }
+
+  public undo = (): void => {
+    this.mappingByCommandName[VimMode.NORMAL][VIM_COMMAND.undo]();
+  };
+
+  public redo = (): void => {
+    this.mappingByCommandName[VimMode.NORMAL][VIM_COMMAND.redo]();
+  };
 }

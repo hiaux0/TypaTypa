@@ -4,9 +4,23 @@
 <main ref="gridTestContainerRef" class="grid-test-container">
   <div>Mode: ${mode}</div>
   <!-- Toolbar -->
-  <!--<section>-->
-  <!--  <button click.trigger="addPanel()">Add Panel</button>-->
-  <!--</section>-->
+  <section class="toolbar-container">
+    <button
+      class="undo-button ${gridUndoRedo.undoStack.length ? '' : 'inactive'}"
+      type="button"
+      click.trigger="undo()"
+    >
+      ↩️ ${gridUndoRedo.undoStack.length}
+    </button>
+    <button
+      class="redo-button ${gridUndoRedo.redoStack.length ? '' : 'inactive'}"
+      type="button"
+      click.trigger="redo()"
+    >
+      ↪️
+    </button>
+    <!--  <button click.trigger="addPanel()">Add Panel</button>-->
+  </section>
 
   <!-- Function Bar -->
   <section class="function-bar-container">

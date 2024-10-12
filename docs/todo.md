@@ -82,11 +82,13 @@
 - [ ] bug: test data with column adjust
   - 01 x P
   - BUG: overflow of 02 wrong
-- [!] bug: undo redo on column delete. BUG: does not undo properly
+- [ ] bug: fix layout of col and row and css uuugh
 
 # Done
 ## Grid
 
+- [x] bug: undo redo on column delete. BUG: does not undo properly
+  - 2024-10-12 15:51: cursor movements also gets recorded
 - [x] bug: x should delete whole col, BUG: but clears only first
 - [x] feat: click on col, should select whole col
 - [x] feat: grid----- overflow: add overflow support
