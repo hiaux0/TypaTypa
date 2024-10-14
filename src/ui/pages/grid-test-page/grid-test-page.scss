@@ -77,6 +77,11 @@
       left: 0;
       background: $secondaryLight0;
       z-index: 2000;
+
+      .cell-header {
+        /* height: 33px; */
+
+      }
     }
     .row-container {
     }

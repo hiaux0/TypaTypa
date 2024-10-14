@@ -34,7 +34,7 @@ export class GridCell {
     }
 
     const minCellWidth = Math.min(
-      this.columnSettings.colWidth,
+      this.columnSettings?.colWidth,
       this.CELL_WIDTH,
     );
     const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;

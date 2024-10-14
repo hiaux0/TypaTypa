@@ -77,7 +77,7 @@ interface GridPanel {
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 5;
+  public rowSize = 50;
   public columnSize = 17;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
