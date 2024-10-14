@@ -76,11 +76,11 @@
 - [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
-- [ ] bug: new cell, does not at Cell obj
 
 # Done
 ## Grid
 
+- [x] bug: new cell, does not add Cell obj
 - [x] bug: textarea input out of place
   - [x] bug: fix layout of col and row and css uuugh
   - [x] bug: enter edit mode, should show all 2024-10-14 11:41

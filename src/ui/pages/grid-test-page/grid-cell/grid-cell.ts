@@ -33,7 +33,11 @@ export class GridCell {
       return `${this.cell.scrollWidth + PADDING}px`;
     }
 
-    const adjustedInitialCellWidth = this.CELL_WIDTH - PADDING - BORDER_WIDTH;
+    const minCellWidth = Math.min(
+      this.columnSettings.colWidth,
+      this.CELL_WIDTH,
+    );
+    const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;
     // 2. Show all content if no cells with text to the right
     if (!this.cell.colsToNextText) {
       const finalWidth = Math.max(
@@ -66,13 +70,13 @@ export class GridCell {
     // 3.2 Calculate final width of cell to show
     const finalWidthOfCurrent = minHeaderAndScrollWidth + otherColWidth;
     const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
-    //if (this.column === 0 && this.row === 0) {
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,63] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
-    //}
+    if (this.column === 2 && this.row === 0) {
+      /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,63] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
+    }
     const asPx = `${finalWidth}px`;
     return asPx;
   }
@@ -109,21 +113,21 @@ export class GridCell {
   private updateCell() {
     if (!this.cell) return;
     if (this.cell?.text == null) return;
-    const inputScrollWidth = this.getInput()?.scrollWidth;
+    const inputScrollWidth = this.getInput()?.scrollWidth ?? 0;
     const finalScrollWidth =
       Math.max(
-        this.cellContentRef.scrollWidth,
+        this.cellContentRef?.scrollWidth ?? 0,
         inputScrollWidth,
-        this.columnSettings?.colWidth,
+        this.columnSettings?.colWidth ?? 0,
       ) -
       PADDING -
       BORDER_WIDTH;
     this.cell.scrollWidth = finalScrollWidth;
-    if (this.column === 0 && this.row === 1) {
-      /*prettier-ignore*/ console.log("[grid-cell.ts,117] inputScrollWidth: ", inputScrollWidth);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,115] this.cellContentRef.scrollWidth: ", this.cellContentRef.scrollWidth);
-      /*prettier-ignore*/ console.log(">>>>>>>>>> [grid-cell.ts,113] finalScrollWidth: ", finalScrollWidth);
-    }
+    //if (this.column === 0 && this.row === 1) {
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,117] inputScrollWidth: ", inputScrollWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,115] this.cellContentRef.scrollWidth: ", this.cellContentRef.scrollWidth);
+    //  /*prettier-ignore*/ console.log(">>>>>>>>>> [grid-cell.ts,113] finalScrollWidth: ", finalScrollWidth);
+    //}
     if (this.cell.text !== "") {
       this.lastContent = this.textareaValue;
     }

@@ -1648,6 +1648,7 @@ export class GridTestPage {
       };
     }
     const beforeWidth = sheet.colHeaderMap?.[colIndex]?.colWidth ?? CELL_WIDTH; // TODO: fix, need to have it adjust to new drag start positions
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1651] beforeWidth: ", beforeWidth);
     return (movedByX: number) => {
       if (!sheet?.colHeaderMap?.[colIndex]) {
         sheet.colHeaderMap = {
