@@ -13,7 +13,7 @@
 }
 
 body {
-  font-family: mono, sans-serif;
+  font-family: $fontFamily;
   color: $textColor;
   background: $secondaryLight0;
 }
@@ -50,9 +50,12 @@ input[type="submit"] {
 
 input,
 textarea {
+  font-family: $fontFamily;
+  font-size: $fontSize;
   border: 1px solid $borderColor;
   border-radius: $borderRadius;
-  background: $secondaryLight0;
+  background: $backgroundColor1;
+  color: $textColor;
   &::placeholder {
     font-size: $fontSizeS;
   }

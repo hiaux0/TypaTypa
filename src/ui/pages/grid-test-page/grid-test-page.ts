@@ -3,6 +3,7 @@ import "./grid-test-page.scss";
 import {
   EV_CELL_CHANGED,
   EV_CELL_SELECTED,
+  EV_GET_CELL,
 } from "../../../common/modules/eventMessages";
 import {
   Cell,
@@ -118,6 +119,7 @@ export class GridTestPage {
   private sheetTabs: ITab[] = [];
   private sheetsData: GridDatabaseType;
   public gridUndoRedo: UndoRedo<ContentMap>;
+  public editedCellCoords = "";
 
   private mappingByCommandName: MappingByCommandName = {
     // @ts-ignore
@@ -255,6 +257,8 @@ export class GridTestPage {
         this.dragEndRowIndex = this.dragStartRowIndex;
       },
       [VIM_COMMAND.enterNormalMode]: () => {
+        console.log("enterNormalMode");
+        this.editedCellCoords = "";
         this.unselectAllSelecedCells();
         this.dragEndColumnIndex = this.dragStartColumnIndex;
         this.dragEndRowIndex = this.dragStartRowIndex;
@@ -713,8 +717,34 @@ export class GridTestPage {
     // this.vimInit = vimInit;
 
     const mappingByKey = {
+      //"<Control>r": () => {
+      //  // return true;
+      //},
+      "<Control>s": () => {
+        this.save();
+        return true;
+      },
       Enter: () => {
-        if (this.mode === VimMode.NORMAL) return;
+        if (getIsInputActive()) {
+          console.log("enter: active");
+          this.putCellIntoUnfocus();
+        } else {
+          this.putCellIntoEdit();
+          console.log("enter: inactive");
+        }
+        // console.log("Enter");
+        // if (this.mode === VimMode.NORMAL) return;
+        //const col = this.dragStartColumnIndex;
+        //const row = this.dragStartRowIndex;
+        //window.setTimeout(() => {
+        //  const cell = this.contentMapForView[this.CELL_COORDS(row, col)];
+        //  /*prettier-ignore*/ console.log("[grid-test-page.ts,735] cell.text: ", cell.text);
+        //  this.setCurrentCellContent(cell.text, col, row);
+        //}, 0);
+        //
+        //// this.editedCellCoords = [NaN, NaN];
+        //this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        return;
 
         if (getIsInputActive()) {
           (document.activeElement as HTMLElement).blur();
@@ -748,7 +778,26 @@ export class GridTestPage {
         }, 0);
       },
       Escape: () => {
-        (document.activeElement as HTMLElement).blur();
+        this.putCellIntoUnfocus();
+        //console.log("escape");
+        //this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        //
+        //const col = this.dragStartColumnIndex;
+        //const row = this.dragStartRowIndex;
+        //window.setTimeout(() => {
+        //  (document.activeElement as HTMLElement).blur();
+        //  const cell = this.contentMapForView[this.CELL_COORDS(row, col)];
+        //  /*prettier-ignore*/ console.log("[grid-test-page.ts,735] cell.text: ", cell.text);
+        //  this.setCurrentCellContent(cell.text, col, row);
+        //}, 0);
+        //window.setTimeout(() => {
+        //  /*prettier-ignore*/ console.log("[grid-test-page.ts,778] this.lastCellContent: ", this.lastCellContent);
+        //  this.contentMapForView[
+        //    this.CELL_COORDS(this.dragStartRowIndex, this.dragStartColumnIndex)
+        //  ].text = this.lastCellContent;
+        //  (document.activeElement as HTMLElement).blur();
+        //}, 0);
+        return;
         if (this.activePanel) {
           this.activePanel.isEdit = false;
         }
@@ -757,7 +806,6 @@ export class GridTestPage {
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
       },
-
       "<Shift>Tab": () => {
         return this.setActivePanelFromHTMLElement();
       },
@@ -775,7 +823,6 @@ export class GridTestPage {
               [prevCol, prevRow],
               (col, row) => {
                 if (nextColWithContent) return;
-                this.textareaValue;
                 const content = this.getCurrentCell(col, row)?.text ?? "";
                 if (content) {
                   nextColWithContent = col;
@@ -886,10 +933,7 @@ export class GridTestPage {
           key: "i",
           command: VIM_COMMAND.enterInsertMode,
           execute: () => {
-            mappingByMode[VimMode.NORMAL]
-              .find((mapping) => mapping.key === "<Enter>")
-              .execute();
-
+            this.putCellIntoEdit();
             return true;
           },
         },
@@ -944,6 +988,13 @@ export class GridTestPage {
           key: "<Enter>",
           desc: "Focus Panel at cursor",
           execute: () => {
+            // this.onEnter();
+            return;
+            this.editedCellCoords = this.CELL_COORDS(
+              this.dragStartColumnIndex,
+              this.dragStartRowIndex,
+            );
+            this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
             const targetPanel = this.getPanelUnderCursor();
             if (!targetPanel) {
               // Add new panel
@@ -1487,9 +1538,13 @@ export class GridTestPage {
   private autosave(): void {
     return;
     gridDatabase.autosave(() => {
-      this.getActiveSheet().selectedRange = this.getSelectedArea();
-      gridDatabase.setItem(this.sheetsData);
+      this.save();
     });
+  }
+
+  public save(): void {
+    this.getActiveSheet().selectedRange = this.getSelectedArea();
+    gridDatabase.setItem(this.sheetsData);
   }
 
   private readonly scrollEditor = (
@@ -1565,22 +1620,22 @@ export class GridTestPage {
   }
 
   private updateCellOverflow(col: number, row: number) {
-    console.log("0000000. updateCellOverflow", col, row);
+    // console.log("0000000. updateCellOverflow", col, row);
     const cell = this.getCurrentCell(col, row);
     let previousCellInRow: Cell | undefined;
     let previousCellInRowCol: number;
     let nextColInRow: number | undefined;
     // 1. If cell has content, then update the overflow of PREVIOUS and NEXT cell
     if (cell?.text) {
-      console.log("11111111.");
+      // console.log("11111111.");
       // 1.1 PREVIOUS cell
-      console.log("1.0 col", col);
-      console.log("1.1 Previous cell");
+      // console.log("1.0 col", col);
+      // console.log("1.1 Previous cell");
       this.iterateOverRowBackwards(
         (col, row) => {
           const cell = this.getCurrentCell(col, row);
           const content = cell?.text;
-          /*prettier-ignore*/ console.log("1.1.0 [grid-test-page.ts,1580] content: ", content);
+          // /*prettier-ignore*/ console.log("1.1.0 [grid-test-page.ts,1580] content: ", content);
           if (content) {
             previousCellInRow = cell;
             previousCellInRowCol = col;
@@ -1589,10 +1644,10 @@ export class GridTestPage {
         },
         { endCol: col - 1, endRow: row },
       );
-      /*prettier-ignore*/ console.log("1.1.1 [grid-test-page.ts] previousCellInRow: ",previousCellInRowCol, previousCellInRow?.row, previousCellInRow?.text);
+      // /*prettier-ignore*/ console.log("1.1.1 [grid-test-page.ts] previousCellInRow: ", previousCellInRowCol, previousCellInRow?.row, previousCellInRow?.text);
 
       // 1.2 NEXT cell
-      console.log("1.2 Next cell");
+      // console.log("1.2 Next cell");
       this.iterateOverRow(
         (col, row) => {
           const cell = this.getCurrentCell(col, row);
@@ -1604,23 +1659,23 @@ export class GridTestPage {
         },
         { startCol: col + 1, startRow: row },
       );
-      /*prettier-ignore*/ console.log("1.2.1 [grid-test-page.ts,1602] nextColInRow: ", nextColInRow);
+      // /*prettier-ignore*/ console.log("1.2.1 [grid-test-page.ts,1602] nextColInRow: ", nextColInRow);
 
-      console.log("1.3 Adjust");
+      // console.log("1.3 Adjust");
       if (previousCellInRow) {
         const toNext = col - previousCellInRowCol;
-        /*prettier-ignore*/ console.log("1.3.1 [grid-test-page.ts] previousCellInRow: ",previousCellInRowCol, previousCellInRow?.row, previousCellInRow?.text);
-        /*prettier-ignore*/ console.log("1.3.2 [grid-test-page.ts,1609] toNext: ", toNext);
+        // /*prettier-ignore*/ console.log("1.3.1 [grid-test-page.ts] previousCellInRow: ", previousCellInRowCol, previousCellInRow?.row, previousCellInRow?.text);
+        // /*prettier-ignore*/ console.log("1.3.2 [grid-test-page.ts,1609] toNext: ", toNext);
         previousCellInRow.colsToNextText = toNext;
       }
       if (nextColInRow !== null) {
         const toNext = nextColInRow - col;
-        /*prettier-ignore*/ console.log("1.3.3 [grid-test-page.ts,1492] cell: ",cell?.col, cell?.row,'"', cell?.text);
-        /*prettier-ignore*/ console.log("1.3.4 [grid-test-page.ts,1615] toNext: ", toNext);
+        // /*prettier-ignore*/ console.log("1.3.3 [grid-test-page.ts,1492] cell: ", cell?.col, cell?.row, '"', cell?.text);
+        // /*prettier-ignore*/ console.log("1.3.4 [grid-test-page.ts,1615] toNext: ", toNext);
         cell.colsToNextText = toNext;
       }
     } else {
-      console.log("2222222.");
+      // console.log("2222222.");
       // 2. Just previous, but also check if content to long for next
       this.iterateOverRowBackwards(
         (col, row) => {
@@ -1668,6 +1723,8 @@ export class GridTestPage {
         };
       }
       sheet.colHeaderMap[colIndex].colWidth = beforeWidth + movedByX;
+      // console.log("colindex", colIndex);
+      // /*prettier-ignore*/ console.log("[grid-test-page.ts,1673] sheet.colHeaderMap[colIndex].colWidth: ", sheet.colHeaderMap[colIndex].colWidth);
     };
   };
 
@@ -1688,4 +1745,32 @@ export class GridTestPage {
   public redo = (): void => {
     this.mappingByCommandName[VimMode.NORMAL][VIM_COMMAND.redo]();
   };
+
+  public onCellUpdate = (col: number, row: number, cell: Cell): void => {
+    if (!this.contentMap) return;
+    console.log("onCellUpdate");
+    this.setCurrentCellContent(cell.text, col, row);
+  };
+
+  private onEnter(): void {
+    console.log("onEnter");
+    //if (getIsInputActive()) {
+    //  return;
+    //}
+    // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+  }
+
+  private putCellIntoUnfocus(): void {
+    this.editedCellCoords = "";
+    (document.activeElement as HTMLElement).blur();
+    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+  }
+
+  private putCellIntoEdit(): void {
+    this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+    this.editedCellCoords = this.CELL_COORDS(
+      this.dragStartColumnIndex,
+      this.dragStartRowIndex,
+    );
+  }
 }

@@ -57,8 +57,16 @@ $primaryDark0: if($theme == dark, $dark-primaryDark0, $light-primaryDark0);
 $primaryDark: if($theme == dark, $dark-primaryDark, $light-primaryDark);
 $primaryDark1: if($theme == dark, $dark-primaryDark1, $light-primaryDark1);
 $primaryDark2: if($theme == dark, $dark-primaryDark2, $light-primaryDark2);
-$secondaryLight0: if($theme == dark, $dark-secondaryLight0, $light-secondaryLight0);
-$secondaryLight: if($theme == dark, $dark-secondaryLight, $light-secondaryLight);
+$secondaryLight0: if(
+  $theme == dark,
+  $dark-secondaryLight0,
+  $light-secondaryLight0
+);
+$secondaryLight: if(
+  $theme == dark,
+  $dark-secondaryLight,
+  $light-secondaryLight
+);
 $secondary: if($theme == dark, $dark-secondary, $light-secondary);
 $black0: if($theme == dark, $dark-black0, $light-black0);
 $black: if($theme == dark, $dark-black, $light-black);
@@ -70,9 +78,13 @@ $white1: if($theme == dark, $dark-white1, $light-white1);
 $grey0: if($theme == dark, $dark-grey0, $light-grey0);
 $grey: if($theme == dark, $dark-grey, $light-grey);
 $red: if($theme == dark, $dark-red, $light-red);
+
 // Apply theme colors
+$textColor0: if($theme == dark, $light-white0, $dark-white0);
 $textColor: if($theme == dark, $light-white1, $dark-white1);
 $borderColor: if($theme == dark, $light-black, $dark-black1);
+$backgroundColor: $secondaryLight0;
+$backgroundColor1: $secondaryLight;
 
 // Other variables
 $borderRadius0: 0.1rem;
@@ -86,6 +98,7 @@ $drawerPadding: 20px;
 $fontSizeXXS: 0.5rem;
 $fontSizeXS: 0.6rem;
 $fontSizeS: 0.8rem;
+$fontSize: 1rem;
 $fontSizeL: 1.2rem;
 $fontSizeXL: 1.4rem;
 
@@ -95,3 +108,8 @@ $zIndex10: 10;
 $zIndex20: 20;
 $zIndex30: 30;
 $zIndex40: 40;
+
+$columnWidth: 64px;
+$columnHeight: 32px;
+
+$fontFamily: mono, sans-serif;

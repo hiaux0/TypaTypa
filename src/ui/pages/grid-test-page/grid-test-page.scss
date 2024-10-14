@@ -1,17 +1,6 @@
 @import "../../mixins.scss";
 @import "../../colors.scss";
 
-$columnWidth: 64px;
-$columnHeight: 32px;
-
-@mixin cell() {
-  padding: 4px;
-  border-right: 1px solid $borderColor;
-  border-bottom: 1px solid $borderColor;
-  min-width: $columnWidth;
-  min-height: $columnHeight;
-}
-
 .grid-test-container {
   margin: 8px;
 
@@ -47,16 +36,6 @@ $columnHeight: 32px;
     height: 70vh;
     overflow: scroll;
 
-    .cell {
-      @include cell();
-      &:hover {
-        background: red;
-      }
-      &.selected-cell {
-        background: #ffa5008a;
-        /* opacity: 0.5; */
-      }
-    }
     .cell-header {
       @include cell();
       position: sticky;

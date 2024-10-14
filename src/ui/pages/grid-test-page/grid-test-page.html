@@ -19,6 +19,7 @@
     >
       ↪️
     </button>
+    <button class="save-button" type="button" click.trigger="save()">💾</button>
     <!--  <button click.trigger="addPanel()">Add Panel</button>-->
   </section>
 
@@ -69,6 +70,8 @@
             selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
             sheet-settings.bind="activeSheet.settings"
             column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
+            is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
+            on-cell-update.bind="onCellUpdate"
             pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
             pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
             pointerup.trigger="onMouseUpGridCell()"

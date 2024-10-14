@@ -1,14 +1,38 @@
+@import "../../../mixins.scss";
+
 .cell {
+  @include cell();
+  padding: unset;
   position: relative;
+  &:hover {
+    background: red;
+  }
+  &.selected-cell {
+    background: #ffa5008a;
+  }
+
   .content {
     position: absolute;
+    padding: 6px;
     overflow: scroll;
     text-overflow: clip;
     height: 32px;
-    /* width: 204px; */
     white-space: nowrap;
-    // position: absolute;
-    // top: 0;
-    // left: 0;
+
+    input {
+      width: inherit;
+      height: inherit;
+      position: absolute;
+      padding: 2px 6px 6px 5px;
+      top: 0;
+      left: 0;
+      border-radius: unset;
+
+      &.editing {
+        background: $backgroundColor1;
+      }
+    }
+  }
+  .content-container {
   }
 }

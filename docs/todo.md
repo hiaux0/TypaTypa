@@ -54,8 +54,6 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
-- [ ] feat: dark mode
-- [ ] feat: cells---- merge cells
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
 - [ ] feat: panels--- use shortcuts to move between panels
@@ -63,28 +61,33 @@
     - or by hjkl?
 - [ ] feat: panels--- grouping-- create groups for panels
 - [ ] feat: panels--- toolbar--- mini toolbar for panels
+- [ ] feat: calendar
 - [ ] feat: selection should include panels
 - [ ] feat: toolbar-- layout edit mode
-- [ ] feat: control grid headers and panels via css variables? (on resize)
-  - [ ] feat: how to store column width - a width+height map?
-- [ ] feat: calendar
+
+- [ ] feat: cells---- merge cells
 - [ ] bug:
 - [ ] feat:
 - [ ] refac:
 
-- [ ] bug: fix layout of col and row and css uuugh
-- [ ] feat: upload state
+- [ ] feat: prevent 'repearCommand' for navigation
 - [ ] feat: search
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
 - [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
 - [!] bug: textarea input out of place
+  - [ ] bug: fix layout of col and row and css uuugh
 
 # Done
 ## Grid
 
+- [x] bug: col header width adjust does not gets saved --> did not enable autosave
+- [x] feat: upload state
+- [x] feat: dark mode
 - [x] bug: overflow and adjusted col widths
+  - [x] feat: control grid headers and panels via css variables? (on resize)
+    - [x] feat: how to store column width - a width+height map?
 - [x] bug: test data with column adjust
   - 01 x P
   - BUG: overflow of 02 wrong

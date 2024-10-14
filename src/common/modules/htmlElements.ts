@@ -1,11 +1,12 @@
 import { getValueFromPixelString } from "./strings";
 
 export function getIsInputActive(): boolean | null {
-  const isInputActive = ["INPUT", "TEXTAREA"].includes(
-    document.activeElement?.nodeName ?? "",
-  );
-
-  return isInputActive;
+  const element = document.activeElement as HTMLElement;
+  if (!element) return null;
+  const isInputActive = ["INPUT", "TEXTAREA"].includes(element.nodeName ?? "");
+  const isContentEditable = element.contentEditable === "true";
+  const isActive = isInputActive || isContentEditable;
+  return isActive;
 }
 
 export function onOutsideClick(

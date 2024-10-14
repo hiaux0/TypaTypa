@@ -1,3 +1,5 @@
+@import "./colors.scss";
+
 @mixin wordHover {
   cursor: pointer;
   font-weight: 600;
@@ -12,6 +14,14 @@
 @mixin borders($color: $borderColor, $size: 1px) {
   border: $size solid $color;
   border-radius: $borderRadius;
+}
+
+@mixin cell() {
+  padding: 6px;
+  border-right: 1px solid $borderColor;
+  border-bottom: 1px solid $borderColor;
+  min-width: $columnWidth;
+  min-height: $columnHeight;
 }
 
 @mixin highlightWord() {

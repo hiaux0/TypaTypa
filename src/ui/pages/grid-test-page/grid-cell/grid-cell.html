@@ -1,7 +1,22 @@
 <div class="cell ${selected ? 'selected-cell' : ''}">
   <!-- (${numberToAlphabet(columnIndex)};${rowIndex}) -->
   <!-- (${(column)};${row}) -->
-  <div ref="cellContentRef" class="content" css="width: ${widthPx};">
-    ${cell.text}
-  </div>
+  <!-- contenteditable.bind="isEdit" -->
+  <section
+    ref="cellContentRef"
+    class="content ${isEdit ? 'editing' : ''}"
+    css="width: ${widthPx};"
+    data-content.bind="isEdit ? lastContent : cell.text"
+  >
+    <input
+      if.bind="isEdit"
+      type="text"
+      class="editing"
+      value.bind="textareaValue"
+      keydown.trigger="onKeyDown($event)"
+    />
+    <div else class="read-only">${cell.text}</div>
+  </section>
+  <!-- >${cell.text}</section> -->
+  <!-- >${isEdit ? lastContent : cell.text}</section> -->
 </div>
