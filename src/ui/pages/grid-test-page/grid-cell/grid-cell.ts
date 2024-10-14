@@ -24,7 +24,6 @@ export class GridCell {
   public textareaValue = "";
 
   private lastContent: string;
-  private currentContent: string;
 
   get widthPx() {
     const adjustedCellWidth = this.CELL_WIDTH + PADDING - BORDER_WIDTH;
@@ -60,23 +59,12 @@ export class GridCell {
   }
 
   isEditChanged() {
-    /*prettier-ignore*/ console.log("[grid-cell.ts,64] this.isEdit: ", this.isEdit);
     if (!this.isEdit) return;
-    // 2. If isEdit=true
-    // 2.1. Set lastContent to cellContent
-    // this.lastContent = cellContent;
-    /*prettier-ignore*/ console.log("[grid-cell.ts,69] this.lastContent: ", this.lastContent);
-    // this.currentContent = this.lastContent
-    // this.cellContentRef.innerText = this.lastContent;
     this.textareaValue = this.lastContent;
 
     window.setTimeout(() => {
       this.cellContentRef.querySelector("input").focus();
     }, 0);
-  }
-
-  columnSettingsChanged() {
-    // /*prettier-ignore*/ console.log("[grid-cell.ts,30] this.columnSettings: ", this.columnSettings);
   }
 
   cellChanged() {
@@ -91,7 +79,6 @@ export class GridCell {
     this.updateCell();
     if (this.cell?.text) {
       this.lastContent = this.cell.text;
-      // this.currentContent = this.cell.text;
     }
   }
 
@@ -110,38 +97,17 @@ export class GridCell {
 
   public onKeyDown(event: KeyboardEvent) {
     if (!this.isEdit) return;
-    // console.clear();
     const key = event.key;
-    // this.lastContent = "";
-    /*prettier-ignore*/ console.log("1. [grid-cell.ts,102] key: ", key);
     if (isEscape(key)) {
-      //if (this.lastContent) {
-      //  // this.cell.text = this.lastContent;
-      //}
-      // this.cellContentRef.innerText = this.cell.text;
-      // this.lastContent = this.cellContentRef.innerText;
       this.lastContent = this.textareaValue;
-      /*prettier-ignore*/ console.log("2. [grid-cell.ts,111] this.lastContent: ", this.lastContent);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,110] this.cell.text: ", this.cell.text);
       this.onCellUpdate(this.column, this.row, this.cell);
     } else if (isEnter(key)) {
-      // /*prettier-ignore*/ console.log("3. [grid-cell.ts,115] this.isEdit: ", this.isEdit);
-      // 1. If isEdit=false and Enter was pressed
-      // 1.1. Update cell with cellContent
       if (this.isEdit) {
         this.updateCell();
-        // const cellContent = this.cellContentRef.innerText;
-        // /*prettier-ignore*/ console.log("3.1 [grid-cell.ts,61] cellContent: ", cellContent);
         this.cell.text = this.textareaValue;
         this.onCellUpdate(this.column, this.row, this.cell);
         return;
       }
     }
   }
-
-  //public onKeyUp(event: KeyboardEvent) {
-  //  if (!this.isEdit) return;
-  //  this.lastContent = this.cellContentRef.innerText;
-  //  /*prettier-ignore*/ console.log("[grid-cell.ts,139] this.lastContent: ", this.lastContent);
-  //}
 }
