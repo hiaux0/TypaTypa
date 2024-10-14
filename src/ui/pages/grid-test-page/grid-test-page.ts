@@ -199,7 +199,7 @@ export class GridTestPage {
         this.iterateOverCol(
           (col, row) => {
             console.log("1. add cell at", col, row);
-            this.addCellAt(col, row);
+            this.addCellEmptyAt(col, row);
             const content = this.lastCellContentArray[index++];
             this.setCurrentCellContent(content, col, row, {
               skipUpdate: true,
@@ -221,7 +221,7 @@ export class GridTestPage {
         this.iterateOverCol(
           (col, row) => {
             console.log("pasteVim", col, row);
-            this.addCellAt(col, row);
+            this.addCellEmptyAt(col, row);
             const content = this.lastCellContentArray[index++];
             this.setCurrentCellContent(content, col, row, {
               skipUpdate: true,
@@ -959,7 +959,7 @@ export class GridTestPage {
           desc: "Move cell right",
           execute: () => {
             console.log("indent right >>");
-            this.addCellAt(0);
+            this.addCellEmptyAt(0);
             this.updateContentMapChangedForView();
           },
         },
@@ -1179,14 +1179,14 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row][col] = { text: content, col, row };
-    this.onCellContentChanged(col, row);
+    this.contentMap[row][col] = { text: content, col, row } as Cell;
+    this.onCellContentChangedInternal(col, row);
 
     if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
   }
 
-  private addCellAt(
+  private addCellEmptyAt(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ) {
@@ -1194,6 +1194,19 @@ export class GridTestPage {
       this.contentMap[row] = [];
     }
     this.contentMap[row].splice(col, 0, undefined);
+  }
+
+  private addCellAt(
+    content: string,
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+    option?: { skipUpdate: boolean },
+  ) {
+    if (this.contentMap[row] == null) {
+      this.contentMap[row] = [];
+    }
+    this.contentMap[row].splice(col, 0, undefined);
+    this.setCurrentCellContent(content, col, row, option);
   }
 
   private removeCellAt(
@@ -1205,7 +1218,7 @@ export class GridTestPage {
       this.contentMap[row] = [];
     }
     this.contentMap[row].splice(col, 1);
-    this.onCellContentChanged(col, row);
+    this.onCellContentChangedInternal(col, row);
     if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
   }
@@ -1534,7 +1547,7 @@ export class GridTestPage {
     this.initSheets(asObj);
   };
 
-  private onCellContentChanged(col: number, row: number): void {
+  private onCellContentChangedInternal(col: number, row: number): void {
     this.updateCellOverflow(col, row);
   }
 
@@ -1669,6 +1682,7 @@ export class GridTestPage {
     if (!this.contentMap) return;
     console.log("onCellUpdate");
     this.setCurrentCellContent(cell.text, col, row);
+    this.onCellContentChangedInternal(col, row);
   };
 
   private putCellIntoUnfocus(): void {
@@ -1678,6 +1692,11 @@ export class GridTestPage {
   }
 
   private putCellIntoEdit(): void {
+    const cell = this.getCurrentCell();
+    if (!cell) {
+      this.addCellAt("");
+    }
+
     this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
     this.editedCellCoords = this.CELL_COORDS(
       this.dragStartColumnIndex,

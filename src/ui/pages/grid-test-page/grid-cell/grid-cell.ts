@@ -80,10 +80,15 @@ export class GridCell {
   isEditChanged() {
     if (!this.isEdit) return;
     this.textareaValue = this.lastContent;
+    this.updateCell();
 
     window.setTimeout(() => {
-      this.cellContentRef.querySelector("input")?.focus();
+      this.getInput()?.focus();
     }, 0);
+  }
+
+  private getInput(): HTMLInputElement {
+    return this.cellContentRef.querySelector("input");
   }
 
   cellChanged() {
@@ -104,10 +109,22 @@ export class GridCell {
   private updateCell() {
     if (!this.cell) return;
     if (this.cell?.text == null) return;
-    if (this.cell.text === "") {
-      this.cell.scrollWidth = this.CELL_WIDTH;
-    } else {
-      this.cell.scrollWidth = this.cellContentRef.scrollWidth;
+    const inputScrollWidth = this.getInput()?.scrollWidth;
+    const finalScrollWidth =
+      Math.max(
+        this.cellContentRef.scrollWidth,
+        inputScrollWidth,
+        this.columnSettings?.colWidth,
+      ) -
+      PADDING -
+      BORDER_WIDTH;
+    this.cell.scrollWidth = finalScrollWidth;
+    if (this.column === 0 && this.row === 1) {
+      /*prettier-ignore*/ console.log("[grid-cell.ts,117] inputScrollWidth: ", inputScrollWidth);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,115] this.cellContentRef.scrollWidth: ", this.cellContentRef.scrollWidth);
+      /*prettier-ignore*/ console.log(">>>>>>>>>> [grid-cell.ts,113] finalScrollWidth: ", finalScrollWidth);
+    }
+    if (this.cell.text !== "") {
       this.lastContent = this.textareaValue;
     }
     this.cell.col = this.column;

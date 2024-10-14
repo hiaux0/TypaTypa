@@ -1,5 +1,6 @@
 // Define theme variable
-$theme: dark;
+/* $theme: dark; */
+$theme: light;
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -80,9 +81,9 @@ $grey: if($theme == dark, $dark-grey, $light-grey);
 $red: if($theme == dark, $dark-red, $light-red);
 
 // Apply theme colors
-$textColor0: if($theme == dark, $light-white0, $dark-white0);
-$textColor: if($theme == dark, $light-white1, $dark-white1);
-$borderColor: if($theme == dark, $light-black, $dark-black1);
+$textColor0: if($theme == dark, $dark-white0, $light-black);
+$textColor: if($theme == dark, $dark-white1, $light-black);
+$borderColor: if($theme == dark, $dark-black, $light-black1);
 $backgroundColor: $secondaryLight0;
 $backgroundColor1: $secondaryLight;
 

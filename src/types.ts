@@ -49,7 +49,10 @@ export interface Cell {
   col?: number;
   row?: number;
   colsToNextText?: number;
-  /* Note, that width is based on border-box */
+  /* 
+   * Note1, that width is based on border-box
+   * Note2: Is set in grid-cell (was least effort)
+   */
   scrollWidth?: number;
 }
 export type ContentMap = Cell[][];
