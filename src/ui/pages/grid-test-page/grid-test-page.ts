@@ -78,7 +78,7 @@ export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
   public rowSize = 5;
-  public columnSize = 7;
+  public columnSize = 17;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -248,7 +248,6 @@ export class GridTestPage {
         this.dragEndRowIndex = this.dragStartRowIndex;
       },
       [VIM_COMMAND.enterNormalMode]: () => {
-        console.log("enterNormalMode");
         this.editedCellCoords = "";
         this.unselectAllSelecedCells();
         this.dragEndColumnIndex = this.dragStartColumnIndex;
@@ -1681,7 +1680,6 @@ export class GridTestPage {
 
   public onCellUpdate = (col: number, row: number, cell: Cell): void => {
     if (!this.contentMap) return;
-    console.log("onCellUpdate");
     this.setCurrentCellContent(cell.text, col, row);
     this.onCellContentChangedInternal(col, row);
   };
@@ -1695,7 +1693,7 @@ export class GridTestPage {
   private putCellIntoEdit(): void {
     const cell = this.getCurrentCell();
     if (!cell) {
-      this.addCellAt("");
+      this.setCurrentCellContent("");
     }
 
     this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");

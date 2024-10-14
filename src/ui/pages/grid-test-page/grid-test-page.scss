@@ -50,11 +50,13 @@
 
     .cells-container {
       width: 100vw;
-      /* overflow: scroll; */
+      display: flex;
+
       .column-container {
         .column-header {
           display: flex;
           justify-content: space-between;
+          width: inherit;
 
           .resize-handler {
             cursor: col-resize;

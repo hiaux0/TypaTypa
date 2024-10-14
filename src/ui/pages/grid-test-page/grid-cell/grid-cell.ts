@@ -70,13 +70,13 @@ export class GridCell {
     // 3.2 Calculate final width of cell to show
     const finalWidthOfCurrent = minHeaderAndScrollWidth + otherColWidth;
     const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
-    if (this.column === 2 && this.row === 0) {
-      /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,63] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
-    }
+    //if (this.column === 2 && this.row === 0) {
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,63] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
+    //}
     const asPx = `${finalWidth}px`;
     return asPx;
   }
