@@ -12,7 +12,7 @@
   }
 
   .content {
-    position: absolute;
+    /* position: absolute; */
     padding: 6px;
     overflow: scroll;
     text-overflow: clip;
@@ -30,6 +30,7 @@
 
       &.editing {
         background: $backgroundColor1;
+        z-index: $zIndexEditing;
       }
     }
   }

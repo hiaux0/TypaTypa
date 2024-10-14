@@ -1,7 +1,4 @@
 <div class="cell ${selected ? 'selected-cell' : ''}">
-  <!-- (${numberToAlphabet(columnIndex)};${rowIndex}) -->
-  <!-- (${(column)};${row}) -->
-  <!-- contenteditable.bind="isEdit" -->
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''}"
@@ -14,6 +11,7 @@
       class="editing"
       value.bind="textareaValue"
       keydown.trigger="onKeyDown($event)"
+      autosize
     />
     <div else class="read-only">${cell.text}</div>
   </section>

@@ -78,6 +78,9 @@
   - convert columns/rows into lines, and update cell coords based on vimState
 - [!] bug: textarea input out of place
   - [ ] bug: fix layout of col and row and css uuugh
+  - [x] bug: enter edit mode, should show all 2024-10-14 11:41
+  - [x] bug: autoexpand when typing
+  - [x] bug: initial width vs colHeaderWidth
 
 # Done
 ## Grid

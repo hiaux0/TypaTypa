@@ -26,20 +26,29 @@ export class GridCell {
   private lastContent: string;
 
   get widthPx() {
-    const adjustedCellWidth = this.CELL_WIDTH + PADDING - BORDER_WIDTH;
-    if (!this.cell?.colsToNextText) {
-      const finalWidth = Math.max(this.cell?.scrollWidth, adjustedCellWidth);
-      if (this.column === 0 && this.row === 0) {
-        /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
-      }
+    if (!this.cell) return;
+
+    // 1. Show all content in edit mode
+    if (this.isEdit) {
+      return `${this.cell.scrollWidth + PADDING}px`;
+    }
+
+    const adjustedInitialCellWidth = this.CELL_WIDTH - PADDING - BORDER_WIDTH;
+    // 2. Show all content if no cells with text to the right
+    if (!this.cell.colsToNextText) {
+      const finalWidth = Math.max(
+        this.cell.scrollWidth,
+        adjustedInitialCellWidth,
+      );
       return `${finalWidth}px`;
     }
 
+    // 3 Calculate width of cell to show (to not overwrite other cells)
+    // 3.1 Prepare data
     const colsToNextText = this.cell.colsToNextText;
     const borderWidthAdjust = colsToNextText * BORDER_WIDTH;
     const colHeaderWidth =
       this.columnSettings?.colWidth - PADDING - borderWidthAdjust;
-    const widthOfCurrentCell = Math.min(colHeaderWidth, this.cell.scrollWidth);
     const otherColsToConsiderForWidth = this.wholeRow.slice(
       this.column + 1,
       this.column + colsToNextText,
@@ -49,11 +58,21 @@ export class GridCell {
       if (!cell) return;
       otherColWidth += cell.scrollWidth;
     }, 0);
-    const finalWidthOfCurrent = widthOfCurrentCell + otherColWidth;
-    const finalWidth = Math.min(finalWidthOfCurrent, adjustedCellWidth);
-    if (this.column === 0 && this.row === 0) {
-      /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
-    }
+    const minHeaderAndScrollWidth = Math.min(
+      colHeaderWidth,
+      this.cell.scrollWidth,
+    );
+
+    // 3.2 Calculate final width of cell to show
+    const finalWidthOfCurrent = minHeaderAndScrollWidth + otherColWidth;
+    const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
+    //if (this.column === 0 && this.row === 0) {
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,63] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
+    //}
     const asPx = `${finalWidth}px`;
     return asPx;
   }
@@ -63,7 +82,7 @@ export class GridCell {
     this.textareaValue = this.lastContent;
 
     window.setTimeout(() => {
-      this.cellContentRef.querySelector("input").focus();
+      this.cellContentRef.querySelector("input")?.focus();
     }, 0);
   }
 
