@@ -4,7 +4,7 @@ import { Cell, ContentMap, GridDatabaseType } from "../../../types";
  * content items: `string` -> `Cell` object
  */
 function migrateToV0_0_2(sheetsData: GridDatabaseType): GridDatabaseType {
-  /*prettier-ignore*/ console.log("[gridMigrations.ts,7] sheetsData: ", sheetsData);
+  // /*prettier-ignore*/ console.log("[gridMigrations.ts,7] sheetsData: ", sheetsData);
   if (!sheetsData.version) {
     sheetsData.version = "v0.0.2";
     sheetsData.sheets.forEach((sheet) => {
@@ -17,15 +17,15 @@ function migrateToV0_0_2(sheetsData: GridDatabaseType): GridDatabaseType {
       );
       sheet.content = updatedContent;
     });
-    /*prettier-ignore*/ console.log("[gridMigrations.ts,21] sheetsData: ", sheetsData);
+    // /*prettier-ignore*/ console.log("[gridMigrations.ts,21] sheetsData: ", sheetsData);
     return sheetsData;
   }
   return sheetsData;
 }
 
 function migrateToV0_0_3(sheetsData: GridDatabaseType): GridDatabaseType {
-  /*prettier-ignore*/ console.log("[gridMigrations.ts,27] sheetsData: ", sheetsData);
-  /*prettier-ignore*/ console.log("[gridMigrations.ts,29] sheetsData.version: ", sheetsData.version);
+  // /*prettier-ignore*/ console.log("[gridMigrations.ts,27] sheetsData: ", sheetsData);
+  // /*prettier-ignore*/ console.log("[gridMigrations.ts,29] sheetsData.version: ", sheetsData.version);
   if (sheetsData.version === "v0.0.2") {
     console.log(">>>here");
     // debugger
@@ -37,7 +37,7 @@ function migrateToV0_0_3(sheetsData: GridDatabaseType): GridDatabaseType {
     });
     return sheetsData;
   }
-  /*prettier-ignore*/ console.log("[gridMigrations.ts,37] sheetsData: ", sheetsData);
+  // /*prettier-ignore*/ console.log("[gridMigrations.ts,37] sheetsData: ", sheetsData);
   return sheetsData;
 }
 

@@ -4,6 +4,7 @@ import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
 import { CELL_WIDTH } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 const PADDING = 8;
+const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
 export class GridCell {
@@ -35,9 +36,13 @@ export class GridCell {
 
     const minCellWidth = Math.min(
       this.columnSettings?.colWidth,
-      this.CELL_WIDTH,
+      // this.CELL_WIDTH,
     );
     const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;
+    if (!this.cell.text) {
+      return `${adjustedInitialCellWidth}px`;
+    }
+
     // 2. Show all content if no cells with text to the right
     if (!this.cell.colsToNextText) {
       const finalWidth = Math.max(
@@ -59,7 +64,12 @@ export class GridCell {
     );
     let otherColWidth = 0;
     otherColsToConsiderForWidth.forEach((cell) => {
-      if (!cell) return;
+      otherColWidth += this.columnSettings?.colWidth;
+      return;
+      if (!cell) {
+        otherColWidth += this.columnSettings.colWidth;
+        return;
+      }
       otherColWidth += cell.scrollWidth;
     }, 0);
     const minHeaderAndScrollWidth = Math.min(
@@ -68,9 +78,14 @@ export class GridCell {
     );
 
     // 3.2 Calculate final width of cell to show
-    const finalWidthOfCurrent = minHeaderAndScrollWidth + otherColWidth;
-    const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
-    //if (this.column === 2 && this.row === 0) {
+    const finalWidthOfCurrent = colHeaderWidth + otherColWidth;
+    // const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
+    const finalWidth = Math.min(finalWidthOfCurrent, this.cell.scrollWidth + PADDING_LEFT);
+    //if (this.column === 0 && this.row === 0) {
+    //  /*prettier-ignore*/ console.log("-------------------------------------------------------------------");
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,61] otherColsToConsiderForWidth: ", otherColsToConsiderForWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,80] this.cell.scrollWidth: ", this.cell.scrollWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] otherColWidth: ", otherColWidth);
     //  /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
     //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
     //  /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
@@ -112,7 +127,6 @@ export class GridCell {
 
   private updateCell() {
     if (!this.cell) return;
-    if (this.cell?.text == null) return;
     const inputScrollWidth = this.getInput()?.scrollWidth ?? 0;
     const finalScrollWidth =
       Math.max(
@@ -120,8 +134,16 @@ export class GridCell {
         inputScrollWidth,
         this.columnSettings?.colWidth ?? 0,
       ) -
-      PADDING -
+      PADDING_LEFT -
       BORDER_WIDTH;
+    //if (this.cell?.text == null) {
+    //  if (this.cell.scrollWidth) {
+    //    this.cell.scrollWidth = finalScrollWidth;
+    //  }
+    //  return;
+    //}
+    // console.log(this.column);
+    // /*prettier-ignore*/ console.log("[grid-cell.ts,140] finalScrollWidth: ", finalScrollWidth);
     this.cell.scrollWidth = finalScrollWidth;
     //if (this.column === 0 && this.row === 1) {
     //  /*prettier-ignore*/ console.log("[grid-cell.ts,117] inputScrollWidth: ", inputScrollWidth);
