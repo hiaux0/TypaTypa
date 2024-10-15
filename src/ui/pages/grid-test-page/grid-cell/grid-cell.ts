@@ -25,8 +25,10 @@ export class GridCell {
   public textareaValue = "";
 
   private lastContent: string;
+  private hasAttached = false;
 
   get widthPx() {
+    if (!this.hasAttached) return;
     if (!this.cell) return;
 
     // 1. Show all content in edit mode
@@ -35,7 +37,7 @@ export class GridCell {
     }
 
     const minCellWidth = Math.min(
-      this.columnSettings?.colWidth,
+      this.columnSettings?.colWidth ?? this.CELL_WIDTH,
       // this.CELL_WIDTH,
     );
     const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;
@@ -49,6 +51,11 @@ export class GridCell {
         this.cell.scrollWidth,
         adjustedInitialCellWidth,
       );
+      //if (this.column === 5 && this.row === 0) {
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,50] this.cell.scrollWidth,: ", this.cell.scrollWidth,);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,52] adjustedInitialCellWidth,: ", adjustedInitialCellWidth,);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,49] finalWidth: ", finalWidth);
+      //}
       return `${finalWidth}px`;
     }
 
@@ -56,15 +63,14 @@ export class GridCell {
     // 3.1 Prepare data
     const colsToNextText = this.cell.colsToNextText;
     const borderWidthAdjust = colsToNextText * BORDER_WIDTH;
-    const colHeaderWidth =
-      this.columnSettings?.colWidth - PADDING - borderWidthAdjust;
-    const otherColsToConsiderForWidth = this.wholeRow.slice(
+    const colHeaderWidth = minCellWidth - PADDING - borderWidthAdjust;
+    const otherColsToConsiderForWidth = this.wholeRow?.slice(
       this.column + 1,
       this.column + colsToNextText,
     );
     let otherColWidth = 0;
-    otherColsToConsiderForWidth.forEach((cell) => {
-      otherColWidth += this.columnSettings?.colWidth;
+    otherColsToConsiderForWidth?.forEach((cell) => {
+      otherColWidth += minCellWidth;
       return;
       if (!cell) {
         otherColWidth += this.columnSettings.colWidth;
@@ -80,17 +86,22 @@ export class GridCell {
     // 3.2 Calculate final width of cell to show
     const finalWidthOfCurrent = colHeaderWidth + otherColWidth;
     // const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
-    const finalWidth = Math.min(finalWidthOfCurrent, this.cell.scrollWidth + PADDING_LEFT);
-    //if (this.column === 0 && this.row === 0) {
-    //  /*prettier-ignore*/ console.log("-------------------------------------------------------------------");
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,61] otherColsToConsiderForWidth: ", otherColsToConsiderForWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,80] this.cell.scrollWidth: ", this.cell.scrollWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] otherColWidth: ", otherColWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,47] colHeaderWidth: ", colHeaderWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,76] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,73] finalWidthOfCurrent: ", finalWidthOfCurrent);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,63] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,28] finalWidth: ", finalWidth);
+    const finalWidth = Math.min(
+      finalWidthOfCurrent,
+      this.cell.scrollWidth + PADDING_LEFT,
+    );
+    //if (this.column === 2 && this.row === 0) {
+    //  /*prettier-ignore*/ console.log("AAAA. -------------------------------------------------------------------");
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,96] this.cell.text: ", this.cell.text);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,97] this.cellContentRef.innerText: ", this.cellContentRef.innerText);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,99] this.cell.scrollWidth: ", this.cell.scrollWidth);
+    //  // /*prettier-ignore*/ console.log("[grid-cell.ts,98] otherColsToConsiderForWidth: ", otherColsToConsiderForWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,100] otherColWidth: ", otherColWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,101] colHeaderWidth: ", colHeaderWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,102] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,103] finalWidthOfCurrent: ", finalWidthOfCurrent);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,104] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
+    //  /*prettier-ignore*/ console.log("[grid-cell.ts,105] finalWidth: ", finalWidth);
     //}
     const asPx = `${finalWidth}px`;
     return asPx;
@@ -123,41 +134,40 @@ export class GridCell {
     if (this.cell?.text) {
       this.lastContent = this.cell.text;
     }
+    this.hasAttached = true;
   }
 
-  private updateCell() {
+  private updateCell(callback?: () => void) {
     if (!this.cell) return;
-    const inputScrollWidth = this.getInput()?.scrollWidth ?? 0;
-    const finalScrollWidth =
-      Math.max(
-        this.cellContentRef?.scrollWidth ?? 0,
-        inputScrollWidth,
-        this.columnSettings?.colWidth ?? 0,
-      ) -
-      PADDING_LEFT -
-      BORDER_WIDTH;
-    //if (this.cell?.text == null) {
-    //  if (this.cell.scrollWidth) {
-    //    this.cell.scrollWidth = finalScrollWidth;
-    //  }
-    //  return;
-    //}
-    // console.log(this.column);
-    // /*prettier-ignore*/ console.log("[grid-cell.ts,140] finalScrollWidth: ", finalScrollWidth);
-    this.cell.scrollWidth = finalScrollWidth;
-    //if (this.column === 0 && this.row === 1) {
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,117] inputScrollWidth: ", inputScrollWidth);
-    //  /*prettier-ignore*/ console.log("[grid-cell.ts,115] this.cellContentRef.scrollWidth: ", this.cellContentRef.scrollWidth);
-    //  /*prettier-ignore*/ console.log(">>>>>>>>>> [grid-cell.ts,113] finalScrollWidth: ", finalScrollWidth);
-    //}
     if (this.cell.text !== "") {
       this.lastContent = this.textareaValue;
     }
     this.cell.col = this.column;
     this.cell.row = this.row;
+    window.setTimeout(() => {
+      //const inputScrollWidth = this.getInput()?.scrollWidth ?? 0;
+      //const maxScrollWidth = Math.max(
+      //  this.cellContentRef?.scrollWidth ?? 0,
+      //  inputScrollWidth,
+      //  this.columnSettings?.colWidth ?? 0,
+      //);
+      //// const finalScrollWidth = maxScrollWidth - PADDING_LEFT - BORDER_WIDTH;
+      //const finalScrollWidth = maxScrollWidth;
+      // this.cell.scrollWidth = finalScrollWidth;
+      //if (this.column === 0 && this.row === 1) {
+      //  /*prettier-ignore*/ console.log("BBBB. ----------------------------");
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,152] this.cell.text: ", this.cell.text);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,154] this.cellContentRef.innerText: ", this.cellContentRef.innerText);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,151] maxScrollWidth: ", maxScrollWidth);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,152] finalScrollWidth: ", finalScrollWidth);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,153] inputScrollWidth: ", inputScrollWidth);
+      //  /*prettier-ignore*/ console.log("[grid-cell.ts,154] this.cellContentRef.scrollWidth: ", this.cellContentRef.scrollWidth);
+      //  /*prettier-ignore*/ console.log(">>>>>>>>>> [grid-cell.ts,155] finalScrollWidth: ", finalScrollWidth);
+      //}
+    }, 0);
   }
 
-  public onKeyDown(event: KeyboardEvent) {
+  public async onKeyDown(event: KeyboardEvent) {
     if (!this.isEdit) return;
     const key = event.key;
     if (isEscape(key)) {

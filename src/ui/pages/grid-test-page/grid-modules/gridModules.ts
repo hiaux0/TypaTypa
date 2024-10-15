@@ -176,6 +176,17 @@ export function iterateOverGridBackwards(
   }
 }
 
+function measureTextWidth(
+  text: string,
+  font = getComputedStyle(document.body).font,
+) {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  context.font = font;
+  const metrics = context.measureText(text);
+  return metrics.width;
+}
+
 export function checkCellOverflow(
   sheetsData: GridDatabaseType,
   options: { cellWidth: number } = { cellWidth: CELL_WIDTH },
@@ -188,11 +199,16 @@ export function checkCellOverflow(
       let lastCellIndex = 0;
       let colOfCellAfterFirstCellWithText = 0;
       row.forEach((cell, col) => {
+        const cellText = cell?.text;
+
+        if (cellText) {
+          cell.scrollWidth = measureTextWidth(cellText);
+        }
+
         // /*prettier-ignore*/ console.log("----------------------------");
         // /*prettier-ignore*/ console.log("0. [gridModules.ts,191] cell.text: ", cell.text);
         if (lastCell) {
-          const hasCellText = cell?.text;
-          if (hasCellText) {
+          if (cellText) {
             // /*prettier-ignore*/ console.log("1. [gridModules.ts,191] hasCellText: ", hasCellText);
             const lastCellWidth = lastCell.scrollWidth || 0;
             // /*prettier-ignore*/ console.log("1.0 [gridModules.ts,197] lastCell.text: ", lastCell.text);
@@ -203,12 +219,10 @@ export function checkCellOverflow(
             // /*prettier-ignore*/ console.log("1.4 [gridModules.ts,196] colDiff: ", colDiff);
             const overflowWidth = colDiff * options.cellWidth;
             // /*prettier-ignore*/ console.log("1.5 [gridModules.ts,198] overflowWidth: ", overflowWidth);
-            if (lastCellWidth > overflowWidth) {
-              // /*prettier-ignore*/ console.log("1.5.1 [gridModules.ts,201] col: ", col);
-              // /*prettier-ignore*/ console.log("1.5.2 [gridModules.ts,204] colDiff: ", colDiff);
-              // /*prettier-ignore*/ console.log("1.5.3 [gridModules.ts,208] lastCell.text: ", lastCell.text);
-              lastCell.colsToNextText = colDiff;
-            }
+            // /*prettier-ignore*/ console.log("1.5.1 [gridModules.ts,201] col: ", col);
+            // /*prettier-ignore*/ console.log("1.5.2 [gridModules.ts,204] colDiff: ", colDiff);
+            // /*prettier-ignore*/ console.log("1.5.3 [gridModules.ts,208] lastCell.text: ", lastCell.text);
+            lastCell.colsToNextText = colDiff;
 
             // Do once, because we skip the very first cell
             if (!colOfCellAfterFirstCellWithText) {
