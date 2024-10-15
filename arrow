@@ -60,6 +60,9 @@ src/ui/pages/grid-test-page/grid-modules/gridModules.ts
 test/sheets/gridModules.spec.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.html
+src/ui/colors.scss
+src/ui/mixins.scss
+
 
 %% Grid Cell Content
 docs/todo.md

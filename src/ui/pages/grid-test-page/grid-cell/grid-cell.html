@@ -1,7 +1,8 @@
 <div class="cell ${selected ? 'selected-cell' : ''}">
+  <!-- Content -->
   <section
     ref="cellContentRef"
-    class="content ${isEdit ? 'editing' : ''}"
+    class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''}"
     css="width: ${widthPx};"
     data-content.bind="isEdit ? lastContent : cell.text"
   >
@@ -15,4 +16,7 @@
     />
     <div else class="read-only">${cell.text}</div>
   </section>
+
+  <!-- Selection -->
+  <div if.bind="selected" class="selection"></div>
 </div>

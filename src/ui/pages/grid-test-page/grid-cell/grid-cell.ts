@@ -3,7 +3,8 @@ import "./grid-cell.scss";
 import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
 import { CELL_WIDTH } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
-const PADDING = 8;
+import { getValueFromPixelString } from "../../../../common/modules/strings";
+const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
@@ -27,7 +28,7 @@ export class GridCell {
   private lastContent: string;
   private hasAttached = false;
 
-  get widthPx() {
+  get widthPx(): string {
     if (!this.hasAttached) return;
     if (!this.cell) return;
 
@@ -105,6 +106,12 @@ export class GridCell {
     //}
     const asPx = `${finalWidth}px`;
     return asPx;
+  }
+
+  get isOverflown(): boolean {
+    if (!this.cell) return false;
+    const width = getValueFromPixelString(this.widthPx);
+    return width > (this.columnSettings?.colWidth ?? this.CELL_WIDTH);
   }
 
   isEditChanged() {

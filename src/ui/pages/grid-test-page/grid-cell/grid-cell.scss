@@ -1,23 +1,48 @@
 @import "../../../mixins.scss";
+@import "../../../colors.scss";
 
 .cell {
   @include cell();
   padding: unset;
   position: relative;
+  /* height: calc(#{$columnHeight} - 1px); */
+
   &:hover {
-    background: red;
+    background: $red;
   }
   &.selected-cell {
-    background: #ffa5008a;
+    /* background: $orange1; */
+    z-index: $zIndexHover2;
+    /* opacity: 0.5; */
+
+    // .content.overflown {
+    //   background: $orange1;
+    //   background: unset;
+    // }
   }
 
   .content {
     /* position: absolute; */
+    height: $columnHeight;
     padding: 6px;
     overflow: scroll;
     text-overflow: clip;
-    height: 32px;
     white-space: nowrap;
+
+    &.overflown {
+      position: relative;
+      border-bottom: 1px solid $borderColor;
+      background: $backgroundColor;
+      z-index: 100;
+      &:hover {
+        height: 32px;
+        border: unset;
+        border-bottom: 1px solid $borderColor;
+        z-index: $zIndexHover2 + 1;
+
+        background: $red;
+      }
+    }
 
     input {
       width: inherit;
@@ -35,5 +60,16 @@
     }
   }
   .content-container {
+  }
+
+  .selection {
+    position: absolute;
+    width: calc(100% + 1px); // +1px: there is a white gap due to border-right
+    height: 100%;
+    top: 0;
+    /* border: 2px solid green; */
+    background: $orange1;
+    opacity: 0.5;
+    z-index: 300;
   }
 }

@@ -79,6 +79,9 @@ $white1: if($theme == dark, $dark-white1, $light-white1);
 $grey0: if($theme == dark, $dark-grey0, $light-grey0);
 $grey: if($theme == dark, $dark-grey, $light-grey);
 $red: if($theme == dark, $dark-red, $light-red);
+$orange: #fdcc6d;
+$orange1: #ffb016;
+/* $orange: #e4c169; */
 
 // Apply theme colors
 $textColor0: if($theme == dark, $dark-white0, $light-black);
@@ -112,6 +115,7 @@ $zIndex40: 40;
 
 $zIndexBase: 10;
 $zIndexHover: 100;
+$zIndexHover2: 200;
 $zIndexEditing: 1000;
 
 $columnWidth: 64px;
