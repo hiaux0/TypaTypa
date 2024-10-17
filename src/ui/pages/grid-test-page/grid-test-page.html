@@ -65,7 +65,7 @@
           <grid-cell
             cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
             row.bind="rowIndex"
-            whole-row.bind="activeSheet.content[rowIndex]"
+            whole-row.bind="this.contentMap[rowIndex]"
             column.bind="columnIndex"
             selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
             sheet-settings.bind="activeSheet.settings"

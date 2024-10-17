@@ -188,7 +188,6 @@ export class GridTestPage {
           this.removeCellAt();
           return;
         }
-
         this.panelCRUD.delete(panel.id);
         this.gridPanels = this.panelCRUD.readAll();
       },
@@ -339,7 +338,6 @@ export class GridTestPage {
         const collectDeleted = [];
         this.iterateOverCol(
           (col, row) => {
-            console.log("delete", col, row);
             collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
             this.removeCellAt(col, row, { skipUpdate: true });
           },
@@ -464,7 +462,7 @@ export class GridTestPage {
         converted[CELL_COORDS(colIndex, cellIndex)] = cell;
       });
     });
-    this.contentMapForView = converted;
+    this.contentMapForView = structuredClone(converted);
   }
 
   public get orderedSelectedRangeToString(): string {
@@ -1178,7 +1176,7 @@ export class GridTestPage {
     if (this.contentMap[row] === undefined) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row][col] = { text: content, col, row } as Cell;
+    this.contentMap[row][col] = { text: content } as Cell;
     this.onCellContentChangedInternal(col, row);
 
     if (option?.skipUpdate) return;
@@ -1216,11 +1214,14 @@ export class GridTestPage {
     if (this.contentMap[row] == null) {
       this.contentMap[row] = [];
     }
-    const cell = this.contentMap[row][col]
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1220] cell: ", cell);
+    // const cell = this.contentMap[row][col];
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1220] cell: ", cell);
     this.contentMap[row].splice(col, 1);
-    const afterCell = this.contentMap[row][col]
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1223] afterCell: ", afterCell);
+    //this.contentMap[row] = this.contentMap[row].filter(
+    //  (_, index) => index !== col,
+    //);
+    // const afterCell = this.contentMap[row][col];
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1223] afterCell: ", afterCell);
     this.onCellContentChangedInternal(col, row);
     if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
