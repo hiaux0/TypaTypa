@@ -76,6 +76,8 @@
 - [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
+- [ ] fix: resize and overflow resets to cell_width
+- [ ] feat: e scrolls to 
 
 # Done
 ## Grid

@@ -3,18 +3,20 @@
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''}"
-    css="width: ${widthPx};"
-    data-content.bind="isEdit ? lastContent : cell.text"
+    css="width: ${setWidthPx(cell, columnSettings?.colWidth)};"
+    data-width.bind="cell.scrollWidth"
   >
-    <input
-      if.bind="isEdit"
-      type="text"
-      class="editing"
-      value.bind="textareaValue"
-      keydown.trigger="onKeyDown($event)"
-      autosize
-    />
-    <div else class="read-only">${cell.text}</div>
+    <template if.bind="cell.text">
+      <input
+        if.bind="isEdit"
+        type="text"
+        class="editing"
+        value.bind="textareaValue"
+        keydown.trigger="onKeyDown($event)"
+        autosize
+      />
+      <div else class="read-only">${cell.text}</div>
+    </template>
   </section>
 
   <!-- Selection -->
