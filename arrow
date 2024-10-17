@@ -62,6 +62,8 @@ src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.html
 src/ui/colors.scss
 src/ui/mixins.scss
+src/types.ts
+
 
 
 %% Grid Cell Content

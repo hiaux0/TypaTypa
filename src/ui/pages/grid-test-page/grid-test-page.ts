@@ -77,7 +77,7 @@ interface GridPanel {
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 50;
+  public rowSize = 100;
   public columnSize = 10;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
@@ -462,7 +462,8 @@ export class GridTestPage {
         converted[CELL_COORDS(colIndex, cellIndex)] = cell;
       });
     });
-    this.contentMapForView = structuredClone(converted);
+    // this.contentMapForView = structuredClone(converted);
+    this.contentMapForView = converted;
   }
 
   public get orderedSelectedRangeToString(): string {
@@ -485,6 +486,7 @@ export class GridTestPage {
   private initSheets(sheetsData: GridDatabaseType): void {
     let updatedSheetData = runGridMigrations(sheetsData);
     updatedSheetData = checkCellOverflow(updatedSheetData);
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,488] updatedSheetData: ", updatedSheetData);
     this.sheetsData = updatedSheetData;
     this.sheetTabs = updatedSheetData.sheets.map((sheet) => ({
       id: sheet.id,
@@ -820,6 +822,10 @@ export class GridTestPage {
               !Number.isNaN(nextColWithContent) &&
               !Number.isNaN(nextRowWithContent)
             ) {
+              const cell = this.getCurrentCell();
+              const amount = cell.colsToNextText;
+              this.scrollEditor("right", amount);
+
               this.setAndUpdateSingleCell(
                 nextColWithContent,
                 nextRowWithContent,
@@ -1055,17 +1061,26 @@ export class GridTestPage {
         },
         commandListener: (result) => {
           const mode = this.mappingByCommandName[result.vimState.mode];
-          if (!mode) return;
+          if (!mode) {
+            // TODO: merge custom commands, so Only need to call undo redo once
+            this.gridUndoRedo.setState(structuredClone(this.contentMap));
+            return;
+          }
           const command = mode[result.targetCommand];
-          if (!command) return;
+          if (!command) {
+            // TODO: merge custom commands, so Only need to call undo redo once
+            this.gridUndoRedo.setState(structuredClone(this.contentMap));
+            return;
+          }
           const response = command(result);
           window.setTimeout(() => {
             if (!this.contentMap) return;
             if (
               result.targetCommand === VIM_COMMAND.redo ||
               result.targetCommand === VIM_COMMAND.undo
-            )
+            ) {
               return;
+            }
             if (!(response as any)?.preventUndoRedoTrace) {
               this.gridUndoRedo.setState(structuredClone(this.contentMap));
             }

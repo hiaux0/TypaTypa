@@ -70,6 +70,8 @@
 - [ ] feat:
 - [ ] refac:
 
+- [ ] feat: grid: todo cell
+- [ ] fix: grid: >> and undo redo
 - [ ] feat: prevent 'repearCommand' for navigation
 - [ ] feat: search
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
@@ -77,7 +79,11 @@
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
 - [ ] fix: resize and overflow resets to cell_width
-- [ ] feat: e scrolls to 
+- [ ] feat: navigation (e, b) scrolls to cell
+  - [ ] add method scrollTo, that only scroll, when out of view port
+    - for this, check `scrollEditor`, but make it take coords
+      - set the cell first, so we can query `.selected-cell` elements for their x,y?
+        - this makes it more dependent on html (cf. measureText)
 
 # Done
 ## Grid

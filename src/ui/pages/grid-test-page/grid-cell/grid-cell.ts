@@ -32,11 +32,11 @@ export class GridCell {
   public textareaValue = "";
 
   private lastContent: string;
-  private hasAttached = false;
-  private counter = 0;
 
-  public setWidthPx(cell: Cell, columnWidth: number) {
-    this.counter++;
+  public setWidthPx(
+    cell: Cell = this.cell,
+    columnWidth: number = this.columnSettings.colWidth,
+  ) {
     const getWidth = () => {
       if (!cell) return;
 
@@ -137,21 +137,25 @@ export class GridCell {
     return this.cellContentRef.querySelector("input");
   }
 
-  //cellChanged() {
-  //  this.updateCell();
-  //}
+  cellChanged() {
+    /**
+     * When pasting text (means, we are not in edit mode)
+     */
+    if (this.cell.text !== this.lastContent && this.isEdit === false) {
+      this.lastContent = this.cell.text;
+      this.setWidthPx();
+    }
+  }
 
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
   ) {}
 
   attached() {
-    // this.setWidthPx();
     this.updateCell();
     if (this.cell?.text) {
       this.lastContent = this.cell.text;
     }
-    this.hasAttached = true;
   }
 
   private updateCell() {

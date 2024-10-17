@@ -170,16 +170,30 @@ export class VimInputHandler {
       if (typeof response === "boolean") {
         preventDefault = response;
       }
+
+      if (this.options?.hooks?.commandListener)
+        this.options.hooks.commandListener({
+          vimState: this.vimCore.getVimState(),
+          targetCommand: VIM_COMMAND[finalCommand.command],
+          keys: finalKey,
+        });
     } else if (commandSequence) {
       const vimState = this.vimCore.executeCommandSequence(commandSequence);
-      if (!vimState) return;
-      this.updateVimState(vimState);
+      if (vimState) {
+        this.updateVimState(vimState);
+
+        if (this.options?.hooks?.commandListener)
+          this.options.hooks.commandListener({
+            vimState,
+            targetCommand: VIM_COMMAND[finalCommand.command],
+            keys: finalKey,
+          });
+      }
     } else if (finalCommand?.command) {
       const vimState = this.vimCore.executeCommand(
         VIM_COMMAND[finalCommand.command],
         finalPressedKey,
       );
-      // /*prettier-ignore*/ console.log("[VimInputHandler.ts,179] vimState: ", vimState);
       // if (!vimState) return; // issue: space in insert got too early returned
 
       if (vimState) {
