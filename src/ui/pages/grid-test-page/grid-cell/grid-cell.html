@@ -3,20 +3,20 @@
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''}"
-    css="width: ${setWidthPx(cell, columnSettings?.colWidth)};"
+    css="width: ${setWidthPx(cell, columnSettings?.colWidth, wholeRow.length)};"
     data-width.bind="cell.scrollWidth"
   >
-    <template if.bind="cell.text">
-      <input
-        if.bind="isEdit"
-        type="text"
-        class="editing"
-        value.bind="textareaValue"
-        keydown.trigger="onKeyDown($event)"
-        autosize
-      />
-      <div else class="read-only">${cell.text}</div>
-    </template>
+    <!-- Can:t remember why input and read-only were wrapped -->
+    <!-- <template if.bind="cell.text"> </template> -->
+    <input
+      if.bind="isEdit"
+      type="text"
+      class="editing"
+      value.bind="textareaValue"
+      keydown.trigger="onKeyDown($event)"
+      autosize="on-width-autosize.bind: onInputWidthChanged;"
+    />
+    <div else class="read-only">${cell.text}</div>
   </section>
 
   <!-- Selection -->

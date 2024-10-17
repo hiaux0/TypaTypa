@@ -77,7 +77,7 @@ interface GridPanel {
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 100;
+  public rowSize = 10;
   public columnSize = 10;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
@@ -714,6 +714,10 @@ export class GridTestPage {
         this.save();
         return true;
       },
+      "<Alt>t": () => {
+        console.log("hi");
+        return true;
+      },
       Enter: () => {
         if (getIsInputActive()) {
           this.putCellIntoUnfocus();
@@ -823,8 +827,10 @@ export class GridTestPage {
               !Number.isNaN(nextRowWithContent)
             ) {
               const cell = this.getCurrentCell();
-              const amount = cell.colsToNextText;
-              this.scrollEditor("right", amount);
+              if (cell) {
+                const amount = cell.colsToNextText;
+                this.scrollEditor("right", amount);
+              }
 
               this.setAndUpdateSingleCell(
                 nextColWithContent,

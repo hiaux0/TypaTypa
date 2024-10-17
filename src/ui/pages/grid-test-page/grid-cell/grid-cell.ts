@@ -35,7 +35,8 @@ export class GridCell {
 
   public setWidthPx(
     cell: Cell = this.cell,
-    columnWidth: number = this.columnSettings.colWidth,
+    columnWidth: number = this.columnSettings?.colWidth ?? this.CELL_WIDTH,
+    rowLength?: number,
   ) {
     const getWidth = () => {
       if (!cell) return;
@@ -138,6 +139,7 @@ export class GridCell {
   }
 
   cellChanged() {
+    if (!this.cell) return;
     /**
      * When pasting text (means, we are not in edit mode)
      */
@@ -152,6 +154,7 @@ export class GridCell {
   ) {}
 
   attached() {
+    this.setWidthPx();
     this.updateCell();
     if (this.cell?.text) {
       this.lastContent = this.cell.text;
@@ -179,5 +182,9 @@ export class GridCell {
         return;
       }
     }
+  }
+
+  public onInputWidthChanged(newWidth: number): void {
+    // /*prettier-ignore*/ console.log("[grid-cell.ts,185] newWidth: ", newWidth);
   }
 }

@@ -75,6 +75,8 @@
 - [ ] feat: prevent 'repearCommand' for navigation
 - [ ] feat: search
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
+  - then can choose one, and it could be replaced
+    - replace by 1.undo 2. redo with additional args, or, replaced text
 - [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
@@ -84,6 +86,7 @@
     - for this, check `scrollEditor`, but make it take coords
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
+- [ ] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
 
 # Done
 ## Grid
