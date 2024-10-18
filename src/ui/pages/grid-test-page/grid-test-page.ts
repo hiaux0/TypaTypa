@@ -1709,7 +1709,7 @@ export class GridTestPage {
 
   public onCellUpdate = (col: number, row: number, cell: Cell): void => {
     if (!this.contentMap) return;
-    /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", cell.text);
+    // /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", cell.text);
     this.setCurrentCellContent(cell.text, col, row);
     this.onCellContentChangedInternal(col, row);
   };

@@ -25,7 +25,7 @@
 
   <!-- Autocomplete -->
   <autocomplete-input
-    if.bind="selected && autoCompleteSource.length"
+    if.bind="isEdit && selected && autoCompleteSource.length"
     container.bind="cellContentRef"
     target.bind="contentInputRef"
     value.two-way="autocompleteValue"

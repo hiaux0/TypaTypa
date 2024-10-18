@@ -4,6 +4,8 @@ import { UiSuggestion } from "../../../domain/types/uiTypes";
 import { translations } from "../../../common/modules/translations";
 import { getLongestCommonSubstring } from "../../../common/modules/strings";
 
+const debugLog = true;
+
 export class AutocompleteInput {
   @bindable() value = "";
   @bindable() placeholder = `${translations.search}...`;
@@ -32,16 +34,19 @@ export class AutocompleteInput {
   public searchInputRef: HTMLElement | null = null;
 
   private activeCursorIndex = 0;
+  private attachCount = 0;
 
-  private valueChanged(newValue: string): void {
+  valueChanged(newValue: string): void {
     this.updateSuggestions(newValue);
   }
 
   attached() {
+    this.attachCount++;
     if (!this.container && this.target) {
       /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: Need also to provide a container if you provide a target");
     }
 
+    /*prettier-ignore*/ debugLog && console.log("AI.1. [autocomplete-input.ts,46] this.value: ", this.value);
     this.hideInput = this.hideInput === "" || this.hideInput;
     this.updateSuggestions(this.value);
     this.initKeyboardEvents();
@@ -60,8 +65,8 @@ export class AutocompleteInput {
 
   private updateSuggestions(searchValue: string): void {
     this.clearSuggestions();
-    ///*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
-    ///*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
+    //*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
+    //*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
     this.source.forEach((word) => {
       const included = word.toLowerCase().includes(searchValue.toLowerCase());
       if (!included) return;
@@ -86,6 +91,7 @@ export class AutocompleteInput {
   }
 
   private initKeyboardEvents(): void {
+    if (this.attachCount > 1) return;
     const host = this.container ?? this.autocompleteContainerRef;
     host?.addEventListener("keydown", (event) => {
       if (this.container && !this.target) {
@@ -142,22 +148,24 @@ export class AutocompleteInput {
           return;
         }
         event.preventDefault();
+        /*prettier-ignore*/ console.log("----------------------------");
         const rawSuggestions = this.suggestions.map((s) => s.original);
-        /*prettier-ignore*/ console.log("[autocomplete-input.ts,148] rawSuggestions: ", rawSuggestions);
+        // /*prettier-ignore*/ console.log("AI.0 [autocomplete-input.ts,148] rawSuggestions: ", rawSuggestions);
         const substring = getLongestCommonSubstring(rawSuggestions);
-        /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,149] substring: ", substring);
+        // /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,149] substring: ", substring);
         /*prettier-ignore*/ console.log("AI.1.2 [autocomplete-input.ts,151] this.value: ", this.value);
         const isSame = substring === this.value;
-        /*prettier-ignore*/ console.log("AI.2. [autocomplete-input.ts,151] isSame: ", isSame);
+        // /*prettier-ignore*/ console.log("AI.2. [autocomplete-input.ts,151] isSame: ", isSame);
         const useSuggestion = isSame && substring.length > 0;
-        /*prettier-ignore*/ console.log("AI.3. [autocomplete-input.ts,153] useSuggestion: ", useSuggestion);
+        // /*prettier-ignore*/ console.log("AI.3. [autocomplete-input.ts,153] useSuggestion: ", useSuggestion);
         let completion = substring;
         if (useSuggestion) {
           const suggestion = this.suggestions[this.activeCursorIndex]?.original;
           completion = suggestion;
         }
-        /*prettier-ignore*/ console.log("AI.4. [autocomplete-input.ts,155] completion: ", completion);
+        // /*prettier-ignore*/ console.log("AI.4. [autocomplete-input.ts,155] completion: ", completion);
         this.value = completion;
+        /*prettier-ignore*/ console.log(">>>> [autocomplete-input.ts,165] this.value: ", this.value);
         this.onPartialAccept?.(completion);
         return;
       }

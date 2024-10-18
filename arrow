@@ -62,8 +62,9 @@ src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.html
 src/ui/colors.scss
 src/ui/mixins.scss
+src/ui/molecules/autocomplete-input/autocomplete-input.ts
+src/ui/molecules/autocomplete-input/autocomplete-input.html
 src/types.ts
-
 
 
 %% Grid Cell Content
