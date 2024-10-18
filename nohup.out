@@ -1,0 +1,23 @@
+
+> decorator-bug@0.1.0 start
+> vite --force
+
+Forced re-optimization of dependencies
+
+  VITE v5.4.1  ready in 375 ms
+
+  ➜  Local:   http://localhost:9000/
+  ➜  Network: http://192.168.1.15:9000/
+  ➜  Network: http://10.130.67.54:9000/
+
+> decorator-bug@0.1.0 start
+> vite --force
+
+Forced re-optimization of dependencies
+Port 9000 is in use, trying another one...
+
+  VITE v5.4.1  ready in 442 ms
+
+  ➜  Local:   http://localhost:9001/
+  ➜  Network: http://192.168.1.15:9001/
+  ➜  Network: http://10.130.67.54:9001/

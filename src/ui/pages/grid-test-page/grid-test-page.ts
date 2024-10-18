@@ -50,6 +50,7 @@ import {
   iterateOverRange,
   iterateOverRangeBackwards,
 } from "./grid-modules/gridModules";
+import { Store } from "../../../common/modules/store";
 
 type GridPanelTypes = "button" | "text";
 
@@ -477,6 +478,7 @@ export class GridTestPage {
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
     private vimInit: VimInit = resolve(VimInit),
+    private store: Store = resolve(Store),
   ) {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
@@ -507,6 +509,7 @@ export class GridTestPage {
     const activeSheet = sheetsData.sheets[activeIndex];
     if (!activeSheet) return;
     this.activeSheet = activeSheet;
+    this.store.activeSheet = activeSheet;
     this.contentMap = activeSheet.content;
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
@@ -1706,6 +1709,7 @@ export class GridTestPage {
 
   public onCellUpdate = (col: number, row: number, cell: Cell): void => {
     if (!this.contentMap) return;
+    /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", cell.text);
     this.setCurrentCellContent(cell.text, col, row);
     this.onCellContentChangedInternal(col, row);
   };

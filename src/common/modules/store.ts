@@ -4,7 +4,7 @@ import {
   SELECTED_TAB_TITLE,
   WORD_TO_LOOK_UP,
 } from "./constants";
-import { Topic } from "../../types";
+import { Sheet, Topic } from "../../types";
 import { ON_TOPIC_CHANGE } from "./eventMessages";
 
 //export type IStore = Store;
@@ -17,6 +17,9 @@ export class Store {
   public activeTabName = SELECTED_TAB_TITLE;
   public wordToLookUp = WORD_TO_LOOK_UP;
   public dictionaryLookedUpList: Set<string> = new Set();
+
+  // Grid
+  public activeSheet: Sheet;
 
   constructor(private ea: EventAggregator = resolve(EventAggregator)) {}
 

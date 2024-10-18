@@ -235,7 +235,7 @@ export function checkCellOverflow(
       });
 
       const firstCell = row[0];
-      if (colOfCellAfterFirstCellWithText) {
+      if (colOfCellAfterFirstCellWithText && firstCell) {
         firstCell.colsToNextText = colOfCellAfterFirstCellWithText;
         // /*prettier-ignore*/ console.log("[gridModules.ts,230] colOfCellAfterFirstCellWithText: ", colOfCellAfterFirstCellWithText);
       }

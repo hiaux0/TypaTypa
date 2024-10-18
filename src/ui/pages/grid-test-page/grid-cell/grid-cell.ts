@@ -1,10 +1,11 @@
-import { EventAggregator, bindable, resolve, watch } from "aurelia";
+import { EventAggregator, bindable, observable, resolve, watch } from "aurelia";
 import "./grid-cell.scss";
 import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
 import { CELL_WIDTH } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
+import { Store } from "../../../../common/modules/store";
 const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
@@ -12,6 +13,8 @@ const BORDER_WIDTH = 1;
 const shouldLog = false;
 const c = 6;
 const r = 6;
+
+const debug = false;
 
 export class GridCell {
   @bindable public cell: Cell;
@@ -24,18 +27,22 @@ export class GridCell {
   @bindable public isEdit: boolean;
   @bindable public onCellUpdate: (col: number, row: number, cell: Cell) => void;
 
+  @observable() public textareaValue = "";
+
+  public completionValue = "";
   public cellContentRef: HTMLElement;
+  public contentInputRef: HTMLElement;
   public contentWidth = NaN;
   public PADDING = PADDING;
   public CELL_WIDTH = CELL_WIDTH;
   public widthPxNew = "";
-  public textareaValue = "";
-
-  private lastContent: string;
+  public autocompleteValue = "";
+  public autoCompleteSource: string[] = [];
 
   public setWidthPx(
     cell: Cell = this.cell,
     columnWidth: number = this.columnSettings?.colWidth ?? this.CELL_WIDTH,
+    /** Used for watching changes on the whole row (Aurelia behavior) */
     rowLength?: number,
   ) {
     const getWidth = () => {
@@ -125,66 +132,70 @@ export class GridCell {
   }
 
   isEditChanged() {
-    if (!this.isEdit) return;
-    this.textareaValue = this.lastContent;
-    this.updateCell();
+    if (!this.isEdit) {
+      return;
+    }
+    this.textareaValue = this.cell?.text;
+    this.updateAutocomplete(this.textareaValue);
 
     window.setTimeout(() => {
       this.getInput()?.focus();
     }, 0);
   }
 
+  textareaValueChanged(): void {
+    this.autocompleteValue = this.textareaValue;
+  }
+
   private getInput(): HTMLInputElement {
     return this.cellContentRef.querySelector("input");
   }
 
-  cellChanged() {
-    if (!this.cell) return;
-    /**
-     * When pasting text (means, we are not in edit mode)
-     */
-    if (this.cell.text !== this.lastContent && this.isEdit === false) {
-      this.lastContent = this.cell.text;
-      this.setWidthPx();
-    }
-  }
-
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
+    private store: Store = resolve(Store),
   ) {}
 
   attached() {
+    if (debug) {
+      this.updateAutocomplete();
+    }
     this.setWidthPx();
-    this.updateCell();
-    if (this.cell?.text) {
-      this.lastContent = this.cell.text;
-    }
-  }
-
-  private updateCell() {
-    if (!this.cell) return;
-    if (this.cell.text !== "") {
-      this.lastContent = this.textareaValue;
-    }
   }
 
   public async onKeyDown(event: KeyboardEvent) {
     if (!this.isEdit) return;
     const key = event.key;
     if (isEscape(key)) {
-      this.lastContent = this.textareaValue;
-      this.onCellUpdate(this.column, this.row, this.cell);
+      /*prettier-ignore*/ console.log("GC.3. [grid-cell.ts,203] this.cell.text: ", this.cell.text);
     } else if (isEnter(key)) {
       if (this.isEdit) {
-        this.updateCell();
         this.cell.text = this.textareaValue;
+        /*prettier-ignore*/ console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
         this.onCellUpdate(this.column, this.row, this.cell);
         return;
       }
     }
   }
 
-  public onInputWidthChanged(newWidth: number): void {
-    // /*prettier-ignore*/ console.log("[grid-cell.ts,185] newWidth: ", newWidth);
+  private updateAutocomplete(inputValue = ""): void {
+    const source = [];
+    this.store.activeSheet.content.forEach((row, rowIndex) => {
+      row.forEach((cell, cellIndex) => {
+        if (!cell?.text) return;
+        if (this.column === cellIndex && this.row === rowIndex) return;
+        source.push(cell.text);
+      });
+    });
+    this.autoCompleteSource = source;
+    this.autocompleteValue = inputValue;
   }
+
+  public partiallyAcceptAutocomplete = (suggestion: string): void => {
+    this.textareaValue = suggestion;
+    this.setWidthPx({
+      text: suggestion,
+      colsToNextText: this.cell.colsToNextText,
+    });
+  };
 }

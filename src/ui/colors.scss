@@ -1,6 +1,6 @@
 // Define theme variable
-/* $theme: dark; */
-$theme: light;
+$theme: dark;
+/* $theme: light; */
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -58,16 +58,10 @@ $primaryDark0: if($theme == dark, $dark-primaryDark0, $light-primaryDark0);
 $primaryDark: if($theme == dark, $dark-primaryDark, $light-primaryDark);
 $primaryDark1: if($theme == dark, $dark-primaryDark1, $light-primaryDark1);
 $primaryDark2: if($theme == dark, $dark-primaryDark2, $light-primaryDark2);
-$secondaryLight0: if(
-  $theme == dark,
-  $dark-secondaryLight0,
-  $light-secondaryLight0
-);
-$secondaryLight: if(
-  $theme == dark,
-  $dark-secondaryLight,
-  $light-secondaryLight
-);
+/*prettier-ignore*/
+$secondaryLight0: if($theme == dark, $dark-secondaryLight0, $light-secondaryLight0);
+/*prettier-ignore*/
+$secondaryLight: if($theme == dark, $dark-secondaryLight, $light-secondaryLight);
 $secondary: if($theme == dark, $dark-secondary, $light-secondary);
 $black0: if($theme == dark, $dark-black0, $light-black0);
 $black: if($theme == dark, $dark-black, $light-black);
@@ -89,6 +83,7 @@ $textColor: if($theme == dark, $dark-white1, $light-black);
 $borderColor: if($theme == dark, $dark-black, $light-black1);
 $backgroundColor: $secondaryLight0;
 $backgroundColor1: $secondaryLight;
+$hoverColor: $primaryDark;
 
 // Other variables
 $borderRadius0: 0.1rem;

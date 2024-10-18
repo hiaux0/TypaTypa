@@ -10,6 +10,10 @@ export class AutosizeCustomAttribute {
    * Pad value, when autosize is applied
    */
   @bindable padding = 8;
+  /**
+   * Don't adapt the width of the element, but the width of the container
+   */
+  @bindable useWidthOfContainer = false;
 
   private element = resolve(INode) as HTMLElement;
   private initialWidth = 0;
@@ -28,18 +32,20 @@ export class AutosizeCustomAttribute {
 
     this.element.addEventListener("keydown", () => {
       // Width
-      this.element.style.width = this.initialWidth + "px";
-      let newWidth = this.initialWidth;
-      if (this.element.scrollWidth > this.initialWidth) {
-        if (this.widthStep !== 0) {
-          const factor = Math.ceil(this.element.scrollWidth / this.widthStep);
-          newWidth = this.widthStep * factor;
-        } else {
-          newWidth = this.widthStep + adjustWidth + this.element.scrollWidth;
+      if (!this.useWidthOfContainer) {
+        this.element.style.width = this.initialWidth + "px";
+        let newWidth = this.initialWidth;
+        if (this.element.scrollWidth > this.initialWidth) {
+          if (this.widthStep !== 0) {
+            const factor = Math.ceil(this.element.scrollWidth / this.widthStep);
+            newWidth = this.widthStep * factor;
+          } else {
+            newWidth = this.widthStep + adjustWidth + this.element.scrollWidth;
+          }
         }
+        this.element.style.width = newWidth + "px";
+        this.onWidthAutosize?.(newWidth);
       }
-      this.element.style.width = newWidth + "px";
-      this.onWidthAutosize?.(newWidth);
 
       // Height
       this.element.style.height = this.initialHeight + "px";
@@ -56,5 +62,9 @@ export class AutosizeCustomAttribute {
       this.element.style.height = newHeight + "px";
       this.onHeightAutosize?.(newHeight);
     });
+  }
+
+  bound() {
+    this.element.style.width = "inherit";
   }
 }

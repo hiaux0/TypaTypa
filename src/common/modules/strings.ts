@@ -94,3 +94,21 @@ export function tokenize(text: string, option?: { lower?: boolean }): string[] {
 export function numberToAlphabet(num: number) {
   return String.fromCharCode(65 + num);
 }
+
+/**
+ * input: ["hello", "helmet"]
+ * getLongestCommonSubstring(input) => "hel"
+ */
+export function getLongestCommonSubstring(input: string[]): string {
+  const sorted = input.concat().sort();
+  if (sorted.length === 0) return "";
+  const a1 = sorted[0];
+  const a2 = sorted[sorted.length - 1];
+  const L = a1.length;
+  let i = 0;
+  while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
+  return a1.substring(0, i);
+}
+
+const output = getLongestCommonSubstring(["hello", "helmet"]); // "hel"
+/*prettier-ignore*/ console.log("[strings.ts,113] output: ", output);

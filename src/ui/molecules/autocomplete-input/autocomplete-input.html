@@ -1,12 +1,18 @@
 <div class="autocomplete-container" ref="autocompleteContainerRef">
   <input
+    show.bind="!hideInput"
     ref="searchInputRef"
     type="text"
     placeholder.bind="placeholder"
     value.bind="value"
     tabindex="1"
   />
-  <ul if.bind="value" class="suggesion-list" ref="suggesionListRef">
+  <ul
+    if.bind="value"
+    class="suggesion-list"
+    ref="suggesionListRef"
+    css="width: ${width};"
+  >
     <li
       repeat.for="suggestion of suggestions"
       class="suggestion ${$index === activeCursorIndex ? 'active ' : ''}"

@@ -3,22 +3,36 @@
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''}"
-    css="width: ${setWidthPx(cell, columnSettings?.colWidth, wholeRow.length)};"
-    data-width.bind="cell.scrollWidth"
+    css="width: ${widthPxNew};"
+    data-compute-width.bind="setWidthPx(cell, columnSettings?.colWidth, wholeRow.length)"
   >
     <!-- Can:t remember why input and read-only were wrapped -->
     <!-- <template if.bind="cell.text"> </template> -->
     <input
       if.bind="isEdit"
+      ref="contentInputRef"
       type="text"
       class="editing"
       value.bind="textareaValue"
       keydown.trigger="onKeyDown($event)"
-      autosize="on-width-autosize.bind: onInputWidthChanged;"
+      autosize="on-width-autosize.bind: onInputWidthChanged; use-width-of-container.bind: true;"
     />
-    <div else class="read-only">${cell.text}</div>
+    <pre else class="read-only">${cell.text}</pre>
   </section>
 
   <!-- Selection -->
   <div if.bind="selected" class="selection"></div>
+
+  <!-- Autocomplete -->
+  <autocomplete-input
+    if.bind="selected && autoCompleteSource.length"
+    container.bind="cellContentRef"
+    target.bind="contentInputRef"
+    value.two-way="autocompleteValue"
+    source.bind="autoCompleteSource"
+    autofocus="true"
+    hide-input
+    width="80vw"
+    on-partial-accept.bind="partiallyAcceptAutocomplete"
+  ></autocomplete-input>
 </div>
