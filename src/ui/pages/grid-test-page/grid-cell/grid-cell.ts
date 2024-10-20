@@ -39,6 +39,7 @@ export class GridCell {
   public widthPxNew = "";
   public autocompleteValue = "";
   public autoCompleteSource: string[] = [];
+  public measureTextWidth = measureTextWidth;
 
   public setWidthPx(
     cell: Cell = this.cell,

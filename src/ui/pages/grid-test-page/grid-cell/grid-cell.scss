@@ -9,6 +9,7 @@
 
   &:hover {
     background: $red;
+    /* width: 100vw; // to show all the cell content */
   }
   &.selected-cell {
     /* background: $orange1; */
