@@ -170,13 +170,13 @@ export class GridCell {
     if (!this.isEdit) return;
     const key = event.key;
     if (isEscape(key)) {
-      /*prettier-ignore*/ debugLog && console.log("before [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
+      // /*prettier-ignore*/ debugLog && console.log("before [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
       this.textareaValue = this.cell.text;
-      /*prettier-ignore*/ debugLog && console.log("after [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
+      // /*prettier-ignore*/ debugLog && console.log("after [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
     } else if (isEnter(key)) {
       if (this.isEdit) {
         this.cell.text = this.textareaValue;
-        /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
+        // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
         this.onCellUpdate(this.column, this.row, this.cell);
         return;
       }
@@ -194,9 +194,9 @@ export class GridCell {
       });
     });
     this.autoCompleteSource = source;
-    /*prettier-ignore*/ console.log("[grid-cell.ts,196] this.autoCompleteSource: ", this.autoCompleteSource);
+    // /*prettier-ignore*/ console.log("[grid-cell.ts,196] this.autoCompleteSource: ", this.autoCompleteSource);
     this.autocompleteValue = inputValue;
-    /*prettier-ignore*/ console.log("GC.B. [grid-cell.ts,196] this.autocompleteValue: ", this.autocompleteValue);
+    // /*prettier-ignore*/ console.log("GC.B. [grid-cell.ts,196] this.autocompleteValue: ", this.autocompleteValue);
   }
 
   public partiallyAcceptAutocomplete = (suggestion: string): void => {

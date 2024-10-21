@@ -4,7 +4,7 @@ import { UiSuggestion } from "../../../domain/types/uiTypes";
 import { translations } from "../../../common/modules/translations";
 import { getLongestCommonSubstring } from "../../../common/modules/strings";
 
-const debugLog = true;
+const debugLog = false;
 
 export class AutocompleteInput {
   @bindable() value = "";

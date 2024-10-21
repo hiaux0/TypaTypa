@@ -121,12 +121,11 @@ export class GridTestPage {
   private isStartDragGridCell = false;
   private panelCRUD: CRUDService<GridPanel>;
   private mappingByMode: KeyBindingModes = {
+    //{
+    //  key: "b",
+    //  execute: () => {},
+    //},
     [VimMode.NORMAL]: [
-      //{
-      //  key: "b",
-      //  execute: () => {},
-      //},
-
       {
         command: VIM_COMMAND.cursorRight,
         execute: () => {
@@ -241,7 +240,6 @@ export class GridTestPage {
           let index = 0;
           this.iterateOverCol(
             (col, row) => {
-              console.log("pasteVim", col, row);
               this.addCellEmptyAt(col, row);
               const content = this.lastCellContentArray[index++];
               this.setCurrentCellContent(content, col, row, {
@@ -260,18 +258,17 @@ export class GridTestPage {
       },
       {
         command: VIM_COMMAND.paste,
-        execute: () => {
-          getClipboardContent().then((text) => {
-            const split = text.trim().split("\n");
-            const len = split.length;
-            this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
-            this.iterateOverSelectedCells((col, row) => {
-              const content = split.shift();
-              this.setCurrentCellContent(content, col, row);
-            });
-            this.dragEndRowIndex = this.dragStartRowIndex;
-            this.updateContentMapChangedForView();
+        execute: async () => {
+          const text = await getClipboardContent();
+          const split = text.trim().split("\n");
+          const len = split.length;
+          this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
+          this.iterateOverSelectedCells((col, row) => {
+            const content = split.shift();
+            this.setCurrentCellContent(content, col, row);
           });
+          this.dragEndRowIndex = this.dragStartRowIndex;
+          this.updateContentMapChangedForView();
         },
       },
       {
@@ -489,6 +486,7 @@ export class GridTestPage {
         key: "i",
         command: VIM_COMMAND.enterInsertMode,
         execute: () => {
+          console.log("enter insert mode");
           this.putCellIntoEdit();
           return true;
         },
@@ -538,54 +536,6 @@ export class GridTestPage {
           this.lastCellContentArray = [text];
           setClipboardContent(text);
           this.clearCurrentCellContent();
-        },
-      },
-      {
-        key: "<Enter>",
-        desc: "Focus Panel at cursor",
-        execute: () => {
-          // this.onEnter();
-          return;
-          this.editedCellCoords = this.CELL_COORDS(
-            this.dragStartColumnIndex,
-            this.dragStartRowIndex,
-          );
-          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-          const targetPanel = this.getPanelUnderCursor();
-          if (!targetPanel) {
-            // Add new panel
-            const newPanel = this.addPanel();
-            this.activePanel = newPanel;
-            newPanel.isEdit = true;
-            this.textareaValue = this.getCurrentCell()?.text ?? "";
-
-            this.unselectAllSelecedCells();
-            this.dragEndColumnIndex = this.dragStartColumnIndex;
-            this.dragEndRowIndex = this.dragStartRowIndex;
-            this.updateAllSelecedCells();
-            this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-
-            // Focus new panel
-            this.activePanelElement = document.querySelector(
-              `[data-panel-id="${newPanel.id}"] textarea`,
-            ) as HTMLElement;
-            this.activePanelElement.focus();
-            this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-            return true;
-          }
-
-          // Focus panel
-          targetPanel.isEdit = true;
-          this.textareaValue =
-            this.getCurrentCell(targetPanel.col, targetPanel.row)?.text ?? "";
-
-          this.activePanel = targetPanel;
-          this.activePanelElement = document.querySelector(
-            `[data-panel-id="${targetPanel.id}"] textarea`,
-          ) as HTMLElement;
-          this.activePanelElement.focus();
-          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-          return true;
         },
       },
       {
@@ -805,7 +755,17 @@ export class GridTestPage {
         },
       },
     ],
-    [VimMode.INSERT]: [],
+    [VimMode.INSERT]: [
+      {
+        key: "<Escape>",
+        command: VIM_COMMAND.enterNormalMode,
+        execute: () => {
+          console.log("escape insert");
+          this.putCellIntoUnfocus();
+        },
+        preventUndoRedo: true,
+      },
+    ],
     [VimMode.CUSTOM]: [
       {
         command: VIM_COMMAND.cursorRight,
@@ -842,6 +802,32 @@ export class GridTestPage {
           this.setCursorAtPanel(panel);
         },
         preventUndoRedo: true,
+      },
+    ],
+    [VimMode.ALL]: [
+      {
+        key: "<Enter>",
+        command: VIM_COMMAND.customExecute,
+        desc: "bor",
+        execute: () => {
+          console.log("enter");
+          if (getIsInputActive()) {
+            this.putCellIntoUnfocus();
+            this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+          } else {
+            this.putCellIntoEdit();
+            this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+          }
+        },
+      },
+
+      {
+        key: "<Control>s",
+        execute: () => {
+          console.log("save 2");
+          this.save();
+          return true;
+        },
       },
     ],
   };
@@ -1104,31 +1090,10 @@ export class GridTestPage {
   }
 
   private initGridNavigation(): void {
-    // const vimInit = new VimInit();
-    // this.vimInit = vimInit;
-
     const mappingByKey = {
       //"<Control>r": () => {
       //  // return true;
       //},
-      "<Control>s": () => {
-        this.save();
-        return true;
-      },
-      "<Alt>t": () => {
-        console.log("hi");
-        return true;
-      },
-      Enter: () => {
-        if (getIsInputActive()) {
-          this.putCellIntoUnfocus();
-        } else {
-          this.putCellIntoEdit();
-        }
-      },
-      Escape: () => {
-        this.putCellIntoUnfocus();
-      },
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
       },
@@ -1151,6 +1116,7 @@ export class GridTestPage {
           this.mode = payload.vimState.mode;
         },
         commandListener: (result) => {
+          // /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] result: ", result);
           window.setTimeout(() => {
             if (!this.contentMap) return;
             if (
@@ -1743,7 +1709,7 @@ export class GridTestPage {
   private putCellIntoUnfocus(): void {
     this.editedCellCoords = "";
     (document.activeElement as HTMLElement).blur();
-    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    // this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
   }
 
   private putCellIntoEdit(): void {
@@ -1752,7 +1718,6 @@ export class GridTestPage {
       this.setCurrentCellContent("");
     }
 
-    this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
     this.editedCellCoords = this.CELL_COORDS(
       this.dragStartColumnIndex,
       this.dragStartRowIndex,

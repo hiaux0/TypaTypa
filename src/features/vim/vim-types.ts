@@ -26,6 +26,8 @@ export interface KeyBindingModes {
   [VimMode.VISUALLINE]?: VimCommand[];
   custom?: [];
   [VimMode.CUSTOM]?: VimCommand[];
+  all?: [];
+  [VimMode.ALL]?: VimCommand[];
   synonyms?: SynonymKey;
 }
 
@@ -108,6 +110,7 @@ export enum VimMode {
   "VISUAL" = "VISUAL",
   "VISUALLINE" = "VISUALLINE",
   "CUSTOM" = "CUSTOM",
+  "ALL" = "ALL",
 }
 export type VimModeKeys = keyof typeof VimMode;
 

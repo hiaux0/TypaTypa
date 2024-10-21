@@ -12,6 +12,7 @@ import { StringUtil } from "../../../../common/modules/string/string";
 import { VisualLineMode } from "../../modes/VisualLineMode";
 import { Logger } from "../../../../common/logging/logging";
 import { VimHelper } from "../../VimHelper";
+import { InsertMode } from "../../modes/InsertMode";
 
 const logger = new Logger("VimCommandManagerv3");
 
@@ -37,6 +38,7 @@ export class VimCommandManager {
   ) {
     this.setInternalVimState(vimState);
     const mode = this.getMode(vimState.mode);
+    // @ts-ignore
     const previousMode = vimState.mode;
 
     /** Changed Mode */
@@ -78,15 +80,21 @@ export class VimCommandManager {
     mode: Mode | undefined,
   ): Mode extends VimMode.NORMAL
     ? NormalMode
-    : Mode extends VimMode.VISUAL
-      ? VisualMode
-      : Mode extends VimMode.VISUALLINE
-        ? VisualLineMode
-        : undefined {
+    : Mode extends VimMode.INSERT
+      ? InsertMode
+      : Mode extends VimMode.VISUAL
+        ? VisualMode
+        : Mode extends VimMode.VISUALLINE
+          ? VisualLineMode
+          : undefined {
     let finalMode = undefined;
     switch (mode) {
       case VimMode.NORMAL: {
         finalMode = new NormalMode(this.internalVimState);
+        break;
+      }
+      case VimMode.INSERT: {
+        finalMode = new InsertMode(this.internalVimState);
         break;
       }
       case VimMode.VISUAL: {

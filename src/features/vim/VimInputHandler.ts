@@ -142,13 +142,10 @@ export class VimInputHandler {
     document.removeEventListener("keydown", this.handleKeydown);
   }
 
-  private handleKeydown = (event: KeyboardEvent) => {
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,144] event: ", event);
-    // console.clear();
-    if (getIsInputActive()) return;
-
+  private handleKeydown = async (event: KeyboardEvent) => {
+    // if (getIsInputActive()) return;
     const mode = this.vimCore.getVimState().mode;
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,149] mode: ", mode);
+    // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
     if (!mode) return;
     const finalKey = KeyMappingService.getKeyFromEvent(event);
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
@@ -163,10 +160,11 @@ export class VimInputHandler {
       finalCommand = KeyMappingService.getLastCommand();
       finalPressedKey = KeyMappingService.getLastKey();
     }
+    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,161] finalCommand: ", finalCommand);
 
     let preventDefault = false;
     if (finalCommand?.execute) {
-      const response = finalCommand.execute();
+      const response = await finalCommand.execute();
       if (typeof response === "boolean") {
         preventDefault = response;
       }
@@ -201,13 +199,14 @@ export class VimInputHandler {
       if (vimState) {
         this.updateVimState(vimState);
 
-        if (this.options?.hooks?.commandListener)
+        if (this.options?.hooks?.commandListener) {
           this.options.hooks.commandListener({
             vimState,
             targetCommand: VIM_COMMAND[finalCommand.command],
             targetCommandFull: finalCommand,
             keys: finalKey,
           });
+        }
       }
     }
 
