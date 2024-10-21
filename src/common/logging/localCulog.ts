@@ -6,6 +6,34 @@ const debugMode = true;
  */
 type LogLevel = "INFO" | "DEBUG" | "VERBOSE" | "WARNING" | "ERROR";
 
+const terminalColorMap = {
+  Reset: "\x1b[0m",
+  Bright: "\x1b[1m",
+  Dim: "\x1b[2m",
+  Underscore: "\x1b[4m",
+  Blink: "\x1b[5m",
+  Reverse: "\x1b[7m",
+  Hidden: "\x1b[8m",
+  FgBlack: "\x1b[30m",
+  FgRed: "\x1b[31m",
+  FgGreen: "\x1b[32m",
+  FgYellow: "\x1b[33m",
+  FgBlue: "\x1b[34m",
+  FgMagenta: "\x1b[35m",
+  FgCyan: "\x1b[36m",
+  FgWhite: "\x1b[37m",
+  FgGray: "\x1b[90m",
+  BgBlack: "\x1b[40m",
+  BgRed: "\x1b[41m",
+  BgGreen: "\x1b[42m",
+  BgYellow: "\x1b[43m",
+  BgBlue: "\x1b[44m",
+  BgMagenta: "\x1b[45m",
+  BgCyan: "\x1b[46m",
+  BgWhite: "\x1b[47m",
+  BgGray: "\x1b[100m",
+} as const;
+
 export interface LogOptions {
   /// //////////// Log
   disableLogger?: boolean;
@@ -43,6 +71,7 @@ export interface LogOptions {
   scope?: string;
   prefix?: number;
   useTable?: boolean;
+  terminalColor?: keyof typeof terminalColorMap;
   /// //////////// Grouping
   startGroupId?: string;
   endGroupId?: string;
@@ -60,6 +89,7 @@ let defautLogOptions: LogOptions = {
   // dontLogUnlessSpecified: true,
   focusedLogging: false,
   useTable: true,
+  terminalColor: "Reset",
   // allGroupsCollapsedButSpecified: true,
   // expandGroupBasedOnString: "h",
   throwOnError: true,
@@ -168,7 +198,8 @@ export class CuLogger {
     let updatedSubstitutions = `[${logOpt.scope ?? ""}] ${withSubstitutions}`;
 
     if (logOpt.prefix) {
-      updatedSubstitutions = `- (${logOpt.prefix}.) - ${updatedSubstitutions}`;
+      // updatedSubstitutions = `- (${logOpt.prefix}.) - ${updatedSubstitutions}`;
+      updatedSubstitutions = `${logOpt.prefix} - ${updatedSubstitutions}`;
     }
 
     //
@@ -259,7 +290,11 @@ export class CuLogger {
     if (callback) {
       callback(...messageWithLogScope);
     } else {
-      console.log(...messageWithLogScope);
+      console.log(
+        terminalColorMap[logOpt.terminalColor],
+        ...messageWithLogScope,
+        terminalColorMap.Reset,
+      );
     }
     this.logTrail.push(messageWithLogScope);
     loggerDevelopmentDebugLog.push(["log", ...messageWithLogScope]);
