@@ -221,3 +221,62 @@
 
     - [ ]  support vn chars
         - https://stackoverflow.com/questions/26543329/java-regex-to-match-vietnamese-chars
+
+
+
+```ts
+export const keyBindings: KeyBindingModes = {
+  normal: [],
+  [VimMode.NORMAL]: [
+    { key: "<Space>tc", sequence: "^elrx" },
+    { key: "<Space>fu", command: VIM_COMMAND.unfoldAll },
+    { key: "a", command: VIM_COMMAND.enterInsertAfterMode },
+    { key: "cc", command: "clearLine" },
+
+/////////////////
+
+private mappingByCommandName: MappingByCommandName = {
+  // @ts-ignore
+  [VimMode.NORMAL]: {
+    [VIM_COMMAND.cursorLineEnd]: () => {
+
+
+/////////////////
+
+const mappingByKey = {
+  //"<Control>r": () => {
+  //  // return true;
+  //},
+  "<Control>s": () => {
+    this.save();
+    return true;
+  },
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

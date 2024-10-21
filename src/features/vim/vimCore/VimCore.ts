@@ -1,8 +1,12 @@
-import { VimOptions, IVimState } from "../vim-types";
+import { VimOptions, IVimState, VimMode } from "../vim-types";
 import { VimCommandManager as VimCommandManager } from "./commands/VimCommandManager";
 import { VIM_COMMAND } from "../vim-commands-repository";
 import { ShortcutService } from "../../../common/services/ShortcutService";
 import { KeyMappingService } from "./commands/KeyMappingService";
+import { VimStateClass } from "../vim-state";
+import { Logger } from "../../../common/logging/logging";
+
+const logger = new Logger("VimCore");
 
 export class VimCore {
   private vimState: IVimState;
@@ -11,6 +15,9 @@ export class VimCore {
   constructor(private options?: VimOptions) {
     Object.assign(this, options);
     this.options = options;
+    if (!this.options.vimState) {
+      this.vimState = VimStateClass.createEmpty();
+    }
     this.manager = VimCommandManager.create(this.options);
   }
 

@@ -11,7 +11,7 @@ import { ISnippet } from "../../common/modules/keybindings/snippets";
 import { EditorId } from "../../domain/types/types";
 import generateId from "../../common/modules/random/random";
 import { Logger } from "../../common/logging/logging";
- 
+
 const logger = new Logger("VimState");
 
 export class VimStateClass {
@@ -35,31 +35,35 @@ export class VimStateClass {
   }
 
   public static create(cursor: Cursor, lines?: VimLine[]) {
-    return new VimStateClass({ cursor, lines, id: "" });
+    return new VimStateClass({ mode: VimMode.NORMAL, cursor, lines, id: "" });
   }
 
   public static createEmpty() {
     return new VimStateClass({
+      mode: VimMode.NORMAL,
       cursor: { col: 0, line: 0 },
       lines: [{ text: "" }],
-      id: "",
+      id: "empty",
     });
   }
 
   public serialize(): IVimState {
-    return {
+    const result: IVimState = {
       id: this.id,
       cursor: this.cursor,
-      foldMap: this.foldMap,
       lines: this.lines,
       mode: this.mode,
-      visualStartCursor: this.visualStartCursor,
-      visualEndCursor: this.visualEndCursor,
-      deletedLinesIndeces: this.deletedLinesIndeces,
-      deletedLines: this.deletedLines,
-      commandName: this.commandName,
-      snippet: this.snippet,
     };
+    if (this.foldMap) result.foldMap = this.foldMap;
+    if (this.visualStartCursor)
+      result.visualStartCursor = this.visualStartCursor;
+    if (this.visualEndCursor) result.visualEndCursor = this.visualEndCursor;
+    if (this.deletedLinesIndeces)
+      result.deletedLinesIndeces = this.deletedLinesIndeces;
+    if (this.deletedLines) result.deletedLines = this.deletedLines;
+    if (this.commandName) result.commandName = this.commandName;
+    if (this.snippet) result.snippet = this.snippet;
+    return result;
   }
 
   public getLineAt(lineIndex: number) {

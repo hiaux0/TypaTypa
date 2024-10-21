@@ -102,7 +102,7 @@ interface IPrepareCommandReturn {
 }
 
 export class KeyMappingService {
-  private static keyBindings: KeyBindingModes = keyBindings;
+  public static keyBindings: KeyBindingModes = keyBindings;
   private static potentialCommands: VimCommand[] = [];
   private static lastCommand: VimCommand;
   private static lastKey: string;
@@ -149,25 +149,27 @@ export class KeyMappingService {
       ),
     };
     this.keyBindings = merged;
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,152] this.keyBindings: ", this.keyBindings);
   }
 
   private static overwriteExistingKeyBindings(
     existing: VimCommand[],
     additional: VimCommand[],
   ): VimCommand[] {
-    additional.forEach((additionalBinding) => {
-      const foundIndex = existing.findIndex((existingBinding) => {
+    additional?.forEach((additionalBinding) => {
+      existing.forEach((existingBinding, index) => {
         const okayKey = existingBinding.key === additionalBinding.key;
-        const okayCommand = false;
-        // existingBinding.command === additionalBinding.command;
+        // const okayCommand = false;
+        const okayCommand =
+          existingBinding.command === additionalBinding.command;
         const okay = okayKey || okayCommand;
-        return okay;
+        if (okay) {
+          existing[index] = {
+            ...existing[index],
+            ...additionalBinding,
+          };
+        }
       });
-      if (foundIndex > 0) {
-        existing[foundIndex] = additionalBinding;
-        return;
-      }
-      existing.push(additionalBinding);
     });
     return existing;
   }
@@ -238,7 +240,7 @@ export class KeyMappingService {
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] collectedModifiers: ", collectedModifiers);
     const pressedKey = ShortcutService.getPressedKey(event);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] pressedKey: ", pressedKey);
-    const finalKey = collectedModifiers.join('') + pressedKey;
+    const finalKey = collectedModifiers.join("") + pressedKey;
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] finalKey: ", finalKey);
     /* prettier-ignore */ logger.culogger.debug(['finalKey', finalKey], {}, (...r)=>console.log(...r));
     return finalKey;
@@ -289,7 +291,7 @@ export class KeyMappingService {
     const commandAwaitingNextInput = getCommandAwaitingNextInput(
       input,
       this.queuedKeys,
-      this.potentialCommands
+      this.potentialCommands,
     );
     if (commandAwaitingNextInput !== undefined) {
       if (this.potentialCommands.length === 0) {

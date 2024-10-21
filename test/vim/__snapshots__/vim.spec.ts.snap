@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`VimInit > Cursor 1`] = `
+{
+  "cursor": {
+    "col": 0,
+    "line": 0,
+  },
+  "deletedLines": {},
+  "id": "8iorzxt-b88n30hk20",
+  "lines": [
+    {
+      "text": "",
+    },
+  ],
+  "mode": "NORMAL",
+}
+`;

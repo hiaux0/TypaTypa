@@ -39,7 +39,7 @@ export function logOptionsGuard(input: any): input is ILogOptions {
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
-  log: true,
+  log: false,
   focusedLogging: true,
   measurePerf: false,
   focusedPerf: true,
@@ -70,7 +70,6 @@ export class Logger {
       options = args.pop() as ILogOptions;
     }
     const message = args.join(" ");
-    /*prettier-ignore*/ console.log("[logging.ts,51] args: ", args);
 
     /**
      * Wallaby logic.

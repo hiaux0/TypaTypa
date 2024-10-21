@@ -110,5 +110,5 @@ export function getLongestCommonSubstring(input: string[]): string {
   return a1.substring(0, i);
 }
 
-const output = getLongestCommonSubstring(["hello", "helmet"]); // "hel"
-/*prettier-ignore*/ console.log("[strings.ts,113] output: ", output);
+// const output = getLongestCommonSubstring(["hello", "helmet"]); // "hel"
+// /*prettier-ignore*/ console.log("[strings.ts,113] output: ", output);

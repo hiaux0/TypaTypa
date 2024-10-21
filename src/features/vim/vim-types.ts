@@ -1,6 +1,6 @@
 import { ISnippet } from "../../common/modules/keybindings/snippets";
 import { getRandomId } from "../../common/modules/random/random";
-import { EditorId } from "../../domain/types/types";
+import { EditorId, Id } from "../../domain/types/types";
 import { AbstractMode } from "./modes/AbstractMode";
 import { NormalMode } from "./modes/NormalMode";
 import { VisualLineMode } from "./modes/VisualLineMode";
@@ -91,6 +91,7 @@ export interface IVimState {
 export interface QueueInputReturn {
   vimState: IVimState | null | undefined;
   targetCommand: VIM_COMMAND;
+  targetCommandFull: VimCommand | undefined;
   keys: string;
 }
 
@@ -123,6 +124,7 @@ export interface VimHooks {
 
 export interface VimOptions {
   vimState?: IVimState;
+  vimId?: Id;
   keyBindings?: KeyBindingModes;
   container?: HTMLElement;
   childSelector?: string;

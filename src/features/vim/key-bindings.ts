@@ -103,7 +103,7 @@ export const keyBindings: KeyBindingModes = {
     { key: "cc", command: "clearLine" },
     { key: "dd", command: "deleteLine" },
     { key: "diw", command: "deleteInnerWord" },
-    { key: "i", command: "enterInsertMode" },
+    { key: "i", command: "enterInsertMode", preventUndoRedo: true },
     { key: "<Shift>I", command: VIM_COMMAND.enterInsertModeStart },
     { key: "J", command: "joinLine" },
     { key: "o", command: "createNewLine" },

@@ -61,6 +61,7 @@ export class VimCommandManager {
           this.options.hooks.modeChanged({
             vimState: result,
             targetCommand: commandName,
+            targetCommandFull: undefined,
             keys: "todo vcm",
           });
       }
@@ -127,6 +128,7 @@ export class VimCommandManager {
     const modeChangedResult: QueueInputReturn = {
       vimState: result,
       targetCommand: this.internalVimState.commandName as any,
+      targetCommandFull: undefined,
       keys: "",
     };
     this.options.hooks.modeChanged(modeChangedResult);

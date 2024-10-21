@@ -145,6 +145,7 @@ export interface VimCommand {
     text?: string;
   };
   desc?: string;
+  preventUndoRedo?: boolean;
 }
 
 export interface SynonymKey {

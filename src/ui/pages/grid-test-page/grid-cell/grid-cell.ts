@@ -189,10 +189,12 @@ export class GridCell {
       row.forEach((cell, cellIndex) => {
         if (!cell?.text) return;
         if (this.column === cellIndex && this.row === rowIndex) return;
+        if (!cell.text.toLowerCase().includes(inputValue.toLowerCase())) return;
         source.push(cell.text);
       });
     });
     this.autoCompleteSource = source;
+    /*prettier-ignore*/ console.log("[grid-cell.ts,196] this.autoCompleteSource: ", this.autoCompleteSource);
     this.autocompleteValue = inputValue;
     /*prettier-ignore*/ console.log("GC.B. [grid-cell.ts,196] this.autocompleteValue: ", this.autocompleteValue);
   }

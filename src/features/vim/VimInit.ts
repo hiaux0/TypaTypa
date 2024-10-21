@@ -1,6 +1,9 @@
+import { Logger } from "../../common/logging/logging";
 import { VIM_COMMAND } from "./vim-commands-repository";
 import { IVimState, VimOptions } from "./vim-types";
 import { VimInputHandler } from "./VimInputHandler";
+
+const logger = new Logger("VimInit");
 
 export class VimInit {
   private vimInputHandler: VimInputHandler;
@@ -12,18 +15,25 @@ export class VimInit {
 
     if (!options) return;
     this.options = options;
-    this.vimInputHandler
+    this.vimInputHandler;
   }
 
   public executeCommandSequence(sequence: string): void {
+    if (!this.vimInputHandler) console.log("Please call #init() first");
     this.vimInputHandler.executeCommandSequence(sequence);
   }
 
   public executeCommand(
     commandName: VIM_COMMAND,
     inputForCommand: string,
-  ): void {
-    this.vimInputHandler.executeCommand(commandName, inputForCommand);
+  ): IVimState | undefined {
+    if (!this.vimInputHandler)
+      throw "[ERROR:VimInit] Please call #init() first";
+    const result = this.vimInputHandler.executeCommand(
+      commandName,
+      inputForCommand,
+    );
+    return result;
   }
 
   public reload(vimState: IVimState) {

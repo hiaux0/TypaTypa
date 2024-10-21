@@ -1,5 +1,5 @@
-import { render } from './helper';
-import { MyApp } from '../src/my-app';
+// import { render } from './helper';
+// import { MyApp } from '../src/my-app';
 
 //describe('my-app', () => {
 //  it('should render message', async () => {

@@ -99,8 +99,9 @@ export class VimInputHandler {
   public executeCommand(
     commandName: VIM_COMMAND,
     inputForCommand: string,
-  ): void {
-    this.vimCore.executeCommand(commandName, inputForCommand);
+  ): IVimState | undefined {
+    const result = this.vimCore.executeCommand(commandName, inputForCommand);
+    return result;
   }
 
   public reload(vimState: IVimState) {
@@ -157,7 +158,6 @@ export class VimInputHandler {
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,156] pressedKey: ", pressedKey);
 
     let finalCommand = command;
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,159] finalCommand: ", finalCommand);
     let finalPressedKey = pressedKey;
     if (commandName === VIM_COMMAND.repeatLastCommand) {
       finalCommand = KeyMappingService.getLastCommand();
@@ -175,6 +175,7 @@ export class VimInputHandler {
         this.options.hooks.commandListener({
           vimState: this.vimCore.getVimState(),
           targetCommand: VIM_COMMAND[finalCommand.command],
+          targetCommandFull: finalCommand,
           keys: finalKey,
         });
     } else if (commandSequence) {
@@ -186,6 +187,7 @@ export class VimInputHandler {
           this.options.hooks.commandListener({
             vimState,
             targetCommand: VIM_COMMAND[finalCommand.command],
+            targetCommandFull: finalCommand,
             keys: finalKey,
           });
       }
@@ -203,6 +205,7 @@ export class VimInputHandler {
           this.options.hooks.commandListener({
             vimState,
             targetCommand: VIM_COMMAND[finalCommand.command],
+            targetCommandFull: finalCommand,
             keys: finalKey,
           });
       }
