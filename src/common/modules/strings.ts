@@ -99,16 +99,30 @@ export function numberToAlphabet(num: number) {
  * input: ["hello", "helmet"]
  * getLongestCommonSubstring(input) => "hel"
  */
-export function getLongestCommonSubstring(input: string[]): string {
-  const sorted = input.concat().sort();
+export function getLongestCommonSubstring(
+  strings: string[],
+  input?: string,
+): string {
+  const sorted = strings.concat().sort();
   if (sorted.length === 0) return "";
   const a1 = sorted[0];
   const a2 = sorted[sorted.length - 1];
   const L = a1.length;
   let i = 0;
   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
-  return a1.substring(0, i);
+  /*prettier-ignore*/ console.log("[strings.ts,111] i: ", i);
+  if (i === 0) {
+    const filtered = strings.filter((s) => s.startsWith(input));
+    return filtered[0] ?? "";
+  }
+  const result = a1.substring(0, i) ?? "";
+  return result;
 }
 
-// const output = getLongestCommonSubstring(["hello", "helmet"]); // "hel"
-// /*prettier-ignore*/ console.log("[strings.ts,113] output: ", output);
+//const output = getLongestCommonSubstring(["hello", "helmet", "hero"]); // "he"
+//const output1 = getLongestCommonSubstring(["hello", "helmet", "hero"]); // "he"
+//const output11 = getLongestCommonSubstring(["hello", "helmet"]); // "hel"
+// const output2 = getLongestCommonSubstring(["10", "01"]); // ""
+// const output21 = getLongestCommonSubstring(["10", "01"], "1"); // "10"
+const output22 = getLongestCommonSubstring(["00", "01"], "0"); // "hel"
+/*prettier-ignore*/ console.log("[strings.ts,128] output22: ", output22);

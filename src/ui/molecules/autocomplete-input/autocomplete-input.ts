@@ -63,17 +63,18 @@ export class AutocompleteInput {
     this.suggestions = [];
   }
 
-  private updateSuggestions(searchValue: string): void {
+  private updateSuggestions(searchValue: string | undefined): void {
     this.clearSuggestions();
-    //*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
-    //*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
+    if (!searchValue) return;
+    /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
+    /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
     this.source.forEach((word) => {
       const included = word.toLowerCase().includes(searchValue.toLowerCase());
       if (!included) return;
 
       this.collectSuggestion(word);
     });
-    // /*prettier-ignore*/ console.log("[autocomplete-input.ts,71] this.suggestions: ", this.suggestions);
+    // // /*prettier-ignore*/ console.log("[autocomplete-input.ts,71] this.suggestions: ", this.suggestions);
   }
 
   private collectSuggestion(searchValue: string): void {
@@ -108,7 +109,7 @@ export class AutocompleteInput {
           this.suggestions.length - 1,
           this.activeCursorIndex + 1,
         );
-        /*prettier-ignore*/ console.log("[autocomplete-input.ts,97] this.activeCursorIndex: ", this.activeCursorIndex);
+        // /*prettier-ignore*/ console.log("[autocomplete-input.ts,97] this.activeCursorIndex: ", this.activeCursorIndex);
         this.scrollToSuggestion();
         return;
       }
@@ -148,12 +149,12 @@ export class AutocompleteInput {
           return;
         }
         event.preventDefault();
-        /*prettier-ignore*/ console.log("----------------------------");
+        // /*prettier-ignore*/ console.log("----------------------------");
         const rawSuggestions = this.suggestions.map((s) => s.original);
         // /*prettier-ignore*/ console.log("AI.0 [autocomplete-input.ts,148] rawSuggestions: ", rawSuggestions);
-        const substring = getLongestCommonSubstring(rawSuggestions);
-        // /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,149] substring: ", substring);
-        /*prettier-ignore*/ console.log("AI.1.2 [autocomplete-input.ts,151] this.value: ", this.value);
+        // /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,151] this.value: ", this.value);
+        const substring = getLongestCommonSubstring(rawSuggestions, this.value);
+        // /*prettier-ignore*/ console.log("AI.1.2 [autocomplete-input.ts,149] substring: ", substring);
         const isSame = substring === this.value;
         // /*prettier-ignore*/ console.log("AI.2. [autocomplete-input.ts,151] isSame: ", isSame);
         const useSuggestion = isSame && substring.length > 0;
@@ -165,7 +166,7 @@ export class AutocompleteInput {
         }
         // /*prettier-ignore*/ console.log("AI.4. [autocomplete-input.ts,155] completion: ", completion);
         this.value = completion;
-        /*prettier-ignore*/ console.log(">>>> [autocomplete-input.ts,165] this.value: ", this.value);
+        // /*prettier-ignore*/ console.log(">>>> [autocomplete-input.ts,165] this.value: ", this.value);
         this.onPartialAccept?.(completion);
         return;
       }

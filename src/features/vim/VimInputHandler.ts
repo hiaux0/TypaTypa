@@ -143,7 +143,7 @@ export class VimInputHandler {
   }
 
   private handleKeydown = async (event: KeyboardEvent) => {
-    // if (getIsInputActive()) return;
+    if (getIsInputActive()) return;
     const mode = this.vimCore.getVimState().mode;
     // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
     if (!mode) return;

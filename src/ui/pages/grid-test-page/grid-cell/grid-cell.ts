@@ -41,6 +41,16 @@ export class GridCell {
   public autoCompleteSource: string[] = [];
   public measureTextWidth = measureTextWidth;
 
+  public get getEditWidth(): string {
+    const cellScrollWidth = measureTextWidth(this.textareaValue);
+    const minCellWidth = Math.min(
+      this.columnSettings?.colWidth ?? this.CELL_WIDTH,
+    );
+    const adjustedTextWidth = cellScrollWidth + PADDING;
+    const value = Math.max(adjustedTextWidth, minCellWidth);
+    return `${value}px`;
+  }
+
   public setWidthPx(
     cell: Cell = this.cell,
     columnWidth: number = this.columnSettings?.colWidth ?? this.CELL_WIDTH,
@@ -52,11 +62,14 @@ export class GridCell {
 
       // xx 1. Show all content in edit mode --> Don't need anymore?!
       const cellScrollWidth = measureTextWidth(cell.text);
+      const minCellWidth = Math.min(columnWidth ?? this.CELL_WIDTH);
       if (this.isEdit) {
-        // return `${cellScrollWidth + PADDING}px`;
+        const adjustedTextWidth = cellScrollWidth + PADDING;
+        const value = Math.max(adjustedTextWidth, minCellWidth);
+        // /*prettier-ignore*/ console.log("[grid-cell.ts,59] value: ", value);
+        return `${value}px`;
       }
 
-      const minCellWidth = Math.min(columnWidth ?? this.CELL_WIDTH);
       const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;
       if (!cell.text) {
         if (this.column === c && this.row === r && shouldLog) {
@@ -194,7 +207,7 @@ export class GridCell {
       });
     });
     this.autoCompleteSource = source;
-    // /*prettier-ignore*/ console.log("[grid-cell.ts,196] this.autoCompleteSource: ", this.autoCompleteSource);
+    /*prettier-ignore*/ console.log("[grid-cell.ts,196] this.autoCompleteSource: ", this.autoCompleteSource);
     this.autocompleteValue = inputValue;
     // /*prettier-ignore*/ console.log("GC.B. [grid-cell.ts,196] this.autocompleteValue: ", this.autocompleteValue);
   }

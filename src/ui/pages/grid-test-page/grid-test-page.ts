@@ -400,9 +400,8 @@ export class GridTestPage {
         desc: "Clear cell and go into Insert",
         execute: () => {
           this.clearCurrentCellContent();
-          this.mappingByMode[VimMode.NORMAL]
-            .find((mapping) => mapping.key === "<Enter>")
-            .execute();
+          this.putCellIntoEdit();
+          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
 
           return true;
         },
@@ -486,7 +485,6 @@ export class GridTestPage {
         key: "i",
         command: VIM_COMMAND.enterInsertMode,
         execute: () => {
-          console.log("enter insert mode");
           this.putCellIntoEdit();
           return true;
         },
@@ -506,9 +504,8 @@ export class GridTestPage {
           this.contentMap.splice(this.dragStartRowIndex + 1, 0, []);
           this.updateContentMapChangedForView();
           this.moveSelectedCellBy(1, "y");
-          this.mappingByMode[VimMode.NORMAL]
-            .find((mapping) => mapping.key === "<Enter>")
-            .execute();
+          this.putCellIntoEdit();
+          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
           return true;
         },
       },
@@ -523,9 +520,8 @@ export class GridTestPage {
           );
           this.updateContentMapChangedForView();
           this.moveSelectedCellBy(-1, "y");
-          this.mappingByMode[VimMode.NORMAL]
-            .find((mapping) => mapping.key === "<Enter>")
-            .execute();
+          this.putCellIntoEdit();
+          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
           return true;
         },
       },
@@ -755,17 +751,7 @@ export class GridTestPage {
         },
       },
     ],
-    [VimMode.INSERT]: [
-      {
-        key: "<Escape>",
-        command: VIM_COMMAND.enterNormalMode,
-        execute: () => {
-          console.log("escape insert");
-          this.putCellIntoUnfocus();
-        },
-        preventUndoRedo: true,
-      },
-    ],
+    [VimMode.INSERT]: [],
     [VimMode.CUSTOM]: [
       {
         command: VIM_COMMAND.cursorRight,
@@ -805,22 +791,6 @@ export class GridTestPage {
       },
     ],
     [VimMode.ALL]: [
-      {
-        key: "<Enter>",
-        command: VIM_COMMAND.customExecute,
-        desc: "bor",
-        execute: () => {
-          console.log("enter");
-          if (getIsInputActive()) {
-            this.putCellIntoUnfocus();
-            this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-          } else {
-            this.putCellIntoEdit();
-            this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-          }
-        },
-      },
-
       {
         key: "<Control>s",
         execute: () => {
@@ -1094,6 +1064,19 @@ export class GridTestPage {
       //"<Control>r": () => {
       //  // return true;
       //},
+
+      Enter: () => {
+        if (getIsInputActive()) {
+          this.putCellIntoUnfocus();
+          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        } else {
+          this.putCellIntoEdit();
+          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+        }
+      },
+      Escape: () => {
+        this.putCellIntoUnfocus();
+      },
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
       },

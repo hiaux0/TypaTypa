@@ -3,8 +3,8 @@
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''}"
-    css="width: ${isEdit ? `${measureTextWidth(textareaValue)}px` : widthPxNew};"
-    data-compute-width.bind="setWidthPx(cell, columnSettings?.colWidth, wholeRow.length, cell.colsToNextText)"
+    css="width: ${isEdit ? getEditWidth : widthPxNew};"
+    data-compute-width.bind="setWidthPx(cell, columnSettings?.colWidth, wholeRow.length, cell.colsToNextText, isEdit)"
   >
     <!-- Can:t remember why input and read-only were wrapped -->
     <!-- <template if.bind="cell.text"> </template> -->

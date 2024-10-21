@@ -88,11 +88,11 @@
         - this makes it more dependent on html (cf. measureText)
 - [ ] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
 
-- [ ] overflowww
 
 # Done
 ## Grid
 
+- [x] overflowww
 - [x] fix: grid: // TODO partial completion like the terminal
 - [x] change width on autocomplete partial accept
 - [x] bug: new cell, does not add Cell obj

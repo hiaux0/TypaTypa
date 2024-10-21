@@ -65,6 +65,9 @@ src/ui/mixins.scss
 src/ui/molecules/autocomplete-input/autocomplete-input.ts
 src/ui/molecules/autocomplete-input/autocomplete-input.html
 src/types.ts
+src/features/vim/vimCore/VimCore.ts
+src/features/vim/VimInputHandler.ts
+src/features/vim/vimCore/commands/KeyMappingService.ts
 
 
 %% Grid Cell Content

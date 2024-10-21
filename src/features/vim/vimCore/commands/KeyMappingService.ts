@@ -165,36 +165,51 @@ export class KeyMappingService {
       ],
     };
     this.keyBindings = merged;
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,157] this.keyBindings: ", this.keyBindings);
+    /*prettier-ignore*/ console.log("[KeyMappingService.ts,157] this.keyBindings: ", this.keyBindings);
   }
 
   private static overwriteExistingKeyBindings(
     existing: VimCommand[],
     ...additionals: VimCommand[][]
   ): VimCommand[] {
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,165] additional: ", additional);
     const merged = additionals.reduce((acc, curr) => {
       return acc.concat(curr);
     }, []);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,176] merged: ", merged);
 
     merged?.forEach((additionalBinding) => {
       // /*prettier-ignore*/ console.log("[KeyMappingService.ts,181] additionalBinding: ", additionalBinding);
+      let foundCount = 0;
       existing.forEach((existingBinding, index) => {
         const okayKey = existingBinding.key === additionalBinding.key;
         let okayCommand = false;
         if (existingBinding.command || additionalBinding.command) {
           okayCommand = existingBinding.command === additionalBinding.command;
         }
-
         const okay = okayKey || okayCommand;
+        //if (additionalBinding.key === "<Control>s") {
+        ///*prettier-ignore*/ console.log("----------------------------");
+        ///*prettier-ignore*/ console.log("[KeyMappingService.ts,190] okay: ", okay);
+        ///*prettier-ignore*/ console.log("[KeyMappingService.ts,191] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
+        ///*prettier-ignore*/ console.log("[KeyMappingService.ts,176] index: ", index);
+        //}
         if (okay) {
-          ///*prettier-ignore*/ console.log("----------------------------");
-          ///*prettier-ignore*/ console.log("[KeyMappingService.ts,191] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
-          ///*prettier-ignore*/ console.log("[KeyMappingService.ts,176] index: ", index);
           existing[index] = {
             ...existing[index],
             ...additionalBinding,
           };
+          foundCount++;
+        }
+
+        // If nothing found, then add
+        const lastIndex = index === existing.length - 1;
+        if (lastIndex && !okay && foundCount === 0) {
+          existing.push(additionalBinding);
+        }
+
+        // Reset found count
+        if (lastIndex && foundCount > 1) {
+          foundCount = 0;
         }
       });
     });
