@@ -618,6 +618,13 @@ export class GridTestPage {
       },
     },
     {
+      key: "zc",
+      desc: "Scroll to [C]enter",
+      execute: () => {
+        this.scrollSelectdeIntoView();
+      },
+    },
+    {
       key: "zb",
       execute: () => {
         const col = this.dragStartColumnIndex;
@@ -1118,6 +1125,7 @@ export class GridTestPage {
     this.gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
     // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
+    this.scrollSelectdeIntoView();
   }
 
   private addEventListeners() {}
@@ -2015,5 +2023,23 @@ export class GridTestPage {
       height: rowHeaderRect.height,
     };
     return rect;
+  }
+
+  private getRowsInViewport(): number {
+    const container = this.spreadsheetContainerRef;
+    const containerRect = container.getBoundingClientRect();
+    const rowHeader = document.querySelector(".row-header");
+    const rowHeaderRect = rowHeader.getBoundingClientRect();
+    const rowHeight = rowHeaderRect.height;
+    const rows = Math.floor(containerRect.height / rowHeight);
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,2028] rows: ", rows);
+    return rows;
+  }
+
+  private scrollSelectdeIntoView(
+    options: ScrollIntoViewOptions = { block: "center", inline: "center" },
+  ): void {
+    const $selected = document.querySelector(".selection");
+    $selected.scrollIntoView(options);
   }
 }
