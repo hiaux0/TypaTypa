@@ -66,6 +66,14 @@ import {
 const logger = new Logger("GridTestPage");
 const debugLog = false;
 
+interface CellRect {
+  left: number;
+  top: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 type GridPanelTypes = "button" | "text";
 
 type MappingByCommandName = Record<
@@ -577,6 +585,51 @@ export class GridTestPage {
         this.lastCellContentArray = [text];
         setClipboardContent(text);
         this.clearCurrentCellContent();
+      },
+    },
+    {
+      key: "zt",
+      execute: () => {
+        const col = this.dragStartColumnIndex;
+        const row = this.dragStartRowIndex;
+        const rect = this.getXYOfSelection(col, row);
+        const { top, height } = rect;
+        const { height: normContainerHeight } =
+          this.getNormalizedContainerDimension();
+        const topPart = normContainerHeight / 5;
+
+        const scrollDiff = topPart - top - height * 1.5;
+        this.spreadsheetContainerRef.scrollTop -= scrollDiff;
+      },
+    },
+    {
+      key: "zz",
+      execute: () => {
+        const col = this.dragStartColumnIndex;
+        const row = this.dragStartRowIndex;
+        const rect = this.getXYOfSelection(col, row);
+        const { top, height } = rect;
+        const { height: normContainerHeight } =
+          this.getNormalizedContainerDimension();
+        const center = normContainerHeight / 2;
+
+        const scrollDiff = center - top - height * 1.5;
+        this.spreadsheetContainerRef.scrollTop -= scrollDiff;
+      },
+    },
+    {
+      key: "zb",
+      execute: () => {
+        const col = this.dragStartColumnIndex;
+        const row = this.dragStartRowIndex;
+        const rect = this.getXYOfSelection(col, row);
+        const { top, height } = rect;
+        const { height: normContainerHeight } =
+          this.getNormalizedContainerDimension();
+        const topPart = normContainerHeight * 0.95;
+
+        const scrollDiff = topPart - top - height * 1.5;
+        this.spreadsheetContainerRef.scrollTop -= scrollDiff;
       },
     },
     {
@@ -1924,5 +1977,43 @@ export class GridTestPage {
     );
     const width = getComputedValueFromPixelString(colHeaderElement, "width");
     this.spreadsheetContainerRef.scrollLeft -= width;
+  }
+
+  private getNormalizedContainerDimension() {
+    const $container = document.querySelector(".spreadsheet-container");
+    const containerRect = $container.getBoundingClientRect();
+    const { width, height } = document
+      .querySelector<HTMLElement>(".column-header-corner")
+      .getBoundingClientRect();
+    const normContainerWidth = containerRect.width - width;
+    const normContainerHeight = containerRect.height - height;
+    const result = {
+      width: normContainerWidth,
+      height: normContainerHeight,
+    };
+    return result;
+  }
+
+  private getXYOfSelection(col: number, row: number): CellRect {
+    const $container = document.querySelector(".spreadsheet-container");
+    const containerRect = $container.getBoundingClientRect();
+    const $colHeader = document.querySelector(`[data-col-index='${col}']`);
+    const colHeaderRect = $colHeader.getBoundingClientRect();
+    const { width, height } = document
+      .querySelector<HTMLElement>(".column-header-corner")
+      .getBoundingClientRect();
+    const normalizedLeft = colHeaderRect.left - containerRect.left - width;
+    const $rowHeader = document.querySelector(`[data-row-index='${row}']`);
+    const rowHeaderRect = $rowHeader.getBoundingClientRect();
+    const normalizedTop = rowHeaderRect.top - containerRect.top - height;
+    const rect: CellRect = {
+      left: normalizedLeft,
+      top: normalizedTop,
+      x: normalizedLeft,
+      y: normalizedTop,
+      width: colHeaderRect.width,
+      height: rowHeaderRect.height,
+    };
+    return rect;
   }
 }

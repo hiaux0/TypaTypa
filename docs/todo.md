@@ -72,7 +72,6 @@
 
 - [ ] feat: grid: todo cell
 - [ ] fix: grid: >> and undo redo
-- [ ] feat: prevent 'repearCommand' for navigation
 - [ ] feat: search
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
   - then can choose one, and it could be replaced
@@ -86,11 +85,12 @@
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
 - [ ] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
-
+- [ ] feat: grid: zz
 
 # Done
 ## Grid
 
+- [x] feat: prevent 'repearCommand' for navigation
 - [x] refac: grid----- vim ------ use existing vimCore logic --> no, because lines and cell behave differently
   - eg. {} on grid, will not work on lines of text
     - I would like to only move along columns, but the vimCore logic only operates on rows
