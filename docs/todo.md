@@ -77,7 +77,6 @@
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
   - then can choose one, and it could be replaced
     - replace by 1.undo 2. redo with additional args, or, replaced text
-- [ ] refac: grid----- vim ------ use existing vimCore logic
 - [ ] refac: improve cell selection and scroll position (scrollTop, scrollLeft); eg. autoscroll to right cell
   - convert columns/rows into lines, and update cell coords based on vimState
 - [ ] fix: resize and overflow resets to cell_width
@@ -87,6 +86,10 @@
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
 - [ ] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
+- [!] refac: grid----- vim ------ use existing vimCore logic --> no, because lines and cell behave differently
+  - eg. {} on grid, will not work on lines of text
+    - I would like to only move along columns, but the vimCore logic only operates on rows
+    - [!] THOUGH, I could always invoke a new vimInstance?
 
 
 # Done

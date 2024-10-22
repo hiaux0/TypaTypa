@@ -187,12 +187,6 @@ export class KeyMappingService {
           okayCommand = existingBinding.command === additionalBinding.command;
         }
         const okay = okayKey || okayCommand;
-        //if (additionalBinding.key === "<Control>s") {
-        ///*prettier-ignore*/ console.log("----------------------------");
-        ///*prettier-ignore*/ console.log("[KeyMappingService.ts,190] okay: ", okay);
-        ///*prettier-ignore*/ console.log("[KeyMappingService.ts,191] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
-        ///*prettier-ignore*/ console.log("[KeyMappingService.ts,176] index: ", index);
-        //}
         if (okay) {
           existing[index] = {
             ...existing[index],
@@ -207,6 +201,15 @@ export class KeyMappingService {
           existing.push(additionalBinding);
         }
 
+        // if (additionalBinding.key === "<Control>s") {
+        //if (additionalBinding.command === "jumpNextBlock") {
+        //  /*prettier-ignore*/ console.log("----------------------------");
+        //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,190] okay: ", okay);
+        //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,191] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
+        //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,176] index: ", index);
+        //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,213] foundCount: ", foundCount);
+        //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,200] lastIndex: ", lastIndex);
+        //}
         // Reset found count
         if (lastIndex && foundCount > 1) {
           foundCount = 0;
@@ -234,6 +237,7 @@ export class KeyMappingService {
     mode: VimMode,
   ): IPrepareCommandReturn | undefined {
     const { targetCommand } = this.findPotentialCommand(key, [], mode);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] targetCommand: ", targetCommand);
 
     if (!targetCommand) return;
 
@@ -387,7 +391,6 @@ export class KeyMappingService {
     });
 
     /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', potentialCommands], {}, (...r) => console.log(...r));
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,359] potentialCommands: ", potentialCommands);
 
     let targetCommand;
     if (potentialCommands.length === 0) {

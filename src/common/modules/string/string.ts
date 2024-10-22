@@ -166,10 +166,12 @@ export function filterListByCharSequence(inputList: string[], value: string) {
  * value = 'z'
  * --> true
  */
-export function inputContainsSequence(input: string, sequence: string) {
-  // input; /*?*/
-  // sequence; /*?*/
+export function inputContainsSequence(
+  input: string,
+  sequence: string,
+): boolean {
   const regex = new RegExp(`^${escapeRegex(sequence)}`);
+  if (!input) return false;
   const execedRegex = regex.exec(input);
 
   if (Array.isArray(execedRegex)) {
@@ -177,7 +179,8 @@ export function inputContainsSequence(input: string, sequence: string) {
     return hasMatch;
   }
 
-  return execedRegex !== null;
+  const result = execedRegex !== null;
+  return result;
 }
 
 function escapeRegex(string: string) {

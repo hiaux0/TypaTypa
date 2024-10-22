@@ -19,7 +19,7 @@ import { cursorAllModes } from "./key-bindings";
  *   - and VimUi
  */
 export class VimInputHandler {
-  private vimCore: VimCore;
+  public vimCore: VimCore;
   private vimUi: VimUi;
   private options?: VimOptions;
   private eventListeners: any[] = [];

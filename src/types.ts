@@ -41,7 +41,7 @@ export interface Features {
 }
 
 export type GridSelectionCoord = [number, number];
-export type GridSelectionRange = [GridSelectionCoord, GridSelectionCoord];
+export type GridSelectionRange = [start: GridSelectionCoord, end: GridSelectionCoord];
 
 // export type ContentMap = Record<string, string>;
 export interface Cell {

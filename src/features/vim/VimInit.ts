@@ -1,11 +1,13 @@
 import { Logger } from "../../common/logging/logging";
 import { VIM_COMMAND } from "./vim-commands-repository";
 import { IVimState, VimOptions } from "./vim-types";
+import { VimCore } from "./vimCore/VimCore";
 import { VimInputHandler } from "./VimInputHandler";
 
 const logger = new Logger("VimInit");
 
 export class VimInit {
+  public vimCore: VimCore;
   private vimInputHandler: VimInputHandler;
   private options: VimOptions;
 
@@ -16,6 +18,7 @@ export class VimInit {
     if (!options) return;
     this.options = options;
     this.vimInputHandler;
+    this.vimCore = this.vimInputHandler.vimCore;
   }
 
   public executeCommandSequence(sequence: string): void {

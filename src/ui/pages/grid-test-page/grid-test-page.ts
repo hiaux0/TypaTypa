@@ -47,6 +47,8 @@ import {
   GridIteratorOptions,
   calculateDiff,
   checkCellOverflow,
+  convertGridToVimState,
+  convertRangeToVimState,
   defaultGridIteratorOptions,
   iterateOverGrid,
   iterateOverGridBackwards,
@@ -215,7 +217,6 @@ export class GridTestPage {
           let index = 0;
           this.iterateOverCol(
             (col, row) => {
-              console.log("1. add cell at", col, row);
               this.addCellEmptyAt(col, row);
               const content = this.lastCellContentArray[index++];
               this.setCurrentCellContent(content, col, row, {
@@ -609,6 +610,7 @@ export class GridTestPage {
       {
         command: VIM_COMMAND.cursorUp,
         execute: () => {
+          console.log("up");
           this.unselectAllSelecedCells();
           const b = this.dragEndRowIndex - 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
@@ -619,6 +621,7 @@ export class GridTestPage {
       {
         command: VIM_COMMAND.cursorDown,
         execute: () => {
+          console.log("down");
           this.unselectAllSelecedCells();
           const b = this.dragEndRowIndex + 1;
           this.dragEndRowIndex = cycleInRange(0, this.rowSize, b);
@@ -794,7 +797,6 @@ export class GridTestPage {
       {
         key: "<Control>s",
         execute: () => {
-          console.log("save 2");
           this.save();
           return true;
         },
@@ -1086,14 +1088,15 @@ export class GridTestPage {
     };
     new KeyMappingService().init(mappingByKey, this.mappingByMode);
 
+    // const vimState = convertGridToVimState(
+    const vimState = convertRangeToVimState(
+      this.contentMap,
+      this.activeSheet.selectedRange,
+    );
+
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
-      vimState: {
-        id: "grid-navigation",
-        mode: VimMode.NORMAL,
-        cursor: { line: 0, col: 0 },
-        lines: [{ text: "    " }],
-      },
+      vimState,
       hooks: {
         modeChanged: (payload) => {
           this.mode = payload.vimState.mode;

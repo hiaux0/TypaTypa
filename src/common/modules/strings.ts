@@ -110,7 +110,6 @@ export function getLongestCommonSubstring(
   const L = a1.length;
   let i = 0;
   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
-  /*prettier-ignore*/ console.log("[strings.ts,111] i: ", i);
   if (i === 0) {
     const filtered = strings.filter((s) => s.startsWith(input));
     return filtered[0] ?? "";
@@ -125,4 +124,4 @@ export function getLongestCommonSubstring(
 // const output2 = getLongestCommonSubstring(["10", "01"]); // ""
 // const output21 = getLongestCommonSubstring(["10", "01"], "1"); // "10"
 const output22 = getLongestCommonSubstring(["00", "01"], "0"); // "hel"
-/*prettier-ignore*/ console.log("[strings.ts,128] output22: ", output22);
+// /*prettier-ignore*/ console.log("[strings.ts,128] output22: ", output22);

@@ -1,9 +1,17 @@
+import { jsonStringify } from "@aurelia/testing";
 import { CELL_WIDTH } from "../../../../common/modules/constants";
 import {
+  IVimState,
+  VimLine,
+  VimMode,
+} from "../../../../features/vim/vim-types";
+import {
   Cell,
+  ContentMap,
   GridDatabaseType,
   GridSelectionCoord,
   GridSelectionRange,
+  Sheet,
 } from "../../../../types";
 
 export interface GridIteratorOptions {
@@ -243,4 +251,77 @@ export function checkCellOverflow(
   });
 
   return sheetsData;
+}
+
+export function convertGridToVimState(
+  gridContent: ContentMap,
+  range: GridSelectionRange,
+): IVimState {
+  // Convert lines
+  const lines: VimLine[] = [];
+  let currentLine = range[0][1];
+  let currentText = "";
+  iterateOverGrid(range[0], range[1], (col, row) => {
+    if (currentLine !== row) {
+      currentText = "";
+    }
+    currentLine = row;
+    if (!lines[row]) {
+      lines[row] = { text: "" };
+    }
+    const text = gridContent[row]?.[col]?.text;
+    if (text) {
+      currentText += text;
+    } else {
+      currentText += " ";
+    }
+    lines[row].text = currentText;
+  });
+  /*prettier-ignore*/ console.log("[gridModules.ts,279] JSON.stringify(lines,null,4): ", JSON.stringify(lines,null,4));
+
+  // Convert cursor
+  const [col, line] = range[0];
+  const cursor = { line, col };
+  const result = {
+    id: "grid-navigation",
+    mode: VimMode.NORMAL,
+    cursor,
+    lines,
+  };
+  return result;
+}
+
+export function convertRangeToVimState(
+  gridContent: ContentMap,
+  range: GridSelectionRange,
+): IVimState {
+  // Convert lines
+  const lines: VimLine[] = [];
+  let currentLine = range[0][1];
+  let currentText = "";
+  iterateOverRange(range[0], range[1], (col, row) => {
+    if (currentLine !== row) {
+      currentText = "";
+    }
+    currentLine = row;
+    if (!lines[row]) {
+      lines[row] = { text: "" };
+    }
+    const text = gridContent[row]?.[col]?.text;
+    if (text) {
+      currentText += text;
+    }
+    lines[row].text = currentText;
+  });
+
+  // Convert cursor
+  const [col, line] = range[0];
+  const cursor = { line, col };
+  const result = {
+    id: "grid-navigation",
+    mode: VimMode.NORMAL,
+    cursor,
+    lines,
+  };
+  return result;
 }
