@@ -294,6 +294,7 @@ export function convertGridToVimState(
 export function convertRangeToVimState(
   gridContent: ContentMap,
   range: GridSelectionRange,
+  startRange?: GridSelectionCoord,
 ): IVimState {
   // Convert lines
   const lines: VimLine[] = [];
@@ -315,7 +316,7 @@ export function convertRangeToVimState(
   });
 
   // Convert cursor
-  const [col, line] = range[0];
+  const [col, line] = startRange ?? range[0];
   const cursor = { line, col };
   const result = {
     id: "grid-navigation",

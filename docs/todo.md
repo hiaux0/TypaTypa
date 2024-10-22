@@ -86,15 +86,15 @@
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
 - [ ] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
-- [!] refac: grid----- vim ------ use existing vimCore logic --> no, because lines and cell behave differently
-  - eg. {} on grid, will not work on lines of text
-    - I would like to only move along columns, but the vimCore logic only operates on rows
-    - [!] THOUGH, I could always invoke a new vimInstance?
 
 
 # Done
 ## Grid
 
+- [x] refac: grid----- vim ------ use existing vimCore logic --> no, because lines and cell behave differently
+  - eg. {} on grid, will not work on lines of text
+    - I would like to only move along columns, but the vimCore logic only operates on rows
+    - [x] THOUGH, I could always invoke a new vimInstance?
 - [x] overflowww
 - [x] fix: grid: // TODO partial completion like the terminal
 - [x] change width on autocomplete partial accept
@@ -258,28 +258,7 @@ const mappingByKey = {
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+hello
+helmet
 
 

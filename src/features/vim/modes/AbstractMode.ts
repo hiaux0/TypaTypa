@@ -272,8 +272,10 @@ export abstract class AbstractMode {
         return isEmpty;
       },
     );
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,268] nextNonEmptyLineIndex: ", nextNonEmptyLineIndex);
     const amountOnEmptyLines =
       this.vimState.cursor.line - nextNonEmptyLineIndex + 1; // don't count starting line
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,277] amountOnEmptyLines: ", amountOnEmptyLines);
     let startingIndex;
 
     if (amountOnEmptyLines === 0) {
@@ -281,6 +283,7 @@ export abstract class AbstractMode {
     } else {
       startingIndex = nextNonEmptyLineIndex + 1;
     }
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,283] startingIndex: ", startingIndex);
 
     const previousBlockIndex = ArrayUtils.findIndexFromIndex(
       this.vimState.lines ?? [],
@@ -290,6 +293,7 @@ export abstract class AbstractMode {
         return isEmpty;
       },
     );
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,289] previousBlockIndex: ", previousBlockIndex);
 
     if (!this.vimState.lines) return this.vimState;
     finalLine = previousBlockIndex;
@@ -299,6 +303,7 @@ export abstract class AbstractMode {
     } else if (previousBlockIndex >= 0) {
       finalLine = previousBlockIndex;
     }
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,300] finalLine: ", finalLine);
 
     this.setCursorLine(finalLine);
 
@@ -316,8 +321,10 @@ export abstract class AbstractMode {
         return isEmpty;
       },
     );
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,312] nextNonEmptyLineIndex: ", nextNonEmptyLineIndex);
     const amountOnEmptyLines =
       this.vimState.cursor.line - nextNonEmptyLineIndex - 1; // don't count starting line
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,321] amountOnEmptyLines: ", amountOnEmptyLines);
     let startingIndex;
 
     if (amountOnEmptyLines === 0) {
@@ -325,6 +332,7 @@ export abstract class AbstractMode {
     } else {
       startingIndex = nextNonEmptyLineIndex - 1;
     }
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,327] startingIndex: ", startingIndex);
 
     const previousBlockIndex = ArrayUtils.findIndexBackwardFromIndex(
       this.vimState.lines,
@@ -334,6 +342,7 @@ export abstract class AbstractMode {
         return isEmpty;
       },
     );
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,333] previousBlockIndex: ", previousBlockIndex);
 
     finalLine = previousBlockIndex;
     if (previousBlockIndex === this.vimState.cursor.line) {
@@ -342,6 +351,7 @@ export abstract class AbstractMode {
     } else if (previousBlockIndex >= 0) {
       finalLine = previousBlockIndex;
     }
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,343] finalLine: ", finalLine);
 
     this.setCursorLine(finalLine);
 

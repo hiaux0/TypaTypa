@@ -28,7 +28,7 @@ export class VimInit {
 
   public executeCommand(
     commandName: VIM_COMMAND,
-    inputForCommand: string,
+    inputForCommand: string = "",
   ): IVimState | undefined {
     if (!this.vimInputHandler)
       throw "[ERROR:VimInit] Please call #init() first";

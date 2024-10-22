@@ -166,6 +166,16 @@ export const keyBindings: KeyBindingModes = {
     ...cursorAllModes,
     ...cursorNormalAndVisual,
   ],
+  [VimMode.ALL]: [
+    {
+      key: "<Space>c",
+      desc: "[c]ear console",
+      execute: () => {
+        console.clear();
+      },
+      preventUndoRedo: true,
+    },
+  ],
   synonyms: {
     "<esc>": "<Escape>",
     escape: "<Escape>",

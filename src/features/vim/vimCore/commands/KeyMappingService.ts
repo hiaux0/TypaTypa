@@ -138,6 +138,7 @@ export class KeyMappingService {
       [VimMode.NORMAL]: [
         ...this.overwriteExistingKeyBindings(
           this.keyBindings[VimMode.NORMAL],
+          this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.NORMAL],
           additionalKeyBindings[VimMode.ALL],
         ),
@@ -145,6 +146,7 @@ export class KeyMappingService {
       [VimMode.INSERT]: [
         ...this.overwriteExistingKeyBindings(
           this.keyBindings[VimMode.INSERT],
+          this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.INSERT],
           additionalKeyBindings[VimMode.ALL],
         ),
@@ -152,6 +154,7 @@ export class KeyMappingService {
       [VimMode.VISUAL]: [
         ...this.overwriteExistingKeyBindings(
           this.keyBindings[VimMode.VISUAL],
+          this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.VISUAL],
           additionalKeyBindings[VimMode.ALL],
         ),
@@ -159,13 +162,14 @@ export class KeyMappingService {
       [VimMode.CUSTOM]: [
         ...this.overwriteExistingKeyBindings(
           this.keyBindings[VimMode.CUSTOM],
+          this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.CUSTOM],
           additionalKeyBindings[VimMode.ALL],
         ),
       ],
     };
     this.keyBindings = merged;
-    /*prettier-ignore*/ console.log("[KeyMappingService.ts,157] this.keyBindings: ", this.keyBindings);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,157] this.keyBindings: ", this.keyBindings);
   }
 
   private static overwriteExistingKeyBindings(
@@ -382,6 +386,7 @@ export class KeyMappingService {
     }
     /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
 
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,386] targetKeyBinding: ", targetKeyBinding);
     const potentialCommands = targetKeyBinding.filter((keyBinding) => {
       // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
       //   return true;
@@ -391,6 +396,7 @@ export class KeyMappingService {
     });
 
     /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', potentialCommands], {}, (...r) => console.log(...r));
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,394] potentialCommands: ", potentialCommands);
 
     let targetCommand;
     if (potentialCommands.length === 0) {
