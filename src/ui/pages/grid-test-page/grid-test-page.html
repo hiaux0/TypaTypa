@@ -34,7 +34,11 @@
     <!-- 1/3 Column Header -->
     <section class="column-container row-header">
       <div class="cell column-header-corner"></div>
-      <div class="cell-header" repeat.for="rowIndex of rowSize">
+      <div
+        class="cell-header"
+        repeat.for="rowIndex of rowSize"
+        data-row-index.bind="rowIndex"
+      >
         ${rowIndex}
       </div>
     </section>
@@ -49,6 +53,7 @@
         <div
           class="cell-header column-header"
           click.trigger="selectColumn(columnIndex)"
+          data-col-index.bind="columnIndex"
         >
           <!-- ${numberToAlphabet(columnIndex)} -->
           <div>${(columnIndex)}</div>

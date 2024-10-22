@@ -23,7 +23,7 @@ export function getValueFromPixelString(pixelString: string): number {
 }
 
 export function getComputedValueFromPixelString(
-  element: HTMLElement,
+  element: Element | HTMLElement,
   value: string,
 ): number {
   // @ts-ignore

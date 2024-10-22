@@ -85,3 +85,8 @@ textarea {
 .debug_red {
   background-color: red;
 }
+
+* {
+  --row-header-width: 31.3333328px;
+  --cell-height: 32px;
+}

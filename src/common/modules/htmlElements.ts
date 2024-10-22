@@ -104,3 +104,16 @@ export function getElementStyleAsNumber(
   const result = getValueFromPixelString(styleString);
   return result;
 }
+
+export function getRelativePosition(parent: HTMLElement, inner: HTMLElement) {
+  const parentRect = parent.getBoundingClientRect();
+  const innerRect = inner.getBoundingClientRect();
+
+  const relativeLeft = innerRect.left - parentRect.left + parent.scrollLeft;
+  const relativeTop = innerRect.top - parentRect.top + parent.scrollTop;
+
+  return {
+    left: relativeLeft,
+    top: relativeTop,
+  };
+}
