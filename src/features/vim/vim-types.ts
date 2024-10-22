@@ -134,6 +134,14 @@ export interface VimOptions {
   leader?: string;
   vimPlugins?: VimPlugin[];
   indentSize?: number;
+  /**
+   * Allow for last command to be repeated, if the last key matches
+   */
+  allowChaining?: boolean;
+  /**
+   * Allow for "family" of commands to be executed
+   */
+  allowExtendedChaining?: boolean;
   hooks?: VimHooks;
 }
 

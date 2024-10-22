@@ -10,6 +10,7 @@ import {
   FindPotentialCommandReturn,
   KeyBindingModes,
   VimMode,
+  VimOptions,
 } from "../../vim-types";
 import { SPECIAL_KEYS } from "../../../../common/modules/keybindings/app-keys";
 import { Logger } from "../../../../common/logging/logging";
@@ -239,8 +240,9 @@ export class KeyMappingService {
   public static prepareCommand(
     key: string,
     mode: VimMode,
+    options?: VimOptions,
   ): IPrepareCommandReturn | undefined {
-    const { targetCommand } = this.findPotentialCommand(key, [], mode);
+    const { targetCommand } = this.findPotentialCommand(key, [], mode, options);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] targetCommand: ", targetCommand);
 
     if (!targetCommand) return;
@@ -337,6 +339,7 @@ export class KeyMappingService {
     input: string,
     modifiers: string[] = [],
     mode: VimMode,
+    options?: VimOptions,
   ): FindPotentialCommandReturn {
     const commandAwaitingNextInput = getCommandAwaitingNextInput(
       input,
@@ -387,7 +390,7 @@ export class KeyMappingService {
     /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
 
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,386] targetKeyBinding: ", targetKeyBinding);
-    const potentialCommands = targetKeyBinding.filter((keyBinding) => {
+    const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
       // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
       //   return true;
       // }
@@ -395,25 +398,49 @@ export class KeyMappingService {
       return result;
     });
 
-    /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', potentialCommands], {}, (...r) => console.log(...r));
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,394] potentialCommands: ", potentialCommands);
+    /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', finalPotentialCommands], {}, (...r) => console.log(...r));
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,402] finalPotentialCommands: ", finalPotentialCommands);
 
     let targetCommand;
-    if (potentialCommands.length === 0) {
+    if (finalPotentialCommands.length === 0) {
       this.emptyQueuedKeys();
     } else if (
-      potentialCommands.length === 1 &&
-      keySequence === potentialCommands[0].key
+      finalPotentialCommands.length === 1 &&
+      keySequence === finalPotentialCommands[0].key
     ) {
-      targetCommand = potentialCommands[0];
-      this.emptyQueuedKeys();
+      const isChain =
+        options?.allowChaining && this.lastCommand?.key.endsWith(keySequence);
+      const isExtendedChain = options?.allowExtendedChaining;
+      if (isExtendedChain) {
+        const commandForExtendedChain = targetKeyBinding.filter(
+          (keyBinding) => {
+            // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
+            //   return true;
+            // }
+            const result = inputContainsSequence(keyBinding.key, keySequence);
+            return result;
+          },
+        );
+        this.lastCommand?.key.startsWith(keySequence);
+        targetCommand = commandForExtendedChain[0];
+      } else if (isChain) {
+        targetCommand = this.lastCommand;
+        this.emptyQueuedKeys();
+      } else {
+        targetCommand = finalPotentialCommands[0];
+        this.emptyQueuedKeys();
+      }
     } else {
       this.queuedKeys.push(input);
-      this.potentialCommands = potentialCommands;
+      this.potentialCommands = finalPotentialCommands;
     }
 
-    /*prettier-ignore*/ logPotentialCommands(potentialCommands, input, mode);
-    return { targetCommand, potentialCommands, keySequence };
+    /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands, input, mode);
+    return {
+      targetCommand,
+      potentialCommands: finalPotentialCommands,
+      keySequence,
+    };
   }
 
   // private static includesPotentialCommands(
@@ -448,6 +475,8 @@ export class KeyMappingService {
   private static emptyQueuedKeys() {
     this.queuedKeys = [];
     this.potentialCommands = [];
+    //this.lastCommand = undefined;
+    //this.lastKey = undefined;
   }
 
   /** */

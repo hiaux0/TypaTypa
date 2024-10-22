@@ -1224,6 +1224,8 @@ export class GridTestPage {
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
       vimState,
+      allowChaining: true,
+      allowExtendedChaining: true,
       hooks: {
         modeChanged: (payload) => {
           this.mode = payload.vimState.mode;

@@ -145,12 +145,13 @@ export class VimInputHandler {
   private handleKeydown = async (event: KeyboardEvent) => {
     if (getIsInputActive()) return;
     const mode = this.vimCore.getVimState().mode;
+    const options = this.vimCore.options;
     // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
     if (!mode) return;
     const finalKey = KeyMappingService.getKeyFromEvent(event);
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
     const { command, commandName, commandSequence } =
-      KeyMappingService.prepareCommand(finalKey, mode) ?? {};
+      KeyMappingService.prepareCommand(finalKey, mode, options) ?? {};
     const pressedKey = ShortcutService.getPressedKey(event);
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,156] pressedKey: ", pressedKey);
 

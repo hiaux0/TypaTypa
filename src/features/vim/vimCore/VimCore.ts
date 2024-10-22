@@ -12,7 +12,7 @@ export class VimCore {
   private vimState: IVimState;
   private manager: VimCommandManager;
 
-  constructor(private options?: VimOptions) {
+  constructor(public options?: VimOptions) {
     Object.assign(this, options);
     this.options = options;
     if (!this.options.vimState) {
