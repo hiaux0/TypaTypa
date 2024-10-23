@@ -1,4 +1,8 @@
 export type Direction = "up" | "down" | "left" | "right" | "none";
+export interface DirectionMap {
+  x: Direction;
+  y: Direction;
+}
 
 export type WordType = "Noun";
 export type OtherSynonyms = string[];
@@ -41,7 +45,10 @@ export interface Features {
 }
 
 export type GridSelectionCoord = [number, number];
-export type GridSelectionRange = [start: GridSelectionCoord, end: GridSelectionCoord];
+export type GridSelectionRange = [
+  start: GridSelectionCoord,
+  end: GridSelectionCoord,
+];
 
 // export type ContentMap = Record<string, string>;
 export interface Cell {
@@ -49,7 +56,7 @@ export interface Cell {
   col?: number;
   row?: number;
   colsToNextText?: number;
-  /* 
+  /*
    * Note1, that width is based on border-box
    * Note2: Is set in grid-cell (was least effort)
    */
@@ -62,6 +69,12 @@ export type ColHeaderMap = Record<
     colWidth: number;
   }
 >;
+export type RowHeaderMap = Record<
+  string,
+  {
+    height: number;
+  }
+>;
 export interface SheetSettings {
   autosave?: boolean;
 }
@@ -72,6 +85,7 @@ export interface Sheet {
   selectedRange?: GridSelectionRange;
   /* TODO: rename to columnSettingsMap */
   colHeaderMap?: ColHeaderMap;
+  rowHeaderMap?: RowHeaderMap;
   settings?: SheetSettings;
 }
 

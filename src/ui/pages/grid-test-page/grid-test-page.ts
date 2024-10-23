@@ -2,6 +2,7 @@ import { EventAggregator, observable, resolve } from "aurelia";
 import "./grid-test-page.scss";
 import { EV_CELL_SELECTED } from "../../../common/modules/eventMessages";
 import {
+  DirectionMap,
   Cell,
   ContentMap,
   Direction,
@@ -67,8 +68,10 @@ const logger = new Logger("GridTestPage");
 const debugLog = false;
 
 interface CellRect {
-  left: number;
   top: number;
+  bottom: number;
+  left: number;
+  right: number;
   x: number;
   y: number;
   width: number;
@@ -441,9 +444,18 @@ export class GridTestPage {
           !Number.isNaN(nextColWithContent) &&
           !Number.isNaN(nextRowWithContent)
         ) {
+          const newCellDirection = this.getNewCellDirection(
+            nextColWithContent,
+            nextRowWithContent,
+          );
           this.setAndUpdateSingleCellSelection(
             nextColWithContent,
             nextRowWithContent,
+          );
+          this.scrollToCell(
+            nextColWithContent,
+            nextRowWithContent,
+            newCellDirection,
           );
         }
       },
@@ -503,15 +515,18 @@ export class GridTestPage {
           !Number.isNaN(nextColWithContent) &&
           !Number.isNaN(nextRowWithContent)
         ) {
-          const cell = this.getCurrentCell();
-          if (cell) {
-            const amount = cell.colsToNextText;
-            this.scrollEditor("right", amount);
-          }
-
+          const newCellDirection = this.getNewCellDirection(
+            nextColWithContent,
+            nextRowWithContent,
+          );
           this.setAndUpdateSingleCellSelection(
             nextColWithContent,
             nextRowWithContent,
+          );
+          this.scrollToCell(
+            nextColWithContent,
+            nextRowWithContent,
+            newCellDirection,
           );
         }
       },
@@ -1019,7 +1034,7 @@ export class GridTestPage {
   private initSheets(sheetsData: GridDatabaseType): void {
     let updatedSheetData = runGridMigrations(sheetsData);
     updatedSheetData = checkCellOverflow(updatedSheetData);
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,488] updatedSheetData: ", updatedSheetData);
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,488] updatedSheetData: ", updatedSheetData);
     this.sheetsData = updatedSheetData;
     this.sheetTabs = updatedSheetData.sheets.map((sheet) => ({
       id: sheet.id,
@@ -1292,7 +1307,7 @@ export class GridTestPage {
           this.mode = payload.vimState.mode;
         },
         commandListener: (result) => {
-          // /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] result: ", result);
+          // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] result: ", result);
           window.setTimeout(() => {
             if (!this.contentMap) return;
             if (
@@ -1372,6 +1387,10 @@ export class GridTestPage {
     this.contentMap.forEach((_, rowIndex) => {
       this.addCellEmptyAt(colIndex, rowIndex);
     });
+
+    if (!this.activeSheet.colHeaderMap[colIndex]) {
+      this.activeSheet.colHeaderMap[colIndex] = { colWidth: this.CELL_WIDTH };
+    }
   }
 
   private addColLeft(): void {
@@ -1432,13 +1451,13 @@ export class GridTestPage {
       this.contentMap[row] = [];
     }
     // const cell = this.contentMap[row][col];
-    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1220] cell: ", cell);
+    // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1220] cell: ", cell);
     this.contentMap[row].splice(col, 1);
     //this.contentMap[row] = this.contentMap[row].filter(
     //  (_, index) => index !== col,
     //);
     // const afterCell = this.contentMap[row][col];
-    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1223] afterCell: ", afterCell);
+    // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1223] afterCell: ", afterCell);
     this.onCellContentChangedInternal(col, row);
     if (option?.skipUpdate) return;
     this.updateContentMapChangedForView();
@@ -1709,7 +1728,7 @@ export class GridTestPage {
     const start = `${this.dragStartColumnIndex}:${this.dragStartRowIndex}`;
     const end = `${this.dragEndColumnIndex}:${this.dragEndRowIndex}`;
     const all = `[${start}] - [${end}]`;
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1457] all: ", all);
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1457] all: ", all);
   }
 
   private autosave(): void {
@@ -1893,7 +1912,7 @@ export class GridTestPage {
       };
     }
     const beforeWidth = sheet.colHeaderMap?.[colIndex]?.colWidth ?? CELL_WIDTH; // TODO: fix, need to have it adjust to new drag start positions
-    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1651] beforeWidth: ", beforeWidth);
+    // // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1651] beforeWidth: ", beforeWidth);
     return (movedByX: number) => {
       if (!sheet?.colHeaderMap?.[colIndex]) {
         sheet.colHeaderMap = {
@@ -1902,7 +1921,7 @@ export class GridTestPage {
       }
       sheet.colHeaderMap[colIndex].colWidth = beforeWidth + movedByX;
       // console.log("colindex", colIndex);
-      // /*prettier-ignore*/ console.log("[grid-test-page.ts,1673] sheet.colHeaderMap[colIndex].colWidth: ", sheet.colHeaderMap[colIndex].colWidth);
+      // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1673] sheet.colHeaderMap[colIndex].colWidth: ", sheet.colHeaderMap[colIndex].colWidth);
     };
   };
 
@@ -1987,8 +2006,12 @@ export class GridTestPage {
     this.spreadsheetContainerRef.scrollLeft -= width;
   }
 
+  private getSpreadSsheetContainer(): HTMLElement {
+    return document.querySelector(".spreadsheet-container");
+  }
+
   private getNormalizedContainerDimension() {
-    const $container = document.querySelector(".spreadsheet-container");
+    const $container = this.getSpreadSsheetContainer();
     const containerRect = $container.getBoundingClientRect();
     const { width, height } = document
       .querySelector<HTMLElement>(".column-header-corner")
@@ -2002,44 +2025,218 @@ export class GridTestPage {
     return result;
   }
 
-  private getXYOfSelection(col: number, row: number): CellRect {
-    const $container = document.querySelector(".spreadsheet-container");
+  private getXYOfSelection(
+    col: number = this.dragStartColumnIndex,
+    row: number = this.dragStartRowIndex,
+    direction: Direction = "right",
+  ): CellRect {
+    const $container = this.getSpreadSsheetContainer();
     const containerRect = $container.getBoundingClientRect();
     const $colHeader = document.querySelector(`[data-col-index='${col}']`);
     const colHeaderRect = $colHeader.getBoundingClientRect();
     const { width, height } = document
       .querySelector<HTMLElement>(".column-header-corner")
       .getBoundingClientRect();
-    const normalizedLeft = colHeaderRect.left - containerRect.left - width;
+    let normalizedLeft = colHeaderRect.left - containerRect.left - width;
+    if (direction === "right") {
+      normalizedLeft += $container.scrollLeft;
+    }
     const $rowHeader = document.querySelector(`[data-row-index='${row}']`);
     const rowHeaderRect = $rowHeader.getBoundingClientRect();
-    const normalizedTop = rowHeaderRect.top - containerRect.top - height;
+    let normalizedTop = rowHeaderRect.top - containerRect.top - height;
+    if (direction === "down") {
+      normalizedTop += $container.scrollTop;
+    }
     const rect: CellRect = {
-      left: normalizedLeft,
       top: normalizedTop,
-      x: normalizedLeft,
       y: normalizedTop,
+      bottom: normalizedTop + rowHeaderRect.height,
+      left: normalizedLeft,
+      x: normalizedLeft,
+      right: normalizedLeft + colHeaderRect.width,
       width: colHeaderRect.width,
       height: rowHeaderRect.height,
     };
     return rect;
   }
 
-  private getRowsInViewport(): number {
-    const container = this.spreadsheetContainerRef;
-    const containerRect = container.getBoundingClientRect();
-    const rowHeader = document.querySelector(".row-header");
-    const rowHeaderRect = rowHeader.getBoundingClientRect();
-    const rowHeight = rowHeaderRect.height;
-    const rows = Math.floor(containerRect.height / rowHeight);
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,2028] rows: ", rows);
-    return rows;
-  }
-
   private scrollSelectdeIntoView(
     options: ScrollIntoViewOptions = { block: "center", inline: "center" },
   ): void {
     const $selected = document.querySelector(".selection");
-    $selected.scrollIntoView(options);
+    $selected?.scrollIntoView(options);
+  }
+
+  private getColWidth(col: number, delta: number = 0): number {
+    let width = 0;
+    if (delta > 0) {
+      this.iterateOverRowFromCurrent(
+        (c) => {
+          width +=
+            this.activeSheet.colHeaderMap[c]?.colWidth ?? this.CELL_WIDTH;
+        },
+        { endCol: col + delta },
+      );
+    } else {
+      this.iterateOverRowUntil(
+        (c) => {
+          width +=
+            this.activeSheet.colHeaderMap[c]?.colWidth ?? this.CELL_WIDTH;
+        },
+        { startCol: col + delta },
+      );
+    }
+
+    return width;
+  }
+
+  private getRowHeight(col: number, delta: number = 0): number {
+    let height = 0;
+    if (delta > 0) {
+      this.iterateOverRowFromCurrent(
+        (_, r) => {
+          height +=
+            this.activeSheet.rowHeaderMap[r]?.height ?? this.CELL_HEIGHT;
+        },
+        { endCol: col + delta },
+      );
+    } else {
+      this.iterateOverRowUntil(
+        (_, r) => {
+          height +=
+            this.activeSheet.rowHeaderMap[r]?.height ?? this.CELL_HEIGHT;
+        },
+        { startCol: col + delta },
+      );
+    }
+
+    return height;
+  }
+
+  private scrollUpToCell(col: number, row: number) {
+    const result = this.getXYOfSelection(col, row, "up");
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2126] result: ", result);
+    const { top } = result;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2125] top: ", top);
+    const $container = this.getSpreadSsheetContainer();
+    const topBorder = $container.scrollTop;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] topBorder: ", topBorder);
+    const bottomBorder =
+      topBorder + this.getNormalizedContainerDimension().height;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2113] bottomBorder: ", bottomBorder);
+    const isInViewport = topBorder < top && top < bottomBorder;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] isInViewport: ", isInViewport);
+    if (!isInViewport) {
+      const bufferHeight = this.getRowHeight(row);
+      const diff = top - bufferHeight;
+      // /*prettier-ignore*/ console.log("[grid-test-page.ts,2113] diff: ", diff);
+      $container.scrollTop = diff;
+    }
+  }
+
+  private scrollDownToCell(col: number, row: number): void {
+    const result = this.getXYOfSelection(col, row, "up");
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2136] result: ", result);
+    const { bottom } = result;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2138] bottom: ", bottom);
+    const $container = this.getSpreadSsheetContainer();
+    const { height: containerHeight } = this.getNormalizedContainerDimension();
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2141] containerHeight: ", containerHeight);
+    const bottomOfContainer = $container.scrollTop + containerHeight;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2143] bottomOfContainer: ", bottomOfContainer);
+    const shouldScroll = bottom > bottomOfContainer;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2145] shouldScroll: ", shouldScroll);
+    const bufferWidth = this.getRowHeight(col, 2);
+    const diff = bottom - bottomOfContainer + bufferWidth;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2148] diff: ", diff);
+    if (shouldScroll) {
+      $container.scrollTop += diff;
+    }
+  }
+
+  private scrollLeftToSelection(col: number, row: number) {
+    const { left } = this.getXYOfSelection(col, row, "right");
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2108] left: ", left);
+    const $container = this.getSpreadSsheetContainer();
+    const leftBorder = $container.scrollLeft;
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] leftBorder: ", leftBorder);
+    const rightBorder =
+      leftBorder + this.getNormalizedContainerDimension().width;
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2113] rightBorder: ", rightBorder);
+    const isInViewport = leftBorder < left && left < rightBorder;
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] isInViewport: ", isInViewport);
+    if (!isInViewport) {
+      const bufferWidth = this.getColWidth(col);
+      const diff = left - bufferWidth;
+      // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2113] diff: ", diff);
+      $container.scrollLeft = diff;
+    }
+  }
+
+  private scrollRightToSelection(col: number, row: number): void {
+    const result = this.getXYOfSelection(col, row, "right");
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2078] result: ", result);
+    const { left } = result;
+    const $container = this.getSpreadSsheetContainer();
+    const { width: containerWidth } = this.getNormalizedContainerDimension();
+    const rightOfContainer = $container.scrollLeft + containerWidth;
+    const shouldScroll = left > rightOfContainer;
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2081] left: ", left);
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2077] rightOfContainer: ", rightOfContainer);
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2084] shouldScroll: ", shouldScroll);
+    const bufferWidth = this.getColWidth(col, 2);
+    const diff = left - rightOfContainer + bufferWidth;
+    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2087] diff: ", diff);
+    if (shouldScroll) {
+      $container.scrollLeft += diff;
+      // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2091] $container.scrollLeft: ", $container.scrollLeft);
+    }
+  }
+
+  private getNewCellDirection(newCol: number, newRow: number): DirectionMap {
+    const direction: DirectionMap = { x: "none", y: "none" };
+    const beforeCol = this.dragStartColumnIndex;
+    const beforeRow = this.dragStartRowIndex;
+    const isSameCol = newCol === beforeCol;
+    const isSameRow = newRow === beforeRow;
+    if (isSameCol) {
+      direction.x = "none";
+    }
+    if (isSameRow) {
+      direction.y = "none";
+    }
+    if (newCol > beforeCol) {
+      direction.x = "right";
+    }
+    if (newCol < beforeCol) {
+      direction.x = "left";
+    }
+    if (newRow > beforeRow) {
+      direction.y = "down";
+    }
+    if (newRow < beforeRow) {
+      direction.y = "up";
+    }
+    return direction;
+  }
+
+  private scrollToCell(
+    col: number,
+    row: number,
+    directionMap: DirectionMap,
+  ): void {
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,2225] directionMap: ", directionMap);
+    const { x, y } = directionMap;
+    if (x === "right") {
+      this.scrollRightToSelection(col, row);
+    } else if (x === "left") {
+      this.scrollLeftToSelection(col, row);
+    }
+
+    if (y === "down") {
+      this.scrollDownToCell(col, row);
+    } else if (y === "up") {
+      this.scrollUpToCell(col, row);
+    }
   }
 }

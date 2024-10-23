@@ -84,12 +84,13 @@
     - for this, check `scrollEditor`, but make it take coords
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
-- [ ] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
-- [ ] feat: grid: zz
+- [ ] b scroll
 
 # Done
 ## Grid
 
+- [x] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
+- [x] feat: grid: zz
 - [x] feat: prevent 'repearCommand' for navigation
 - [x] refac: grid----- vim ------ use existing vimCore logic --> no, because lines and cell behave differently
   - eg. {} on grid, will not work on lines of text

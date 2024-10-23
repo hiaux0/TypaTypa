@@ -41,10 +41,28 @@ function migrateToV0_0_3(sheetsData: GridDatabaseType): GridDatabaseType {
   return sheetsData;
 }
 
+function migrateToV0_0_4(sheetsData: GridDatabaseType): GridDatabaseType {
+  // /*prettier-ignore*/ console.log("[gridMigrations.ts,27] sheetsData: ", sheetsData);
+  // /*prettier-ignore*/ console.log("[gridMigrations.ts,29] sheetsData.version: ", sheetsData.version);
+  if (sheetsData.version === "v0.0.3") {
+    // debugger
+    sheetsData.version = "v0.0.4";
+    sheetsData.sheets.forEach((sheet) => {
+      if (!sheet.rowHeaderMap) {
+        sheet.rowHeaderMap = {};
+      }
+    });
+    return sheetsData;
+  }
+  /*prettier-ignore*/ console.log("[gridMigrations.ts,37] sheetsData: ", sheetsData);
+  return sheetsData;
+}
+
 export function runGridMigrations(
   sheetsData: GridDatabaseType,
 ): GridDatabaseType {
   let updated = migrateToV0_0_2(sheetsData);
   updated = migrateToV0_0_3(sheetsData);
+  updated = migrateToV0_0_4(sheetsData);
   return updated;
 }
