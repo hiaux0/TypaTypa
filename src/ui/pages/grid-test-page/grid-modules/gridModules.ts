@@ -135,7 +135,7 @@ export function iterateOverRangeBackwards(
   start: GridSelectionCoord,
   end: GridSelectionCoord,
   callback: (columnIndex: number, rowIndex: number) => boolean | void,
-  options: GridIteratorOptions,
+  options?: GridIteratorOptions,
 ) {
   const startCol = options?.startCol ?? start[0];
   // /*prettier-ignore*/ console.log("[gridModules.ts,133] startCol: ", startCol);
