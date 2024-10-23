@@ -35,6 +35,8 @@ import {
   CELL_COORDS,
   CELL_HEIGHT,
   CELL_WIDTH,
+  INITIAL_COLUMN_COUNT,
+  INITIAL_ROW_COUNT,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -103,8 +105,8 @@ interface GridPanel {
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
-  public rowSize = 20;
-  public columnSize = 10;
+  public colSize = INITIAL_COLUMN_COUNT;
+  public rowSize = INITIAL_ROW_COUNT;
   public CELL_HEIGHT = CELL_HEIGHT;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
@@ -144,7 +146,7 @@ export class GridTestPage {
       execute: () => {
         this.unselectAllSelecedCells();
         const next = this.dragStartColumnIndex + 1;
-        const mostRight = this.columnSize;
+        const mostRight = this.colSize;
         if (next >= mostRight) {
           this.addColRight();
           this.dragStartColumnIndex = mostRight;
@@ -183,9 +185,8 @@ export class GridTestPage {
         this.dragStartColumnIndex = next;
         this.dragEndColumnIndex = next;
         this.updateAllSelecedCells();
-        if (this.dragStartColumnIndex === this.columnSize - 1) {
-          this.spreadsheetContainerRef.scrollLeft =
-            this.columnSize * CELL_WIDTH;
+        if (this.dragStartColumnIndex === this.colSize - 1) {
+          this.spreadsheetContainerRef.scrollLeft = this.colSize * CELL_WIDTH;
         } else {
           this.scrollEditor("left", 1);
         }
@@ -260,17 +261,21 @@ export class GridTestPage {
         const endCol = startCol + this.lastCellContentArray[0]?.length - 1;
         const endRow =
           this.dragStartRowIndex + this.lastCellContentArray.length - 1;
-        iterateOverRangeBackwards([startCol, startRow], [endCol, endRow], (col, row) => {
-          this.addCellEmptyAt(col, row);
-          const rowIndex = row - startRow;
-          const colIdnex = col - startCol;
-          const content = this.lastCellContentArray[rowIndex][colIdnex];
-          if (content) {
-            this.setCurrentCellContent(content, col, row, {
-              skipUpdate: true,
-            });
-          }
-        });
+        iterateOverRangeBackwards(
+          [startCol, startRow],
+          [endCol, endRow],
+          (col, row) => {
+            this.addCellEmptyAt(col, row);
+            const rowIndex = row - startRow;
+            const colIdnex = col - startCol;
+            const content = this.lastCellContentArray[rowIndex][colIdnex];
+            if (content) {
+              this.setCurrentCellContent(content, col, row, {
+                skipUpdate: true,
+              });
+            }
+          },
+        );
         this.updateContentMapChangedForView();
       },
     },
@@ -283,18 +288,22 @@ export class GridTestPage {
         const endCol = startCol + this.lastCellContentArray[0]?.length - 1;
         const endRow =
           this.dragStartRowIndex + this.lastCellContentArray.length - 1;
-        iterateOverRangeBackwards([startCol, startRow], [endCol, endRow], (col, row) => {
-          console.log(col, row);
-          this.addCellEmptyAt(col, row);
-          const rowIndex = row - startRow;
-          const colIdnex = col - startCol;
-          const content = this.lastCellContentArray[rowIndex][colIdnex];
-          if (content) {
-            this.setCurrentCellContent(content, col, row, {
-              skipUpdate: true,
-            });
-          }
-        });
+        iterateOverRangeBackwards(
+          [startCol, startRow],
+          [endCol, endRow],
+          (col, row) => {
+            console.log(col, row);
+            this.addCellEmptyAt(col, row);
+            const rowIndex = row - startRow;
+            const colIdnex = col - startCol;
+            const content = this.lastCellContentArray[rowIndex][colIdnex];
+            if (content) {
+              this.setCurrentCellContent(content, col, row, {
+                skipUpdate: true,
+              });
+            }
+          },
+        );
         this.updateContentMapChangedForView();
       },
     },
@@ -409,10 +418,10 @@ export class GridTestPage {
       command: VIM_COMMAND.cursorLineEnd,
       execute: () => {
         this.setAndUpdateSingleCellSelection(
-          this.columnSize - 1,
+          this.colSize - 1,
           this.dragStartRowIndex,
         );
-        this.spreadsheetContainerRef.scrollLeft = this.columnSize * CELL_WIDTH;
+        this.spreadsheetContainerRef.scrollLeft = this.colSize * CELL_WIDTH;
       },
       preventUndoRedo: true,
     },
@@ -435,7 +444,7 @@ export class GridTestPage {
             }
           },
           {
-            colSize: this.columnSize,
+            colSize: this.colSize,
           },
         );
 
@@ -752,7 +761,7 @@ export class GridTestPage {
       execute: () => {
         this.unselectAllSelecedCells();
         const b = this.dragEndColumnIndex + 1;
-        this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+        this.dragEndColumnIndex = cycleInRange(0, this.colSize, b);
         this.updateAllSelecedCells();
       },
       preventUndoRedo: true,
@@ -762,7 +771,7 @@ export class GridTestPage {
       execute: () => {
         this.unselectAllSelecedCells();
         const b = this.dragEndColumnIndex - 1;
-        this.dragEndColumnIndex = cycleInRange(0, this.columnSize, b);
+        this.dragEndColumnIndex = cycleInRange(0, this.colSize, b);
         this.updateAllSelecedCells();
       },
       preventUndoRedo: true,
@@ -1054,7 +1063,11 @@ export class GridTestPage {
     if (!activeSheet) return;
     this.activeSheet = activeSheet;
     this.rowSize = Math.max(this.rowSize, this.activeSheet.content.length);
-    this.columnSize = this.getColSize(this.activeSheet.content);
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,1057] this.rowSize: ", this.rowSize);
+    this.colSize = Math.max(
+      this.colSize,
+      this.getColSize(this.activeSheet.content),
+    );
     this.store.activeSheet = activeSheet;
     this.contentMap = activeSheet.content;
     this.setSelectionFromRange(activeSheet.selectedRange);
@@ -1343,7 +1356,7 @@ export class GridTestPage {
     let prevCol = this.dragStartColumnIndex - 1;
     let prevRow = this.dragStartRowIndex;
     if (prevCol === -1) {
-      prevCol = this.columnSize - 1;
+      prevCol = this.colSize - 1;
       prevRow = prevRow - 1;
     }
 
@@ -1353,7 +1366,7 @@ export class GridTestPage {
   private getNextCellCoords(): GridSelectionCoord {
     let prevCol = this.dragStartColumnIndex + 1;
     let prevRow = this.dragStartRowIndex;
-    if (prevCol === this.columnSize) {
+    if (prevCol === this.colSize) {
       prevCol = 0;
       prevRow = prevRow + 1;
     }
@@ -1391,8 +1404,15 @@ export class GridTestPage {
       this.addCellEmptyAt(colIndex, rowIndex);
     });
 
-    if (!this.activeSheet.colHeaderMap[colIndex]) {
-      this.activeSheet.colHeaderMap[colIndex] = { colWidth: this.CELL_WIDTH };
+    this.addEntryToColHeaderMap(colIndex);
+  }
+
+  private addEntryToColHeaderMap(col: number): void {
+    if (!this.activeSheet.colHeaderMap) {
+      this.activeSheet.colHeaderMap = {};
+    }
+    if (!this.activeSheet.colHeaderMap[col]) {
+      this.activeSheet.colHeaderMap[col] = { colWidth: this.CELL_WIDTH };
     }
   }
 
@@ -1404,8 +1424,8 @@ export class GridTestPage {
   private addColRight(): void {
     const right = this.dragStartColumnIndex + 1;
     this.addColAt(right);
-    if (right === this.columnSize) {
-      this.columnSize += 1;
+    if (right === this.colSize) {
+      this.colSize += 1;
     }
   }
 
@@ -1614,7 +1634,7 @@ export class GridTestPage {
   ) {
     iterateOverGrid(
       [options.startCol, options.startRow],
-      [this.columnSize - 1, this.rowSize - 1],
+      [this.colSize - 1, this.rowSize - 1],
       callback,
       options,
     );
@@ -1633,7 +1653,7 @@ export class GridTestPage {
   ) {
     iterateOverGrid(
       [options.startCol, options.startRow],
-      [this.columnSize - 1, this.rowSize - 1],
+      [this.colSize - 1, this.rowSize - 1],
       (columnIndex, rowIndex) => {
         const content = this.getCurrentCell(columnIndex, rowIndex)?.text ?? "";
         callback(columnIndex, rowIndex, {
@@ -1664,7 +1684,7 @@ export class GridTestPage {
   ) {
     iterateOverRange(
       [0, this.dragStartRowIndex],
-      [this.columnSize - 1, this.dragStartRowIndex],
+      [this.colSize - 1, this.dragStartRowIndex],
       callback,
       options,
     );
@@ -1676,7 +1696,7 @@ export class GridTestPage {
   ) {
     iterateOverRange(
       [this.dragStartColumnIndex, this.dragStartRowIndex],
-      [this.columnSize - 1, this.dragStartRowIndex],
+      [this.colSize - 1, this.dragStartRowIndex],
       callback,
       options,
     );

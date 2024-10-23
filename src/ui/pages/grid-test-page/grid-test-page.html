@@ -47,7 +47,7 @@
     <section class="cells-container">
       <section
         class="column-container"
-        repeat.for="columnIndex of columnSize"
+        repeat.for="columnIndex of colSize"
         css="width: ${activeSheet.colHeaderMap?.[columnIndex]?.colWidth ? `${activeSheet.colHeaderMap?.[columnIndex].colWidth}px` : `${CELL_WIDTH}px`};"
       >
         <div

@@ -84,11 +84,13 @@
     - for this, check `scrollEditor`, but make it take coords
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
-- [ ] b scroll
+- [ ] styling
+- [ ] fix: grid: paste: newlines at start should be reduced (when copying code blocks)
 
 # Done
 ## Grid
 
+- [x] b scroll
 - [x] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
 - [x] feat: grid: zz
 - [x] feat: prevent 'repearCommand' for navigation
