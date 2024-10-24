@@ -8,13 +8,7 @@ const testSheetData: GridDatabaseType = {
     {
       id: "1",
       title: "Sheet 1",
-      content: [
-        [
-          { text: "0123456789012345678", scrollWidth: 181 },
-          undefined,
-          { text: "20" },
-        ],
-      ],
+      content: [[{ text: "0123456789012345678" }, undefined, { text: "20" }]],
       selectedRange: [
         [0, 0],
         [0, 0],

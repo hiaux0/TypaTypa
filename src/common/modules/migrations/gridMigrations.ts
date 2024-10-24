@@ -27,7 +27,6 @@ function migrateToV0_0_3(sheetsData: GridDatabaseType): GridDatabaseType {
   // /*prettier-ignore*/ console.log("[gridMigrations.ts,27] sheetsData: ", sheetsData);
   // /*prettier-ignore*/ console.log("[gridMigrations.ts,29] sheetsData.version: ", sheetsData.version);
   if (sheetsData.version === "v0.0.2") {
-    console.log(">>>here");
     // debugger
     sheetsData.version = "v0.0.3";
     sheetsData.sheets.forEach((sheet) => {

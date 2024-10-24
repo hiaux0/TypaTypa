@@ -37,6 +37,7 @@ import {
   CELL_WIDTH,
   INITIAL_COLUMN_COUNT,
   INITIAL_ROW_COUNT,
+  PADDING,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -58,6 +59,7 @@ import {
   iterateOverGridBackwards,
   iterateOverRange,
   iterateOverRangeBackwards,
+  measureTextWidth,
 } from "./grid-modules/gridModules";
 import { Store } from "../../../common/modules/store";
 import { Logger } from "../../../common/logging/logging";
@@ -541,6 +543,59 @@ export class GridTestPage {
       preventUndoRedo: true,
     },
     {
+      key: "<Shift>E",
+      desc: "Word end",
+      execute: () => {
+        console.log("EE");
+        const cell = this.getCurrentCell();
+        const cellText = measureTextWidth(cell.text);
+        const xy = this.getXYOfSelection();
+        const width = xy.left + cellText + PADDING;
+        const nextColNew = this.getNextColFromWidth(width);
+        this.setAndUpdateSingleCellSelection(nextColNew);
+
+        return;
+        let nextColWithContent = NaN;
+        let nextRowWithContent = NaN;
+        const [nextCol, nextRow] = this.getNextCellCoords();
+        this.iterateOverAllCells(
+          (col, row) => {
+            if (nextColWithContent) return;
+            const content = this.getCurrentCell(col, row)?.text ?? "";
+            if (content) {
+              nextColWithContent = col;
+              nextRowWithContent = row;
+              return true;
+            }
+          },
+          {
+            startCol: nextCol,
+            startRow: nextRow,
+          },
+        );
+
+        if (
+          !Number.isNaN(nextColWithContent) &&
+          !Number.isNaN(nextRowWithContent)
+        ) {
+          const newCellDirection = this.getNewCellDirection(
+            nextColWithContent,
+            nextRowWithContent,
+          );
+          this.setAndUpdateSingleCellSelection(
+            nextColWithContent,
+            nextRowWithContent,
+          );
+          this.scrollToCell(
+            nextColWithContent,
+            nextRowWithContent,
+            newCellDirection,
+          );
+        }
+      },
+      preventUndoRedo: true,
+    },
+    {
       key: "<Control>k",
       execute: () => {
         // this.scrollEditor("up", 1);
@@ -551,6 +606,7 @@ export class GridTestPage {
       execute: () => {
         this.setAndUpdateSingleCellSelection(0, 0);
         this.spreadsheetContainerRef.scrollTop = 0;
+        this.spreadsheetContainerRef.scrollLeft = 0;
       },
     },
     {
@@ -559,6 +615,7 @@ export class GridTestPage {
         this.setAndUpdateSingleCellSelection(0, this.rowSize - 1);
         const height = this.rowSize * CELL_HEIGHT;
         this.spreadsheetContainerRef.scrollTop = height;
+        this.spreadsheetContainerRef.scrollLeft = 0;
       },
     },
     {
@@ -1063,7 +1120,6 @@ export class GridTestPage {
     if (!activeSheet) return;
     this.activeSheet = activeSheet;
     this.rowSize = Math.max(this.rowSize, this.activeSheet.content.length);
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1057] this.rowSize: ", this.rowSize);
     this.colSize = Math.max(
       this.colSize,
       this.getColSize(this.activeSheet.content),
@@ -1343,7 +1399,10 @@ export class GridTestPage {
     this.vimInit.init(vimOptions);
   }
 
-  private setAndUpdateSingleCellSelection(col: number, row: number) {
+  private setAndUpdateSingleCellSelection(
+    col: number,
+    row: number = this.dragStartRowIndex,
+  ) {
     this.unselectAllSelecedCells();
     this.dragStartColumnIndex = col;
     this.dragEndColumnIndex = col;
@@ -2111,6 +2170,22 @@ export class GridTestPage {
     }
 
     return width;
+  }
+
+  private getNextColFromWidth(width: number): number {
+    let nextCol = 0;
+    let widthTracker = width;
+    this.iterateOverRowFromCurrent((c, row) => {
+      widthTracker -=
+        this.activeSheet.colHeaderMap[c]?.colWidth ?? this.CELL_WIDTH;
+      const stop = widthTracker < 0;
+      if (stop) {
+        nextCol = c + 1;
+        return true;
+      }
+    });
+
+    return nextCol;
   }
 
   private getRowHeight(col: number, delta: number = 0): number {

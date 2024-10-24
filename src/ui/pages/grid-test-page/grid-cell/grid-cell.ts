@@ -6,6 +6,7 @@ import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
 import { Store } from "../../../../common/modules/store";
+
 const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
@@ -57,6 +58,7 @@ export class GridCell {
     /** Used for watching changes on the whole row (Aurelia behavior) */
     rowLength?: number,
   ) {
+    logger
     const getWidth = () => {
       if (!cell) return;
 

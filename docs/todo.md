@@ -84,8 +84,13 @@
     - for this, check `scrollEditor`, but make it take coords
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
-- [ ] styling
+- [ ] feat: ui styling
+- [ ] feat: quickly toggle settings
 - [ ] fix: grid: paste: newlines at start should be reduced (when copying code blocks)
+- [ ] E
+  - [ ] until cell with no content
+  - [ ] if no overflow, then until next cell
+
 
 # Done
 ## Grid
