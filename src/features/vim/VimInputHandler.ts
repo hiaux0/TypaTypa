@@ -15,6 +15,9 @@ import { cursorAllModes } from "./key-bindings";
 import { EV_VIM_ID_CHANGED } from "../../common/modules/eventMessages";
 import { Id } from "../../domain/types/types";
 import { container } from "../../diContainer";
+import { Logger } from "../../common/logging/logging";
+
+const logger = new Logger("VimInputHandler");
 
 /**
  * - Takes in input from user
@@ -27,12 +30,22 @@ export class VimInputHandler {
   private vimUi: VimUi;
   private options?: VimOptions;
   private eventListeners: any[] = [];
-  private activeVimInstancesIdMap: string[];
+  private keyMappingService: KeyMappingService;
+
+  constructor() {
+    this.keyMappingService = new KeyMappingService();
+  }
 
   public init(options?: VimOptions) {
+    /*prettier-ignore*/ logger.culogger.debug(["[VimInputHandler.ts,38] init: ", {log: true}]);
+    // this.keyMappingService.init({}, options.keyBindings);
     this.options = options;
+    this.keyMappingService.id = options?.vimState.id;
 
+    const keyBindings = this.keyMappingService.keyBindings;
+    /*prettier-ignore*/ console.log(">>>>[VimInputHandler.ts,46] keyBindings: ", keyBindings);
     const vimCore = VimCore.create({
+      keyBindings,
       ...this.options,
       hooks: {
         ...this.options?.hooks,
@@ -152,28 +165,28 @@ export class VimInputHandler {
       window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
     const isThisInstance = lastActiveId === this.vimCore.getVimState().id;
     if (!isThisInstance) return;
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,147] this.vimCore.getVimState().id: ", this.vimCore.getVimState().id);
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,153] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,147] this.vimCore.getVimState().id: ", this.vimCore.getVimState().id);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,153] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
 
     if (getIsInputActive()) return;
     const mode = this.vimCore.getVimState().mode;
     const options = this.vimCore.options;
     // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
     if (!mode) return;
-    const finalKey = KeyMappingService.getKeyFromEvent(event);
+    const finalKey = this.keyMappingService.getKeyFromEvent(event);
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
     const { command, commandName, commandSequence } =
-      KeyMappingService.prepareCommand(finalKey, mode, options) ?? {};
+      this.keyMappingService.prepareCommand(finalKey, mode, options) ?? {};
     const pressedKey = ShortcutService.getPressedKey(event);
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,156] pressedKey: ", pressedKey);
 
     let finalCommand = command;
     let finalPressedKey = pressedKey;
     if (commandName === VIM_COMMAND.repeatLastCommand) {
-      finalCommand = KeyMappingService.getLastCommand();
-      finalPressedKey = KeyMappingService.getLastKey();
+      finalCommand = this.keyMappingService.getLastCommand();
+      finalPressedKey = this.keyMappingService.getLastKey();
     }
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,161] finalCommand: ", finalCommand);
 
@@ -273,8 +286,8 @@ export class VimInputHandler {
       commandName !== VIM_COMMAND.repeatLastCommand &&
       !VimHelper.isModeChangingCommand(commandName);
     if (saveLast) {
-      KeyMappingService.setLastKey(finalKey);
-      KeyMappingService.setLastCommand(command);
+      this.keyMappingService.setLastKey(finalKey);
+      this.keyMappingService.setLastCommand(command);
     }
   };
 

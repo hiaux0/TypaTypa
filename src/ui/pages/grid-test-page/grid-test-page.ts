@@ -10,6 +10,7 @@ import {
   GridSelectionCoord,
   GridSelectionRange,
   Sheet,
+  defaultGridSelectionRange,
 } from "../../../types";
 import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
@@ -135,6 +136,7 @@ export class GridTestPage {
   public gridUndoRedo: UndoRedo<ContentMap>;
   public editedCellCoords = "";
 
+  private keyMappingService: KeyMappingService;
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
   private lastCellContentArray: string[][] = [];
@@ -1050,6 +1052,7 @@ export class GridTestPage {
         key: "<Control>s",
         desc: "[S]ave",
         execute: () => {
+          console.log("save");
           this.save();
           return true;
         },
@@ -1093,6 +1096,7 @@ export class GridTestPage {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
     this.gridUndoRedo = new UndoRedo<ContentMap>();
+    this.keyMappingService = new KeyMappingService();
   }
 
   private initSheets(sheetsData: GridDatabaseType): void {
@@ -1126,6 +1130,9 @@ export class GridTestPage {
     );
     this.store.activeSheet = activeSheet;
     this.contentMap = activeSheet.content;
+    if (!this.activeSheet.selectedRange) {
+      this.activeSheet.selectedRange = defaultGridSelectionRange;
+    }
     this.setSelectionFromRange(activeSheet.selectedRange);
     this.updateContentMapChangedForView();
   }
@@ -1349,7 +1356,6 @@ export class GridTestPage {
         return this.setActivePanelFromHTMLElement();
       },
     };
-    new KeyMappingService().init(mappingByKey, this.mappingByMode);
 
     // const vimState = convertGridToVimState(
     const vimState = convertRangeToVimState(
@@ -1357,12 +1363,16 @@ export class GridTestPage {
       this.activeSheet.selectedRange,
     );
     window.activeVimInstancesIdMap.push(vimState.id);
+    this.keyMappingService.id = vimState.id;
+    this.keyMappingService.init(mappingByKey, this.mappingByMode);
+    const keyBindings = this.keyMappingService.keyBindings;
 
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
       vimState,
       allowChaining: true,
       allowExtendedChaining: true,
+      keyBindings,
       hooks: {
         modeChanged: (payload) => {
           this.mode = payload.vimState.mode;
@@ -1385,6 +1395,7 @@ export class GridTestPage {
         },
       },
     };
+    // console.log("1.");
     this.vimInit.init(vimOptions);
   }
 

@@ -57,6 +57,10 @@ export type GridSelectionRange = [
   start: GridSelectionCoord,
   end: GridSelectionCoord,
 ];
+export const defaultGridSelectionRange: GridSelectionRange = [
+  [0, 0],
+  [0, 0],
+];
 
 // export type ContentMap = Record<string, string>;
 export interface Cell {

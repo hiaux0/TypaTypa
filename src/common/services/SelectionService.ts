@@ -1,4 +1,6 @@
-import { getSelection, createRangyRange } from "rangy";
+// import * as Rangy from "rangy";
+import Rangy from "rangy";
+const { createRangyRange } = Rangy;
 import { Cursor } from "../../features/vim/vim-types";
 
 type RangyRange = ReturnType<typeof createRangyRange>;
@@ -23,7 +25,8 @@ export class SelectionService {
   }
 
   static createRange(node: Node, cursor: Cursor) {
-    const range = createRangyRange();
+    const range = Rangy.createRangyRange();
+    /*prettier-ignore*/ console.log("[SelectionService.ts,30] range: ", range);
 
     // Col
     range.setStart(node, cursor.col);
@@ -36,7 +39,7 @@ export class SelectionService {
   }
 
   static setSingleRange(range: RangyRange) {
-    getSelection().setSingleRange(range);
+    Rangy.getSelection().setSingleRange(range);
     // const range: Range = document.createRange();
 
     // // Col

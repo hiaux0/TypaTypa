@@ -12,6 +12,7 @@ export class VimInit {
   private options: VimOptions;
 
   public init(options?: VimOptions) {
+    /*prettier-ignore*/ logger.culogger.debug(["[VimInit.ts,16] init: "], {log: true});
     this.vimInputHandler = new VimInputHandler();
     this.vimInputHandler.init(options);
 

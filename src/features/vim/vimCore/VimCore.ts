@@ -11,6 +11,7 @@ const logger = new Logger("VimCore");
 export class VimCore {
   private vimState: IVimState;
   private manager: VimCommandManager;
+  private keyMappingService: KeyMappingService;
 
   constructor(public options?: VimOptions) {
     Object.assign(this, options);
@@ -19,6 +20,7 @@ export class VimCore {
       this.vimState = VimStateClass.createEmpty();
     }
     this.manager = VimCommandManager.create(this.options);
+    this.keyMappingService = new KeyMappingService();
   }
 
   static create(options?: VimOptions) {
@@ -64,7 +66,8 @@ export class VimCore {
 
     const resultList: IVimState[] = [];
     splitSequence.forEach((key) => {
-      const { commandName } = KeyMappingService.prepareCommand(key, mode) ?? {};
+      const { commandName } =
+        this.keyMappingService.prepareCommand(key, mode) ?? {};
       if (!commandName) return;
 
       const result = this.executeCommand(commandName, key);

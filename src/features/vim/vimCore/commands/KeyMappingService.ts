@@ -103,14 +103,15 @@ interface IPrepareCommandReturn {
 }
 
 export class KeyMappingService {
-  public static keyBindings: KeyBindingModes = keyBindings;
-  private static potentialCommands: VimCommand[] = [];
-  private static lastCommand: VimCommand;
-  private static lastKey: string;
+  public keyBindings: KeyBindingModes = keyBindings;
+  private potentialCommands: VimCommand[] = [];
+  private lastCommand: VimCommand;
+  private lastKey: string;
   /** If a command did not trigger, save key */
-  private static queuedKeys: string[] = [];
+  private queuedKeys: string[] = [];
+  public id = "not-set";
 
-  public static create() {
+  public create() {
     return new KeyMappingService();
   }
 
@@ -118,11 +119,13 @@ export class KeyMappingService {
     mappings: IKeyMappingMapping,
     additionalKeyBindings?: KeyBindingModes,
   ) {
-    KeyMappingService.mergeKeybindings(additionalKeyBindings);
+    // /*prettier-ignore*/ console.trace("[KeyMappingService.ts,118] init: ");
+    // /*prettier-ignore*/ logger.culogger.debug(["[KeyMappingService.ts,122] init: ", {log: true}]);
+    this.mergeKeybindings(additionalKeyBindings);
 
     document.addEventListener("keydown", (event) => {
       // console.clear();
-      const finalKey = KeyMappingService.getKeyFromEvent(event);
+      const finalKey = this.getKeyFromEvent(event);
       if (mappings[finalKey]) {
         const dontPrevent = mappings[finalKey]();
         if (dontPrevent === false) return;
@@ -131,11 +134,11 @@ export class KeyMappingService {
     });
   }
 
-  private static mergeKeybindings(additionalKeyBindings?: KeyBindingModes) {
+  private mergeKeybindings(additionalKeyBindings?: KeyBindingModes) {
     if (!additionalKeyBindings) return;
 
     const merged = {
-      ...this.keyBindings,
+      // ...this.keyBindings,
       [VimMode.NORMAL]: [
         ...this.overwriteExistingKeyBindings(
           this.keyBindings[VimMode.NORMAL],
@@ -170,22 +173,27 @@ export class KeyMappingService {
       ],
     };
     this.keyBindings = merged;
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,157] this.keyBindings: ", this.keyBindings);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,174] this.keyBindings: ", this.keyBindings);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,178] this.id: ", this.id);
   }
 
-  private static overwriteExistingKeyBindings(
+  private overwriteExistingKeyBindings(
     existing: VimCommand[],
     ...additionals: VimCommand[][]
   ): VimCommand[] {
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,179] existing: ", existing);
     const merged = additionals.reduce((acc, curr) => {
       return acc.concat(curr);
     }, []);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,176] merged: ", merged);
+    const updated = [...existing];
+    // const updated = existing;
 
     merged?.forEach((additionalBinding) => {
+      if (!additionalBinding) return;
       // /*prettier-ignore*/ console.log("[KeyMappingService.ts,181] additionalBinding: ", additionalBinding);
       let foundCount = 0;
-      existing.forEach((existingBinding, index) => {
+      updated.forEach((existingBinding, index) => {
         const okayKey = existingBinding.key === additionalBinding.key;
         let okayCommand = false;
         if (existingBinding.command || additionalBinding.command) {
@@ -193,17 +201,17 @@ export class KeyMappingService {
         }
         const okay = okayKey || okayCommand;
         if (okay) {
-          existing[index] = {
-            ...existing[index],
+          updated[index] = {
+            ...updated[index],
             ...additionalBinding,
           };
           foundCount++;
         }
 
         // If nothing found, then add
-        const lastIndex = index === existing.length - 1;
+        const lastIndex = index === updated.length - 1;
         if (lastIndex && !okay && foundCount === 0) {
-          existing.push(additionalBinding);
+          updated.push(additionalBinding);
         }
 
         // if (additionalBinding.key === "<Control>s") {
@@ -221,7 +229,7 @@ export class KeyMappingService {
         }
       });
     });
-    return existing;
+    return updated;
   }
 
   /**
@@ -237,7 +245,7 @@ export class KeyMappingService {
    * - Ctrl+v
    * - key sequence
    */
-  public static prepareCommand(
+  public prepareCommand(
     key: string,
     mode: VimMode,
     options?: VimOptions,
@@ -287,7 +295,7 @@ export class KeyMappingService {
     };
   }
 
-  public static getKeyFromEvent(event: KeyboardEvent) {
+  public getKeyFromEvent(event: KeyboardEvent) {
     const { collectedModifiers } = ShortcutService.assembleModifiers(event);
     // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] collectedModifiers: ", collectedModifiers);
     const pressedKey = ShortcutService.getPressedKey(event);
@@ -298,10 +306,7 @@ export class KeyMappingService {
     return finalKey;
   }
 
-  public static getCommandFromKey(
-    mode: VimMode,
-    key: string,
-  ): VimCommand | undefined {
+  public getCommandFromKey(mode: VimMode, key: string): VimCommand | undefined {
     const modeKeys = this.keyBindings[mode];
     const commandName = modeKeys?.find((command) => {
       const standard = command.key === key;
@@ -314,7 +319,7 @@ export class KeyMappingService {
     return commandName;
   }
 
-  public static getSynonymModifier(
+  public getSynonymModifier(
     keyBindings: KeyBindingModes,
     input: string,
   ): string {
@@ -335,7 +340,7 @@ export class KeyMappingService {
    * sideeffect queuedKeys
    * sideeffect potentialCommands
    */
-  private static findPotentialCommand(
+  private findPotentialCommand(
     input: string,
     modifiers: string[] = [],
     mode: VimMode,
@@ -362,7 +367,8 @@ export class KeyMappingService {
     if (this.potentialCommands?.length) {
       targetKeyBinding = this.potentialCommands;
     } else {
-      targetKeyBinding = this.keyBindings[mode] ?? [];
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,371] this.keyBindings: ", this.keyBindings);
+      targetKeyBinding = (options.keyBindings ?? this.keyBindings)[mode] ?? [];
     }
 
     //
@@ -389,7 +395,8 @@ export class KeyMappingService {
     }
     /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
 
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,386] targetKeyBinding: ", targetKeyBinding);
+    // /*prettier-ignore*/ console.log("[KeyMappingSemvice.ts,386] targetKeyBinding: ", targetKeyBinding);
+    // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
     const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
       // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
       //   return true;
@@ -443,7 +450,7 @@ export class KeyMappingService {
     };
   }
 
-  // private static includesPotentialCommands(
+  // private  includesPotentialCommands(
   //   commandAwaitingNextInput: FindPotentialCommandReturn,
   // ): VimCommand | undefined {
   //   const has = this.potentialCommands.find((command) => {
@@ -456,23 +463,23 @@ export class KeyMappingService {
   //   return has;
   // }
 
-  public static getLastCommand(): VimCommand {
+  public getLastCommand(): VimCommand {
     return this.lastCommand;
   }
 
-  public static setLastCommand(lastCommand: VimCommand): void {
+  public setLastCommand(lastCommand: VimCommand): void {
     this.lastCommand = lastCommand;
   }
 
-  public static getLastKey(): string {
+  public getLastKey(): string {
     return this.lastKey;
   }
 
-  public static setLastKey(lastKey: string): void {
+  public setLastKey(lastKey: string): void {
     this.lastKey = lastKey;
   }
 
-  private static emptyQueuedKeys() {
+  private emptyQueuedKeys() {
     this.queuedKeys = [];
     this.potentialCommands = [];
     //this.lastCommand = undefined;
@@ -480,7 +487,7 @@ export class KeyMappingService {
   }
 
   /** */
-  private static ensureVimModifier(input: string) {
+  private ensureVimModifier(input: string) {
     if (SPECIAL_KEYS.includes(input)) {
       const asVimModifier = `<${input}>`;
 
@@ -490,7 +497,7 @@ export class KeyMappingService {
     return input;
   }
 
-  public static isEnter(event: KeyboardEvent): boolean {
+  public isEnter(event: KeyboardEvent): boolean {
     const is = event.key === "Enter";
     return is;
   }

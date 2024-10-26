@@ -145,6 +145,11 @@ export class VimCommandManager {
   }
 
   private enterNormalMode(vimState: IVimState) {
+    const currentMode = vimState.mode;
+    if (currentMode === VimMode.NORMAL) {
+      window.activeVimInstancesIdMap.pop();
+    }
+
     const mode = new NormalMode(vimState);
     const updated = mode.cancelAll().serialize();
 

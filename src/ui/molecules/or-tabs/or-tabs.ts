@@ -24,6 +24,12 @@ export class OrTabs {
   @bindable activeTabId: Id;
   @bindable tabs: ITab[] = [];
 
+  private keyMappingService: KeyMappingService;
+
+  constructor() {
+    this.keyMappingService = new KeyMappingService();
+  }
+
   private debug = false;
   private tab: ITab;
   private tabsCRUD = new CRUDService<ITab>();
@@ -163,7 +169,7 @@ export class OrTabs {
   }
 
   private rename(event: KeyboardEvent) {
-    const isEnter = KeyMappingService.isEnter(event);
+    const isEnter = this.keyMappingService.isEnter(event);
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: or-tabs.ts:167 ~ isEnter:', isEnter);
     if (!isEnter) return;
 

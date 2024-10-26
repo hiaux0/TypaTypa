@@ -30,6 +30,9 @@ export default defineConfig({
   //    },
   //  },
   //},
+   optimizeDeps: {
+    include: ['rangy']
+  },
   plugins: [
     aurelia({
       useDev: true,
