@@ -18,6 +18,9 @@ import { DraggableCustomAttribute } from "./ui/attributes/draggable";
 import { OrTabs } from "./ui/molecules/or-tabs/or-tabs";
 import { UploadButton } from "./ui/atoms/upload-button/upload-button";
 import { ResizeCustomAttribute } from "./ui/attributes/resize";
+import { VimEditor } from "./ui/organisms/vim-editor/vim-editor";
+
+window.activeVimInstancesIdMap = [];
 
 const attributes = [
   AutosizeCustomAttribute,
@@ -26,7 +29,7 @@ const attributes = [
 ];
 const atoms = [UploadButton];
 const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
-const organisms = [CustomTable, Dictionary, TabDrawer, Topics];
+const organisms = [CustomTable, Dictionary, TabDrawer, Topics, VimEditor];
 
 Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
   .register([...atoms, ...attributes, ...molecules, ...organisms, Scratch])

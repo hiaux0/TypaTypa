@@ -8,20 +8,28 @@
   >
     <!-- Can:t remember why input and read-only were wrapped -->
     <!-- <template if.bind="cell.text"> </template> -->
-    <input
-      if.bind="isEdit"
-      ref="contentInputRef"
-      type="text"
-      class="editing"
-      value.bind="textareaValue"
-      keydown.trigger="onKeyDown($event)"
-      autosize="on-width-autosize.bind: onInputWidthChanged; use-width-of-container.bind: true;"
-    />
+    <div class="input-container">
+      <vim-editor
+        if.bind="isEdit"
+        vim-state.bind="vimState"
+        show-line-numbers.bind="false"
+      ></vim-editor>
+    </div>
+
+    <!--<input-->
+    <!--  if.bind="isEdit"-->
+    <!--  ref="contentInputRef"-->
+    <!--  type="text"-->
+    <!--  class="editing"-->
+    <!--  value.bind="textareaValue"-->
+    <!--  keydown.trigger="onKeyDown($event)"-->
+    <!--  autosize="on-width-autosize.bind: onInputWidthChanged; use-width-of-container.bind: true;"-->
+    <!--/>-->
     <pre else class="read-only">${cell.text}</pre>
   </section>
 
   <!-- Selection -->
-  <div if.bind="selected" class="selection"></div>
+  <!-- <div if.bind="selected" class="selection"></div> -->
 
   <!-- Autocomplete -->
   <autocomplete-input

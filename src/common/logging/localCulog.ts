@@ -1,4 +1,5 @@
 const debugMode = true;
+const isBrowser = true;
 
 /**
  * TODO: WARNING and ERROR mean sth else in other loggers, but here
@@ -290,11 +291,16 @@ export class CuLogger {
     if (callback) {
       callback(...messageWithLogScope);
     } else {
-      console.log(
-        terminalColorMap[logOpt.terminalColor],
-        ...messageWithLogScope,
-        terminalColorMap.Reset,
-      );
+      if (isBrowser) {
+        console.log(...messageWithLogScope);
+      } else {
+        // nodejs
+        console.log(
+          terminalColorMap[logOpt.terminalColor],
+          ...messageWithLogScope,
+          terminalColorMap.Reset,
+        );
+      }
     }
     this.logTrail.push(messageWithLogScope);
     loggerDevelopmentDebugLog.push(["log", ...messageWithLogScope]);

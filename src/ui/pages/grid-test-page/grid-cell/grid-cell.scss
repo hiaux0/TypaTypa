@@ -45,6 +45,15 @@
       }
     }
 
+    .input-container {
+      width: inherit;
+      height: inherit;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: unset;
+    }
+
     input {
       width: inherit;
       height: inherit;

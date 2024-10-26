@@ -6,6 +6,12 @@ import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
 import { Store } from "../../../../common/modules/store";
+import { Logger } from "../../../../common/logging/logging";
+import { IVimState, VimMode } from "../../../../features/vim/vim-types";
+import { Id } from "../../../../domain/types/SecondBrainDataModel";
+import { EV_VIM_ID_CHANGED } from "../../../../common/modules/eventMessages";
+
+const logger = new Logger("GridCell");
 
 const PADDING = 6;
 const PADDING_LEFT = 6;
@@ -41,6 +47,7 @@ export class GridCell {
   public autocompleteValue = "";
   public autoCompleteSource: string[] = [];
   public measureTextWidth = measureTextWidth;
+  public vimState: IVimState;
 
   public get getEditWidth(): string {
     const cellScrollWidth = measureTextWidth(this.textareaValue);
@@ -58,7 +65,7 @@ export class GridCell {
     /** Used for watching changes on the whole row (Aurelia behavior) */
     rowLength?: number,
   ) {
-    logger
+    // logger.culogger.debug(["hi"], { log: true }, (...r) => console.log(...r));
     const getWidth = () => {
       if (!cell) return;
 
@@ -154,6 +161,18 @@ export class GridCell {
     }
     this.textareaValue = this.cell?.text;
     this.updateAutocomplete(this.textareaValue);
+    const id = this.getVimId();
+    const vimState: IVimState = {
+      mode: VimMode.NORMAL,
+      cursor: {
+        col: 0,
+        line: 0,
+      },
+      id,
+      lines: [{ text: this.cell.text }],
+    };
+    this.vimState = vimState;
+    window.activeVimInstancesIdMap.push(id);
 
     window.setTimeout(() => {
       this.getInput()?.focus();
@@ -221,4 +240,8 @@ export class GridCell {
       colsToNextText: this.cell.colsToNextText,
     });
   };
+
+  private getVimId(): Id {
+    return `grid-cell-${this.column}-${this.row}`;
+  }
 }

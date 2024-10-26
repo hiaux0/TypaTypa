@@ -1,4 +1,5 @@
 import { ShortcutService } from "../../common/services/ShortcutService";
+import { EventAggregator, resolve } from "aurelia";
 import { IVimState, VimOptions } from "./vim-types";
 import { KeyMappingService } from "./vimCore/commands/KeyMappingService";
 import { VimHelper } from "./VimHelper";
@@ -11,6 +12,9 @@ import { CursorUtils } from "../../common/modules/cursor/cursor-utils";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
 import { VIM_COMMAND } from "./vim-commands-repository";
 import { cursorAllModes } from "./key-bindings";
+import { EV_VIM_ID_CHANGED } from "../../common/modules/eventMessages";
+import { Id } from "../../domain/types/types";
+import { container } from "../../diContainer";
 
 /**
  * - Takes in input from user
@@ -23,6 +27,7 @@ export class VimInputHandler {
   private vimUi: VimUi;
   private options?: VimOptions;
   private eventListeners: any[] = [];
+  private activeVimInstancesIdMap: string[];
 
   public init(options?: VimOptions) {
     this.options = options;
@@ -143,6 +148,15 @@ export class VimInputHandler {
   }
 
   private handleKeydown = async (event: KeyboardEvent) => {
+    const lastActiveId =
+      window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
+    const isThisInstance = lastActiveId === this.vimCore.getVimState().id;
+    if (!isThisInstance) return;
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,147] this.vimCore.getVimState().id: ", this.vimCore.getVimState().id);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,153] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
+
     if (getIsInputActive()) return;
     const mode = this.vimCore.getVimState().mode;
     const options = this.vimCore.options;

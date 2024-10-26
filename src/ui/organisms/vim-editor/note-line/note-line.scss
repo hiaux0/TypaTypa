@@ -1,0 +1,25 @@
+@import '../vim-editor.scss';
+
+.container {
+
+  &.mode-VISUAL,
+  &.mode-VISUALLINE {
+    note-line {
+      .editorLine__highlight {
+        position: absolute;
+        top: 0px;
+
+        background: orange;
+        opacity: 0.5;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+note-line {
+  position: relative;
+  height: $editorLineHeight;
+  display: block;
+}

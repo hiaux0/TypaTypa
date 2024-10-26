@@ -1,0 +1,67 @@
+<import from="./note-line/note-line"></import>
+
+<div class="notesComponentContainer">
+  <div class="container mode-${vimState.mode}">
+    <div class="lineNumberContainer" if.bind="showLineNumbers">
+      <div
+        repeat.for="line of vimState.lines"
+        show.bind="!vimState.foldMap[$index]"
+      >
+        ${$index}
+      </div>
+    </div>
+
+    <div class="mainEditorContainer">
+      <div
+        ref="inputContainerRef"
+        class="inputContainer"
+        contenteditable.bind="contenteditable"
+      >
+        <template repeat.for="line of vimState.lines">
+          <note-line
+            show.bind="!vimState.foldMap[$index]"
+            editor-line-class="inputLine"
+            line.bind="line"
+            line-index.bind="$index"
+            line-highlight-end.bind="vimState.visualEndCursor"
+            line-highlight-start.bind="vimState.visualStartCursor"
+            fold-map.bind="vimState.foldMap"
+          ></note-line>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <div class="debugContainer" if.bind="debugFlags.showDebugSection">
+    <div style="text-decoration: underline">Debug mode (${vimState.mode})</div>
+    <div>
+      <strong>Id</strong>
+      ${vimState.id}
+    </div>
+    <div>
+      <strong># of lines: </strong>
+      ${vimState.lines.length}
+    </div>
+    <div>
+      <strong>Text:</strong>
+      ${vimState.lines[vimState.cursor.line].text}
+    </div>
+    <div>
+      <strong>Cursor</strong>
+      L: ${vimState.cursor.line} - C: ${vimState.cursor.col}
+    </div>
+    <div class="divider"></div>
+    <div>
+      <strong>Visual Cursor</strong>
+    </div>
+    <div if.bind="vimState.visualStartCursor">
+      <strong>Start</strong>
+      L: ${vimState.visualStartCursor.line} - C:
+      ${vimState.visualStartCursor.col}
+    </div>
+    <div if.bind="vimState.visualEndCursor">
+      <strong>End</strong>
+      L: ${vimState.visualEndCursor.line} - C: ${vimState.visualEndCursor.col}
+    </div>
+  </div>
+</div>

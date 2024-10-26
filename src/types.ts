@@ -1,3 +1,11 @@
+import { Id } from "./domain/types/types";
+
+declare global {
+  interface Window {
+    activeVimInstancesIdMap: Id[];
+  }
+}
+
 export type Direction = "up" | "down" | "left" | "right" | "none";
 export interface DirectionMap {
   x: Direction;

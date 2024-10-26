@@ -1,0 +1,19 @@
+<div
+  ref="lineRef"
+  class="${editorLineClass}"
+  data-test="${editorLineClass}"
+><span class="editorText" highlight
+  >${debugFlags.showLineNumbers ? `${String(lineIndex).padEnd(2)}  ` : ''}${line.text.trimEnd()}</span
+  ><span> </span><span class="editorDecoration"
+  >${!foldMap[lineIndex] && foldMap[lineIndex + 1] ? '...' : ''}</span
+  >
+</div>
+
+<div
+  if.bind="lineHightlight().left && lineHightlight().width"
+  class="editorLine__highlight"
+  css="
+        width: ${lineHightlight().width};
+        left: ${lineHightlight().left};
+      "
+></div>

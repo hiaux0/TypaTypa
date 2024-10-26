@@ -13,6 +13,7 @@ import {
   GridSelectionRange,
   Sheet,
 } from "../../../../types";
+import { VimStateClass } from "../../../../features/vim/vim-state";
 
 export interface GridIteratorOptions {
   startCol?: number;
@@ -296,6 +297,7 @@ export function convertRangeToVimState(
   range: GridSelectionRange,
   startRange?: GridSelectionCoord,
 ): IVimState {
+  if (!range) return VimStateClass.createEmpty();
   // Convert lines
   const lines: VimLine[] = [];
   let currentLine = range[0][1];

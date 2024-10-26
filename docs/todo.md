@@ -88,8 +88,9 @@
 - [ ] feat: quickly toggle settings
 - [ ] fix: grid: paste: newlines at start should be reduced (when copying code blocks)
 - [ ] E
-  - [ ] until cell with no content
-  - [ ] if no overflow, then until next cell
+  - [x] until cell with no content
+  - [ ] if no overflow, then until next empty cell 
+- [ ] vimeditor
 
 
 # Done

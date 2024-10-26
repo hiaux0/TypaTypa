@@ -1186,7 +1186,7 @@ export class GridTestPage {
 
   attached() {
     this.initGridNavigation();
-    const [start, end] = this.activeSheet.selectedRange;
+    const [start, end] = this.activeSheet.selectedRange ?? [[], []];
     if (start[0] !== end[0] && start[1] !== end[1]) {
       this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
     }
@@ -1198,20 +1198,8 @@ export class GridTestPage {
       EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
     ] = true;
 
-    // this.contentMap[this.CELL_COORDS(0, 0)] = "Hi";
-    // this.contentMap[this.CELL_COORDS(1, 0)] = "Bye";
-
-    this.gridPanels = [
-      // { id: "1", row: 0, col: 0, type: "button", content: "Hi" },
-      //{ row: 1, col: 1, width: 2, type: "button" },
-      // { id: "2", col: 3, row: 4, width: 4, height: 4, type: "button" },
-      // { id: "3", col: 8, row: 5, width: 2, height: 2, type: "button" },
-      // { id: "5", col: 3, row: 3, width: 1, height: 1, type: "button" },
-      // { id: "6", col: 4, row: 4, width: 1, height: 1, type: "button" },
-    ];
     this.gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
-    // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
     this.scrollSelectdeIntoView();
   }
 
@@ -1368,6 +1356,7 @@ export class GridTestPage {
       this.contentMap,
       this.activeSheet.selectedRange,
     );
+    window.activeVimInstancesIdMap.push(vimState.id);
 
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,

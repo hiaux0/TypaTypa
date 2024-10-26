@@ -55,6 +55,8 @@ src/common/logging/logging.ts
 src/ui/pages/grid-test-page/grid-test-page.ts
 src/ui/pages/grid-test-page/grid-test-page.html
 src/features/vim/key-bindings.ts
+src/ui/organisms/vim-editor/vim-editor.ts
+src/ui/organisms/vim-editor/vim-editor.html
 src/common/modules/database/gridDatabase.ts
 src/ui/pages/grid-test-page/grid-modules/gridModules.ts
 test/sheets/gridModules.spec.ts
@@ -64,6 +66,28 @@ src/ui/colors.scss
 src/ui/mixins.scss
 src/ui/molecules/autocomplete-input/autocomplete-input.ts
 src/ui/molecules/autocomplete-input/autocomplete-input.html
+src/types.ts
+src/features/vim/vimCore/VimCore.ts
+src/features/vim/VimInputHandler.ts
+src/features/vim/vimCore/commands/KeyMappingService.ts
+
+%% Grid Vim Editor
+docs/todo.md
+arrow
+src/common/logging/logging.ts
+src/ui/pages/grid-test-page/grid-test-page.ts
+src/ui/pages/grid-test-page/grid-test-page.html
+src/features/vim/key-bindings.ts
+src/ui/organisms/vim-editor/vim-editor.ts
+src/ui/organisms/vim-editor/vim-editor.html
+src/ui/organisms/vim-editor/vim-editor.scss
+src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
+src/ui/pages/grid-test-page/grid-cell/grid-cell.html
+src/common/modules/database/gridDatabase.ts
+src/ui/pages/grid-test-page/grid-modules/gridModules.ts
+test/sheets/gridModules.spec.ts
+src/ui/colors.scss
+src/ui/mixins.scss
 src/types.ts
 src/features/vim/vimCore/VimCore.ts
 src/features/vim/VimInputHandler.ts
