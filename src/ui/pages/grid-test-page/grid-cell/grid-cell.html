@@ -8,11 +8,11 @@
   >
     <!-- Can:t remember why input and read-only were wrapped -->
     <!-- <template if.bind="cell.text"> </template> -->
-    <div class="input-container">
+    <div if.bind="isEdit" class="input-container editing">
       <vim-editor
-        if.bind="isEdit"
         vim-state.bind="vimState"
         show-line-numbers.bind="false"
+        debug.bind="true"
       ></vim-editor>
     </div>
 
@@ -29,7 +29,7 @@
   </section>
 
   <!-- Selection -->
-  <!-- <div if.bind="selected" class="selection"></div> -->
+  <div if.bind="selected" class="selection"></div>
 
   <!-- Autocomplete -->
   <autocomplete-input

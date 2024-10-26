@@ -1,3 +1,5 @@
+import { VimStateClass } from "../../../features/vim/vim-state";
+import { IVimState } from "../../../features/vim/vim-types";
 import "./khong-a-page.scss";
 
 const titleQuestions = [
@@ -47,4 +49,13 @@ const possibleNos = [
 
 export class KhongAPage {
   public message = "khong-a-page.html";
+  vimState: IVimState;
+
+  binding() {
+    this.vimState = VimStateClass.createEmpty();
+    this.vimState.cursor = { col: 7, line: 0 };
+    this.vimState.lines = [{ text: "hello, friend how are you?" }];
+    this.vimState.id = "khong-a-page";
+    window.activeVimInstancesIdMap = [this.vimState.id];
+  }
 }

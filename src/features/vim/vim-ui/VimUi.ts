@@ -42,7 +42,10 @@ export class VimUi {
   }
   private currentCaretCol = 0;
 
-  constructor(public vimState: IVimState, public options?: VimEditorOptions) {
+  constructor(
+    public vimState: IVimState,
+    public options?: VimEditorOptions,
+  ) {
     if (options) {
       this.container = options.container;
       this.caret = options.caret;
@@ -72,7 +75,7 @@ export class VimUi {
   }
 
   public update(vimState: IVimState): void {
-    if (!vimState) return
+    if (!vimState) return;
     this.setCursorMovement(vimState.cursor);
   }
 
@@ -108,7 +111,7 @@ export class VimUi {
         this.vimState.cursor,
         Math.abs(this.currentLineNumber - newCursorLine),
       );
-      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: VimUi.ts:106 ~ newCursorLine:', newCursorLine);
+      // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: VimUi.ts:106 ~ newCursorLine:', newCursorLine);
     }
 
     const horiDirection =
@@ -242,10 +245,10 @@ export class VimUi {
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view
      */
-    window.requestAnimationFrame(() => {
+    window.setTimeout(() => {
       this.focusContainer();
       this.setCursorInInsert(cursor);
-    });
+    }, 66);
   }
 
   private setCursorInInsert(cursor?: Cursor) {
@@ -339,6 +342,7 @@ export class VimUi {
       const simpleCase = onlyOneNode && onlyOneNodeWithBr && thirdIsEmpty;
       if (simpleCase) {
         if (!child.textContent) return;
+        /*prettier-ignore*/ console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
         lines.push({ text: child.textContent });
         return;
       }
@@ -348,8 +352,12 @@ export class VimUi {
       const isTextOnlyMultiLinePaste = moreThan3ChildNodes && !thirdIsEmpty;
       if (isTextOnlyMultiLinePaste) {
         const textNodes = getTextNodes(child);
+        /*prettier-ignore*/ console.log("[VimUi.ts,355] child: ", child);
+        /*prettier-ignore*/ console.log("[VimUi.ts,355] textNodes: ", textNodes);
+        // debugger
         textNodes.forEach((textNode) => {
-          if (!textNode.nodeValue) return;
+          if (!textNode.nodeValue.trim()) return;
+          /*prettier-ignore*/ console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
           lines.push({ text: textNode.nodeValue });
         });
         return;
@@ -361,6 +369,7 @@ export class VimUi {
         const childrenOfDivs = Array.from((first as Element).children);
         childrenOfDivs.forEach((child) => {
           if (!child.textContent) return;
+          /*prettier-ignore*/ console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
           lines.push({ text: child.textContent });
         });
         return;
@@ -368,6 +377,7 @@ export class VimUi {
 
       /** Rest is okay */
       if (!child.textContent) return;
+      console.log("WHAT");
       lines.push({ text: child.textContent });
     });
     return lines;
@@ -457,7 +467,7 @@ function getAdjustedCursorLineWithFoldmap(
   cursor: Cursor | undefined,
   unadjustedNewCusorLine: number,
 ): number {
-  /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'darkblue'}`);
+  // /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'darkblue'}`);
   if (!foldMap) return unadjustedNewCusorLine;
   if (!cursor) return unadjustedNewCusorLine;
   /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: VimUi.ts:459 ~ foldMap:', foldMap);

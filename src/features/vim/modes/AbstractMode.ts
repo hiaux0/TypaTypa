@@ -900,6 +900,7 @@ export abstract class AbstractMode {
 
     return adjusted;
   }
+
 }
 
 function getNumOfWhiteSpaceAtStart(text: string) {

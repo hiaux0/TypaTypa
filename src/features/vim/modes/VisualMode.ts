@@ -1,4 +1,5 @@
 import { Logger } from "../../../common/logging/logging";
+import { setClipboardContent } from "../../../common/modules/platform/clipboard";
 import { replaceRange } from "../../../common/modules/string/string";
 import { VIM_COMMAND } from "../vim-commands-repository";
 import { VimStateClass } from "../vim-state";
@@ -103,6 +104,31 @@ export class VisualMode extends AbstractMode {
     this.vimState.cursor.col = visualStartCursor.col;
 
     return this.vimState;
+  }
+
+  public copy(): VimStateClass {
+    const text = this.getSelectedText();
+    /*prettier-ignore*/ console.log("[VisualMode.ts,110] text: ", text);
+    setClipboardContent(text);
+    return this.vimState;
+  }
+
+  private getSelectedText(): string {
+    const { visualStartCursor, visualEndCursor } = this.vimState;
+    if (!visualStartCursor) {
+      logVisualDeleteError("Need start cursor");
+      return;
+    }
+    if (!visualEndCursor) {
+      logVisualDeleteError("Need end cursor");
+      return;
+    }
+
+    const activeLine = this.vimState.getActiveLine();
+    if (!activeLine) return;
+    const text = activeLine.text;
+    const part = text.slice(visualStartCursor.col, visualEndCursor.col + 1);
+    return part;
   }
 }
 

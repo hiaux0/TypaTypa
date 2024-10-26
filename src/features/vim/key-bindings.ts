@@ -96,7 +96,6 @@ const cursorNormalAndVisual: VimCommand[] = [
 export const keyBindings: KeyBindingModes = {
   normal: [],
   [VimMode.NORMAL]: [
-    // { key: "<Space>", command: "vimLeader" },
     { key: "<Space>tc", sequence: "^elrx" },
     { key: "<Space>fu", command: VIM_COMMAND.unfoldAll },
     { key: "a", command: VIM_COMMAND.enterInsertAfterMode },

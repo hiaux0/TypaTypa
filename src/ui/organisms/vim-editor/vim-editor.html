@@ -18,6 +18,7 @@
         contenteditable.bind="contenteditable"
       >
         <template repeat.for="line of vimState.lines">
+          <!-- ${line.text} -->
           <note-line
             show.bind="!vimState.foldMap[$index]"
             editor-line-class="inputLine"
@@ -32,7 +33,7 @@
     </div>
   </div>
 
-  <div class="debugContainer" if.bind="debugFlags.showDebugSection">
+  <div class="debugContainer" if.bind="debugFlags.showDebugSection && debug">
     <div style="text-decoration: underline">Debug mode (${vimState.mode})</div>
     <div>
       <strong>Id</strong>

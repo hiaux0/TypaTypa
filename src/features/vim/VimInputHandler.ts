@@ -11,7 +11,7 @@ import { getIsInputActive } from "../../common/modules/htmlElements";
 import { CursorUtils } from "../../common/modules/cursor/cursor-utils";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
 import { VIM_COMMAND } from "./vim-commands-repository";
-import { cursorAllModes } from "./key-bindings";
+import { cursorAllModes, isEscape } from "./key-bindings";
 import { EV_VIM_ID_CHANGED } from "../../common/modules/eventMessages";
 import { Id } from "../../domain/types/types";
 import { container } from "../../diContainer";
@@ -38,12 +38,10 @@ export class VimInputHandler {
 
   public init(options?: VimOptions) {
     /*prettier-ignore*/ logger.culogger.debug(["[VimInputHandler.ts,38] init: ", {log: true}]);
-    // this.keyMappingService.init({}, options.keyBindings);
     this.options = options;
     this.keyMappingService.id = options?.vimState.id;
 
     const keyBindings = this.keyMappingService.keyBindings;
-    /*prettier-ignore*/ console.log(">>>>[VimInputHandler.ts,46] keyBindings: ", keyBindings);
     const vimCore = VimCore.create({
       keyBindings,
       ...this.options,
@@ -51,6 +49,7 @@ export class VimInputHandler {
         ...this.options?.hooks,
         modeChanged: (...args) => {
           const { vimState } = args[0];
+          // /*prettier-ignore*/ console.log("> [VimInputHandler.ts,57] vimState.lines.length: ", vimState.lines.length);
           const newVimState = vimState;
           if (!newVimState) return;
           if (!newVimState.mode) return;
@@ -80,6 +79,7 @@ export class VimInputHandler {
 
               /** Lines */
               const lines = this.vimUi.getTextFromHtml();
+              /*prettier-ignore*/ console.log(">>>>> [VimInputHandler.ts,86] lines: ", lines);
               newVimState.lines = lines;
 
               // this.vimUi.removeHtmlGeneratedNewLines(this.options);
@@ -89,6 +89,7 @@ export class VimInputHandler {
           });
 
           if (this.options?.hooks?.modeChanged) {
+            // /*prettier-ignore*/ console.log(">>[VimInputHandler.ts,96] args[0].vimState.lines.length: ", args[0].vimState.lines.length);
             this.options.hooks.modeChanged(...args);
           }
 
@@ -170,13 +171,13 @@ export class VimInputHandler {
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
 
-    if (getIsInputActive()) return;
+    const finalKey = this.keyMappingService.getKeyFromEvent(event);
+    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
+    if (getIsInputActive() && !isEscape(finalKey)) return;
     const mode = this.vimCore.getVimState().mode;
     const options = this.vimCore.options;
     // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
     if (!mode) return;
-    const finalKey = this.keyMappingService.getKeyFromEvent(event);
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
     const { command, commandName, commandSequence } =
       this.keyMappingService.prepareCommand(finalKey, mode, options) ?? {};
     const pressedKey = ShortcutService.getPressedKey(event);

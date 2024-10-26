@@ -48,6 +48,7 @@ export class VimStateClass {
   }
 
   public serialize(): IVimState {
+    // /*prettier-ignore*/ console.log("[vim-state.ts,52] this.lines: ", this.lines);
     const result: IVimState = {
       id: this.id,
       cursor: this.cursor,

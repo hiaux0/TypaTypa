@@ -44,6 +44,7 @@ export class VimCommandManager {
     /** Changed Mode */
     if (VimHelper.isModeChangingCommand(commandName)) {
       const result = this.executeModeChange(commandName);
+      // /*prettier-ignore*/ console.log("[VimCommandManager.ts,48] result.lines.length: ", result.lines.length);
       return result;
     }
 
@@ -131,6 +132,9 @@ export class VimCommandManager {
     if (!this[commandName]) return;
     // @ts-ignore
     const result = this[commandName](this.internalVimState);
+    this.internalVimState.lines.length
+    ///*prettier-ignore*/ console.log("[VimCommandManager.ts,136] this.internalVimState.lines.length: ", this.internalVimState.lines.length);
+    ///*prettier-ignore*/ console.log("[VimCommandManager.ts,138] result.lines.length: ", result.lines.length);
 
     if (!this.options?.hooks?.modeChanged) return;
     const modeChangedResult: QueueInputReturn = {
@@ -147,7 +151,10 @@ export class VimCommandManager {
   private enterNormalMode(vimState: IVimState) {
     const currentMode = vimState.mode;
     if (currentMode === VimMode.NORMAL) {
-      window.activeVimInstancesIdMap.pop();
+      if (window.activeVimInstancesIdMap.length > 1) {
+        // keep 1
+        window.activeVimInstancesIdMap.pop();
+      }
     }
 
     const mode = new NormalMode(vimState);

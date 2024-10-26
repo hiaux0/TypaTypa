@@ -26,7 +26,6 @@ export class SelectionService {
 
   static createRange(node: Node, cursor: Cursor) {
     const range = Rangy.createRangyRange();
-    /*prettier-ignore*/ console.log("[SelectionService.ts,30] range: ", range);
 
     // Col
     range.setStart(node, cursor.col);

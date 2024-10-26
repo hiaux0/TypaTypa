@@ -54,6 +54,7 @@ export class VimCore {
       commandName,
       inputForCommand,
     );
+    // /*prettier-ignore*/ console.log("[VimCore.ts,58] result.lines.length;: ", result.lines.length);
     if (!result) return;
     this.setVimState(result);
     return result;

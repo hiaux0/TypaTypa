@@ -13,6 +13,7 @@ export class VimEditor {
   @bindable public vimState: IVimState;
   @bindable public vimEditorHooks: VimHooks;
   @bindable public showLineNumbers = true;
+  @bindable public debug = false;
 
   private vimInit: VimInit;
   private debugFlags = debugFlags.vimEditor;
@@ -78,7 +79,13 @@ export class VimEditor {
   }
 
   private setVimState(vimState: IVimState | undefined): void {
+    // /*prettier-ignore*/ console.trace("[vim-editor.ts,82] vimState.lines.length: ", vimState.lines.length);
+    // /*prettier-ignore*/ console.log("[vim-editor.ts,82] vimState.lines.length: ", vimState.lines.length);
     if (!vimState) return;
     this.vimState = vimState;
+    this.vimState.lines;
+    // /*prettier-ignore*/ console.log("[vim-editor.ts,85] this.vimState.lines: ", this.vimState.lines);
+    this.vimState.lines.length;
+    // /*prettier-ignore*/ console.log("[vim-editor.ts,86] this.vimState.lines.length: ", this.vimState.lines.length);
   }
 }
