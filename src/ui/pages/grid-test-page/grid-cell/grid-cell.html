@@ -11,8 +11,10 @@
     <div if.bind="isEdit" class="input-container editing">
       <vim-editor
         vim-state.bind="vimState"
+        vim-editor-hooks.bind="vimEditorHooks"
         show-line-numbers.bind="false"
-        debug.bind="true"
+        value.two-way="textareaValue"
+        mapping-by-mode.bind="mappingByMode"
       ></vim-editor>
     </div>
 
@@ -32,15 +34,4 @@
   <div if.bind="selected" class="selection"></div>
 
   <!-- Autocomplete -->
-  <autocomplete-input
-    if.bind="isEdit && selected && autoCompleteSource.length"
-    container.bind="cellContentRef"
-    target.bind="contentInputRef"
-    value.two-way="autocompleteValue"
-    source.bind="autoCompleteSource"
-    autofocus="true"
-    hide-input
-    width="80vw"
-    on-partial-accept.bind="partiallyAcceptAutocomplete"
-  ></autocomplete-input>
 </div>

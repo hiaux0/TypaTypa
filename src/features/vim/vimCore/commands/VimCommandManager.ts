@@ -73,7 +73,7 @@ export class VimCommandManager {
     }
   }
 
-  private setInternalVimState(vimState: IVimState) {
+  public setInternalVimState(vimState: IVimState) {
     this.internalVimState = structuredClone(vimState);
   }
 
@@ -125,14 +125,14 @@ export class VimCommandManager {
     return finalMode;
   }
 
-  private executeModeChange(commandName: VIM_COMMAND): IVimState | undefined {
+  public executeModeChange(commandName: VIM_COMMAND): IVimState | undefined {
     logger.culogger.debug(["Mode change command", commandName]);
 
     // @ts-ignore
     if (!this[commandName]) return;
     // @ts-ignore
     const result = this[commandName](this.internalVimState);
-    this.internalVimState.lines.length
+    this.internalVimState.lines.length;
     ///*prettier-ignore*/ console.log("[VimCommandManager.ts,136] this.internalVimState.lines.length: ", this.internalVimState.lines.length);
     ///*prettier-ignore*/ console.log("[VimCommandManager.ts,138] result.lines.length: ", result.lines.length);
 
@@ -149,14 +149,7 @@ export class VimCommandManager {
   }
 
   private enterNormalMode(vimState: IVimState) {
-    const currentMode = vimState.mode;
-    if (currentMode === VimMode.NORMAL) {
-      if (window.activeVimInstancesIdMap.length > 1) {
-        // keep 1
-        window.activeVimInstancesIdMap.pop();
-      }
-    }
-
+    /*prettier-ignore*/ console.log("1. ----------------------------");
     const mode = new NormalMode(vimState);
     const updated = mode.cancelAll().serialize();
 

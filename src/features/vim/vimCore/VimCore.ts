@@ -10,7 +10,7 @@ const logger = new Logger("VimCore");
 
 export class VimCore {
   private vimState: IVimState;
-  private manager: VimCommandManager;
+  public manager: VimCommandManager;
   private keyMappingService: KeyMappingService;
 
   constructor(public options?: VimOptions) {
@@ -20,6 +20,7 @@ export class VimCore {
       this.vimState = VimStateClass.createEmpty();
     }
     this.manager = VimCommandManager.create(this.options);
+    this.manager.setInternalVimState(this.vimState)
     this.keyMappingService = new KeyMappingService();
   }
 

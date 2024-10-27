@@ -1,6 +1,7 @@
 import { Logger } from "../../common/logging/logging";
+import { IKeyMappingMapping } from "../../types";
 import { VIM_COMMAND } from "./vim-commands-repository";
-import { IVimState, VimOptions } from "./vim-types";
+import { IVimState, KeyBindingModes, VimOptions } from "./vim-types";
 import { VimCore } from "./vimCore/VimCore";
 import { VimInputHandler } from "./VimInputHandler";
 
@@ -11,10 +12,14 @@ export class VimInit {
   private vimInputHandler: VimInputHandler;
   private options: VimOptions;
 
-  public init(options?: VimOptions) {
-    /*prettier-ignore*/ logger.culogger.debug(["[VimInit.ts,16] init: "], {log: true});
+  public init(
+    options?: VimOptions,
+    mappings?: IKeyMappingMapping,
+    additionalKeyBindings?: KeyBindingModes,
+  ) {
+    /*prettier-ignore*/ logger.culogger.debug(["[VimInit.ts,16] init: "], {log: false});
     this.vimInputHandler = new VimInputHandler();
-    this.vimInputHandler.init(options);
+    this.vimInputHandler.init(options, mappings, additionalKeyBindings);
 
     if (!options) return;
     this.options = options;
@@ -42,6 +47,10 @@ export class VimInit {
 
   public reload(vimState: IVimState) {
     this.vimInputHandler.reload(vimState);
+  }
+
+  public clear(): void {
+    this.vimInputHandler.clearKeybord();
   }
 
   public getOptions() {

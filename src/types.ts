@@ -108,3 +108,13 @@ export const defaultGridDatabaseType: GridDatabaseType = {
   selectedSheetId: "1",
 };
 // export const defaultGridDatabaseType: GridDatabaseType = {};
+//
+
+/** Name from keydown event */
+type EventKeyName = string;
+export interface IKeyMappingMapping {
+  /**
+   * Return `false` to prevent default
+   */
+  [key: EventKeyName]: () => boolean | void;
+}

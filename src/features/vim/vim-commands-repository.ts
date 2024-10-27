@@ -1,4 +1,5 @@
 import { ModifiersType } from "../../common/modules/keybindings/app-keys";
+import { VimMode } from "./vim-types";
 
 export enum VIM_COMMAND {
   "backspace" = "backspace",
@@ -140,12 +141,13 @@ export interface VimCommand {
   /**
    * Return `false` to prevent default
    */
-  execute?: () => boolean | void | Promise<void>;
+  execute?: (mode: VimMode) => boolean | void | Promise<void>;
   args?: {
     text?: string;
   };
   desc?: string;
   preventUndoRedo?: boolean;
+  ignoreMode?: VimMode[];
 }
 
 export interface SynonymKey {

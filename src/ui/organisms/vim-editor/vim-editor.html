@@ -17,18 +17,16 @@
         class="inputContainer"
         contenteditable.bind="contenteditable"
       >
-        <template repeat.for="line of vimState.lines">
-          <!-- ${line.text} -->
-          <note-line
-            show.bind="!vimState.foldMap[$index]"
-            editor-line-class="inputLine"
-            line.bind="line"
-            line-index.bind="$index"
-            line-highlight-end.bind="vimState.visualEndCursor"
-            line-highlight-start.bind="vimState.visualStartCursor"
-            fold-map.bind="vimState.foldMap"
-          ></note-line>
-        </template>
+        <note-line
+          repeat.for="line of vimState.lines"
+          show.bind="!vimState.foldMap[$index]"
+          editor-line-class="inputLine"
+          line.bind="line"
+          line-index.bind="$index"
+          line-highlight-end.bind="vimState.visualEndCursor"
+          line-highlight-start.bind="vimState.visualStartCursor"
+          fold-map.bind="vimState.foldMap"
+        ></note-line>
       </div>
     </div>
   </div>

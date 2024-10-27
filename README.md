@@ -21,7 +21,11 @@ Run unit tests in watch mode.
 
 # Data Schemas
 
-# Grid
+## Grid
 v0.0.2
 - change content
     - items `string` -> `Cell` object
+
+# Vim
+## Usage
+- If you want to start `<vim-editor>` in another mode than `normal`, please use the `afterInit` hook

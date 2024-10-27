@@ -1,3 +1,4 @@
+import { log } from "console";
 import { Logger } from "../../../common/logging/logging";
 import { getCssVar } from "../../../common/modules/css/css-variables";
 import { debugFlags } from "../../../common/modules/debug/debugFlags";
@@ -67,9 +68,15 @@ export class VimUi {
   }
 
   private createCaret() {
+    const $existingCaret = document.getElementById("caret");
+    const grandParent = this.container?.parentElement;
+    if ($existingCaret) {
+      grandParent?.appendChild($existingCaret);
+      this.caret = $existingCaret;
+      return;
+    }
     const $caret = document.createElement("div");
     $caret.id = "caret";
-    const grandParent = this.container?.parentElement;
     grandParent?.appendChild($caret);
     this.caret = $caret;
   }
@@ -241,6 +248,7 @@ export class VimUi {
   }
 
   public enterInsertMode(cursor: Cursor | undefined) {
+    console.log("5.");
     /**
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view
@@ -342,7 +350,7 @@ export class VimUi {
       const simpleCase = onlyOneNode && onlyOneNodeWithBr && thirdIsEmpty;
       if (simpleCase) {
         if (!child.textContent) return;
-        /*prettier-ignore*/ console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
+        // /*prettier-ignore*/ console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
         lines.push({ text: child.textContent });
         return;
       }
@@ -354,12 +362,20 @@ export class VimUi {
         const textNodes = getTextNodes(child);
         /*prettier-ignore*/ console.log("[VimUi.ts,355] child: ", child);
         /*prettier-ignore*/ console.log("[VimUi.ts,355] textNodes: ", textNodes);
-        // debugger
+        // debugger;
+        const linesToJoin: VimLine[] = []; // issue with empty text nodes in html conversio
         textNodes.forEach((textNode) => {
+          textNode.normalize;
           if (!textNode.nodeValue.trim()) return;
-          /*prettier-ignore*/ console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
-          lines.push({ text: textNode.nodeValue });
+          // /*prettier-ignore*/ console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
+          const text = textNode.nodeValue;
+          /*prettier-ignore*/ console.log("[VimUi.ts,369] text: ", text);
+          linesToJoin.push({ text });
         });
+        const joined = linesToJoin.map((l) => l.text).join("");
+        /*prettier-ignore*/ console.log("[VimUi.ts,374] joined: ", joined);
+        // debugger;
+        lines.push({ text: joined });
         return;
       }
 
@@ -369,7 +385,7 @@ export class VimUi {
         const childrenOfDivs = Array.from((first as Element).children);
         childrenOfDivs.forEach((child) => {
           if (!child.textContent) return;
-          /*prettier-ignore*/ console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
+          // /*prettier-ignore*/ console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
           lines.push({ text: child.textContent });
         });
         return;
@@ -377,7 +393,7 @@ export class VimUi {
 
       /** Rest is okay */
       if (!child.textContent) return;
-      console.log("WHAT");
+      // console.log("WHAT");
       lines.push({ text: child.textContent });
     });
     return lines;

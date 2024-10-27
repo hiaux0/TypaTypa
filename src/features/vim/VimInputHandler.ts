@@ -1,6 +1,6 @@
 import { ShortcutService } from "../../common/services/ShortcutService";
 import { EventAggregator, resolve } from "aurelia";
-import { IVimState, VimOptions } from "./vim-types";
+import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
 import { KeyMappingService } from "./vimCore/commands/KeyMappingService";
 import { VimHelper } from "./VimHelper";
 import { VimUi } from "./vim-ui/VimUi";
@@ -16,6 +16,7 @@ import { EV_VIM_ID_CHANGED } from "../../common/modules/eventMessages";
 import { Id } from "../../domain/types/types";
 import { container } from "../../diContainer";
 import { Logger } from "../../common/logging/logging";
+import { IKeyMappingMapping } from "../../types";
 
 const logger = new Logger("VimInputHandler");
 
@@ -36,10 +37,16 @@ export class VimInputHandler {
     this.keyMappingService = new KeyMappingService();
   }
 
-  public init(options?: VimOptions) {
+  public init(
+    options?: VimOptions,
+    mappings?: IKeyMappingMapping,
+    additionalKeyBindings?: KeyBindingModes,
+  ) {
+    this.clearKeybord();
     /*prettier-ignore*/ logger.culogger.debug(["[VimInputHandler.ts,38] init: ", {log: true}]);
     this.options = options;
     this.keyMappingService.id = options?.vimState.id;
+    this.keyMappingService.init(mappings, additionalKeyBindings);
 
     const keyBindings = this.keyMappingService.keyBindings;
     const vimCore = VimCore.create({
@@ -48,6 +55,7 @@ export class VimInputHandler {
       hooks: {
         ...this.options?.hooks,
         modeChanged: (...args) => {
+          console.log("3.");
           const { vimState } = args[0];
           // /*prettier-ignore*/ console.log("> [VimInputHandler.ts,57] vimState.lines.length: ", vimState.lines.length);
           const newVimState = vimState;
@@ -64,6 +72,7 @@ export class VimInputHandler {
           }
           VimHelper.switchModes(newVimState.mode, {
             insert: () => {
+              console.log("4.");
               this.vimUi.enterInsertMode(newVimState.cursor);
             },
             normal: () => {
@@ -157,7 +166,7 @@ export class VimInputHandler {
     });
   }
 
-  private clearKeybord() {
+  public clearKeybord() {
     document.removeEventListener("keydown", this.handleKeydown);
   }
 
@@ -165,10 +174,12 @@ export class VimInputHandler {
     const lastActiveId =
       window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
     const isThisInstance = lastActiveId === this.vimCore.getVimState().id;
-    if (!isThisInstance) return;
-    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,147] this.vimCore.getVimState().id: ", this.vimCore.getVimState().id);
+    // /*prettier-ignore*/ console.log("2. ----------------------------");
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,153] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
+    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,169] id:", this.vimCore.getVimState().id);
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
+
+    if (!isThisInstance) return;
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
 
     const finalKey = this.keyMappingService.getKeyFromEvent(event);
@@ -189,11 +200,11 @@ export class VimInputHandler {
       finalCommand = this.keyMappingService.getLastCommand();
       finalPressedKey = this.keyMappingService.getLastKey();
     }
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,161] finalCommand: ", finalCommand);
+    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,192] finalCommand: ", finalCommand);
 
     let preventDefault = false;
     if (finalCommand?.execute) {
-      const response = await finalCommand.execute();
+      const response = await finalCommand.execute(mode);
       if (typeof response === "boolean") {
         preventDefault = response;
       }

@@ -2,7 +2,6 @@
 
 <import from="./grid-cell/grid-cell"></import>
 
-
 <main ref="gridTestContainerRef" class="grid-test-container">
   <div>Mode: ${mode}</div>
   <!-- Toolbar -->
@@ -79,6 +78,8 @@
             column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
             is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
             on-cell-update.bind="onCellUpdate"
+            on-escape.bind="onEscape"
+            on-enter.bind="onEnter"
             pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
             pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
             pointerup.trigger="onMouseUpGridCell()"

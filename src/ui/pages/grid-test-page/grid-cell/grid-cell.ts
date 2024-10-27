@@ -1,15 +1,26 @@
 import { EventAggregator, bindable, observable, resolve, watch } from "aurelia";
 import "./grid-cell.scss";
-import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
+import {
+  Cell,
+  ColHeaderMap,
+  IKeyMappingMapping,
+  SheetSettings,
+} from "../../../../types";
 import { CELL_WIDTH } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
 import { Store } from "../../../../common/modules/store";
 import { Logger } from "../../../../common/logging/logging";
-import { IVimState, VimMode } from "../../../../features/vim/vim-types";
+import {
+  IVimState,
+  KeyBindingModes,
+  VimHooks,
+  VimMode,
+} from "../../../../features/vim/vim-types";
 import { Id } from "../../../../domain/types/SecondBrainDataModel";
 import { EV_VIM_ID_CHANGED } from "../../../../common/modules/eventMessages";
+import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
 
 const logger = new Logger("GridCell");
 
@@ -34,6 +45,8 @@ export class GridCell {
   @bindable public columnSettings: ColHeaderMap[string];
   @bindable public isEdit: boolean;
   @bindable public onCellUpdate: (col: number, row: number, cell: Cell) => void;
+  @bindable public onEscape: () => void;
+  @bindable public onEnter: () => void;
 
   @observable() public textareaValue = "";
 
@@ -48,6 +61,11 @@ export class GridCell {
   public autoCompleteSource: string[] = [];
   public measureTextWidth = measureTextWidth;
   public vimState: IVimState;
+  public vimEditorHooks: VimHooks = {
+    afterInit: (vim) => {
+      vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
+    },
+  };
 
   public get getEditWidth(): string {
     const cellScrollWidth = measureTextWidth(this.textareaValue);
@@ -162,14 +180,15 @@ export class GridCell {
     this.textareaValue = this.cell?.text;
     this.updateAutocomplete(this.textareaValue);
     const id = this.getVimId();
+    const text = this.cell.text;
     const vimState: IVimState = {
       mode: VimMode.NORMAL,
       cursor: {
-        col: 0,
+        col: Math.max(0, text.length - 1),
         line: 0,
       },
       id,
-      lines: [{ text: this.cell.text }],
+      lines: [{ text }],
     };
     this.vimState = vimState;
     window.activeVimInstancesIdMap.push(id);
@@ -199,6 +218,41 @@ export class GridCell {
     }
     this.setWidthPx();
   }
+
+  public mappingByMode: KeyBindingModes = {
+    [VimMode.ALL]: [
+      {
+        key: "<Enter>",
+        execute: () => {
+          if (this.isEdit) {
+            this.cell.text = this.textareaValue;
+            /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
+            this.onCellUpdate(this.column, this.row, this.cell);
+            this.onEnter();
+            return;
+          }
+          return true;
+        },
+      },
+    ],
+    [VimMode.NORMAL]: [
+      {
+        key: "<Escape>",
+        desc: "Cancel edit and revert changes",
+        execute: (mode) => {
+          /*prettier-ignore*/ console.log("[grid-cell.ts,232] mode: ", mode);
+          // /*prettier-ignore*/ debugLog && console.log("before [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
+          if (mode === VimMode.NORMAL) {
+            this.textareaValue = this.cell.text;
+            /*prettier-ignore*/ console.log("[grid-cell.ts,234] this.textareaValue: ", this.textareaValue);
+            this.onEscape();
+          }
+          // /*prettier-ignore*/ console.log("[grid-cell.ts,231] this.textareaValue: ", this.textareaValue);
+          // /*prettier-ignore*/ debugLog && console.log("after [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
+        },
+      },
+    ],
+  };
 
   public async onKeyDown(event: KeyboardEvent) {
     if (!this.isEdit) return;

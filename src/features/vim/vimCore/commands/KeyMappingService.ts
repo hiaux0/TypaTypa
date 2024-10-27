@@ -14,17 +14,9 @@ import {
 } from "../../vim-types";
 import { SPECIAL_KEYS } from "../../../../common/modules/keybindings/app-keys";
 import { Logger } from "../../../../common/logging/logging";
+import { IKeyMappingMapping } from "../../../../types";
 
 const logger = new Logger("KeyMappingService");
-
-/** Name from keydown event */
-type EventKeyName = string;
-interface IKeyMappingMapping {
-  /**
-   * Return `false` to prevent default
-   */
-  [key: EventKeyName]: () => boolean | void;
-}
 
 /**
  * @example
@@ -116,22 +108,51 @@ export class KeyMappingService {
   }
 
   public init(
-    mappings: IKeyMappingMapping,
+    mappings?: IKeyMappingMapping,
     additionalKeyBindings?: KeyBindingModes,
   ) {
     // /*prettier-ignore*/ console.trace("[KeyMappingService.ts,118] init: ");
     // /*prettier-ignore*/ logger.culogger.debug(["[KeyMappingService.ts,122] init: ", {log: true}]);
+    const converted = this.convertKeyMappingsToVimCommandMappings(mappings);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,125] converted: ", converted);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,126] additionalKeyBindings: ", additionalKeyBindings);
+    if (!additionalKeyBindings) {
+      additionalKeyBindings = converted;
+    } else {
+      additionalKeyBindings[VimMode.ALL] = additionalKeyBindings[
+        VimMode.ALL
+      ].concat(converted[VimMode.ALL]);
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,132] additionalKeyBindings[VimMode.ALL]: ", additionalKeyBindings[VimMode.ALL]);
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,134] converted[VimMode.ALL]: ", converted[VimMode.ALL]);
+    }
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,135] additionalKeyBindings: ", additionalKeyBindings);
     this.mergeKeybindings(additionalKeyBindings);
 
-    document.addEventListener("keydown", (event) => {
-      // console.clear();
-      const finalKey = this.getKeyFromEvent(event);
-      if (mappings[finalKey]) {
-        const dontPrevent = mappings[finalKey]();
-        if (dontPrevent === false) return;
-        event.preventDefault();
-      }
+    //document.addEventListener("keydown", (event) => {
+    //  // console.clear();
+    //  const finalKey = this.getKeyFromEvent(event);
+    //  if (mappings[finalKey]) {
+    //    const dontPrevent = mappings[finalKey]();
+    //    if (dontPrevent === false) return;
+    //    event.preventDefault();
+    //  }
+    //});
+  }
+
+  private convertKeyMappingsToVimCommandMappings(
+    mappings: IKeyMappingMapping,
+  ): KeyBindingModes {
+    const result: KeyBindingModes = {
+      [VimMode.ALL]: [],
+    };
+    Object.entries(mappings ?? {}).forEach(([key, execute]) => {
+      const converted: VimCommand = {
+        key,
+        execute,
+      };
+      result[VimMode.ALL].push(converted);
     });
+    return result;
   }
 
   private mergeKeybindings(additionalKeyBindings?: KeyBindingModes) {
@@ -244,7 +265,7 @@ export class KeyMappingService {
           };
           foundCount++;
           if (additionalBinding.command === "enterInsertMode") {
-            /*prettier-ignore*/ console.log("----------------------------");
+            // /*prettier-ignore*/ console.log("----------------------------");
             // /*prettier-ignore*/ console.log("[KeyMappingService.ts,249] both: ", both);
             // /*prettier-ignore*/ console.log("[KeyMappingService.ts,250] one: ", one);
             // /*prettier-ignore*/ console.log("[KeyMappingService.ts,225] okay: ", okay);
@@ -259,7 +280,7 @@ export class KeyMappingService {
         const lastIndex = index === finalBindings.length - 1;
         if (lastIndex && !okay && foundCount === 0) {
           if (additionalBinding.command === "enterInsertMode") {
-            /*prettier-ignore*/ console.log("----------------------------");
+            // /*prettier-ignore*/ console.log("----------------------------");
             // /*prettier-ignore*/ console.log("[KeyMappingService.ts,249] both: ", both);
             // /*prettier-ignore*/ console.log("[KeyMappingService.ts,250] one: ", one);
             // /*prettier-ignore*/ console.log("[KeyMappingService.ts,225] okay: ", okay);

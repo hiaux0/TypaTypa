@@ -25,11 +25,9 @@ import {
   VimCommand,
 } from "../../../features/vim/vim-commands-repository";
 import { cycleInRange } from "../../../common/modules/numbers";
-import { KeyMappingService } from "../../../features/vim/vimCore/commands/KeyMappingService";
 import {
   findParentElement,
   getIsInputActive,
-  getRelativePosition,
 } from "../../../common/modules/htmlElements";
 import { CRUDService } from "../../../common/services/CRUDService";
 import {
@@ -68,6 +66,7 @@ import {
   getComputedValueFromPixelString,
   getCssVar,
 } from "../../../common/modules/css/css-variables";
+import { popVimInstanceId } from "../../../features/vim/mulitple-vim-instances-handle";
 
 const logger = new Logger("GridTestPage");
 const debugLog = false;
@@ -136,7 +135,6 @@ export class GridTestPage {
   public gridUndoRedo: UndoRedo<ContentMap>;
   public editedCellCoords = "";
 
-  private keyMappingService: KeyMappingService;
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
   private lastCellContentArray: string[][] = [];
@@ -1096,7 +1094,6 @@ export class GridTestPage {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
     this.gridUndoRedo = new UndoRedo<ContentMap>();
-    this.keyMappingService = new KeyMappingService();
   }
 
   private initSheets(sheetsData: GridDatabaseType): void {
@@ -1330,22 +1327,31 @@ export class GridTestPage {
     this.gridPanels = filtered;
   }
 
+  public onEscape = (): void => {
+    /*prettier-ignore*/ console.log("3. ----------------------------");
+    this.putCellIntoUnfocus();
+    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    popVimInstanceId();
+  };
+  public onEnter = (): void => {
+    if (getIsInputActive()) {
+      this.putCellIntoUnfocus();
+      this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    } else {
+      this.putCellIntoEdit();
+      this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+    }
+  };
+
   private initGridNavigation(): void {
     const mappingByKey = {
       //"<Control>r": () => {
       //  // return true;
       //},
 
-      Enter: () => {
-        if (getIsInputActive()) {
-          this.putCellIntoUnfocus();
-          this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-        } else {
-          this.putCellIntoEdit();
-          this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-        }
-      },
+      Enter: () => {},
       Escape: () => {
+        /*prettier-ignore*/ console.log("3. ----------------------------");
         this.putCellIntoUnfocus();
         this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
       },
@@ -1363,16 +1369,12 @@ export class GridTestPage {
       this.activeSheet.selectedRange,
     );
     window.activeVimInstancesIdMap.push(vimState.id);
-    this.keyMappingService.id = vimState.id;
-    this.keyMappingService.init(mappingByKey, this.mappingByMode);
-    const keyBindings = this.keyMappingService.keyBindings;
 
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
       vimState,
       allowChaining: true,
       allowExtendedChaining: true,
-      keyBindings,
       hooks: {
         modeChanged: (payload) => {
           this.mode = payload.vimState.mode;
@@ -1396,7 +1398,7 @@ export class GridTestPage {
       },
     };
     // console.log("1.");
-    this.vimInit.init(vimOptions);
+    this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode);
   }
 
   private setAndUpdateSingleCellSelection(
