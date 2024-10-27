@@ -1,11 +1,6 @@
-import { EventAggregator, bindable, observable, resolve, watch } from "aurelia";
+import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
-import {
-  Cell,
-  ColHeaderMap,
-  IKeyMappingMapping,
-  SheetSettings,
-} from "../../../../types";
+import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
 import { CELL_WIDTH } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
@@ -19,7 +14,6 @@ import {
   VimMode,
 } from "../../../../features/vim/vim-types";
 import { Id } from "../../../../domain/types/SecondBrainDataModel";
-import { EV_VIM_ID_CHANGED } from "../../../../common/modules/eventMessages";
 import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
 import { debugFlags } from "../../../../common/modules/debug/debugFlags";
 
@@ -76,6 +70,56 @@ export class GridCell {
     const adjustedTextWidth = cellScrollWidth + PADDING;
     const value = Math.max(adjustedTextWidth, minCellWidth);
     return `${value}px`;
+  }
+
+  public get isOverflown(): boolean {
+    if (!this.cell) return false;
+    const width = getValueFromPixelString(this.widthPxNew);
+    return width > (this.columnSettings?.colWidth ?? this.CELL_WIDTH);
+  }
+
+  isEditChanged() {
+    if (!this.isEdit) {
+      return;
+    }
+    this.textareaValue = this.cell?.text;
+    this.updateAutocomplete(this.textareaValue);
+    const id = this.getVimId();
+    const text = this.cell.text;
+    const vimState: IVimState = {
+      mode: VimMode.NORMAL,
+      cursor: {
+        col: debugFlags.grid.startCellAtCol0WhenEnterNormalMode
+          ? 0
+          : Math.max(0, text.length),
+        line: 0,
+      },
+      id,
+      lines: [{ text }],
+    };
+    this.vimState = vimState;
+    window.activeVimInstancesIdMap.push(id);
+
+    window.setTimeout(() => {
+      this.getInput()?.focus();
+    }, 0);
+  }
+
+  textareaValueChanged(): void {
+    this.autocompleteValue = this.textareaValue;
+    /*prettier-ignore*/ debugLog &&  console.log("GC.A [grid-cell.ts,148] this.autocompleteValue: ", this.autocompleteValue);
+  }
+
+  constructor(
+    private eventAggregator: EventAggregator = resolve(EventAggregator),
+    private store: Store = resolve(Store),
+  ) {}
+
+  attached() {
+    if (debug) {
+      this.updateAutocomplete();
+    }
+    this.setWidthPx();
   }
 
   public setWidthPx(
@@ -168,60 +212,6 @@ export class GridCell {
     return result;
   }
 
-  get isOverflown(): boolean {
-    if (!this.cell) return false;
-    const width = getValueFromPixelString(this.widthPxNew);
-    return width > (this.columnSettings?.colWidth ?? this.CELL_WIDTH);
-  }
-
-  isEditChanged() {
-    if (!this.isEdit) {
-      return;
-    }
-    this.textareaValue = this.cell?.text;
-    this.updateAutocomplete(this.textareaValue);
-    const id = this.getVimId();
-    const text = this.cell.text;
-    const vimState: IVimState = {
-      mode: VimMode.NORMAL,
-      cursor: {
-        col: debugFlags.grid.startCellAtCol0WhenEnterNormalMode
-          ? 0
-          : Math.max(0, text.length),
-        line: 0,
-      },
-      id,
-      lines: [{ text }],
-    };
-    this.vimState = vimState;
-    window.activeVimInstancesIdMap.push(id);
-
-    window.setTimeout(() => {
-      this.getInput()?.focus();
-    }, 0);
-  }
-
-  textareaValueChanged(): void {
-    this.autocompleteValue = this.textareaValue;
-    /*prettier-ignore*/ debugLog &&  console.log("GC.A [grid-cell.ts,148] this.autocompleteValue: ", this.autocompleteValue);
-  }
-
-  private getInput(): HTMLInputElement {
-    return this.cellContentRef.querySelector("input");
-  }
-
-  constructor(
-    private eventAggregator: EventAggregator = resolve(EventAggregator),
-    private store: Store = resolve(Store),
-  ) {}
-
-  attached() {
-    if (debug) {
-      this.updateAutocomplete();
-    }
-    this.setWidthPx();
-  }
-
   public mappingByMode: KeyBindingModes = {
     [VimMode.ALL]: [
       {
@@ -268,6 +258,18 @@ export class GridCell {
     }
   }
 
+  public partiallyAcceptAutocomplete = (suggestion: string): void => {
+    this.textareaValue = suggestion;
+    this.setWidthPx({
+      text: suggestion,
+      colsToNextText: this.cell.colsToNextText,
+    });
+  };
+
+  private getInput(): HTMLInputElement {
+    return this.cellContentRef.querySelector("input");
+  }
+
   private updateAutocomplete(inputValue = ""): void {
     const source = [];
     this.store.activeSheet.content.forEach((row, rowIndex) => {
@@ -283,14 +285,6 @@ export class GridCell {
     this.autocompleteValue = inputValue;
     // /*prettier-ignore*/ console.log("GC.B. [grid-cell.ts,196] this.autocompleteValue: ", this.autocompleteValue);
   }
-
-  public partiallyAcceptAutocomplete = (suggestion: string): void => {
-    this.textareaValue = suggestion;
-    this.setWidthPx({
-      text: suggestion,
-      colsToNextText: this.cell.colsToNextText,
-    });
-  };
 
   private getVimId(): Id {
     return `grid-cell-${this.column}-${this.row}`;

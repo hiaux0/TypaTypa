@@ -131,9 +131,9 @@ export class GridTestPage {
   public activeSheet: Sheet;
   public activeContent = "initial";
   public sheetTabHooks: ITabHooks;
-  @observable activeSheetId = "";
   public gridUndoRedo: UndoRedo<ContentMap>;
   public editedCellCoords = "";
+  @observable public activeSheetId = "";
 
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
@@ -1037,7 +1037,6 @@ export class GridTestPage {
       preventUndoRedo: true,
     },
   ];
-
   private mappingByMode: KeyBindingModes = {
     //{
     //  key: "b",
@@ -1069,31 +1068,18 @@ export class GridTestPage {
     ],
   };
 
-  activeSheetIdChanged() {
-    if (!this.activeSheetId) return;
-    this.sheetsData.selectedSheetId = this.activeSheetId;
-    this.updateContentMap(this.sheetsData, this.activeSheetId);
-  }
-
-  updateContentMapChangedForView() {
-    const converted = {};
-    this.contentMap.forEach((col, colIndex) => {
-      if (!col) return;
-      col.forEach((cell, cellIndex) => {
-        if (!cell) return;
-        converted[CELL_COORDS(colIndex, cellIndex)] = cell;
-      });
-    });
-    // this.contentMapForView = structuredClone(converted);
-    this.contentMapForView = converted;
-  }
-
   public get orderedSelectedRangeToString(): string {
     const ordered = this.getSelectedArea();
     const [[startColumn, startRow], [endColumn, endRow]] = ordered;
     // const result = `${this.numberToAlphabet(startColumn)}${startRow + 1} - ${this.numberToAlphabet(endColumn)}${endRow + 1}`;
     const result = `${startColumn},${startRow}:${endColumn},${endRow}`;
     return result;
+  }
+
+  activeSheetIdChanged() {
+    if (!this.activeSheetId) return;
+    this.sheetsData.selectedSheetId = this.activeSheetId;
+    this.updateContentMap(this.sheetsData, this.activeSheetId);
   }
 
   constructor(
@@ -1105,6 +1091,228 @@ export class GridTestPage {
     this.initSheets(this.sheetsData);
     this.gridUndoRedo = new UndoRedo<ContentMap>();
   }
+
+  attaching() {
+    this.panelCRUD = new CRUDService(this.gridPanels);
+
+    this.sheetTabHooks = {
+      newTabAdded: (newTab) => {
+        this.sheetsData.sheets.push({
+          id: newTab.id,
+          title: newTab.name,
+          content: [],
+        });
+        console.log("newTabAdded", newTab);
+      },
+      tabRenamed: (tab) => {
+        const sheet = this.sheetsData.sheets.find((s) => s.id === tab.id);
+        if (!sheet) return;
+        sheet.title = tab.name;
+      },
+      tabDeleted: (tab) => {
+        this.sheetsData.sheets = this.sheetsData.sheets.filter(
+          (s) => s.id !== tab.id,
+        );
+      },
+    };
+
+    this.contentMap;
+    // this.sheetsData.sheets[this.sheetsData.selectedSheetId].content;
+
+    this.autosave();
+  }
+
+  attached() {
+    this.initGridNavigation();
+    const [start, end] = this.activeSheet.selectedRange ?? [[], []];
+    if (start[0] !== end[0] && start[1] !== end[1]) {
+      this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
+    }
+
+    // @ts-ignore
+    window.test = this;
+
+    this.selectedMap[
+      EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
+    ] = true;
+
+    this.gridUndoRedo.init(structuredClone(this.contentMap));
+    this.addEventListeners();
+    this.scrollSelectdeIntoView();
+  }
+
+  public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
+    this.isStartDragGridCell = true;
+    this.unselectAllSelecedCells();
+    this.dragStartColumnIndex = columnIndex;
+    this.dragStartRowIndex = rowIndex;
+    this.dragEndColumnIndex = columnIndex;
+    this.dragEndRowIndex = rowIndex;
+    this.updateAllSelecedCells();
+  };
+
+  public onMouseOverGridCell = (columnIndex: number, rowIndex: number) => {
+    if (!this.isStartDragGridCell) return;
+    const before = this.getSelectedArea();
+    this.dragEndColumnIndex = columnIndex;
+
+    this.dragEndRowIndex = rowIndex;
+
+    const after = this.getSelectedArea();
+
+    const diff = calculateDiff(before, after);
+    if (diff.length) {
+      diff.forEach(([columnIndex, rowIndex]) => {
+        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = false;
+      });
+    }
+
+    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
+      if (!this.isInArea(columnIndex, rowIndex)) return;
+      this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
+    });
+  };
+
+  public onMouseUpGridCell(): void {
+    // this.addGridPanelToSelection();
+    this.resetDrag();
+    // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
+  }
+
+  public onPanelClicked(panel: GridPanel): void {
+    this.setActivePanelFromHTMLElement();
+  }
+
+  public addPanel(): GridPanel {
+    this.unselectAllSelecedCells();
+    const newPanel = this.addGridPanelToSelection();
+    return newPanel;
+  }
+
+  public updatePanelCoords = (panel: GridPanel): ((a, b) => void) => {
+    return (moveByX, moveByY) => {
+      const updatedCol = panel.col + moveByX;
+      panel.col = updatedCol;
+      const updatedRow = panel.row + moveByY;
+      panel.row = updatedRow;
+
+      this.unselectAllSelecedCells();
+      this.setCursorAtPanel(panel);
+      this.updateAllSelecedCells();
+    };
+  };
+
+  public onTextareaWidthChanged(panel: GridPanel): (a) => void {
+    return (newWidth: number) => {
+      const adjustedWidth = Math.floor(newWidth / CELL_WIDTH);
+      panel.width = adjustedWidth;
+    };
+  }
+
+  public onTextareaHeightChanged(panel: GridPanel): (a) => void {
+    return (newHeight: number) => {
+      const adjustedHeight = Math.floor(newHeight / CELL_HEIGHT);
+      panel.height = adjustedHeight;
+    };
+  }
+
+  /**
+   * A1 - C3
+   * B2 ok
+   * B3 ok
+   * C4 not ok
+   */
+  public isInArea(columnIndex: number, rowIndex: number): boolean {
+    const [[startColumn, startRow], [endColumn, endRow]] =
+      this.getSelectedArea();
+
+    const isInColumn = columnIndex >= startColumn && columnIndex <= endColumn;
+    const isInRow = rowIndex >= startRow && rowIndex <= endRow;
+    const is = isInRow && isInColumn;
+    return is;
+  }
+
+  public deletePanel(panel: GridPanel): void {
+    const filtered = this.gridPanels.filter((p) => p !== panel);
+    this.gridPanels = filtered;
+  }
+
+  public onEscape = (): void => {
+    this.putCellIntoUnfocus();
+    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    popVimInstanceId();
+  };
+
+  public onEnter = (): void => {
+    // console.log("6");
+    const active = getIsInputActive();
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1338] active: ", active);
+    if (!active) {
+      this.putCellIntoUnfocus();
+      this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+      popVimInstanceId();
+    } else {
+      this.putCellIntoEdit();
+      this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+    }
+  };
+
+  public onResizeColumns = (colIndex: number) => {
+    const sheet = this.activeSheet;
+    if (!sheet?.colHeaderMap?.[colIndex]) {
+      sheet.colHeaderMap = {
+        ...sheet.colHeaderMap,
+        [colIndex]: { colWidth: this.CELL_WIDTH },
+      };
+    }
+    const beforeWidth = sheet.colHeaderMap?.[colIndex]?.colWidth ?? CELL_WIDTH; // TODO: fix, need to have it adjust to new drag start positions
+    // // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1651] beforeWidth: ", beforeWidth);
+    return (movedByX: number) => {
+      if (!sheet?.colHeaderMap?.[colIndex]) {
+        sheet.colHeaderMap = {
+          [colIndex]: { colWidth: this.CELL_WIDTH },
+        };
+      }
+      sheet.colHeaderMap[colIndex].colWidth = beforeWidth + movedByX;
+      // console.log("colindex", colIndex);
+      // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1673] sheet.colHeaderMap[colIndex].colWidth: ", sheet.colHeaderMap[colIndex].colWidth);
+    };
+  };
+
+  public updateResizeColumns = (): void => {};
+
+  public selectColumn(col: number): void {
+    this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
+    this.setSelectionFromRange([
+      [col, 0],
+      [col, this.rowSize - 1],
+    ]);
+  }
+
+  public undo = (): void => {
+    this.getCommand(VIM_COMMAND.undo)?.execute();
+  };
+
+  public redo = (): void => {
+    this.getCommand(VIM_COMMAND.redo)?.execute();
+  };
+
+  public onCellUpdate = (col: number, row: number, cell: Cell): void => {
+    if (!this.contentMap) return;
+    // /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", col, row,cell.text);
+    this.setCurrentCellContent(cell.text, col, row);
+    this.onCellContentChangedInternal(col, row);
+  };
+
+  public save(): void {
+    this.getActiveSheet().selectedRange = this.getSelectedArea();
+    gridDatabase.setItem(this.sheetsData);
+  }
+
+  public onUpload = (result: string) => {
+    const asObj = JSON.parse(result);
+    this.initSheets(asObj);
+  };
 
   private initSheets(sheetsData: GridDatabaseType): void {
     let updatedSheetData = runGridMigrations(sheetsData);
@@ -1168,88 +1376,20 @@ export class GridTestPage {
     this.updateAllSelecedCells();
   }
 
-  attaching() {
-    this.panelCRUD = new CRUDService(this.gridPanels);
-
-    this.sheetTabHooks = {
-      newTabAdded: (newTab) => {
-        this.sheetsData.sheets.push({
-          id: newTab.id,
-          title: newTab.name,
-          content: [],
-        });
-        console.log("newTabAdded", newTab);
-      },
-      tabRenamed: (tab) => {
-        const sheet = this.sheetsData.sheets.find((s) => s.id === tab.id);
-        if (!sheet) return;
-        sheet.title = tab.name;
-      },
-      tabDeleted: (tab) => {
-        this.sheetsData.sheets = this.sheetsData.sheets.filter(
-          (s) => s.id !== tab.id,
-        );
-      },
-    };
-
-    this.contentMap;
-    // this.sheetsData.sheets[this.sheetsData.selectedSheetId].content;
-
-    this.autosave();
-  }
-
-  attached() {
-    this.initGridNavigation();
-    const [start, end] = this.activeSheet.selectedRange ?? [[], []];
-    if (start[0] !== end[0] && start[1] !== end[1]) {
-      this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
-    }
-
-    // @ts-ignore
-    window.test = this;
-
-    this.selectedMap[
-      EV_CELL_SELECTED(this.dragStartColumnIndex, this.dragStartRowIndex)
-    ] = true;
-
-    this.gridUndoRedo.init(structuredClone(this.contentMap));
-    this.addEventListeners();
-    this.scrollSelectdeIntoView();
+  private updateContentMapChangedForView() {
+    const converted = {};
+    this.contentMap.forEach((col, colIndex) => {
+      if (!col) return;
+      col.forEach((cell, cellIndex) => {
+        if (!cell) return;
+        converted[CELL_COORDS(colIndex, cellIndex)] = cell;
+      });
+    });
+    // this.contentMapForView = structuredClone(converted);
+    this.contentMapForView = converted;
   }
 
   private addEventListeners() {}
-
-  public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
-    this.isStartDragGridCell = true;
-    this.unselectAllSelecedCells();
-    this.dragStartColumnIndex = columnIndex;
-    this.dragStartRowIndex = rowIndex;
-    this.dragEndColumnIndex = columnIndex;
-    this.dragEndRowIndex = rowIndex;
-    this.updateAllSelecedCells();
-  };
-
-  public onMouseOverGridCell = (columnIndex: number, rowIndex: number) => {
-    if (!this.isStartDragGridCell) return;
-    const before = this.getSelectedArea();
-    this.dragEndColumnIndex = columnIndex;
-
-    this.dragEndRowIndex = rowIndex;
-
-    const after = this.getSelectedArea();
-
-    const diff = calculateDiff(before, after);
-    if (diff.length) {
-      diff.forEach(([columnIndex, rowIndex]) => {
-        this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = false;
-      });
-    }
-
-    this.iterateOverSelectedCells((columnIndex, rowIndex) => {
-      if (!this.isInArea(columnIndex, rowIndex)) return;
-      this.selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)] = true;
-    });
-  };
 
   private getActiveSheet(): Sheet {
     const sheetId = this.sheetsData.selectedSheetId;
@@ -1257,65 +1397,6 @@ export class GridTestPage {
       (sheet) => sheet.id === sheetId,
     );
     return this.sheetsData.sheets[activeIndex];
-  }
-
-  public onMouseUpGridCell(): void {
-    // this.addGridPanelToSelection();
-    this.resetDrag();
-    // this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
-  }
-
-  public onPanelClicked(panel: GridPanel): void {
-    this.setActivePanelFromHTMLElement();
-  }
-
-  public addPanel(): GridPanel {
-    this.unselectAllSelecedCells();
-    const newPanel = this.addGridPanelToSelection();
-    return newPanel;
-  }
-
-  public updatePanelCoords = (panel: GridPanel): ((a, b) => void) => {
-    return (moveByX, moveByY) => {
-      const updatedCol = panel.col + moveByX;
-      panel.col = updatedCol;
-      const updatedRow = panel.row + moveByY;
-      panel.row = updatedRow;
-
-      this.unselectAllSelecedCells();
-      this.setCursorAtPanel(panel);
-      this.updateAllSelecedCells();
-    };
-  };
-
-  public onTextareaWidthChanged(panel: GridPanel): (a) => void {
-    return (newWidth: number) => {
-      const adjustedWidth = Math.floor(newWidth / CELL_WIDTH);
-      panel.width = adjustedWidth;
-    };
-  }
-
-  public onTextareaHeightChanged(panel: GridPanel): (a) => void {
-    return (newHeight: number) => {
-      const adjustedHeight = Math.floor(newHeight / CELL_HEIGHT);
-      panel.height = adjustedHeight;
-    };
-  }
-
-  /**
-   * A1 - C3
-   * B2 ok
-   * B3 ok
-   * C4 not ok
-   */
-  public isInArea(columnIndex: number, rowIndex: number): boolean {
-    const [[startColumn, startRow], [endColumn, endRow]] =
-      this.getSelectedArea();
-
-    const isInColumn = columnIndex >= startColumn && columnIndex <= endColumn;
-    const isInRow = rowIndex >= startRow && rowIndex <= endRow;
-    const is = isInRow && isInColumn;
-    return is;
   }
 
   private isCursorInsidePanel(panel: GridPanel): boolean {
@@ -1331,30 +1412,6 @@ export class GridTestPage {
     const is = isInRow && isInColumn;
     return is;
   }
-
-  public deletePanel(panel: GridPanel): void {
-    const filtered = this.gridPanels.filter((p) => p !== panel);
-    this.gridPanels = filtered;
-  }
-
-  public onEscape = (): void => {
-    this.putCellIntoUnfocus();
-    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-    popVimInstanceId();
-  };
-  public onEnter = (): void => {
-    // console.log("6");
-    const active = getIsInputActive();
-    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1338] active: ", active);
-    if (!active) {
-      this.putCellIntoUnfocus();
-      this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-      popVimInstanceId();
-    } else {
-      this.putCellIntoEdit();
-      this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-    }
-  };
 
   private initGridNavigation(): void {
     const mappingByKey = {
@@ -1828,11 +1885,6 @@ export class GridTestPage {
     });
   }
 
-  public save(): void {
-    this.getActiveSheet().selectedRange = this.getSelectedArea();
-    gridDatabase.setItem(this.sheetsData);
-  }
-
   private readonly scrollEditor = (
     direction: Direction,
     delta: number,
@@ -1894,11 +1946,6 @@ export class GridTestPage {
         break;
       }
     }
-  };
-
-  public onUpload = (result: string) => {
-    const asObj = JSON.parse(result);
-    this.initSheets(asObj);
   };
 
   private onCellContentChangedInternal(col: number, row: number): void {
@@ -1993,38 +2040,6 @@ export class GridTestPage {
     }
   }
 
-  public onResizeColumns = (colIndex: number) => {
-    const sheet = this.activeSheet;
-    if (!sheet?.colHeaderMap?.[colIndex]) {
-      sheet.colHeaderMap = {
-        ...sheet.colHeaderMap,
-        [colIndex]: { colWidth: this.CELL_WIDTH },
-      };
-    }
-    const beforeWidth = sheet.colHeaderMap?.[colIndex]?.colWidth ?? CELL_WIDTH; // TODO: fix, need to have it adjust to new drag start positions
-    // // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1651] beforeWidth: ", beforeWidth);
-    return (movedByX: number) => {
-      if (!sheet?.colHeaderMap?.[colIndex]) {
-        sheet.colHeaderMap = {
-          [colIndex]: { colWidth: this.CELL_WIDTH },
-        };
-      }
-      sheet.colHeaderMap[colIndex].colWidth = beforeWidth + movedByX;
-      // console.log("colindex", colIndex);
-      // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1673] sheet.colHeaderMap[colIndex].colWidth: ", sheet.colHeaderMap[colIndex].colWidth);
-    };
-  };
-
-  public updateResizeColumns = (): void => {};
-
-  public selectColumn(col: number): void {
-    this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
-    this.setSelectionFromRange([
-      [col, 0],
-      [col, this.rowSize - 1],
-    ]);
-  }
-
   private getCommand(
     command: VIM_COMMAND,
     mode = VimMode.NORMAL,
@@ -2032,20 +2047,6 @@ export class GridTestPage {
     const target = this.mappingByMode[mode].find((c) => c.command === command);
     return target;
   }
-
-  public undo = (): void => {
-    this.getCommand(VIM_COMMAND.undo)?.execute();
-  };
-  public redo = (): void => {
-    this.getCommand(VIM_COMMAND.redo)?.execute();
-  };
-
-  public onCellUpdate = (col: number, row: number, cell: Cell): void => {
-    if (!this.contentMap) return;
-    // /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", col, row,cell.text);
-    this.setCurrentCellContent(cell.text, col, row);
-    this.onCellContentChangedInternal(col, row);
-  };
 
   private putCellIntoUnfocus(): void {
     this.editedCellCoords = "";
