@@ -88,7 +88,7 @@ export class OrTabs {
   }
 
   private initKeys() {
-    new KeyMappingService().init({
+    new KeyMappingService().initWithListener({
       "<Control>Home": () => {
         const previous = this.tabsCRUD.getPreviousItem(this.activeTabId);
         this.setActiveTab(previous);

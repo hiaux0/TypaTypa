@@ -139,6 +139,18 @@ export class KeyMappingService {
     //});
   }
 
+  public initWithListener(mappings?: IKeyMappingMapping) {
+    document.addEventListener("keydown", (event) => {
+      // console.clear();
+      const finalKey = this.getKeyFromEvent(event);
+      if (mappings[finalKey]) {
+        const dontPrevent = mappings[finalKey]();
+        if (dontPrevent === false) return;
+        event.preventDefault();
+      }
+    });
+  }
+
   private convertKeyMappingsToVimCommandMappings(
     mappings: IKeyMappingMapping,
   ): KeyBindingModes {

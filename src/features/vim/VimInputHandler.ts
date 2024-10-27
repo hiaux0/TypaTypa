@@ -200,7 +200,7 @@ export class VimInputHandler {
       finalCommand = this.keyMappingService.getLastCommand();
       finalPressedKey = this.keyMappingService.getLastKey();
     }
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,192] finalCommand: ", finalCommand);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,192] finalCommand: ", finalCommand);
 
     let preventDefault = false;
     if (finalCommand?.execute) {
