@@ -801,6 +801,17 @@ export class GridTestPage {
       },
       preventUndoRedo: true,
     },
+    {
+      key: "<Enter>",
+      desc: "Enter Normal mode",
+      execute: () => {
+        console.log("enter");
+        this.putCellIntoEdit();
+        // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+        return true
+      },
+      preventUndoRedo: true,
+    },
   ];
   private mappingByVisualMode: VimCommand[] = [
     //{
@@ -1328,15 +1339,18 @@ export class GridTestPage {
   }
 
   public onEscape = (): void => {
-    /*prettier-ignore*/ console.log("3. ----------------------------");
     this.putCellIntoUnfocus();
     this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
     popVimInstanceId();
   };
   public onEnter = (): void => {
-    if (getIsInputActive()) {
+    // console.log("6");
+    const active = getIsInputActive();
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1338] active: ", active);
+    if (!active) {
       this.putCellIntoUnfocus();
       this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+      popVimInstanceId();
     } else {
       this.putCellIntoEdit();
       this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
@@ -1348,13 +1362,6 @@ export class GridTestPage {
       //"<Control>r": () => {
       //  // return true;
       //},
-
-      Enter: () => {},
-      Escape: () => {
-        /*prettier-ignore*/ console.log("3. ----------------------------");
-        this.putCellIntoUnfocus();
-        this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-      },
       Tab: () => {
         return this.setActivePanelFromHTMLElement();
       },
@@ -2036,7 +2043,7 @@ export class GridTestPage {
 
   public onCellUpdate = (col: number, row: number, cell: Cell): void => {
     if (!this.contentMap) return;
-    /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", col, row,cell.text);
+    // /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", col, row,cell.text);
     this.setCurrentCellContent(cell.text, col, row);
     this.onCellContentChangedInternal(col, row);
   };

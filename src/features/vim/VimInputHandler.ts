@@ -11,7 +11,7 @@ import { getIsInputActive } from "../../common/modules/htmlElements";
 import { CursorUtils } from "../../common/modules/cursor/cursor-utils";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
 import { VIM_COMMAND } from "./vim-commands-repository";
-import { cursorAllModes, isEscape } from "./key-bindings";
+import { cursorAllModes, isEnter, isEscape } from "./key-bindings";
 import { EV_VIM_ID_CHANGED } from "../../common/modules/eventMessages";
 import { Id } from "../../domain/types/types";
 import { container } from "../../diContainer";
@@ -55,7 +55,6 @@ export class VimInputHandler {
       hooks: {
         ...this.options?.hooks,
         modeChanged: (...args) => {
-          console.log("3.");
           const { vimState } = args[0];
           // /*prettier-ignore*/ console.log("> [VimInputHandler.ts,57] vimState.lines.length: ", vimState.lines.length);
           const newVimState = vimState;
@@ -72,7 +71,6 @@ export class VimInputHandler {
           }
           VimHelper.switchModes(newVimState.mode, {
             insert: () => {
-              console.log("4.");
               this.vimUi.enterInsertMode(newVimState.cursor);
             },
             normal: () => {
@@ -88,7 +86,6 @@ export class VimInputHandler {
 
               /** Lines */
               const lines = this.vimUi.getTextFromHtml();
-              /*prettier-ignore*/ console.log(">>>>> [VimInputHandler.ts,86] lines: ", lines);
               newVimState.lines = lines;
 
               // this.vimUi.removeHtmlGeneratedNewLines(this.options);
@@ -179,12 +176,15 @@ export class VimInputHandler {
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,169] id:", this.vimCore.getVimState().id);
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
 
-    if (!isThisInstance) return;
+    // if (!isThisInstance) return;
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
 
     const finalKey = this.keyMappingService.getKeyFromEvent(event);
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
-    if (getIsInputActive() && !isEscape(finalKey)) return;
+    //if (isEnter(finalKey)) {
+    //  event.preventDefault();
+    //}
+    if (getIsInputActive() && !isEscape(finalKey) && !isEnter(finalKey)) return;
     const mode = this.vimCore.getVimState().mode;
     const options = this.vimCore.options;
     // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
@@ -234,6 +234,7 @@ export class VimInputHandler {
         VIM_COMMAND[finalCommand.command],
         finalPressedKey,
       );
+      // /*prettier-ignore*/ console.log("[VimInputHandler.ts,234] vimState: ", vimState);
       // if (!vimState) return; // issue: space in insert got too early returned
 
       if (vimState) {
@@ -253,9 +254,8 @@ export class VimInputHandler {
     VimHelper.switchModes(mode, {
       insert: () => {
         if (commandName) {
-          // /*prettier-ignore*/ console.log("[VimInputHandler.ts,200] commandName: ", commandName);
+          ///*prettier-ignore*/ console.log("[VimInputHandler.ts,200] commandName: ", commandName);
           if (!preventDefault) return;
-          // /*prettier-ignore*/ console.log("[VimInputHandler.ts,202] preventDefault: ", preventDefault);
           event.preventDefault();
         }
 

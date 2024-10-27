@@ -184,7 +184,7 @@ export class GridCell {
     const vimState: IVimState = {
       mode: VimMode.NORMAL,
       cursor: {
-        col: Math.max(0, text.length - 1),
+        col: Math.max(0, text.length),
         line: 0,
       },
       id,
@@ -226,10 +226,9 @@ export class GridCell {
         execute: () => {
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
-            /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
+            // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
             this.onCellUpdate(this.column, this.row, this.cell);
             this.onEnter();
-            return;
           }
           return true;
         },
@@ -241,14 +240,10 @@ export class GridCell {
         desc: "Cancel edit and revert changes",
         execute: (mode) => {
           /*prettier-ignore*/ console.log("[grid-cell.ts,232] mode: ", mode);
-          // /*prettier-ignore*/ debugLog && console.log("before [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
           if (mode === VimMode.NORMAL) {
             this.textareaValue = this.cell.text;
-            /*prettier-ignore*/ console.log("[grid-cell.ts,234] this.textareaValue: ", this.textareaValue);
             this.onEscape();
           }
-          // /*prettier-ignore*/ console.log("[grid-cell.ts,231] this.textareaValue: ", this.textareaValue);
-          // /*prettier-ignore*/ debugLog && console.log("after [grid-cell.ts,172] this.textareaValue: ", this.textareaValue);
         },
       },
     ],

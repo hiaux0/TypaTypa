@@ -21,7 +21,7 @@ import { ResizeCustomAttribute } from "./ui/attributes/resize";
 import { VimEditor } from "./ui/organisms/vim-editor/vim-editor";
 
 window.activeVimInstancesIdMap = [];
-/*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
+// /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 
 const attributes = [
   AutosizeCustomAttribute,

@@ -248,7 +248,6 @@ export class VimUi {
   }
 
   public enterInsertMode(cursor: Cursor | undefined) {
-    console.log("5.");
     /**
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view
@@ -327,12 +326,14 @@ export class VimUi {
    *   ```
    */
   public getTextFromHtml(): VimLine[] {
+    // /*prettier-ignore*/ console.log("[VimUi.ts,329] getTextFromHtml: ", );
     const $children = this.querySelectorService.getInputContainerChildrenText();
     const lines: VimLine[] = [];
 
     $children?.forEach((child) => {
       /* 0. just empty line */
       const { childNodes } = child;
+      // /*prettier-ignore*/ console.log("[VimUi.ts,335] childNodes: ", childNodes);
       if (!childNodes) return;
 
       const [first, second, third, ...others] = childNodes;
@@ -360,8 +361,8 @@ export class VimUi {
       const isTextOnlyMultiLinePaste = moreThan3ChildNodes && !thirdIsEmpty;
       if (isTextOnlyMultiLinePaste) {
         const textNodes = getTextNodes(child);
-        /*prettier-ignore*/ console.log("[VimUi.ts,355] child: ", child);
-        /*prettier-ignore*/ console.log("[VimUi.ts,355] textNodes: ", textNodes);
+         ///*prettier-ignore*/ console.log("[VimUi.ts,355] child: ", child);
+         ///*prettier-ignore*/ console.log("[VimUi.ts,355] textNodes: ", textNodes);
         // debugger;
         const linesToJoin: VimLine[] = []; // issue with empty text nodes in html conversio
         textNodes.forEach((textNode) => {
@@ -369,11 +370,11 @@ export class VimUi {
           if (!textNode.nodeValue.trim()) return;
           // /*prettier-ignore*/ console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
           const text = textNode.nodeValue;
-          /*prettier-ignore*/ console.log("[VimUi.ts,369] text: ", text);
+          // /*prettier-ignore*/ console.log("[VimUi.ts,369] text: ", text);
           linesToJoin.push({ text });
         });
         const joined = linesToJoin.map((l) => l.text).join("");
-        /*prettier-ignore*/ console.log("[VimUi.ts,374] joined: ", joined);
+        // /*prettier-ignore*/ console.log("[VimUi.ts,374] joined: ", joined);
         // debugger;
         lines.push({ text: joined });
         return;

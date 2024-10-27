@@ -53,7 +53,6 @@ function migrateToV0_0_4(sheetsData: GridDatabaseType): GridDatabaseType {
     });
     return sheetsData;
   }
-  /*prettier-ignore*/ console.log("[gridMigrations.ts,37] sheetsData: ", sheetsData);
   return sheetsData;
 }
 

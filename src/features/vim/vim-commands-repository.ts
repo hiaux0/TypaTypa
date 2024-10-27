@@ -141,7 +141,7 @@ export interface VimCommand {
   /**
    * Return `false` to prevent default
    */
-  execute?: (mode: VimMode) => boolean | void | Promise<void>;
+  execute?: (mode?: VimMode) => boolean | void | Promise<void>;
   args?: {
     text?: string;
   };
