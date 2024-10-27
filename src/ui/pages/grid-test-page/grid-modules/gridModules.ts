@@ -328,3 +328,4 @@ export function convertRangeToVimState(
   };
   return result;
 }
+window.measureTextWidth = measureTextWidth

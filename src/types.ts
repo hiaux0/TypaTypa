@@ -3,6 +3,7 @@ import { Id } from "./domain/types/types";
 declare global {
   interface Window {
     activeVimInstancesIdMap: Id[];
+    measureTextWidth: (text: string, font: string) => number;
   }
 }
 

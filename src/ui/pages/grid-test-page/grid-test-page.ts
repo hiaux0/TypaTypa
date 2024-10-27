@@ -315,6 +315,7 @@ export class GridTestPage {
         const text = await getClipboardContent();
         const split = text.trim().split("\n");
         const len = split.length;
+        this.rowSize = Math.max(this.rowSize, this.dragStartRowIndex + len);
         this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
         this.iterateOverSelectedCells((col, row) => {
           const content = split.shift();
@@ -546,7 +547,6 @@ export class GridTestPage {
       key: "<Shift>E",
       desc: "Word end",
       execute: () => {
-        console.log("EE");
         const cell = this.getCurrentCell();
         const cellText = measureTextWidth(cell.text);
         const xy = this.getXYOfSelection();
@@ -805,10 +805,9 @@ export class GridTestPage {
       key: "<Enter>",
       desc: "Enter Normal mode",
       execute: () => {
-        console.log("enter");
         this.putCellIntoEdit();
         // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
-        return true
+        return true;
       },
       preventUndoRedo: true,
     },
@@ -1823,7 +1822,7 @@ export class GridTestPage {
   }
 
   private autosave(): void {
-    return;
+    // return;
     gridDatabase.autosave(() => {
       this.save();
     });

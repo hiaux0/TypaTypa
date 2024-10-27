@@ -43,7 +43,7 @@ function migrateToV0_0_3(sheetsData: GridDatabaseType): GridDatabaseType {
 function migrateToV0_0_4(sheetsData: GridDatabaseType): GridDatabaseType {
   // /*prettier-ignore*/ console.log("[gridMigrations.ts,27] sheetsData: ", sheetsData);
   // /*prettier-ignore*/ console.log("[gridMigrations.ts,29] sheetsData.version: ", sheetsData.version);
-  if (sheetsData.version === "v0.0.3") {
+  if (sheetsData.version === "v0.0.4") {
     // debugger
     sheetsData.version = "v0.0.4";
     sheetsData.sheets.forEach((sheet) => {
@@ -62,5 +62,6 @@ export function runGridMigrations(
   let updated = migrateToV0_0_2(sheetsData);
   updated = migrateToV0_0_3(sheetsData);
   updated = migrateToV0_0_4(sheetsData);
+  /*prettier-ignore*/ console.log("[gridMigrations.ts,65] updated: ", updated);
   return updated;
 }

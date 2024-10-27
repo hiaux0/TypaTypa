@@ -8,6 +8,6 @@ export const debugFlags = {
   },
   grid: {
     enterIntoNewLine: false,
+    startCellAtCol0WhenEnterNormalMode: true,
   },
 };
-

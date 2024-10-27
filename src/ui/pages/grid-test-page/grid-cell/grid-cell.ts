@@ -21,6 +21,7 @@ import {
 import { Id } from "../../../../domain/types/SecondBrainDataModel";
 import { EV_VIM_ID_CHANGED } from "../../../../common/modules/eventMessages";
 import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
+import { debugFlags } from "../../../../common/modules/debug/debugFlags";
 
 const logger = new Logger("GridCell");
 
@@ -184,7 +185,9 @@ export class GridCell {
     const vimState: IVimState = {
       mode: VimMode.NORMAL,
       cursor: {
-        col: Math.max(0, text.length),
+        col: debugFlags.grid.startCellAtCol0WhenEnterNormalMode
+          ? 0
+          : Math.max(0, text.length),
         line: 0,
       },
       id,
@@ -239,7 +242,6 @@ export class GridCell {
         key: "<Escape>",
         desc: "Cancel edit and revert changes",
         execute: (mode) => {
-          /*prettier-ignore*/ console.log("[grid-cell.ts,232] mode: ", mode);
           if (mode === VimMode.NORMAL) {
             this.textareaValue = this.cell.text;
             this.onEscape();

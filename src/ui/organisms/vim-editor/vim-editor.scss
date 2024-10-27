@@ -1,4 +1,3 @@
-
 // @mixin caretBlinking {
 //   animation-name: blink;
 //   animation-duration: 0.5s;
@@ -13,7 +12,10 @@ $fontSize: 16px;
 $caretBackgroundColor: lightblue;
 $caretColor: grey;
 $carentWidth: 1.6px;
-$caretSizeWidth: 0.6 * $fontSize;
+/* $caretSizeWidth: 0.5 * $fontSize; */
+/* $caretSizeWidth: 10px; */
+/* $caretSizeWidth: 9.6px; // 200% zoom */
+$caretSizeWidth: 9.34px; // 150% zoom
 // $caretSizeHeight: 1.29 * $fontSize;
 $caretSizeHeight: 21.4667px;
 $editorLineHeight: 21.4667px;
@@ -29,7 +31,6 @@ body {
 }
 
 @keyframes blinkInsert {
-
   from,
   to {
     border-left: $carentWidth solid $caretColor;
@@ -41,7 +42,6 @@ body {
 }
 
 @keyframes blinkNormal {
-
   from,
   to {
     background: $caretBackgroundColor;
@@ -67,7 +67,7 @@ body {
 
       &::after {
         content: ".";
-        background: red;
+        /* background: red; */
         width: 2px;
         display: block;
         z-index: 2;
@@ -119,7 +119,7 @@ body {
       width: 100%;
 
       .inputContainer {
-        border: 1px solid black;
+        /* border: 1px solid black; */ // debug
 
         .inputLine {
           white-space: break-spaces;
