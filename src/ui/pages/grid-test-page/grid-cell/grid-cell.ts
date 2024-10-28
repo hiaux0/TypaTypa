@@ -69,6 +69,7 @@ export class GridCell {
       {
         key: "<Enter>",
         execute: () => {
+          console.log("5");
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
             // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
@@ -160,6 +161,10 @@ export class GridCell {
     this.finalMappingByMode[VimMode.NORMAL] = overwriteExistingKeyBindings(
       this.mappingByModeCell[VimMode.NORMAL],
       this.mappingByMode[VimMode.NORMAL],
+    );
+    this.finalMappingByMode[VimMode.ALL] = overwriteExistingKeyBindings(
+      this.mappingByModeCell[VimMode.ALL],
+      this.mappingByMode[VimMode.ALL],
     );
   }
 

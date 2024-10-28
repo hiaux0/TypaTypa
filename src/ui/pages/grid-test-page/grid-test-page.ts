@@ -523,7 +523,7 @@ export class GridTestPage {
       key: "dd",
       desc: "Delete current row",
       execute: () => {
-        this.contentMap.splice(this.dragStartRowIndex, 1);
+        this.removeRowAt();
         this.updateContentMapChangedForView();
         return true;
       },
@@ -622,6 +622,25 @@ export class GridTestPage {
         }
       },
       preventUndoRedo: true,
+    },
+    {
+      key: "<Shift>J",
+      desc: "Join current cell with cell below",
+      execute: (_, vimState, vimCore) => {
+        const thisText = this.getCurrentCell()?.text ?? "";
+        const belowText =
+          this.getCurrentCell(
+            this.dragStartColumnIndex,
+            this.dragStartRowIndex + 1,
+          )?.text ?? "";
+        const concat = `${thisText.trim()} ${belowText.trim()}`;
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,639] concat: ", concat);
+        this.setCurrentCellContent(concat);
+        this.removeRowAt(this.dragStartRowIndex + 1);
+        vimState.lines[vimState.cursor.line].text = concat;
+        vimCore.setVimState(vimState);
+        this.updateContentMapChangedForView();
+      },
     },
     {
       key: "<Control>k",
@@ -1586,6 +1605,13 @@ export class GridTestPage {
 
   private addRowAt(rowIndex: number): void {
     this.contentMap.splice(rowIndex, 0, []);
+  }
+
+  private removeRowAt(
+    row: number = this.dragStartRowIndex,
+    amount: number = 1,
+  ): void {
+    this.contentMap.splice(row, amount);
   }
 
   private addRowAbove(): void {
