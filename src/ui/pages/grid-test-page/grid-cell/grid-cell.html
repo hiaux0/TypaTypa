@@ -14,7 +14,7 @@
         vim-editor-hooks.bind="vimEditorHooks"
         show-line-numbers.bind="false"
         value.two-way="textareaValue"
-        mapping-by-mode.bind="mappingByMode"
+        mapping-by-mode.bind="finalMappingByMode"
       ></vim-editor>
     </div>
 
@@ -27,7 +27,10 @@
     <!--  keydown.trigger="onKeyDown($event)"-->
     <!--  autosize="on-width-autosize.bind: onInputWidthChanged; use-width-of-container.bind: true;"-->
     <!--/>-->
-    <pre else class="read-only">${cell.text}</pre>
+    <template else>
+      <pre if.bind="isOverflown && selected" class=" read-only overflown">${cell.text}</pre>
+      <pre else class="read-only">${cell.text}</pre>
+    </template>
   </section>
 
   <!-- Selection -->

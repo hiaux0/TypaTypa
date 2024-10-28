@@ -204,7 +204,8 @@ export class VimInputHandler {
 
     let preventDefault = false;
     if (finalCommand?.execute) {
-      const response = await finalCommand.execute(mode);
+      const vimState = this.vimCore.getVimState();
+      const response = await finalCommand.execute(mode, vimState, this.vimCore);
       if (typeof response === "boolean") {
         preventDefault = response;
       }

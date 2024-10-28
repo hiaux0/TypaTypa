@@ -16,6 +16,7 @@ import {
 import { Id } from "../../../../domain/types/SecondBrainDataModel";
 import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
 import { debugFlags } from "../../../../common/modules/debug/debugFlags";
+import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/commands/KeyMappingService";
 
 const logger = new Logger("GridCell");
 
@@ -24,8 +25,8 @@ const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
 const shouldLog = false;
-const c = 6;
-const r = 6;
+const c = 0;
+const r = 11;
 
 const debug = false;
 const debugLog = false;
@@ -42,9 +43,11 @@ export class GridCell {
   @bindable public onCellUpdate: (col: number, row: number, cell: Cell) => void;
   @bindable public onEscape: () => void;
   @bindable public onEnter: () => void;
+  @bindable public mappingByMode: KeyBindingModes;
 
   @observable() public textareaValue = "";
 
+  public finalMappingByMode: KeyBindingModes = {};
   public completionValue = "";
   public cellContentRef: HTMLElement;
   public contentInputRef: HTMLElement;
@@ -60,6 +63,34 @@ export class GridCell {
     afterInit: (vim) => {
       vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
     },
+  };
+  public mappingByModeCell: KeyBindingModes = {
+    [VimMode.ALL]: [
+      {
+        key: "<Enter>",
+        execute: () => {
+          if (this.isEdit) {
+            this.cell.text = this.textareaValue;
+            // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
+            this.onCellUpdate(this.column, this.row, this.cell);
+            this.onEnter();
+          }
+          return true;
+        },
+      },
+    ],
+    [VimMode.NORMAL]: [
+      {
+        key: "<Escape>",
+        desc: "Cancel edit and revert changes",
+        execute: (mode) => {
+          if (mode === VimMode.NORMAL) {
+            this.textareaValue = this.cell.text;
+            this.onEscape();
+          }
+        },
+      },
+    ],
   };
 
   public get getEditWidth(): string {
@@ -120,6 +151,16 @@ export class GridCell {
       this.updateAutocomplete();
     }
     this.setWidthPx();
+
+    if (this.column === c && this.row === r) {
+      /*prettier-ignore*/ console.log("[grid-cell.ts,126] this.isOverflown: ", this.isOverflown);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,127] this.cell.text: ", this.cell?.text);
+    }
+
+    this.finalMappingByMode[VimMode.NORMAL] = overwriteExistingKeyBindings(
+      this.mappingByModeCell[VimMode.NORMAL],
+      this.mappingByMode[VimMode.NORMAL],
+    );
   }
 
   public setWidthPx(
@@ -211,35 +252,6 @@ export class GridCell {
     this.widthPxNew = result;
     return result;
   }
-
-  public mappingByMode: KeyBindingModes = {
-    [VimMode.ALL]: [
-      {
-        key: "<Enter>",
-        execute: () => {
-          if (this.isEdit) {
-            this.cell.text = this.textareaValue;
-            // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
-            this.onCellUpdate(this.column, this.row, this.cell);
-            this.onEnter();
-          }
-          return true;
-        },
-      },
-    ],
-    [VimMode.NORMAL]: [
-      {
-        key: "<Escape>",
-        desc: "Cancel edit and revert changes",
-        execute: (mode) => {
-          if (mode === VimMode.NORMAL) {
-            this.textareaValue = this.cell.text;
-            this.onEscape();
-          }
-        },
-      },
-    ],
-  };
 
   public async onKeyDown(event: KeyboardEvent) {
     if (!this.isEdit) return;

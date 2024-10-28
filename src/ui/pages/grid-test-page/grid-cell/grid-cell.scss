@@ -59,6 +59,19 @@
         background: $backgroundColor1;
         z-index: $zIndexEditing;
       }
+
+      // make vim editor lines also word-wrap
+      // PROBLEM: with word-wrap logic
+      // .editorText {
+      //   position: absolute;
+      //   top: 0;
+      //   left: 0;
+      //   line-height: calc(#{$columnHeight} - 1px);
+      //   color: unset;
+      //   white-space: normal;
+      //   width: 90vw;
+      //   background: $backgroundColor1;
+      // }
     }
 
     input {
@@ -73,6 +86,20 @@
       &.editing {
         background: $backgroundColor1;
         z-index: $zIndexEditing;
+      }
+    }
+
+    .read-only {
+      &.overflown {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 3px 6px 6px 6px;
+        line-height: calc(#{$columnHeight} - 1px);
+        color: unset;
+        white-space: normal;
+        width: 95vw;
+        background: $backgroundColor1;
       }
     }
   }

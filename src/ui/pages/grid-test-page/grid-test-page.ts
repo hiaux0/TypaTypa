@@ -133,6 +133,34 @@ export class GridTestPage {
   public sheetTabHooks: ITabHooks;
   public gridUndoRedo: UndoRedo<ContentMap>;
   public editedCellCoords = "";
+  public mappingByModeForCell: KeyBindingModes = {
+    [VimMode.NORMAL]: [
+      {
+        key: "<Control>Enter",
+        execute: (_, vimState, vimCore) => {
+          const cellText =
+            this.contentMap[this.dragStartRowIndex]?.[this.dragStartColumnIndex]
+              ?.text;
+          if (!cellText) return;
+          const { col } = vimState.cursor;
+          const beforeText = cellText.slice(0, col).trim();
+          const afterText = cellText.slice(col).trim();
+          // set current cell
+          this.setCurrentCellContent(beforeText);
+          vimState.lines[vimState.cursor.line].text = beforeText;
+          vimCore.setVimState(vimState);
+          // add new cell, and set
+          this.addRowBelow();
+          this.addCellAt(
+            afterText,
+            this.dragStartColumnIndex,
+            this.dragStartRowIndex + 1,
+          );
+          this.updateContentMapChangedForView();
+        },
+      },
+    ],
+  };
   @observable public activeSheetId = "";
 
   private activePanel: GridPanel;
@@ -696,6 +724,7 @@ export class GridTestPage {
         const scrollDiff = center - top - height * 1.5;
         this.spreadsheetContainerRef.scrollTop -= scrollDiff;
       },
+      preventUndoRedo: true,
     },
     {
       key: "zc",
@@ -703,6 +732,7 @@ export class GridTestPage {
       execute: () => {
         this.scrollSelectdeIntoView();
       },
+      preventUndoRedo: true,
     },
     {
       key: "zb",
@@ -718,6 +748,7 @@ export class GridTestPage {
         const scrollDiff = topPart - top - height * 1.5;
         this.spreadsheetContainerRef.scrollTop -= scrollDiff;
       },
+      preventUndoRedo: true,
     },
     {
       key: "<Shift>><Shift>>",
@@ -1879,7 +1910,7 @@ export class GridTestPage {
   }
 
   private autosave(): void {
-    // return;
+    return;
     gridDatabase.autosave(() => {
       this.save();
     });
@@ -2172,7 +2203,7 @@ export class GridTestPage {
       this.iterateOverRowUntil(
         (c) => {
           width +=
-            this.activeSheet.colHeaderMap[c]?.colWidth ?? this.CELL_WIDTH;
+            this.activeSheet.colHeaderMap?.[c]?.colWidth ?? this.CELL_WIDTH;
         },
         { startCol: col + delta },
       );
@@ -2203,7 +2234,7 @@ export class GridTestPage {
       this.iterateOverRowFromCurrent(
         (_, r) => {
           height +=
-            this.activeSheet.rowHeaderMap[r]?.height ?? this.CELL_HEIGHT;
+            this.activeSheet.rowHeaderMap?.[r]?.height ?? this.CELL_HEIGHT;
         },
         { endCol: col + delta },
       );
@@ -2211,7 +2242,7 @@ export class GridTestPage {
       this.iterateOverRowUntil(
         (_, r) => {
           height +=
-            this.activeSheet.rowHeaderMap[r]?.height ?? this.CELL_HEIGHT;
+            this.activeSheet.rowHeaderMap?.[r]?.height ?? this.CELL_HEIGHT;
         },
         { startCol: col + delta },
       );

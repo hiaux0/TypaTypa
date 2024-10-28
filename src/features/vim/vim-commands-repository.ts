@@ -1,5 +1,6 @@
 import { ModifiersType } from "../../common/modules/keybindings/app-keys";
-import { VimMode } from "./vim-types";
+import { IVimState, VimMode } from "./vim-types";
+import { VimCore } from "./vimCore/VimCore";
 
 export enum VIM_COMMAND {
   "backspace" = "backspace",
@@ -141,7 +142,11 @@ export interface VimCommand {
   /**
    * Return `false` to prevent default
    */
-  execute?: (mode?: VimMode) => boolean | void | Promise<void>;
+  execute?: (
+    mode?: VimMode,
+    vimState?: IVimState,
+    vimCore?: VimCore,
+  ) => boolean | void | Promise<void>;
   args?: {
     text?: string;
   };

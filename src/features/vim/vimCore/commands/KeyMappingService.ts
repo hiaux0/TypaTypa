@@ -18,6 +18,100 @@ import { IKeyMappingMapping } from "../../../../types";
 
 const logger = new Logger("KeyMappingService");
 
+export function overwriteExistingKeyBindings(
+  existing: VimCommand[],
+  ...additionals: VimCommand[][]
+): VimCommand[] {
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,179] existing: ", existing);
+  const mergedAdditionals = additionals.reduce((acc, curr) => {
+    if (!curr) return acc;
+    return acc.concat(curr);
+  }, []);
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,204] mergedAdditionals: ", mergedAdditionals);
+  const finalBindings = [...existing];
+  // const finalBindings = existing;
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,206] finalBindings: ", finalBindings);
+
+  if (finalBindings.length === 0) {
+    mergedAdditionals.forEach((additionalBinding) => {
+      const hasSimilar = finalBindings.find((b) =>
+        this.hasSimilarBinding(b, additionalBinding),
+      );
+      if (hasSimilar) return;
+      finalBindings.push(additionalBinding);
+    });
+    // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,216] finalBindings: ", finalBindings);
+    return finalBindings;
+  }
+
+  mergedAdditionals?.forEach((additionalBinding) => {
+    if (!additionalBinding) return;
+    let foundCount = 0;
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,181] additionalBinding: ", additionalBinding);
+
+    finalBindings.forEach((existingBinding, index) => {
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] existingBinding: ", existingBinding);
+      if (!existingBinding) return;
+      const okayKey = existingBinding.key === additionalBinding.key;
+      let okayCommand = false;
+      if (existingBinding.command || additionalBinding.command) {
+        okayCommand = existingBinding.command === additionalBinding.command;
+      }
+      const both = okayKey && okayCommand;
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,234] both: ", both);
+      const one = okayKey || okayCommand;
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,236] one: ", one);
+      const okay = one || both;
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] okay: ", okay);
+      if (okay) {
+        // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,236] okay: ", okay);
+        finalBindings[index] = {
+          ...finalBindings[index],
+          ...additionalBinding,
+        };
+        foundCount++;
+        if (additionalBinding.command === "enterInsertMode") {
+          // /*prettier-ignore*/ console.log("----------------------------");
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,249] both: ", both);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,250] one: ", one);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,225] okay: ", okay);
+          //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,252] existingBinding.key: ", existingBinding.key, existingBinding.command);
+          //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
+          //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,227] index: ", index);
+          //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,228] foundCount: ", foundCount);
+        }
+      }
+
+      // If nothing found, then add
+      const lastIndex = index === finalBindings.length - 1;
+      if (lastIndex && !okay && foundCount === 0) {
+        if (additionalBinding.command === "enterInsertMode") {
+          // /*prettier-ignore*/ console.log("----------------------------");
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,249] both: ", both);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,250] one: ", one);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,225] okay: ", okay);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,252] existingBinding.key: ", existingBinding.key, existingBinding.command);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,227] index: ", index);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,228] foundCount: ", foundCount);
+          // /*prettier-ignore*/ console.log("[KeyMappingService.ts,229] lastIndex: ", lastIndex);
+        }
+        // console.log("Push", additionalBinding.key, additionalBinding.command);
+        finalBindings.push(additionalBinding);
+      }
+
+      // if (additionalBinding.key === "<Control>s") {
+      // Reset found count
+      if (lastIndex && foundCount > 1) {
+        foundCount = 0;
+      }
+    });
+  });
+  // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,234] updated: ", updated);
+
+  return finalBindings;
+}
+
 /**
  * @example
  *   input = t
@@ -119,6 +213,9 @@ export class KeyMappingService {
     if (!additionalKeyBindings) {
       additionalKeyBindings = converted;
     } else {
+      if (!additionalKeyBindings[VimMode.ALL]) {
+        additionalKeyBindings[VimMode.ALL] = [];
+      }
       additionalKeyBindings[VimMode.ALL] = additionalKeyBindings[
         VimMode.ALL
       ].concat(converted[VimMode.ALL]);
@@ -175,7 +272,7 @@ export class KeyMappingService {
     const merged = {
       // ...this.keyBindings,
       [VimMode.NORMAL]: [
-        ...this.overwriteExistingKeyBindings(
+        ...overwriteExistingKeyBindings(
           this.keyBindings[VimMode.NORMAL],
           this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.NORMAL],
@@ -183,7 +280,7 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.INSERT]: [
-        ...this.overwriteExistingKeyBindings(
+        ...overwriteExistingKeyBindings(
           this.keyBindings[VimMode.INSERT],
           this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.INSERT],
@@ -191,7 +288,7 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.VISUAL]: [
-        ...this.overwriteExistingKeyBindings(
+        ...overwriteExistingKeyBindings(
           this.keyBindings[VimMode.VISUAL],
           this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.VISUAL],
@@ -199,7 +296,7 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.CUSTOM]: [
-        ...this.overwriteExistingKeyBindings(
+        ...overwriteExistingKeyBindings(
           this.keyBindings[VimMode.CUSTOM],
           this.keyBindings[VimMode.ALL],
           additionalKeyBindings[VimMode.CUSTOM],
@@ -222,100 +319,6 @@ export class KeyMappingService {
     const one = okayKey || okayCommand;
     const similar = one && !both;
     return similar;
-  }
-
-  private overwriteExistingKeyBindings(
-    existing: VimCommand[],
-    ...additionals: VimCommand[][]
-  ): VimCommand[] {
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,179] existing: ", existing);
-    const mergedAdditionals = additionals.reduce((acc, curr) => {
-      if (!curr) return acc;
-      return acc.concat(curr);
-    }, []);
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,204] mergedAdditionals: ", mergedAdditionals);
-    const finalBindings = [...existing];
-    // const finalBindings = existing;
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,206] finalBindings: ", finalBindings);
-
-    if (finalBindings.length === 0) {
-      mergedAdditionals.forEach((additionalBinding) => {
-        const hasSimilar = finalBindings.find((b) =>
-          this.hasSimilarBinding(b, additionalBinding),
-        );
-        if (hasSimilar) return;
-        finalBindings.push(additionalBinding);
-      });
-      // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,216] finalBindings: ", finalBindings);
-      return finalBindings;
-    }
-
-    mergedAdditionals?.forEach((additionalBinding) => {
-      if (!additionalBinding) return;
-      let foundCount = 0;
-      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,181] additionalBinding: ", additionalBinding);
-
-      finalBindings.forEach((existingBinding, index) => {
-        // /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] existingBinding: ", existingBinding);
-        if (!existingBinding) return;
-        const okayKey = existingBinding.key === additionalBinding.key;
-        let okayCommand = false;
-        if (existingBinding.command || additionalBinding.command) {
-          okayCommand = existingBinding.command === additionalBinding.command;
-        }
-        const both = okayKey && okayCommand;
-        // /*prettier-ignore*/ console.log("[KeyMappingService.ts,234] both: ", both);
-        const one = okayKey || okayCommand;
-        // /*prettier-ignore*/ console.log("[KeyMappingService.ts,236] one: ", one);
-        const okay = one || both;
-        // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] okay: ", okay);
-        if (okay) {
-          // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,236] okay: ", okay);
-          finalBindings[index] = {
-            ...finalBindings[index],
-            ...additionalBinding,
-          };
-          foundCount++;
-          if (additionalBinding.command === "enterInsertMode") {
-            // /*prettier-ignore*/ console.log("----------------------------");
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,249] both: ", both);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,250] one: ", one);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,225] okay: ", okay);
-            //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,252] existingBinding.key: ", existingBinding.key, existingBinding.command);
-            //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
-            //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,227] index: ", index);
-            //// /*prettier-ignore*/ console.log("[KeyMappingService.ts,228] foundCount: ", foundCount);
-          }
-        }
-
-        // If nothing found, then add
-        const lastIndex = index === finalBindings.length - 1;
-        if (lastIndex && !okay && foundCount === 0) {
-          if (additionalBinding.command === "enterInsertMode") {
-            // /*prettier-ignore*/ console.log("----------------------------");
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,249] both: ", both);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,250] one: ", one);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,225] okay: ", okay);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,252] existingBinding.key: ", existingBinding.key, existingBinding.command);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,227] index: ", index);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,228] foundCount: ", foundCount);
-            // /*prettier-ignore*/ console.log("[KeyMappingService.ts,229] lastIndex: ", lastIndex);
-          }
-          // console.log("Push", additionalBinding.key, additionalBinding.command);
-          finalBindings.push(additionalBinding);
-        }
-
-        // if (additionalBinding.key === "<Control>s") {
-        // Reset found count
-        if (lastIndex && foundCount > 1) {
-          foundCount = 0;
-        }
-      });
-    });
-    // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,234] updated: ", updated);
-
-    return finalBindings;
   }
 
   /**
