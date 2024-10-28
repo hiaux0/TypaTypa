@@ -67,6 +67,8 @@ import {
   getCssVar,
 } from "../../../common/modules/css/css-variables";
 import { popVimInstanceId } from "../../../features/vim/mulitple-vim-instances-handle";
+import { featureFlags } from "./grid-modules/featureFlags";
+import { splitByEndingAndSeparator } from "../../../common/modules/strings";
 
 const logger = new Logger("GridTestPage");
 const debugLog = false;
@@ -340,14 +342,19 @@ export class GridTestPage {
     {
       command: VIM_COMMAND.paste,
       execute: async () => {
-        const text = await getClipboardContent();
-        const split = text.trim().split("\n");
+        const text = (await getClipboardContent()).trim();
+        const splitByNewLine = text.split("\n");
+        let split = splitByNewLine;
+        if (featureFlags.paste.splitByPeriodAndComma) {
+          split = splitByEndingAndSeparator(text);
+        }
+
         const len = split.length;
         this.rowSize = Math.max(this.rowSize, this.dragStartRowIndex + len);
         this.dragEndRowIndex = this.dragStartRowIndex + len - 1;
         this.iterateOverSelectedCells((col, row) => {
           const content = split.shift();
-          this.setCurrentCellContent(content, col, row);
+          this.setCurrentCellContent(content, col, row, { skipUpdate: true });
         });
         this.dragEndRowIndex = this.dragStartRowIndex;
         this.updateContentMapChangedForView();

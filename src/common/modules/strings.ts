@@ -123,5 +123,22 @@ export function getLongestCommonSubstring(
 //const output11 = getLongestCommonSubstring(["hello", "helmet"]); // "hel"
 // const output2 = getLongestCommonSubstring(["10", "01"]); // ""
 // const output21 = getLongestCommonSubstring(["10", "01"], "1"); // "10"
-const output22 = getLongestCommonSubstring(["00", "01"], "0"); // "hel"
+// const output22 = getLongestCommonSubstring(["00", "01"], "0"); // "hel"
 // /*prettier-ignore*/ console.log("[strings.ts,128] output22: ", output22);
+
+/**
+ * Spit by period, but keep period in output
+ */
+export function splitByEndingAndSeparator(input: string): string[] {
+  const byNewLine = input.split("\n");
+  const splitByEndingSign = byNewLine.flatMap((sentence) => {
+    return sentence.split(/(?<=[.!?])/);
+  });
+  const splitBySeparator = splitByEndingSign.flatMap((sentence) => {
+    return sentence.split(/(?<=[,;])/);
+  });
+  const trimmed = splitBySeparator.flatMap((sentence) => sentence.trim());
+  return trimmed;
+}
+// const result = splitByPeriodAndComma("Hello, world! This is a test. Okay. Bro!");
+// /*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);
