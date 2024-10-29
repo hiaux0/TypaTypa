@@ -26,8 +26,8 @@ const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
 const shouldLog = false;
-const c = 0;
-const r = 11;
+const c = 8;
+const r = 4;
 
 const debug = false;
 const debugLog = false;
@@ -119,8 +119,16 @@ export class GridCell {
 
   public get isOverflown(): boolean {
     if (!this.cell) return false;
-    const width = getValueFromPixelString(this.widthPxNew);
-    return width > (this.columnSettings?.colWidth ?? this.CELL_WIDTH);
+    // const width = getValueFromPixelString(this.widthPxNew);
+    const width = measureTextWidth(this.cell.text);
+    const otherWidth = this.columnSettings?.colWidth ?? this.CELL_WIDTH;
+    const is = width > otherWidth;
+    if (this.column === c && this.row === r && shouldLog) {
+      /*prettier-ignore*/ console.log("[grid-cell.ts,123] width: ", width);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,125] otherWidth: ", otherWidth);
+      /*prettier-ignore*/ console.log("[grid-cell.ts,127] is: ", is);
+    }
+    return is;
   }
 
   isEditChanged() {
@@ -167,8 +175,8 @@ export class GridCell {
     this.setWidthPx();
 
     if (this.column === c && this.row === r) {
-      /*prettier-ignore*/ console.log("[grid-cell.ts,126] this.isOverflown: ", this.isOverflown);
-      /*prettier-ignore*/ console.log("[grid-cell.ts,127] this.cell.text: ", this.cell?.text);
+      ///*prettier-ignore*/ console.log("[grid-cell.ts,126] this.isOverflown: ", this.isOverflown);
+      ///*prettier-ignore*/ console.log("[grid-cell.ts,127] this.cell.text: ", this.cell?.text);
     }
 
     this.finalMappingByMode[VimMode.NORMAL] = overwriteExistingKeyBindings(
