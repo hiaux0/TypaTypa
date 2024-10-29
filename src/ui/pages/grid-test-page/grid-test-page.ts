@@ -177,9 +177,9 @@ export class GridTestPage {
       command: VIM_COMMAND.cursorRight,
       execute: () => {
         this.unselectAllSelecedCells();
-        const next = this.dragStartColumnIndex + 1;
+        let next = this.dragStartColumnIndex + 1;
         const mostRight = this.colSize;
-        if (next >= mostRight) {
+        if (next >= mostRight && featureFlags.mode.autoExpandGrid) {
           this.addColRight();
           this.dragStartColumnIndex = mostRight;
           this.dragEndColumnIndex = mostRight;
@@ -187,6 +187,8 @@ export class GridTestPage {
           this.updateContentMapChangedForView();
           this.scrollEditor("right", 1);
           return;
+        } else {
+          next = Math.min(next, this.colSize - 1);
         }
         this.dragStartColumnIndex = next;
         this.dragEndColumnIndex = next;
@@ -203,8 +205,8 @@ export class GridTestPage {
       command: VIM_COMMAND.cursorLeft,
       execute: () => {
         this.unselectAllSelecedCells();
-        const next = this.dragStartColumnIndex - 1;
-        if (next < 0) {
+        let next = this.dragStartColumnIndex - 1;
+        if (next < 0 && featureFlags.mode.autoExpandGrid) {
           this.addColLeft();
           this.dragStartColumnIndex = 0;
           this.dragEndColumnIndex = 0;
@@ -212,6 +214,8 @@ export class GridTestPage {
           this.updateContentMapChangedForView();
           this.scrollEditor("left", 1);
           return;
+        } else {
+          next = Math.max(0, next);
         }
 
         this.dragStartColumnIndex = next;
@@ -229,11 +233,10 @@ export class GridTestPage {
       command: VIM_COMMAND.cursorUp,
       execute: () => {
         this.unselectAllSelecedCells();
-        // const max = Math.max(0, this.dragStartRowIndex - 1);
-        const next = this.dragStartRowIndex - 1;
+        let next = this.dragStartRowIndex - 1;
 
         // 1. Add new row above
-        if (next < 0) {
+        if (next < 0 && featureFlags.mode.autoExpandGrid) {
           this.addRowAbove();
           this.dragStartRowIndex = 0;
           this.dragEndRowIndex = 0;
@@ -241,6 +244,8 @@ export class GridTestPage {
           this.updateContentMapChangedForView();
           this.scrollEditor("up", 1);
           return;
+        } else {
+          next = Math.max(0, next);
         }
 
         // 2. Move normally
@@ -634,16 +639,22 @@ export class GridTestPage {
       key: "<Shift>J",
       desc: "Join current cell with cell below",
       execute: (_, vimState, vimCore) => {
-        const thisText = this.getCurrentCell()?.text ?? "";
-        const belowText =
+        const thisText = (this.getCurrentCell()?.text ?? "").trim();
+        const belowText = (
           this.getCurrentCell(
             this.dragStartColumnIndex,
             this.dragStartRowIndex + 1,
-          )?.text ?? "";
-        const concat = `${thisText.trim()} ${belowText.trim()}`;
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,639] concat: ", concat);
+          )?.text ?? ""
+        ).trim();
+        let concat = `${thisText} ${belowText}`;
+        if (!thisText) {
+          concat = belowText;
+        }
         this.setCurrentCellContent(concat);
-        this.removeRowAt(this.dragStartRowIndex + 1);
+        this.removeCellAt(
+          this.dragStartColumnIndex,
+          this.dragStartRowIndex + 1,
+        );
         vimState.lines[vimState.cursor.line].text = concat;
         vimCore.setVimState(vimState);
         this.updateContentMapChangedForView();
@@ -1943,7 +1954,9 @@ export class GridTestPage {
   }
 
   private autosave(): void {
-    return;
+    if (!featureFlags.autosave) {
+      return;
+    }
     gridDatabase.autosave(() => {
       this.save();
     });

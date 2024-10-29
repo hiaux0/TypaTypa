@@ -46,6 +46,25 @@
 - [ ] refac: fuse mappings [VimMode.Normal]: <commandName> and object
   - helps to reduce ambiguity, and know in ONE place, which keys are assigned
 - [ ] refac: mapping-- `new KeyMappingService().init(` should be in `initVim`
+- [ ] c-o, c-i
+  - remember cursor positions
+  - across files
+- how to fix insert and normal mode, make it better and simplier
+```
+hello darkness my old friend
+this time we are showing you
+it has all I need to write content
+BUT, what about formatting?
+I want to have live-editor
+## Heading
+**bold**
+```
+  - --> probably mulitple input elements, and up and down moves between them
+    - [ ]  think about difference between grid based and editor based
+      - grid: per cell, cell can have editor inside
+      - editor: contained inside grid
+
+
 
 ## Grid
 
@@ -54,6 +73,8 @@
 - [ ] feat: panels---
 - [ ] feat: toolbar--
 
+- [ ] feat: pro cons
+- [ ] feat: tables
 - [ ] feat: panels--- when escaping out of panel should put cursor in top left corner
 - [ ] feat: panels--- "o" to switch from top left to bottom right corner, when under a panle
 - [ ] feat: panels--- use shortcuts to move between panels

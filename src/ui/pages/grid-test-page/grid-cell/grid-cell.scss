@@ -94,7 +94,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        padding: 3px 6px 6px 6px;
+        /* padding: 3px 6px 6px 6px; */
+        padding: 0px 6px 0px 6px;
         line-height: calc(#{$columnHeight} - 1px);
         color: unset;
         white-space: normal;

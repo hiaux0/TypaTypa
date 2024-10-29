@@ -28,7 +28,9 @@
     <!--  autosize="on-width-autosize.bind: onInputWidthChanged; use-width-of-container.bind: true;"-->
     <!--/>-->
     <template else>
-      <pre if.bind="isOverflown && selected" class=" read-only overflown">${cell.text}</pre>
+      <pre if.bind="isOverflown && selected" class=" read-only overflown" css="width: ${overflownWidth};"
+        >${cell.text}</pre
+      >
       <pre else class="read-only">${cell.text}</pre>
     </template>
   </section>

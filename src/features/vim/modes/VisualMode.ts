@@ -3,7 +3,7 @@ import { setClipboardContent } from "../../../common/modules/platform/clipboard"
 import { replaceRange } from "../../../common/modules/string/string";
 import { VIM_COMMAND } from "../vim-commands-repository";
 import { VimStateClass } from "../vim-state";
-import { IVimState } from "../vim-types";
+import { IVimState, VimMode } from "../vim-types";
 import { AbstractMode } from "./AbstractMode";
 
 const logger = new Logger("VisualMode");
@@ -108,8 +108,9 @@ export class VisualMode extends AbstractMode {
 
   public copy(): VimStateClass {
     const text = this.getSelectedText();
-    /*prettier-ignore*/ console.log("[VisualMode.ts,110] text: ", text);
+    /*prettier-ignore*/ console.log("[VisualMode.ts,111] text: ", text);
     setClipboardContent(text);
+    this.vimState.mode = VimMode.NORMAL;
     return this.vimState;
   }
 
@@ -127,7 +128,9 @@ export class VisualMode extends AbstractMode {
     const activeLine = this.vimState.getActiveLine();
     if (!activeLine) return;
     const text = activeLine.text;
-    const part = text.slice(visualStartCursor.col, visualEndCursor.col + 1);
+    const min = Math.min(visualStartCursor.col, visualEndCursor.col);
+    const max = Math.max(visualStartCursor.col, visualEndCursor.col);
+    const part = text.slice(min, max + 1);
     return part;
   }
 }

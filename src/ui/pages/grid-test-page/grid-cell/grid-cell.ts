@@ -17,6 +17,7 @@ import { Id } from "../../../../domain/types/SecondBrainDataModel";
 import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
 import { debugFlags } from "../../../../common/modules/debug/debugFlags";
 import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/commands/KeyMappingService";
+import { featureFlags } from "../grid-modules/featureFlags";
 
 const logger = new Logger("GridCell");
 
@@ -61,7 +62,9 @@ export class GridCell {
   public vimState: IVimState;
   public vimEditorHooks: VimHooks = {
     afterInit: (vim) => {
-      vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
+      if (featureFlags.mode.enterCellInInsertMode) {
+        vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
+      }
     },
   };
   public mappingByModeCell: KeyBindingModes = {
@@ -102,6 +105,16 @@ export class GridCell {
     const adjustedTextWidth = cellScrollWidth + PADDING;
     const value = Math.max(adjustedTextWidth, minCellWidth);
     return `${value}px`;
+  }
+
+  public get overflownWidth(): string {
+    const vw = document.body.clientWidth;
+    const textWidth = measureTextWidth(this.cell.text);
+    if (textWidth > vw) {
+      return "95vw";
+    }
+    const adjusted = textWidth + PADDING * 2;
+    return `${adjusted}px`;
   }
 
   public get isOverflown(): boolean {

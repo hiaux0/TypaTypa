@@ -135,7 +135,7 @@ export function splitByEndingAndSeparator(input: string): string[] {
     return sentence.split(/(?<=[.!?])/);
   });
   const splitBySeparator = splitByEndingSign.flatMap((sentence) => {
-    return sentence.split(/(?<=[,;])/);
+    return sentence.split(/(?<=[,;:])/);
   });
   const trimmed = splitBySeparator.flatMap((sentence) => sentence.trim());
   return trimmed;
