@@ -329,7 +329,6 @@ export class GridTestPage {
           [startCol, startRow],
           [endCol, endRow],
           (col, row) => {
-            console.log(col, row);
             this.addCellEmptyAt(col, row);
             const rowIndex = row - startRow;
             const colIdnex = col - startCol;
@@ -1457,7 +1456,21 @@ export class GridTestPage {
     this.contentMapForView = converted;
   }
 
-  private addEventListeners() {}
+  private addEventListeners() {
+    if (featureFlags.copy.autopasteIntoRow.enabled) {
+      this.spreadsheetContainerRef.addEventListener("copy", () => {
+        const selection = document.getSelection();
+        const text = selection.toString();
+        const col = featureFlags.copy.autopasteIntoRow.col;
+
+        let nextEmptyCol = col;
+        while (this.getCurrentCell(nextEmptyCol)?.text) {
+          nextEmptyCol++;
+        }
+        this.setCurrentCellContent(text, nextEmptyCol);
+      });
+    }
+  }
 
   private getActiveSheet(): Sheet {
     const sheetId = this.sheetsData.selectedSheetId;
