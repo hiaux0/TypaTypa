@@ -25,7 +25,7 @@ const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
-const shouldLog = true;
+const shouldLog = false;
 const c = 0;
 const r = 19;
 
@@ -182,13 +182,21 @@ export class GridCell {
       ///*prettier-ignore*/ console.log("[grid-cell.ts,127] this.cell.text: ", this.cell?.text);
     }
 
+    this.finalMappingByMode[VimMode.ALL] = overwriteExistingKeyBindings(
+      this.mappingByModeCell[VimMode.ALL],
+      this.mappingByMode[VimMode.ALL],
+    );
     this.finalMappingByMode[VimMode.NORMAL] = overwriteExistingKeyBindings(
       this.mappingByModeCell[VimMode.NORMAL],
       this.mappingByMode[VimMode.NORMAL],
     );
-    this.finalMappingByMode[VimMode.ALL] = overwriteExistingKeyBindings(
-      this.mappingByModeCell[VimMode.ALL],
-      this.mappingByMode[VimMode.ALL],
+    this.finalMappingByMode[VimMode.INSERT] = overwriteExistingKeyBindings(
+      this.mappingByModeCell[VimMode.INSERT] ?? [],
+      this.mappingByMode[VimMode.INSERT],
+    );
+    this.finalMappingByMode[VimMode.VISUAL] = overwriteExistingKeyBindings(
+      this.mappingByModeCell[VimMode.VISUAL] ?? [],
+      this.mappingByMode[VimMode.VISUAL],
     );
   }
 

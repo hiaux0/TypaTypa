@@ -69,6 +69,7 @@ import {
 import { popVimInstanceId } from "../../../features/vim/mulitple-vim-instances-handle";
 import { featureFlags } from "./grid-modules/featureFlags";
 import { splitByEndingAndSeparator } from "../../../common/modules/strings";
+import { VisualMode } from "../../../features/vim/modes/VisualMode";
 
 const logger = new Logger("GridTestPage");
 const debugLog = false;
@@ -159,6 +160,24 @@ export class GridTestPage {
             this.dragStartRowIndex + 1,
           );
           this.updateContentMapChangedForView();
+        },
+      },
+    ],
+    [VimMode.VISUAL]: [
+      {
+        key: "<Control>c",
+        command: VIM_COMMAND.copy,
+        afterExecute: async (mode, _, vimCore) => {
+          if (featureFlags.copy.autopasteIntoRow.enabled) {
+            const modeHandler = vimCore.manager.getMode(mode) as VisualMode;
+            const text = modeHandler.getSelectedText();
+            const col = featureFlags.copy.autopasteIntoRow.col;
+            let nextEmptyCol = col;
+            while (this.getCurrentCell(nextEmptyCol)?.text) {
+              nextEmptyCol++;
+            }
+            this.setCurrentCellContent(text, nextEmptyCol);
+          }
         },
       },
     ],

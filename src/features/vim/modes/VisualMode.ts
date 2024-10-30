@@ -108,13 +108,12 @@ export class VisualMode extends AbstractMode {
 
   public copy(): VimStateClass {
     const text = this.getSelectedText();
-    /*prettier-ignore*/ console.log("[VisualMode.ts,111] text: ", text);
     setClipboardContent(text);
     this.vimState.mode = VimMode.NORMAL;
     return this.vimState;
   }
 
-  private getSelectedText(): string {
+  public getSelectedText(): string {
     const { visualStartCursor, visualEndCursor } = this.vimState;
     if (!visualStartCursor) {
       logVisualDeleteError("Need start cursor");

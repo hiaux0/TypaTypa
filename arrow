@@ -92,6 +92,8 @@ src/types.ts
 src/features/vim/vimCore/VimCore.ts
 src/features/vim/VimInputHandler.ts
 src/features/vim/vimCore/commands/KeyMappingService.ts
+src/ui/pages/grid-test-page/grid-modules/featureFlags.ts
+
 
 
 %% Grid Cell Content

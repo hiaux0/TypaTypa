@@ -147,6 +147,11 @@ export interface VimCommand {
     vimState?: IVimState,
     vimCore?: VimCore,
   ) => boolean | void | Promise<void>;
+  afterExecute?: (
+    mode?: VimMode,
+    vimState?: IVimState,
+    vimCore?: VimCore,
+  ) => boolean | void | Promise<void>;
   args?: {
     text?: string;
   };

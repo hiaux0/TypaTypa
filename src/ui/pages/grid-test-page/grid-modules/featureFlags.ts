@@ -1,9 +1,9 @@
 export const featureFlags = {
-  autosave: false,
+  autosave: true,
   copy: {
     autopasteIntoRow: {
       enabled: true,
-      col: 8,
+      col: 2,
     },
   },
   paste: {
