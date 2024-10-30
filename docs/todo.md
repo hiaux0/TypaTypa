@@ -92,6 +92,8 @@ I want to have live-editor
 - [ ] refac:
 
 - [ ] feat: grid: todo cell
+- [ ] feat: add custom column name
+  - Col8 = vocab for Col6
 - [ ] fix: grid: >> and undo redo
 - [ ] feat: search
 - [ ] feat: grid----- vim ------ after paste, show completions, for recent pastes
@@ -112,6 +114,7 @@ I want to have live-editor
   - [x] until cell with no content
   - [ ] if no overflow, then until next empty cell 
 - [ ] vimeditor
+- [ ] spaceO
 
 
 # Done

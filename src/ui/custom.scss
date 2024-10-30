@@ -16,6 +16,7 @@ body {
   font-family: $fontFamily;
   color: $textColor;
   background: $secondaryLight0;
+  font-size: $fontSize;
 }
 
 button,
@@ -86,7 +87,3 @@ textarea {
   background-color: red;
 }
 
-* {
-  --row-header-width: 31.3333328px;
-  --cell-height: 32px;
-}

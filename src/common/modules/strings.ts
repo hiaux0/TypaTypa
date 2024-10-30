@@ -132,7 +132,18 @@ export function getLongestCommonSubstring(
 export function splitByEndingAndSeparator(input: string): string[] {
   const byNewLine = input.split("\n");
   const splitByEndingSign = byNewLine.flatMap((sentence) => {
-    return sentence.split(/(?<=[.!?])/);
+    // split by period, question mark, exclamation mark
+    // but keep the ending sign
+    // also keep numbering, like "1.", or "1.1"
+    return sentence.split(/(?<=\D[.!?])/);
+    // return sentence.split(/(?<=[.!?])\s+(?<!(?!\D|$))/);
+    // return sentence.split(/(?<=[.!?])\s+(?=\D|$)/);
+    // return sentence.split(/(?<=[.!?])/);
+    // return sentence.split(/(?<!\d[.])(?=[.!?])/)
+    // return sentence.split(/(?<=[^.?!])(?<!\d[.!?])(?=[.!?])/);
+    // return sentence.split(/(?<=[.!?])\s+(?=\D)/);
+    // return sentence.split(/(?<=[.!?])\s+(?=\D)/);
+    // return sentence.split(/(?<=[.!?])\s+(?=(?!\d))/);
   });
   const splitBySeparator = splitByEndingSign.flatMap((sentence) => {
     return sentence.split(/(?<=[,;:])/);
@@ -140,5 +151,9 @@ export function splitByEndingAndSeparator(input: string): string[] {
   const trimmed = splitBySeparator.flatMap((sentence) => sentence.trim());
   return trimmed;
 }
-// const result = splitByPeriodAndComma("Hello, world! This is a test. Okay. Bro!");
-// /*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);
+const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");
+/*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);
+
+//const input = "This is a sentence. 1. This is numbered! 2.1. Another sentence? 3. This is the end.";
+//const result1 = input.split(/(?<=[.!?])\s*(?<!(\d+)[.])/)
+//console.log(result1);

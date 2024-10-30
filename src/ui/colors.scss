@@ -97,7 +97,8 @@ $drawerPadding: 20px;
 $fontSizeXXS: 0.5rem;
 $fontSizeXS: 0.6rem;
 $fontSizeS: 0.8rem;
-$fontSize: 1rem;
+/* $fontSize: 26px; */
+$fontSize: 16px;
 $fontSizeL: 1.2rem;
 $fontSizeXL: 1.4rem;
 
@@ -114,7 +115,13 @@ $zIndexHover2: 200;
 $zIndexEditing: 1000;
 
 $columnWidth: 64px;
-$columnHeight: 32px;
+$columnHeight: var(--cell-height);
 
-$fontFamily: mono, sans-serif;
+/* $fontFamily: mono, sans-serif; */
+$fontFamily: monospace, sans-serif;
 
+
+* {
+  --row-header-width: 31.3333328px;
+  --cell-height: 32px;
+}

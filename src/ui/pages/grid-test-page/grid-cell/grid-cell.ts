@@ -25,9 +25,9 @@ const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
-const shouldLog = false;
-const c = 8;
-const r = 4;
+const shouldLog = true;
+const c = 0;
+const r = 19;
 
 const debug = false;
 const debugLog = false;
@@ -72,7 +72,6 @@ export class GridCell {
       {
         key: "<Enter>",
         execute: () => {
-          console.log("5");
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
             // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
@@ -107,13 +106,17 @@ export class GridCell {
     return `${value}px`;
   }
 
-  public get overflownWidth(): string {
+  public get overflownWidthWhenSelected(): string {
     const vw = document.body.clientWidth;
     const textWidth = measureTextWidth(this.cell.text);
     if (textWidth > vw) {
       return "95vw";
     }
     const adjusted = textWidth + PADDING * 2;
+    const minMax = Math.min(getValueFromPixelString(this.widthPxNew), adjusted);
+    ///*prettier-ignore*/ console.log("[grid-cell.ts,119] this.widthPxNew: ", this.widthPxNew);
+    ///*prettier-ignore*/ console.log("[grid-cell.ts,120] adjusted: ", adjusted);
+    ///*prettier-ignore*/ console.log("[grid-cell.ts,118] minMax: ", minMax);
     return `${adjusted}px`;
   }
 
@@ -245,8 +248,11 @@ export class GridCell {
       );
       let otherColWidth = 0;
       otherColsToConsiderForWidth?.forEach((cell) => {
+        if (!cell) {
+          otherColWidth += this.CELL_WIDTH;
+          return;
+        }
         otherColWidth += minCellWidth;
-        return;
       }, 0);
       const minHeaderAndScrollWidth = Math.min(colHeaderWidth, cellScrollWidth);
 
@@ -260,9 +266,9 @@ export class GridCell {
       if (this.column === c && this.row === r && shouldLog) {
         /*prettier-ignore*/ console.log("AAAA. -------------------------------------------------------------------");
         /*prettier-ignore*/ console.log("[grid-cell.ts,96] cell.text: ", cell.text);
-        /*prettier-ignore*/ console.log("[grid-cell.ts,97] this.cellContentRef.innerText: ", this.cellContentRef.innerText);
+        // /*prettier-ignore*/ console.log("[grid-cell.ts,97] this.cellContentRef.innerText: ", this.cellContentRef.innerText);
         /*prettier-ignore*/ console.log("[grid-cell.ts,99] cellScrollWidth: ", cellScrollWidth);
-        // /*prettier-ignore*/ console.log("[grid-cell.ts,98] otherColsToConsiderForWidth: ", otherColsToConsiderForWidth);
+        /*prettier-ignore*/ console.log("[grid-cell.ts,98] otherColsToConsiderForWidth: ", otherColsToConsiderForWidth);
         /*prettier-ignore*/ console.log("[grid-cell.ts,100] otherColWidth: ", otherColWidth);
         /*prettier-ignore*/ console.log("[grid-cell.ts,101] colHeaderWidth: ", colHeaderWidth);
         /*prettier-ignore*/ console.log("[grid-cell.ts,102] minHeaderAndScrollWidth: ", minHeaderAndScrollWidth);

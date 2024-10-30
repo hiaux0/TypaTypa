@@ -1,5 +1,5 @@
 export const featureFlags = {
-  autosave: true,
+  autosave: false,
   copy: {
     autopasteIntoRow: {
       enabled: true,
@@ -10,7 +10,7 @@ export const featureFlags = {
     splitByPeriodAndComma: true,
   },
   mode: {
-    enterCellInInsertMode: true,
+    enterCellInInsertMode: false,
     autoExpandGrid: false,
   },
 };

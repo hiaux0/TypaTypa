@@ -20,13 +20,16 @@
     //   background: $orange1;
     //   background: unset;
     // }
+    .content.overflown {
+      overflow: unset;
+    }
   }
 
   .content {
     /* position: absolute; */
     height: $columnHeight;
     padding: 6px;
-    /* overflow: scroll; */
+    overflow: hidden;
     text-overflow: clip;
     white-space: nowrap;
 
@@ -92,11 +95,15 @@
     .read-only {
       &.overflown {
         position: absolute;
-        top: 0;
+        /* top: 0; */
+        top: -2px;
         left: 0;
+        height: calc(#{$columnHeight} + 1px);
         /* padding: 3px 6px 6px 6px; */
-        padding: 0px 6px 0px 6px;
-        line-height: calc(#{$columnHeight} - 1px);
+        /* padding: 0px 6px 0px 6px; */
+        padding: 0px 0px 0px 6px;
+        /* line-height: calc(#{$columnHeight} - 1px); */
+        line-height: calc(#{$columnHeight} - 0px);
         color: unset;
         white-space: normal;
         width: 95vw;

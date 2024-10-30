@@ -347,6 +347,24 @@ export class GridTestPage {
       command: VIM_COMMAND.paste,
       execute: async () => {
         const text = (await getClipboardContent()).trim();
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,350] text: ", text);
+        try {
+          const is2DimStringArray = JSON.parse(text);
+          if (
+            Array.isArray(is2DimStringArray) &&
+            Array.isArray(is2DimStringArray[0]) &&
+            typeof is2DimStringArray[0][0] === "string"
+          ) {
+            /*prettier-ignore*/ logger.culogger.debug(["Is 2 dim string array, so invoke pasteVimBefore"])
+            this.lastCellContentArray = is2DimStringArray;
+            const pasteVimBeforeCommand = this.mappingByNormalMode.find(
+              (a) => a.command === VIM_COMMAND.pasteVimBefore,
+            );
+            pasteVimBeforeCommand.execute();
+            return;
+          }
+        } catch {}
+
         const splitByNewLine = text.split("\n");
         let split = splitByNewLine;
         if (featureFlags.paste.splitByPeriodAndComma) {
@@ -956,6 +974,32 @@ export class GridTestPage {
       },
     },
     {
+      command: VIM_COMMAND.copy,
+      desc: "Copy selected cells to clipboard",
+      execute: () => {
+        const collectToCopy = [];
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,981] collectToCopy: ", collectToCopy);
+        const [start, end] = this.getSelectedArea();
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,983] start: ", start);
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,983] end: ", end);
+        iterateOverRange(start, end, (col, row) => {
+          if (!collectToCopy[row]) {
+            collectToCopy[row] = [];
+          }
+          const text = this.getCurrentCell(col, row)?.text;
+          collectToCopy[row].push(text ?? "");
+        });
+        // const asString = JSON.stringify(collectToCopy, null, 2)
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,994] collectToCopy: ", collectToCopy);
+        const filtered = collectToCopy.filter((a) => a);
+        const asString = JSON.stringify(filtered);
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,991] asString: ", asString);
+        setClipboardContent(asString);
+        this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+        this.setAndUpdateSingleCellSelection();
+      },
+    },
+    {
       command: VIM_COMMAND.enterVisualMode,
       execute: () => {
         /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
@@ -1546,7 +1590,7 @@ export class GridTestPage {
   }
 
   private setAndUpdateSingleCellSelection(
-    col: number,
+    col: number = this.dragStartColumnIndex,
     row: number = this.dragStartRowIndex,
   ) {
     this.unselectAllSelecedCells();
