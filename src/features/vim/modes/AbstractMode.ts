@@ -752,6 +752,7 @@ export abstract class AbstractMode {
   }
 
   yank(): VimStateClass {
+    this.vimState.mode = VimMode.NORMAL;
     return this.vimState;
   }
 

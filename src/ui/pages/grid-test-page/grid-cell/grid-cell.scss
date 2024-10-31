@@ -98,7 +98,7 @@
         /* top: 0; */
         top: -2px;
         left: 0;
-        height: calc(#{$columnHeight} + 1px);
+        /* height: calc(#{$columnHeight} + 1px); */ // TODO: needed? If present, then wrapped lines not above
         /* padding: 3px 6px 6px 6px; */
         /* padding: 0px 6px 0px 6px; */
         padding: 0px 0px 0px 6px;
@@ -107,7 +107,8 @@
         color: unset;
         white-space: normal;
         width: 95vw;
-        background: $backgroundColor1;
+        /* background: $backgroundColor1; */
+        background: $black0;
       }
     }
   }
@@ -120,8 +121,8 @@
     height: 100%;
     top: 0;
     /* border: 2px solid green; */
-    background: $orange1;
+    background: $black;
     opacity: 0.5;
-    z-index: 300;
+    z-index: $zIndexBaseBelow;
   }
 }

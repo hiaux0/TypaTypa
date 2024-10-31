@@ -1,9 +1,10 @@
 export const featureFlags = {
-  autosave: true,
+  autosave: false,
   copy: {
     autopasteIntoRow: {
       enabled: true,
       col: 2,
+      method: ["yank"],
     },
   },
   paste: {
@@ -11,7 +12,7 @@ export const featureFlags = {
   },
   mode: {
     enterCellInInsertMode: false,
-    autoExpandGrid: false,
+    autoExpandGrid: true,
   },
 };
 

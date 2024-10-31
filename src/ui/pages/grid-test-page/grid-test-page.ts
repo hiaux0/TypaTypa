@@ -165,24 +165,52 @@ export class GridTestPage {
     ],
     [VimMode.VISUAL]: [
       {
-        key: "<Control>c",
-        command: VIM_COMMAND.copy,
+        key: "y",
+        command: VIM_COMMAND.yank,
         afterExecute: async (mode, _, vimCore) => {
-          if (featureFlags.copy.autopasteIntoRow.enabled) {
+          const { autopasteIntoRow } = featureFlags.copy;
+          const okay =
+            autopasteIntoRow.enabled &&
+            autopasteIntoRow.method.includes("yank");
+          if (okay) {
             const modeHandler = vimCore.manager.getMode(mode) as VisualMode;
             const text = modeHandler.getSelectedText();
             const col = featureFlags.copy.autopasteIntoRow.col;
-            let nextEmptyCol = col;
-            while (this.getCurrentCell(nextEmptyCol)?.text) {
-              nextEmptyCol++;
+            const isCellEmpty = this.isCellEmpty(col);
+            if (isCellEmpty) {
+              this.setCurrentCellContent(text, col);
+              return;
             }
-            this.setCurrentCellContent(text, nextEmptyCol);
+            this.addCellBelow(text, col);
+            return true;
           }
         },
       },
     ],
   };
   @observable public activeSheetId = "";
+
+  private isRowEmpty(row: number): boolean {
+    return !this.contentMap[row]?.some((cell) => cell.text);
+  }
+  private addCellBelow(content: string, col = this.dragStartColumnIndex): void {
+    const nextRow = this.dragStartRowIndex + 1;
+    const rowEmpty = this.isRowEmpty(this.dragStartRowIndex);
+    if (rowEmpty) {
+      this.setCurrentCellContent(content, col, nextRow);
+      return;
+    }
+    this.addRowBelow();
+    this.setCurrentCellContent(content, col, nextRow);
+  }
+  private isCellEmpty(
+    col: number = this.dragStartColumnIndex,
+    row: number = this.dragStartRowIndex,
+  ): boolean {
+    const text = this.getCurrentCell(col, row)?.text.trim();
+    const is = !text;
+    return is;
+  }
 
   private activePanel: GridPanel;
   private activePanelElement: HTMLElement;
@@ -283,9 +311,22 @@ export class GridTestPage {
       command: VIM_COMMAND.cursorDown,
       execute: () => {
         this.unselectAllSelecedCells();
-        const a = Math.min(this.rowSize - 1, this.dragStartRowIndex + 1);
-        this.dragStartRowIndex = a;
-        this.dragEndRowIndex = a;
+        let next = this.dragStartRowIndex + 1;
+        const mostBottom = this.rowSize;
+        if (next >= mostBottom && featureFlags.mode.autoExpandGrid) {
+          this.addRowBelow();
+          this.dragStartRowIndex = mostBottom;
+          this.dragEndRowIndex = mostBottom;
+          this.updateAllSelecedCells();
+          this.updateContentMapChangedForView();
+          this.scrollEditor("down", 1);
+          return;
+        } else {
+          next = Math.min(next, this.rowSize - 1);
+        }
+
+        this.dragStartRowIndex = next;
+        this.dragEndRowIndex = next;
         this.updateAllSelecedCells();
         if (this.dragStartRowIndex === 0) {
           this.spreadsheetContainerRef.scrollTop = 0;
@@ -739,7 +780,7 @@ export class GridTestPage {
       key: "o",
       desc: "Insert one row below",
       execute: () => {
-        this.contentMap.splice(this.dragStartRowIndex + 1, 0, []);
+        this.addRowBelow();
         this.updateContentMapChangedForView();
         this.moveSelectedCellBy(1, "y");
         this.putCellIntoEdit();
@@ -1520,17 +1561,26 @@ export class GridTestPage {
   }
 
   private addEventListeners() {
-    if (featureFlags.copy.autopasteIntoRow.enabled) {
+    const { autopasteIntoRow } = featureFlags.copy;
+    if (autopasteIntoRow.enabled && autopasteIntoRow.method.includes["copy"]) {
       this.spreadsheetContainerRef.addEventListener("copy", () => {
+        console.log("bruh");
         const selection = document.getSelection();
         const text = selection.toString();
         const col = featureFlags.copy.autopasteIntoRow.col;
-
-        let nextEmptyCol = col;
-        while (this.getCurrentCell(nextEmptyCol)?.text) {
-          nextEmptyCol++;
+        const isCellEmpty = this.isCellEmpty(col);
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1554] isCellEmpty: ", isCellEmpty);
+        if (isCellEmpty) {
+          this.setCurrentCellContent(text, col);
+          return;
         }
-        this.setCurrentCellContent(text, nextEmptyCol);
+        this.addCellBelow(text, col);
+
+        //let nextEmptyCol = col;
+        //while (this.getCurrentCell(nextEmptyCol)?.text) {
+        //  nextEmptyCol++;
+        //}
+        //this.setCurrentCellContent(text, nextEmptyCol);
       });
     }
   }
@@ -1581,7 +1631,7 @@ export class GridTestPage {
       container: this.gridTestContainerRef,
       vimState,
       allowChaining: true,
-      allowExtendedChaining: true,
+      allowExtendedChaining: false,
       hooks: {
         modeChanged: (payload) => {
           this.mode = payload.vimState.mode;
@@ -1686,6 +1736,7 @@ export class GridTestPage {
 
   private addColLeft(): void {
     const left = Math.max(0, this.dragStartColumnIndex - 1);
+    this.colSize += 1
     this.addColAt(left);
   }
 
@@ -1710,10 +1761,12 @@ export class GridTestPage {
 
   private addRowAbove(): void {
     const next = Math.max(0, this.dragStartRowIndex - 1);
+    this.rowSize += 1;
     this.addRowAt(next);
   }
 
   private addRowBelow(): void {
+    this.rowSize += 1;
     this.addRowAt(this.dragStartRowIndex + 1);
   }
 

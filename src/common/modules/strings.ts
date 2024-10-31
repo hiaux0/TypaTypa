@@ -151,9 +151,5 @@ export function splitByEndingAndSeparator(input: string): string[] {
   const trimmed = splitBySeparator.flatMap((sentence) => sentence.trim());
   return trimmed;
 }
-const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");
-/*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);
-
-//const input = "This is a sentence. 1. This is numbered! 2.1. Another sentence? 3. This is the end.";
-//const result1 = input.split(/(?<=[.!?])\s*(?<!(\d+)[.])/)
-//console.log(result1);
+//const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");
+///*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);

@@ -69,7 +69,7 @@ export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
   `${columnIndex}:${rowIndex}`;
 export const CELL_HEIGHT = 48;
 export const CELL_WIDTH = 64;
-export const INITIAL_COLUMN_COUNT = 20;
+export const INITIAL_COLUMN_COUNT = 2;
 export const INITIAL_ROW_COUNT = 5;
 export const PADDING = 6;
 export const PADDING_LEFT = 6;

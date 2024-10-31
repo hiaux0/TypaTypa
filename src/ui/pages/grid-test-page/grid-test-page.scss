@@ -41,7 +41,7 @@
       @include cell();
       position: sticky;
       top: 0;
-      z-index: 2000;
+      z-index: $zIndexEditing2;
       background: $secondaryLight0;
 
       &:hover {
@@ -50,8 +50,9 @@
     }
 
     .cells-container {
-      width: 100vw;
       display: flex;
+      width: 100vw;
+      height: fit-content; // for sticky
 
       .column-container {
         .column-header {
@@ -75,13 +76,20 @@
     .row-header {
       /* margin-right: -10px; // microadjust white space after row header (probably comes from `display: inline-block;`) */
       position: sticky;
+      height: fit-content;
       left: 0;
       background: $secondaryLight0;
-      z-index: 2000;
+      z-index: $zIndexEditing2;
+
+      .cell.column-header-corner {
+        position: sticky;
+        top: 0;
+        background: $secondaryLight0;
+        z-index: $zIndexEditing21;
+      }
 
       .cell-header {
         /* height: 33px; */
-
       }
     }
     .row-container {

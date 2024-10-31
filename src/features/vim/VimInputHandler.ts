@@ -254,7 +254,11 @@ export class VimInputHandler {
 
     if (finalCommand?.afterExecute) {
       const vimState = this.vimCore.getVimState();
-      const response = finalCommand?.afterExecute(mode, vimState, this.vimCore);
+      const response = await finalCommand?.afterExecute(
+        mode,
+        vimState,
+        this.vimCore,
+      );
       if (typeof response === "boolean") {
         preventDefault = response;
       }

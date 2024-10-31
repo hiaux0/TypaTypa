@@ -109,10 +109,14 @@ $zIndex20: 20;
 $zIndex30: 30;
 $zIndex40: 40;
 
+$zIndexBaseBelow: -10;
 $zIndexBase: 10;
 $zIndexHover: 100;
 $zIndexHover2: 200;
 $zIndexEditing: 1000;
+$zIndexEditing2: 2000;
+$zIndexEditing21: 2100;
+$zIndexEditing3: 3000;
 
 $columnWidth: 64px;
 $columnHeight: var(--cell-height);
