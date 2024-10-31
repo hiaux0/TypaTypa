@@ -154,12 +154,34 @@ export class GridTestPage {
           vimCore.setVimState(vimState);
           // add new cell, and set
           this.addRowBelow();
-          this.addCellAt(
+          this.addCellInRowAt(
             afterText,
             this.dragStartColumnIndex,
             this.dragStartRowIndex + 1,
           );
           this.updateContentMapChangedForView();
+        },
+      },
+      {
+        command: VIM_COMMAND.cursorDown,
+        desc: "Move to below cell when in INSERT mode",
+        execute: () => {
+          console.log("DOWN");
+          this.onEscape();
+          popVimInstanceId();
+          this.getCommand(VIM_COMMAND.cursorDown, VimMode.NORMAL)?.execute();
+          this.putCellIntoEdit();
+        },
+      },
+      {
+        command: VIM_COMMAND.cursorUp,
+        desc: "Move to above cell when in INSERT mode",
+        execute: () => {
+          console.log("UP");
+          this.onEscape();
+          popVimInstanceId();
+          this.getCommand(VIM_COMMAND.cursorUp, VimMode.NORMAL)?.execute();
+          this.putCellIntoEdit();
         },
       },
     ],
@@ -181,7 +203,7 @@ export class GridTestPage {
               this.setCurrentCellContent(text, col);
               return;
             }
-            this.addCellBelow(text, col);
+            this.addCellBelowAndMaybeNewRow(text, col);
             return true;
           }
         },
@@ -193,7 +215,10 @@ export class GridTestPage {
   private isRowEmpty(row: number): boolean {
     return !this.contentMap[row]?.some((cell) => cell.text);
   }
-  private addCellBelow(content: string, col = this.dragStartColumnIndex): void {
+  private addCellBelowAndMaybeNewRow(
+    content: string,
+    col = this.dragStartColumnIndex,
+  ): void {
     const nextRow = this.dragStartRowIndex + 1;
     const rowEmpty = this.isRowEmpty(this.dragStartRowIndex);
     if (rowEmpty) {
@@ -362,7 +387,7 @@ export class GridTestPage {
           [startCol, startRow],
           [endCol, endRow],
           (col, row) => {
-            this.addCellEmptyAt(col, row);
+            this.addCellEmptyInRowAt(col, row);
             const rowIndex = row - startRow;
             const colIdnex = col - startCol;
             const content = this.lastCellContentArray[rowIndex][colIdnex];
@@ -389,7 +414,7 @@ export class GridTestPage {
           [startCol, startRow],
           [endCol, endRow],
           (col, row) => {
-            this.addCellEmptyAt(col, row);
+            this.addCellEmptyInRowAt(col, row);
             const rowIndex = row - startRow;
             const colIdnex = col - startCol;
             const content = this.lastCellContentArray[rowIndex][colIdnex];
@@ -869,7 +894,7 @@ export class GridTestPage {
       desc: "Move cell right",
       execute: () => {
         console.log("indent right >>");
-        this.addCellEmptyAt(0);
+        this.addCellEmptyInRowAt(0);
         this.updateContentMapChangedForView();
       },
     },
@@ -903,6 +928,13 @@ export class GridTestPage {
 
         if (!nextPanel) return;
         this.setActivePanel(nextPanel);
+      },
+    },
+    {
+      key: "<Space>eacb",
+      desc: "[E]ditor [a]add [c]ell [b]elow",
+      execute: () => {
+        this.addCellInColAndShiftDown();
       },
     },
     {
@@ -1247,6 +1279,16 @@ export class GridTestPage {
     return result;
   }
 
+  private get nextCol(): number {
+    return this.dragStartColumnIndex + 1;
+  }
+
+  private get nextRow(): number {
+    const next = this.dragStartRowIndex + 1;
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,1277] next: ", next);
+    return next;
+  }
+
   activeSheetIdChanged() {
     if (!this.activeSheetId) return;
     this.sheetsData.selectedSheetId = this.activeSheetId;
@@ -1574,7 +1616,7 @@ export class GridTestPage {
           this.setCurrentCellContent(text, col);
           return;
         }
-        this.addCellBelow(text, col);
+        this.addCellBelowAndMaybeNewRow(text, col);
 
         //let nextEmptyCol = col;
         //while (this.getCurrentCell(nextEmptyCol)?.text) {
@@ -1719,7 +1761,7 @@ export class GridTestPage {
 
   private addColAt(colIndex: number): void {
     this.contentMap.forEach((_, rowIndex) => {
-      this.addCellEmptyAt(colIndex, rowIndex);
+      this.addCellEmptyInRowAt(colIndex, rowIndex);
     });
 
     this.addEntryToColHeaderMap(colIndex);
@@ -1736,7 +1778,7 @@ export class GridTestPage {
 
   private addColLeft(): void {
     const left = Math.max(0, this.dragStartColumnIndex - 1);
-    this.colSize += 1
+    this.colSize += 1;
     this.addColAt(left);
   }
 
@@ -1770,7 +1812,7 @@ export class GridTestPage {
     this.addRowAt(this.dragStartRowIndex + 1);
   }
 
-  private addCellEmptyAt(
+  private addCellEmptyInRowAt(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ) {
@@ -1780,7 +1822,7 @@ export class GridTestPage {
     this.contentMap[row].splice(col, 0, undefined);
   }
 
-  private addCellAt(
+  private addCellInRowAt(
     content: string,
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
@@ -1791,6 +1833,23 @@ export class GridTestPage {
     }
     this.contentMap[row].splice(col, 0, undefined);
     this.setCurrentCellContent(content, col, row, option);
+  }
+
+  private addCellInColAndShiftDown(): void {
+    const startRow = this.dragStartRowIndex + 1;
+    let beforeValue = "";
+    this.iterateOverCol(
+      (col, row) => {
+        const currentText = this.getCurrentCell(col, row)?.text;
+        this.setCurrentCellContent(beforeValue, col, row, {
+          skipUpdate: true,
+        });
+
+        beforeValue = currentText;
+      },
+      { startRow },
+    );
+    this.updateContentMapChangedForView();
   }
 
   private removeCellAt(
@@ -1987,11 +2046,14 @@ export class GridTestPage {
         callback(columnIndex, rowIndex, {
           content,
           set: (newContent: string) =>
-            this.setCurrentCellContent(newContent, columnIndex, rowIndex),
+            this.setCurrentCellContent(newContent, columnIndex, rowIndex, {
+              skipUpdate: true,
+            }),
         });
       },
       options,
     );
+    this.updateContentMapChangedForView();
   }
 
   private iterateOverCol(
@@ -2004,6 +2066,34 @@ export class GridTestPage {
       callback,
       options,
     );
+  }
+
+  private iterateOverRangeEnhanced(
+    start: GridSelectionCoord,
+    end: GridSelectionCoord,
+    callback: (
+      columnIndex: number,
+      rowIndex: number,
+      options: { content: string; set: Function },
+    ) => void,
+    options?: GridIteratorOptions,
+  ) {
+    iterateOverRange(
+      start,
+      end,
+      (columnIndex, rowIndex) => {
+        const content = this.getCurrentCell(columnIndex, rowIndex)?.text ?? "";
+        callback(columnIndex, rowIndex, {
+          content,
+          set: (newContent: string) =>
+            this.setCurrentCellContent(newContent, columnIndex, rowIndex, {
+              skipUpdate: true,
+            }),
+        });
+      },
+      options,
+    );
+    this.updateContentMapChangedForView();
   }
 
   private iterateOverWholeRow(

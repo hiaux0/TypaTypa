@@ -35,13 +35,13 @@
 
     &.overflown {
       position: relative;
-      border-bottom: 1px solid $borderColor;
+      border-bottom: 1px solid $borderColor1; // based on cell()
       background: $backgroundColor;
       z-index: 100;
       &:hover {
         height: 32px;
         border: unset;
-        border-bottom: 1px solid $borderColor;
+        border-bottom: 1px solid $borderColor1; // based on cell()
         z-index: $zIndexHover2 + 1;
 
         background: $red;

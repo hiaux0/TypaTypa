@@ -32,7 +32,8 @@ const atoms = [UploadButton];
 const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
 const organisms = [CustomTable, Dictionary, TabDrawer, Topics, VimEditor];
 
-Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
+Aurelia
+  .register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
   .register([...atoms, ...attributes, ...molecules, ...organisms, Scratch])
   .register(Registration.singleton(Store, Store))
   // .register()

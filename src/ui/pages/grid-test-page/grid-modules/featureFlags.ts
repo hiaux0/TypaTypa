@@ -12,7 +12,7 @@ export const featureFlags = {
   },
   mode: {
     enterCellInInsertMode: false,
-    autoExpandGrid: true,
+    autoExpandGrid: false,
   },
 };
 

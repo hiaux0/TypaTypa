@@ -20,7 +20,7 @@ export class VimCore {
       this.vimState = VimStateClass.createEmpty();
     }
     this.manager = VimCommandManager.create(this.options);
-    this.manager.setInternalVimState(this.vimState)
+    this.manager.setInternalVimState(this.vimState);
     this.keyMappingService = new KeyMappingService();
   }
 
@@ -68,6 +68,7 @@ export class VimCore {
 
     const resultList: IVimState[] = [];
     splitSequence.forEach((key) => {
+      /*prettier-ignore*/ console.log("[VimCore.ts,72] this.keyMappingService.id: ", this.keyMappingService.id);
       const { commandName } =
         this.keyMappingService.prepareCommand(key, mode) ?? {};
       if (!commandName) return;

@@ -46,6 +46,7 @@ $dark-white: #dcdcdc; // main grey
 $dark-white1: #c5c5c5; // darker grey
 $dark-grey0: #6b6b6b; // light grey
 $dark-grey: #4a4a4a; // main grey
+$dark-grey1: #313131; // darker grey
 $dark-red: #c54a4a; // dark tomato
 
 /* $primary: #bfd6a7; */
@@ -72,6 +73,7 @@ $white: if($theme == dark, $dark-white, $light-white);
 $white1: if($theme == dark, $dark-white1, $light-white1);
 $grey0: if($theme == dark, $dark-grey0, $light-grey0);
 $grey: if($theme == dark, $dark-grey, $light-grey);
+$grey1: if($theme == dark, $dark-grey1, $light-grey);
 $red: if($theme == dark, $dark-red, $light-red);
 $orange: #fdcc6d;
 $orange1: #ffb016;
@@ -80,7 +82,9 @@ $orange1: #ffb016;
 // Apply theme colors
 $textColor0: if($theme == dark, $dark-white0, $light-black);
 $textColor: if($theme == dark, $dark-white1, $light-black);
+$borderColor0: if($theme == dark, $grey, $light-black1);
 $borderColor: if($theme == dark, $dark-black, $light-black1);
+$borderColor1: if($theme == dark, $dark-grey1, $light-black1);
 $backgroundColor: $secondaryLight0;
 $backgroundColor1: $secondaryLight;
 $hoverColor: $primaryDark;

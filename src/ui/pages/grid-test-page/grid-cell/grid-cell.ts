@@ -96,6 +96,10 @@ export class GridCell {
     ],
   };
 
+  //public getEditWidth = "64px";
+  //public overflownWidthWhenSelected = "95vw";
+  //public isOverflown = false
+
   public get getEditWidth(): string {
     const cellScrollWidth = measureTextWidth(this.textareaValue);
     const minCellWidth = Math.min(
@@ -154,7 +158,9 @@ export class GridCell {
       lines: [{ text }],
     };
     this.vimState = vimState;
+    // /*prettier-ignore*/ console.log("[grid-cell.ts,162] id: ", id);
     window.activeVimInstancesIdMap.push(id);
+    // /*prettier-ignore*/ console.log("[grid-cell.ts,164] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 
     window.setTimeout(() => {
       this.getInput()?.focus();
@@ -183,20 +189,23 @@ export class GridCell {
     }
 
     this.finalMappingByMode[VimMode.ALL] = overwriteExistingKeyBindings(
-      this.mappingByModeCell[VimMode.ALL],
-      this.mappingByMode[VimMode.ALL],
+      this.mappingByMode[VimMode.ALL] ?? [],
+      this.mappingByModeCell[VimMode.ALL] ?? [],
     );
     this.finalMappingByMode[VimMode.NORMAL] = overwriteExistingKeyBindings(
-      this.mappingByModeCell[VimMode.NORMAL],
-      this.mappingByMode[VimMode.NORMAL],
+      this.mappingByMode[VimMode.NORMAL] ?? [],
+      this.mappingByModeCell[VimMode.NORMAL] ?? [],
     );
+    if (this.column === c && this.row === r && shouldLog) {
+      // /*prettier-ignore*/ console.log("[grid-cell.ts,200] this.finalMappingByMode[VimMode.NORMAL]: ", this.finalMappingByMode[VimMode.NORMAL]);
+    }
     this.finalMappingByMode[VimMode.INSERT] = overwriteExistingKeyBindings(
+      this.mappingByMode[VimMode.INSERT] ?? [],
       this.mappingByModeCell[VimMode.INSERT] ?? [],
-      this.mappingByMode[VimMode.INSERT],
     );
     this.finalMappingByMode[VimMode.VISUAL] = overwriteExistingKeyBindings(
+      this.mappingByMode[VimMode.VISUAL] ?? [],
       this.mappingByModeCell[VimMode.VISUAL] ?? [],
-      this.mappingByMode[VimMode.VISUAL],
     );
   }
 

@@ -18,8 +18,8 @@
 
 @mixin cell() {
   padding: 6px;
-  border-right: 1px solid $borderColor;
-  border-bottom: 1px solid $borderColor;
+  border-right: 1px solid $borderColor1;
+  border-bottom: 1px solid $borderColor1;
   height: $columnHeight;
 }
 
