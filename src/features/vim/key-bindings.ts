@@ -49,7 +49,7 @@ const commandsAllModes: VimCommand[] = [
  * TODO: rename? `...VeryNextInput`
  */
 export const commandsThatWaitForNextInput: VimCommand[] = [
-  { key: "F", command: VIM_COMMAND["toCharacterAtBack"] },
+  { key: "<Shift>F", command: VIM_COMMAND["toCharacterAtBack"] },
   { key: "f", command: VIM_COMMAND["toCharacterAt"] },
   { key: "r", command: VIM_COMMAND["replace"] },
   { key: "T", command: VIM_COMMAND["toCharacterAfterBack"] },

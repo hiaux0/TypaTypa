@@ -14,6 +14,7 @@ import { toggleFold } from "./features/folding";
 import { VimStateClass } from "../vim-state";
 import { VimLine, VimMode, VimOptions, IVimState } from "../vim-types";
 import { CRUDService } from "../../../common/services/CRUDService";
+import { specialCharsSet } from "../../../common/modules/constants";
 
 const logger = new Logger("AbstractMode");
 
@@ -41,6 +42,7 @@ export abstract class AbstractMode {
   constructor(vimState?: IVimState) {
     if (!vimState) return;
     this.vimState = new VimStateClass(vimState);
+    this.vimStateClass = this.vimState;
   }
 
   public executeCommand(
@@ -156,20 +158,25 @@ export abstract class AbstractMode {
   cursorWordForwardEnd(): VimStateClass {
     if (!this.vimState.cursor) return this.vimState;
     const tokenUnderCursor = this.getTokenUnderCursor();
+    tokenUnderCursor; /*?*/
 
     const isAtEnd = tokenUnderCursor?.end === this.vimState.cursor.col;
+    isAtEnd;
     const isNotAtEnd = tokenUnderCursor === undefined;
 
     let resultCol: number;
     if (isAtEnd) {
       const nextToken = this.getTokenAtIndex(tokenUnderCursor.index + 1);
+      nextToken;
       if (nextToken) resultCol = nextToken?.end;
     } else if (isNotAtEnd) {
       const nextToken = this.getNexToken();
       if (!nextToken) return this.vimState;
+      nextToken;
       resultCol = nextToken?.end;
     } else {
       resultCol = tokenUnderCursor.end;
+      resultCol;
     }
 
     // @ts-ignore
@@ -381,8 +388,8 @@ export abstract class AbstractMode {
     const activeLine = this.vimState.getActiveLine();
     if (!activeLine) return this.vimState;
     const text = activeLine.text;
-    const currentTextToEnd = text.substring(cursor.col);
-    const targetCharacterIndex = currentTextToEnd.indexOf(commandInput);
+    const currentTextToEnd = text.substring(cursor.col + 1); // +1: next char
+    const targetCharacterIndex = currentTextToEnd.indexOf(commandInput) + 1; // account for above +1
 
     if (targetCharacterIndex > -1) {
       const finalNewIndex = cursor.col + targetCharacterIndex; // before substring + target index
@@ -901,7 +908,6 @@ export abstract class AbstractMode {
 
     return adjusted;
   }
-
 }
 
 function getNumOfWhiteSpaceAtStart(text: string) {
@@ -943,27 +949,102 @@ export function isValidVerticalPosition(line: number, lines: VimLine[]) {
 }
 
 export function tokenizeInput(input: string): TokenizedString[] {
-  const regExp = /(\S+)/g;
-  const matchResult: RegExpExecArray[] = [];
-  let match: RegExpExecArray | null;
+  const tokens = [];
+  let currentToken = "";
+  let currentIndex = 0;
 
-  while ((match = regExp.exec(input))) {
-    matchResult.push(match);
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i];
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,959] char: ", char);
+
+    if (specialCharsSet.has(char)) {
+      // /*prettier-ignore*/ console.log("1");
+      // If we have a current token (either a word or a previous special token), push it first
+      if (currentToken) {
+        tokens.push({
+          string: currentToken,
+          start: currentIndex,
+          end: currentIndex + currentToken.length - 1,
+          index: tokens.length,
+        });
+        currentToken = "";
+      }
+
+      // Start accumulating special characters
+      currentToken += char;
+      currentIndex = i; // Update the start index for the special token
+
+      // Continue accumulating special characters until a non-special character is found
+      while (i + 1 < input.length && specialCharsSet.has(input[i + 1])) {
+        i++;
+        currentToken += input[i];
+      }
+
+      // Push the accumulated special character token
+      tokens.push({
+        string: currentToken,
+        start: currentIndex,
+        end: currentIndex + currentToken.length - 1,
+        index: tokens.length,
+      });
+
+      currentToken = ""; // Reset currentToken
+    } else if (char.trim()) {
+      // /*prettier-ignore*/ console.log("2");
+      // Check for non-whitespace characters
+      if (!currentToken) {
+        currentIndex = i; // Mark the start of the token
+      }
+      currentToken += char; // Build the current word
+    } else {
+      // /*prettier-ignore*/ console.log("3");
+      // If we hit whitespace and have a current token, push it
+      if (currentToken) {
+        tokens.push({
+          string: currentToken,
+          start: currentIndex,
+          end: currentIndex + currentToken.length - 1,
+          index: tokens.length,
+        });
+        currentToken = "";
+      }
+    }
   }
 
-  const tokens = matchResult.map((result, resultIndex) => {
-    const matchedString = result[0];
-    const { index: matchIndex } = result;
-    const token: TokenizedString = {
-      string: matchedString,
-      start: matchIndex,
-      end: matchIndex + matchedString.length - 1,
-      index: resultIndex,
-    };
-    return token;
-  });
-
-  logger.culogger.debug(["Tokens: %o", tokens], { onlyVerbose: true });
+  // Push any remaining token
+  if (currentToken) {
+    // /*prettier-ignore*/ console.log("4");
+    tokens.push({
+      string: currentToken,
+      start: currentIndex,
+      end: currentIndex + currentToken.length - 1,
+      index: tokens.length,
+    });
+  }
 
   return tokens;
 }
+
+//// const result = tokenizeInput("0.!@456");
+//const result = tokenizeInput("s.");
+//// 0123456
+///*prettier-ignore*/ console.log("", JSON.stringify(result));
+///*prettier-ignore*/ console.log("", result[0]);
+///*prettier-ignore*/ console.log("", result[1]);
+///*prettier-ignore*/ console.log("", result[2]);
+///*prettier-ignore*/ console.log("", result[3]);
+
+//const inputString = "Hello, world! This is a test: 1 + 2 = 3.";
+////                   012345678901234567890123456789012345678901234567
+////                   0         1         2         3         4
+//const tokens = tokenizeInput(inputString);
+//console.log(tokens[0]);
+//console.log(tokens[1]);
+//console.log(tokens[2]);
+//console.log(tokens[3]);
+//console.log(tokens[4]);
+//console.log(tokens[5]);
+//console.log(tokens[6]);
+//console.log(tokens[7]);
+//console.log(tokens[8]);
+//console.log(tokens[9]);

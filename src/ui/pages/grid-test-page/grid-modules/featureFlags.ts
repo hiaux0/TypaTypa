@@ -1,5 +1,8 @@
 export const featureFlags = {
   autosave: false,
+  llm: {
+    printPrompts: true,
+  },
   copy: {
     autopasteIntoRow: {
       enabled: true,
@@ -17,6 +20,7 @@ export const featureFlags = {
 };
 
 // featureFlags
+// featureFlags.llm.printPrompts
 // featureFlags.copy.autopasteIntoRow
 // featureFlags.mode.enterCellInInsertMode
 // featureFlags.mode.autoExpandGrid

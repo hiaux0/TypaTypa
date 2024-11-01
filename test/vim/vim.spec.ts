@@ -16,7 +16,7 @@ describe("VimInit", () => {
     expect(result).toMatchSnapshot();
   });
 
-  test.only("Cursor", () => {
+  test("Cursor", () => {
     const mappingByKey = {};
     const mappingByMode: KeyBindingModes = {
       [VimMode.NORMAL]: [

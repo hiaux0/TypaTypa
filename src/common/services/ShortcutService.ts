@@ -8,7 +8,7 @@ import {
 } from "../modules/keybindings/app-keys";
 import { KeyBindingModes } from "../../features/vim/vim-types";
 import { isMac } from "../modules/platform/platform-check";
-
+import { legacyKeyCodes } from "../modules/constants";
 
 export class ShortcutService {
   public static clickGlobalShortcut(key: string): void {

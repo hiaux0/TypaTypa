@@ -486,7 +486,7 @@ export class KeyMappingService {
     }
     /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
 
-    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingSemvice.ts,386] targetKeyBinding: ", targetKeyBinding);
+    // /*prettier-ignore*/ shouldLog && console.log("[KeyMappingSemvice.ts,386] targetKeyBinding: ", targetKeyBinding);
     // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
     const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
       // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
@@ -498,7 +498,7 @@ export class KeyMappingService {
 
     /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', finalPotentialCommands], {}, (...r) => console.log(...r));
     /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,402] finalPotentialCommands: ", finalPotentialCommands);
-
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,502] keySequence: ", keySequence);
     let targetCommand;
     if (finalPotentialCommands.length === 0) {
       this.emptyQueuedKeys();
@@ -508,6 +508,9 @@ export class KeyMappingService {
     ) {
       const isChain =
         options?.allowChaining && this.lastCommand?.key.endsWith(keySequence);
+      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] this.lastCommand: ", this.lastCommand);
+      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,510] isChain: ", isChain);
+      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] keySequence: ", keySequence);
       const isExtendedChain = options?.allowExtendedChaining;
       if (isExtendedChain) {
         const commandForExtendedChain = targetKeyBinding.filter(
@@ -534,6 +537,9 @@ export class KeyMappingService {
     }
 
     /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands, input, mode);
+    ///*prettier-ignore*/ console.log("[KeyMappingService.ts,542] targetCommand: ", targetCommand);
+    ///*prettier-ignore*/ console.log("[KeyMappingService.ts,544] finalPotentialCommands: ", finalPotentialCommands);
+    ///*prettier-ignore*/ console.log("[KeyMappingService.ts,546] keySequence: ", keySequence);
     return {
       targetCommand,
       potentialCommands: finalPotentialCommands,

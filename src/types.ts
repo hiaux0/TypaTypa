@@ -7,6 +7,11 @@ declare global {
   }
 }
 
+export interface Tabs {
+  title: string;
+  shortcut: string;
+}
+
 export type Direction = "up" | "down" | "left" | "right" | "none";
 export interface DirectionMap {
   x: Direction;

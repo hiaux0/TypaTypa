@@ -166,7 +166,6 @@ export class GridTestPage {
         command: VIM_COMMAND.cursorDown,
         desc: "Move to below cell when in INSERT mode",
         execute: () => {
-          console.log("DOWN");
           this.onEscape();
           popVimInstanceId();
           this.getCommand(VIM_COMMAND.cursorDown, VimMode.NORMAL)?.execute();
@@ -177,7 +176,6 @@ export class GridTestPage {
         command: VIM_COMMAND.cursorUp,
         desc: "Move to above cell when in INSERT mode",
         execute: () => {
-          console.log("UP");
           this.onEscape();
           popVimInstanceId();
           this.getCommand(VIM_COMMAND.cursorUp, VimMode.NORMAL)?.execute();
@@ -333,6 +331,27 @@ export class GridTestPage {
       preventUndoRedo: true,
     },
     {
+      key: "<Space>csa",
+      desc: "[C]ell [S]wap [A]bove - Swap cell with cell above",
+      execute: () => {
+        if (this.dragStartRowIndex === 0) return;
+        const currentCell = this.getCurrentCell();
+        const curCellText = currentCell?.text ?? "";
+        const aboveCell = this.getCurrentCell(undefined, this.prevRow);
+        const aboveCellText = aboveCell?.text ?? "";
+        this.setCurrentCellContent(aboveCellText, undefined, undefined, {
+          skipUpdate: true,
+        });
+        this.setCurrentCellContent(curCellText, undefined, this.prevRow, {
+          skipUpdate: true,
+        });
+        this.setAndUpdateSingleCellSelection(undefined, this.prevRow);
+        this.updateContentMapChangedForView();
+
+        return;
+      },
+    },
+    {
       command: VIM_COMMAND.cursorDown,
       execute: () => {
         this.unselectAllSelecedCells();
@@ -360,6 +379,27 @@ export class GridTestPage {
         }
       },
       preventUndoRedo: true,
+    },
+    {
+      key: "<Space>csb",
+      desc: "[C]ell [S]wap [B]elow - Swap cell with cell above",
+      execute: () => {
+        if (this.dragStartRowIndex === this.rowSize - 1) return;
+        const currentCell = this.getCurrentCell();
+        const curCellText = currentCell?.text ?? "";
+        const belowCell = this.getCurrentCell(undefined, this.nextRow);
+        const belowCellText = belowCell?.text ?? "";
+        this.setCurrentCellContent(belowCellText, undefined, undefined, {
+          skipUpdate: true,
+        });
+        this.setCurrentCellContent(curCellText, undefined, this.nextRow, {
+          skipUpdate: true,
+        });
+        this.setAndUpdateSingleCellSelection(undefined, this.nextRow);
+        this.updateContentMapChangedForView();
+
+        return;
+      },
     },
     {
       command: VIM_COMMAND.delete,
@@ -432,16 +472,29 @@ export class GridTestPage {
       command: VIM_COMMAND.paste,
       execute: async () => {
         const text = (await getClipboardContent()).trim();
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,350] text: ", text);
         try {
-          const is2DimStringArray = JSON.parse(text);
+          const is1Dor2DimStringArray = JSON.parse(text);
+
+          // 1D
           if (
-            Array.isArray(is2DimStringArray) &&
-            Array.isArray(is2DimStringArray[0]) &&
-            typeof is2DimStringArray[0][0] === "string"
+            Array.isArray(is1Dor2DimStringArray) &&
+            typeof is1Dor2DimStringArray[0] === "string"
+          ) {
+            /*prettier-ignore*/ logger.culogger.debug(["Is 1 dim string array, convert, and then invoke pasteVimBefore"])
+            this.lastCellContentArray = is1Dor2DimStringArray.map((a) => [a]);
+            this.getCommand(
+              VIM_COMMAND.pasteVimBefore,
+              VimMode.NORMAL,
+            )?.execute();
+            return;
+          } else if (
+            // 2D
+            Array.isArray(is1Dor2DimStringArray) &&
+            Array.isArray(is1Dor2DimStringArray[0]) &&
+            typeof is1Dor2DimStringArray[0][0] === "string"
           ) {
             /*prettier-ignore*/ logger.culogger.debug(["Is 2 dim string array, so invoke pasteVimBefore"])
-            this.lastCellContentArray = is2DimStringArray;
+            this.lastCellContentArray = is1Dor2DimStringArray;
             const pasteVimBeforeCommand = this.mappingByNormalMode.find(
               (a) => a.command === VIM_COMMAND.pasteVimBefore,
             );
@@ -738,6 +791,29 @@ export class GridTestPage {
       preventUndoRedo: true,
     },
     {
+      key: "<Space>eacb",
+      desc: "[E]ditor [a]add [c]ell [b]elow",
+      execute: () => {
+        this.addCellInColAndShiftDown();
+      },
+    },
+    {
+      key: "<Space>ecar",
+      desc: "[E]ditor [c]olumn [a]dd [r]ight",
+      execute: () => {
+        this.addColRight();
+      },
+    },
+    {
+      key: "<Space>ecla",
+      desc: "[E]ditor [Cl]ear [A]ll",
+      execute: () => {
+        this.contentMap = [];
+        this.contentMapForView = {};
+        this.getActiveSheet().content = [];
+      },
+    },
+    {
       key: "<Shift>J",
       desc: "Join current cell with cell below",
       execute: (_, vimState, vimCore) => {
@@ -931,22 +1007,6 @@ export class GridTestPage {
       },
     },
     {
-      key: "<Space>eacb",
-      desc: "[E]ditor [a]add [c]ell [b]elow",
-      execute: () => {
-        this.addCellInColAndShiftDown();
-      },
-    },
-    {
-      key: "<Space>ecla",
-      desc: "[E]ditor [Cl]ear [A]ll",
-      execute: () => {
-        this.contentMap = [];
-        this.contentMapForView = {};
-        this.getActiveSheet().content = [];
-      },
-    },
-    {
       key: "<Space>sh",
       desc: "[S]croll left",
       execute: () => {
@@ -1070,25 +1130,26 @@ export class GridTestPage {
       desc: "Copy selected cells to clipboard",
       execute: () => {
         const collectToCopy = [];
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,981] collectToCopy: ", collectToCopy);
         const [start, end] = this.getSelectedArea();
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,983] start: ", start);
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,983] end: ", end);
         iterateOverRange(start, end, (col, row) => {
           if (!collectToCopy[row]) {
             collectToCopy[row] = [];
           }
-          const text = this.getCurrentCell(col, row)?.text;
-          collectToCopy[row].push(text ?? "");
+          const text = this.getCurrentCell(col, row)?.text ?? "";
+          collectToCopy[row].push(text);
         });
-        // const asString = JSON.stringify(collectToCopy, null, 2)
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,994] collectToCopy: ", collectToCopy);
         const filtered = collectToCopy.filter((a) => a);
         const asString = JSON.stringify(filtered);
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,991] asString: ", asString);
         setClipboardContent(asString);
         this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         this.setAndUpdateSingleCellSelection();
+        if (featureFlags.llm.printPrompts) {
+          const translatePrompt =
+            "Translate the following words from vietnamese to english. Note, the empty strings. Please also include those in your answer.";
+          const words = JSON.stringify(collectToCopy.flat(), null);
+          const out = `\n\n${translatePrompt}\n${words}\n\n`;
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,1101] out: ", out);
+        }
       },
     },
     {
@@ -1285,8 +1346,17 @@ export class GridTestPage {
 
   private get nextRow(): number {
     const next = this.dragStartRowIndex + 1;
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1277] next: ", next);
     return next;
+  }
+
+  private get prevCol(): number {
+    const prev = this.dragStartColumnIndex - 1;
+    return prev;
+  }
+
+  private get prevRow(): number {
+    const prev = this.dragStartRowIndex - 1;
+    return prev;
   }
 
   activeSheetIdChanged() {

@@ -142,6 +142,9 @@ export class VimInputHandler {
 
   public initKeyboard() {
     document.addEventListener("keydown", this.handleKeydown);
+    //document.addEventListener("keyup", (event) => {
+    //  /*prettier-ignore*/ console.log("[VimInputHandler.ts,147] event: ", event);
+    //});
   }
 
   private initMouseListeners() {
@@ -168,6 +171,7 @@ export class VimInputHandler {
   }
 
   private handleKeydown = async (event: KeyboardEvent) => {
+    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,171] event: ", event);
     const lastActiveId =
       window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
     const isThisInstance = lastActiveId === this.vimCore.getVimState().id;

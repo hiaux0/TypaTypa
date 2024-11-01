@@ -130,6 +130,14 @@ export function getLongestCommonSubstring(
  * Spit by period, but keep period in output
  */
 export function splitByEndingAndSeparator(input: string): string[] {
+  if (
+    input.startsWith("http") ||
+    input.startsWith("www") ||
+    input.startsWith("https")
+  ) {
+    return [input];
+  }
+
   const byNewLine = input.split("\n");
   const splitByEndingSign = byNewLine.flatMap((sentence) => {
     // split by period, question mark, exclamation mark
