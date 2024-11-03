@@ -78,6 +78,11 @@ textarea {
   padding-top: $padding0;
 }
 
+.reset-button {
+  color: unset;
+  background: unset;
+  text-decoration: unset;
+}
 .reset-text {
   color: unset;
   text-decoration: unset;

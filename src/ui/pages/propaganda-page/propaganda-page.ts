@@ -1,6 +1,5 @@
 import "./propaganda-page.scss";
-// import * as Data from "./data/PropagandaData.json";
-const Data = {}
+import * as Data from "./data/PropagandaData.json";
 import { PropagandaSchema } from "../../../domain/types/propgandaTypes";
 import { observable } from "aurelia";
 import { UiSuggestion } from "../../../domain/types/uiTypes";

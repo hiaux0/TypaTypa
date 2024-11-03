@@ -1,0 +1,22 @@
+<div ref="menuContainerRef" class="menu-container">
+  <a
+    class="menuItem reset-text"
+    repeat.for="item of finalItems"
+    href.bind="item.path"
+  >
+    ${item.title}
+  </a>
+
+  <popover close-on-click.bind="true">
+    <button au-slot="trigger" class="icon-button reset-button">v</button>
+    <template au-slot="content">
+      <ul>
+        <li repeat.for="item of remainingItems">
+          <a class="menuItem reset-text" href.bind="item.path">
+            ${item.title}
+          </a>
+        </li>
+      </ul>
+    </template>
+  </popover>
+</div>

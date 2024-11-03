@@ -1,0 +1,19 @@
+@import "../../mixins.scss";
+
+.menu-container {
+  width: 100%;
+  height: 100%;
+
+  a {
+    margin-right: 1rem;
+  }
+
+  .show-more {
+  }
+}
+
+@include tablet-s {
+  body {
+    background: grey;
+  }
+}

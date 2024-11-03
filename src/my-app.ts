@@ -8,39 +8,42 @@ import { VimV3Page } from "./ui/pages/vim-v3-page/vim-v3-page";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
 
+const routes = [
+  {
+    path: "grid-test",
+    component: GridTestPage,
+    title: "Grid Test",
+  },
+  {
+    path: "khong-a",
+    component: KhongAPage,
+    title: "Khong a",
+  },
+  {
+    path: "typins",
+    component: TypingPage,
+    title: "Typing",
+  },
+  {
+    path: "propaganda",
+    component: PropagandaPage,
+    title: "Propaganda",
+  },
+  {
+    path: "vim-V3",
+    component: VimV3Page,
+    title: "Vim V3",
+  },
+];
+
 @route({
   title: APP_NAME,
-  routes: [
-    {
-      path: ["grid-test"],
-      component: GridTestPage,
-      title: "Grid Test",
-    },
-    {
-      path: ["khong-a"],
-      component: KhongAPage,
-      title: "Khong a",
-    },
-    {
-      path: ["typing"],
-      component: TypingPage,
-      title: "Typing",
-    },
-    {
-      path: "propaganda",
-      component: PropagandaPage,
-      title: "Propaganda",
-    },
-    {
-      path: "vim-V3",
-      component: VimV3Page,
-      title: "Vim V3",
-    },
-  ],
+  routes,
 })
 @inject(Router)
 export class MyApp {
   public appName = APP_NAME;
+  public routes = routes;
 
   //public wordToLookUp = "";
   //public isDrawerOpen = false;

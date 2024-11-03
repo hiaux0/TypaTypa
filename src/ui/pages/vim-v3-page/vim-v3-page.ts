@@ -14,11 +14,7 @@ export class VimV3Page {
     window.activeVimInstancesIdMap = [this.vimState.id];
   }
 
-  attached() {
-    document.addEventListener("keydown", (event) => {
-      /*prettier-ignore*/ console.log("[vim-v3-page.ts,20] event: ", event);
-    });
-  }
+  attached() {}
 
   public handleKeydown(event: KeyboardEvent): void {
     const key = event.key;

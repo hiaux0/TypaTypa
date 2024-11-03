@@ -45,3 +45,57 @@
   border: none;
   border-radius: unset;
 }
+
+// Smartphone Breakpoints
+@mixin smartphone {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
+// Tablet Breakpoints
+@mixin tablet-s {
+  @media screen and (min-width: 400px) and (max-width: 767px) {
+    @content;
+  }
+}
+@mixin tablet {
+  @media screen and (min-width: 768px) and (max-width: 1280px) {
+    @content;
+  }
+}
+
+// Laptop Breakpoints
+@mixin laptop {
+  @media screen and (min-width: 1280px) and (max-width: 1920px) {
+    @content;
+  }
+}
+
+// Extra-large Laptop Breakpoints
+@mixin laptop-xl {
+  @media screen and (min-width: 2560px) {
+    @content;
+  }
+}
+
+// Usage Example
+.example {
+  color: black;
+
+  @include smartphone {
+    color: blue; // Styles for smartphones
+  }
+
+  @include tablet {
+    color: green; // Styles for tablets
+  }
+
+  @include laptop {
+    color: orange; // Styles for laptops
+  }
+
+  @include laptop-xl {
+    color: red; // Styles for extra-large laptops
+  }
+}

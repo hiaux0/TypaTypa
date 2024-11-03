@@ -19,6 +19,7 @@ import { OrTabs } from "./ui/molecules/or-tabs/or-tabs";
 import { UploadButton } from "./ui/atoms/upload-button/upload-button";
 import { ResizeCustomAttribute } from "./ui/attributes/resize";
 import { VimEditor } from "./ui/organisms/vim-editor/vim-editor";
+import { OrMenu } from "./ui/organisms/or-menu/or-menu";
 
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
@@ -30,10 +31,16 @@ const attributes = [
 ];
 const atoms = [UploadButton];
 const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
-const organisms = [CustomTable, Dictionary, TabDrawer, Topics, VimEditor];
+const organisms = [
+  CustomTable,
+  Dictionary,
+  OrMenu,
+  TabDrawer,
+  Topics,
+  VimEditor,
+];
 
-Aurelia
-  .register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
+Aurelia.register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
   .register([...atoms, ...attributes, ...molecules, ...organisms, Scratch])
   .register(Registration.singleton(Store, Store))
   // .register()
