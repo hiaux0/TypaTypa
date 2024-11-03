@@ -4,6 +4,7 @@ import { initDebugShortcuts } from "./common/modules/debugging";
 import { route, Router } from "@aurelia/router-lite";
 import { TypingPage } from "./ui/pages/typing-page/typing-page";
 import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
+import { VimV3Page } from "./ui/pages/vim-v3-page/vim-v3-page";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
 
@@ -29,6 +30,11 @@ import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
       path: "propaganda",
       component: PropagandaPage,
       title: "Propaganda",
+    },
+    {
+      path: "vim-V3",
+      component: VimV3Page,
+      title: "Vim V3",
     },
   ],
 })

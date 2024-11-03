@@ -1,0 +1,17 @@
+<br />
+<br />
+<style>
+  input {
+    margin-right: 12px;
+    padding: 12px;
+  }
+</style>
+
+<div class="input-container" repeat.for="line of vimState.lines">
+  <input
+    type="text"
+    autofocus
+    keydown.trigger="handleKeydown"
+    value.bind="line.text"
+  />
+</div>
