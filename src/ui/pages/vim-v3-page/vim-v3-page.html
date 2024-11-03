@@ -1,17 +1,15 @@
 <br />
 <br />
-<style>
-  input {
-    margin-right: 12px;
-    padding: 12px;
-  }
-</style>
 
-<div class="input-container" repeat.for="line of vimState.lines">
-  <input
-    type="text"
-    autofocus
-    keydown.trigger="handleKeydown"
-    value.bind="line.text"
-  />
+<div class="placement-container">
+  <div class="input-container" class="mode-NORMAL">
+    <input
+      repeat.for="line of vimState.lines"
+      type="text"
+      autofocus
+      keydown.trigger="handleKeydown"
+      value.bind="line.text"
+    />
+    <div id="caret"></div>
+  </div>
 </div>

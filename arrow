@@ -135,3 +135,12 @@ src/ui/pages/propaganda-page/propaganda-page.html
 src/ui/pages/propaganda-page/propaganda-page.scss
 src/modules/store.ts
 arrow
+
+%% Vim V3
+docs/todo.md
+arrow
+src/common/logging/logging.ts
+src/ui/pages/vim-v3-page/vim-v3-page.ts
+src/ui/pages/vim-v3-page/vim-v3-page.html
+src/ui/pages/vim-v3-page/vim-v3-page.scss
+

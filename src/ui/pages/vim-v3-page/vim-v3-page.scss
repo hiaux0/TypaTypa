@@ -1,0 +1,110 @@
+@import "../../mixins.scss";
+$caretBackgroundColor: lightblue;
+$caretColor: grey;
+$carentWidth: 1.6px;
+/* $caretSizeWidth: 0.5 * $fontSize; */
+/* $caretSizeWidth: 10px; */
+/* $caretSizeWidth: 9.6px; // 200% zoom */
+/* $caretSizeWidth: 9.34px; // 150% zoom */
+/* $caretSizeWidth: 9.8px; // 133% zoom 1. */
+$caretSizeWidth: 9.75px; // 133% zoom 2.
+// $caretSizeHeight: 1.29 * $fontSize;
+$caretSizeHeight: 21.4667px;
+$editorLineHeight: 21.4667px;
+
+$caretHeight: 24px;
+$caretWidth: 10px;
+
+@mixin caretBlinking($animationName) {
+  animation: 1.3s $animationName step-end infinite;
+}
+@mixin caretStylesPerMode() {
+  &.mode-NORMAL {
+    #caret {
+      border: 1px solid black;
+
+      &.caret-blinking {
+        @include caretBlinking(blinkNormal);
+      }
+
+      &::after {
+        content: ".";
+        background: red;
+        width: 2px;
+        display: block;
+        z-index: 2;
+        // position: relative;
+        position: absolute;
+        top: 0;
+      }
+    }
+  }
+
+  &.mode-INSERT {
+    #caret {
+      background: transparent;
+      border: none;
+      // border-left: $carentWidth solid grey;
+
+      // &.caret-blinking {
+      //   @include caretBlinking(blinkInsert);
+      // }
+    }
+  }
+
+  &.mode-VISUAL,
+  &.mode-VISUALLINE {
+    #caret {
+      background: rgba(226, 190, 143, 0.63);
+      border: 1px solid black;
+    }
+  }
+}
+
+.placement-container {
+  display: flex;
+  justify-content: end;
+}
+
+.input-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  background: gray;
+  margin-right: 24px;
+  @include caretStylesPerMode();
+
+  input {
+    width: 100%;
+    height: $caretHeight;
+    outline: none;
+    @include resetInput();
+  }
+
+  #caret {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* height: $caretSizeHeight; */
+    height: $caretHeight;
+    width: $caretWidth;
+    border: 1px solid black;
+    background: gray;
+    opacity: 0.5;
+  }
+}
+
+@media only screen and (min-height: 500px) and (max-height: 800px) and (min-width: 600px) {
+  #caret {
+    width: 32px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  // body {
+  //   background: red;
+  // }
+  #caret {
+    width: $caretWidth;
+  }
+}

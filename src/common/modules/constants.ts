@@ -125,8 +125,6 @@ export const legacyKeyCodes = {
 
 export const specialChars = "`~!@#%^&*()\\-+=[]{}|;:'\",.<>/?";
 export const specialCharsSet = new Set(specialChars);
-const result = specialCharsSet.has(".");
-/*prettier-ignore*/ console.log("[constants.ts,8] result: ", result);
 
 export const APP_NAME = "TypaTypa";
 

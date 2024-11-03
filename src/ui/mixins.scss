@@ -39,3 +39,9 @@
 @mixin reset() {
   padding: unset;
 }
+
+@mixin resetInput() {
+  outline: none;
+  border: none;
+  border-radius: unset;
+}

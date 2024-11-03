@@ -9,15 +9,21 @@ export class VimV3Page {
   binding() {
     this.vimState = VimStateClass.createEmpty();
     this.vimState.cursor = { col: 7, line: 0 };
-    this.vimState.lines = [{ text: "hello, how are you?" }];
+    this.vimState.lines = [{ text: "hello, how are you?" }, { text: "next" }];
     this.vimState.id = "vim-v3-page";
     window.activeVimInstancesIdMap = [this.vimState.id];
+  }
+
+  attached() {
+    document.addEventListener("keydown", (event) => {
+      /*prettier-ignore*/ console.log("[vim-v3-page.ts,20] event: ", event);
+    });
   }
 
   public handleKeydown(event: KeyboardEvent): void {
     const key = event.key;
     if (key === "Enter") {
-      this.handleEnter(key);
+      this.handleEnter();
     }
   }
 
