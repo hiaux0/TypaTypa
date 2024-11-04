@@ -9,8 +9,11 @@ const logger = new Logger("VimInit");
 
 export class VimInit {
   public vimCore: VimCore;
-  private vimInputHandler: VimInputHandler;
   private options: VimOptions;
+
+  public static readonly inject = [VimInputHandler];
+
+  constructor(private vimInputHandler: VimInputHandler) {}
 
   public init(
     options?: VimOptions,
@@ -18,8 +21,7 @@ export class VimInit {
     additionalKeyBindings?: KeyBindingModes,
   ) {
     /*prettier-ignore*/ logger.culogger.debug(["[VimInit.ts,16] init: "], {log: false});
-    this.vimInputHandler = new VimInputHandler();
-    this.vimInputHandler.init(options, mappings, additionalKeyBindings);
+    this.vimInputHandler?.init(options, mappings, additionalKeyBindings);
 
     if (!options) return;
     this.options = options;

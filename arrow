@@ -70,6 +70,7 @@ src/types.ts
 src/features/vim/vimCore/VimCore.ts
 src/features/vim/VimInputHandler.ts
 src/features/vim/vimCore/commands/KeyMappingService.ts
+src/features/vim/VimInputHandlerV2.ts
 
 %% Grid Vim Editor
 docs/todo.md

@@ -156,6 +156,7 @@ export interface VimCommand {
     text?: string;
   };
   desc?: string;
+  context?: string[];
   preventUndoRedo?: boolean;
   ignoreMode?: VimMode[];
 }

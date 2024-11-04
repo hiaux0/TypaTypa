@@ -3,17 +3,12 @@
     "module": "esnext",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "target": "ES2017",
+    "target": "ES2022",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "importHelpers": true,
     "sourceMap": true
   },
-  "include": [
-    "src",
-    "test"
-  ],
-  "files": [
-    "src/resource.d.ts"
-  ]
+  "include": ["src", "test", "./*.ts"],
+  "files": ["src/resource.d.ts", "./src/appContainer.ts"]
 }

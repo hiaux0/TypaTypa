@@ -34,6 +34,7 @@ import {
   CELL_COORDS,
   CELL_HEIGHT,
   CELL_WIDTH,
+  EV_GRID_CELL,
   INITIAL_COLUMN_COUNT,
   INITIAL_ROW_COUNT,
   PADDING,
@@ -70,6 +71,10 @@ import { popVimInstanceId } from "../../../features/vim/mulitple-vim-instances-h
 import { featureFlags } from "./grid-modules/featureFlags";
 import { splitByEndingAndSeparator } from "../../../common/modules/strings";
 import { VisualMode } from "../../../features/vim/modes/VisualMode";
+import {
+  IVimInputHandlerV2,
+  VimInputHandlerV2,
+} from "../../../features/vim/VimInputHandlerV2";
 
 const logger = new Logger("GridTestPage");
 const debugLog = false;
@@ -165,6 +170,7 @@ export class GridTestPage {
       {
         command: VIM_COMMAND.cursorDown,
         desc: "Move to below cell when in INSERT mode",
+        context: ["Grid"],
         execute: () => {
           this.onEscape();
           popVimInstanceId();
@@ -175,6 +181,7 @@ export class GridTestPage {
       {
         command: VIM_COMMAND.cursorUp,
         desc: "Move to above cell when in INSERT mode",
+        context: ["Grid"],
         execute: () => {
           this.onEscape();
           popVimInstanceId();
@@ -186,6 +193,8 @@ export class GridTestPage {
     [VimMode.VISUAL]: [
       {
         key: "y",
+        desc: "yank",
+        context: ["Grid"],
         command: VIM_COMMAND.yank,
         afterExecute: async (mode, _, vimCore) => {
           const { autopasteIntoRow } = featureFlags.copy;
@@ -245,6 +254,8 @@ export class GridTestPage {
   private mappingByNormalMode: VimCommand[] = [
     {
       command: VIM_COMMAND.cursorRight,
+      desc: "cursorRight",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         let next = this.dragStartColumnIndex + 1;
@@ -273,6 +284,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorLeft,
+      desc: "cursorLeft",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         let next = this.dragStartColumnIndex - 1;
@@ -301,6 +314,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorUp,
+      desc: "cursorUp",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         let next = this.dragStartRowIndex - 1;
@@ -333,6 +348,7 @@ export class GridTestPage {
     {
       key: "<Space>csa",
       desc: "[C]ell [S]wap [A]bove - Swap cell with cell above",
+      context: ["Grid"],
       execute: () => {
         if (this.dragStartRowIndex === 0) return;
         const currentCell = this.getCurrentCell();
@@ -353,6 +369,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorDown,
+      desc: "cursorDown",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         let next = this.dragStartRowIndex + 1;
@@ -383,6 +401,7 @@ export class GridTestPage {
     {
       key: "<Space>csb",
       desc: "[C]ell [S]wap [B]elow - Swap cell with cell above",
+      context: ["Grid"],
       execute: () => {
         if (this.dragStartRowIndex === this.rowSize - 1) return;
         const currentCell = this.getCurrentCell();
@@ -403,6 +422,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.delete,
+      desc: "delete",
+      context: ["Grid"],
       execute: () => {
         const panel = this.getPanelUnderCursor();
         if (!panel) {
@@ -416,6 +437,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.pasteVim,
+      desc: "pasteVim",
+      context: ["Grid"],
       execute: () => {
         if (this.lastCellContentArray.length === 0) return;
         const startCol = this.dragStartColumnIndex + 1;
@@ -443,6 +466,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.pasteVimBefore,
+      desc: "pasteVimBefore",
+      context: ["Grid"],
       execute: () => {
         if (this.lastCellContentArray.length === 0) return;
         const startCol = this.dragStartColumnIndex;
@@ -470,6 +495,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.paste,
+      desc: "paste",
+      context: ["Grid"],
       execute: async () => {
         const text = (await getClipboardContent()).trim();
         try {
@@ -522,6 +549,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.enterNormalMode,
+      desc: "enterNormalMode",
+      context: ["Grid"],
       execute: () => {
         this.editedCellCoords = "";
         this.unselectAllSelecedCells();
@@ -533,6 +562,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.jumpPreviousBlock,
+      desc: "jumpPreviousBlock",
+      context: ["Grid"],
       execute: () => {
         const colRange: GridSelectionRange = [
           [this.dragStartColumnIndex, 0],
@@ -560,6 +591,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.jumpNextBlock,
+      desc: "jumpNextBlock",
+      context: ["Grid"],
       execute: () => {
         const colRange: GridSelectionRange = [
           [this.dragStartColumnIndex, 0],
@@ -586,6 +619,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.undo,
+      desc: "undo",
+      context: ["Grid"],
       execute: () => {
         const undone = this.gridUndoRedo.undo();
         if (!undone) return;
@@ -596,6 +631,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.redo,
+      desc: "redo",
+      context: ["Grid"],
       execute: () => {
         const redone = this.gridUndoRedo.redo();
         if (!redone) return;
@@ -606,6 +643,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorLineStart,
+      desc: "cursorLineStart",
+      context: ["Grid"],
       execute: () => {
         this.setAndUpdateSingleCellSelection(0, this.dragStartRowIndex);
         this.spreadsheetContainerRef.scrollLeft = 0;
@@ -614,6 +653,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorLineEnd,
+      desc: "cursorLineEnd",
+      context: ["Grid"],
       execute: () => {
         this.setAndUpdateSingleCellSelection(
           this.colSize - 1,
@@ -625,6 +666,8 @@ export class GridTestPage {
     },
     {
       key: "b",
+      desc: "back",
+      context: ["Grid"],
       execute: () => {
         let nextColWithContent = NaN;
         let nextRowWithContent = NaN;
@@ -670,6 +713,7 @@ export class GridTestPage {
     {
       key: "cc",
       desc: "Clear cell and go into Insert",
+      context: ["Grid"],
       execute: () => {
         this.clearCurrentCellContent();
         this.putCellIntoEdit();
@@ -680,6 +724,8 @@ export class GridTestPage {
     },
     {
       key: "<Control>c",
+      desc: "Copy current cell",
+      context: ["Grid"],
       execute: () => {
         const text = this.getCurrentCell()?.text ?? "";
         this.lastCellContentArray = [[text]];
@@ -689,6 +735,7 @@ export class GridTestPage {
     {
       key: "dd",
       desc: "Delete current row",
+      context: ["Grid"],
       execute: () => {
         this.removeRowAt();
         this.updateContentMapChangedForView();
@@ -741,6 +788,7 @@ export class GridTestPage {
     {
       key: "<Shift>E",
       desc: "Word end",
+      context: ["Grid"],
       execute: () => {
         const cell = this.getCurrentCell();
         const cellText = measureTextWidth(cell.text);
@@ -793,6 +841,7 @@ export class GridTestPage {
     {
       key: "<Space>eacb",
       desc: "[E]ditor [a]add [c]ell [b]elow",
+      context: ["Grid"],
       execute: () => {
         this.addCellInColAndShiftDown();
       },
@@ -800,6 +849,7 @@ export class GridTestPage {
     {
       key: "<Space>ecar",
       desc: "[E]ditor [c]olumn [a]dd [r]ight",
+      context: ["Grid"],
       execute: () => {
         this.addColRight();
       },
@@ -807,6 +857,7 @@ export class GridTestPage {
     {
       key: "<Space>ecla",
       desc: "[E]ditor [Cl]ear [A]ll",
+      context: ["Grid"],
       execute: () => {
         this.contentMap = [];
         this.contentMapForView = {};
@@ -816,6 +867,7 @@ export class GridTestPage {
     {
       key: "<Shift>J",
       desc: "Join current cell with cell below",
+      context: ["Grid"],
       execute: (_, vimState, vimCore) => {
         const thisText = (this.getCurrentCell()?.text ?? "").trim();
         const belowText = (
@@ -839,13 +891,9 @@ export class GridTestPage {
       },
     },
     {
-      key: "<Control>k",
-      execute: () => {
-        // this.scrollEditor("up", 1);
-      },
-    },
-    {
       key: "gg",
+      desc: "Go to top",
+      context: ["Grid"],
       execute: () => {
         this.setAndUpdateSingleCellSelection(0, 0);
         this.spreadsheetContainerRef.scrollTop = 0;
@@ -854,6 +902,8 @@ export class GridTestPage {
     },
     {
       key: "<Shift>G",
+      desc: "Go to bottom",
+      context: ["Grid"],
       execute: () => {
         this.setAndUpdateSingleCellSelection(0, this.rowSize - 1);
         const height = this.rowSize * CELL_HEIGHT;
@@ -864,6 +914,8 @@ export class GridTestPage {
     {
       key: "i",
       command: VIM_COMMAND.enterInsertMode,
+      desc: "Put cell into edit",
+      context: ["Grid"],
       execute: () => {
         this.putCellIntoEdit();
         return true;
@@ -872,6 +924,7 @@ export class GridTestPage {
     {
       key: "m",
       desc: "Enter [M]ove mode",
+      context: ["Grid"],
       execute: () => {
         this.vimInit.executeCommand(VIM_COMMAND.enterCustomMode, "");
         this.mode = "Move";
@@ -880,6 +933,7 @@ export class GridTestPage {
     {
       key: "o",
       desc: "Insert one row below",
+      context: ["Grid"],
       execute: () => {
         this.addRowBelow();
         this.updateContentMapChangedForView();
@@ -892,6 +946,7 @@ export class GridTestPage {
     {
       key: "<Shift>O",
       desc: "Insert one row above",
+      context: ["Grid"],
       execute: () => {
         this.contentMap.splice(Math.max(0, this.dragStartRowIndex - 1), 0, []);
         this.updateContentMapChangedForView();
@@ -944,6 +999,7 @@ export class GridTestPage {
     {
       key: "zc",
       desc: "Scroll to [C]enter",
+      context: ["Grid"],
       execute: () => {
         this.scrollSelectdeIntoView();
       },
@@ -968,6 +1024,7 @@ export class GridTestPage {
     {
       key: "<Shift>><Shift>>",
       desc: "Move cell right",
+      context: ["Grid"],
       execute: () => {
         console.log("indent right >>");
         this.addCellEmptyInRowAt(0);
@@ -977,6 +1034,7 @@ export class GridTestPage {
     {
       key: "<Shift><<Shift><",
       desc: "Move cell left",
+      context: ["Grid"],
       execute: () => {
         const content = this.getCurrentCell(0)?.text ?? "";
         if (content) return;
@@ -986,6 +1044,7 @@ export class GridTestPage {
     {
       key: "<Space>pn",
       desc: "[P]anel [N]ext",
+      context: ["Grid"],
       execute: () => {
         const activePanelId = this.activePanel?.id ?? this.gridPanels[0]?.id;
 
@@ -1009,6 +1068,7 @@ export class GridTestPage {
     {
       key: "<Space>sh",
       desc: "[S]croll left",
+      context: ["Grid"],
       execute: () => {
         this.spreadsheetContainerRef.scrollLeft -= this.CELL_WIDTH;
       },
@@ -1017,6 +1077,7 @@ export class GridTestPage {
     {
       key: "<Space>sl",
       desc: "[S]croll right",
+      context: ["Grid"],
       execute: () => {
         this.spreadsheetContainerRef.scrollLeft += this.CELL_WIDTH;
       },
@@ -1025,6 +1086,7 @@ export class GridTestPage {
     {
       key: "<Space>su",
       desc: "[S]croll down",
+      context: ["Grid"],
       execute: () => {
         this.spreadsheetContainerRef.scrollTop += this.CELL_HEIGHT;
       },
@@ -1033,6 +1095,7 @@ export class GridTestPage {
     {
       key: "<Space>sk",
       desc: "[S]croll up",
+      context: ["Grid"],
       execute: () => {
         this.spreadsheetContainerRef.scrollTop -= this.CELL_HEIGHT;
       },
@@ -1041,6 +1104,7 @@ export class GridTestPage {
     {
       key: "<Enter>",
       desc: "Enter Normal mode",
+      context: ["Grid"],
       execute: () => {
         this.putCellIntoEdit();
         // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
@@ -1062,6 +1126,8 @@ export class GridTestPage {
 
     {
       command: VIM_COMMAND.cursorRight,
+      desc: "expand selection right",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         const b = this.dragEndColumnIndex + 1;
@@ -1072,6 +1138,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorLeft,
+      desc: "expand selection left",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         const b = this.dragEndColumnIndex - 1;
@@ -1082,6 +1150,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorUp,
+      desc: "expand selection up",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         const b = this.dragEndRowIndex - 1;
@@ -1092,6 +1162,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.cursorDown,
+      desc: "expand selection down",
+      context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
         const b = this.dragEndRowIndex + 1;
@@ -1102,6 +1174,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.visualDelete,
+      desc: "visualDelete",
+      context: ["Grid"],
       execute: () => {
         const collectDeleted = [];
         const [start, end] = this.getSelectedArea();
@@ -1128,6 +1202,7 @@ export class GridTestPage {
     {
       command: VIM_COMMAND.copy,
       desc: "Copy selected cells to clipboard",
+      context: ["Grid"],
       execute: () => {
         const collectToCopy = [];
         const [start, end] = this.getSelectedArea();
@@ -1154,6 +1229,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.enterVisualMode,
+      desc: "enterVisualMode",
+      context: ["Grid"],
       execute: () => {
         /*prettier-ignore*/ console.log("[grid-test-page.ts,161] enterVisualMode: ");
       },
@@ -1161,6 +1238,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.yank,
+      desc: "yank",
+      context: ["Grid"],
       execute: () => {
         const collectDeleted = [];
         this.iterateOverCol(
@@ -1183,6 +1262,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.jumpPreviousBlock,
+      desc: "jumpPreviousBlock",
+      context: ["Grid"],
       execute: () => {
         const colRange: GridSelectionRange = [
           [this.dragStartColumnIndex, 0],
@@ -1209,6 +1290,8 @@ export class GridTestPage {
     },
     {
       command: VIM_COMMAND.jumpNextBlock,
+      desc: "jumpNextBlock",
+      context: ["Grid"],
       execute: () => {
         const colRange: GridSelectionRange = [
           [this.dragStartColumnIndex, 0],
@@ -1231,75 +1314,76 @@ export class GridTestPage {
       },
       preventUndoRedo: true,
     },
-    {
-      key: "<Space>pa",
-      execute: () => {
-        console.log("space pa");
-        this.addPanel();
-        this.unselectAllSelecedCells();
-        this.dragEndColumnIndex = this.dragStartColumnIndex;
-        this.dragEndRowIndex = this.dragStartRowIndex;
-        this.updateAllSelecedCells();
-        this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-      },
-    },
-    {
-      key: "<Enter>",
-      execute: () => {
-        // Add new panel
-        const newPanel = this.addPanel();
-        this.unselectAllSelecedCells();
-        this.dragEndColumnIndex = this.dragStartColumnIndex;
-        this.dragEndRowIndex = this.dragStartRowIndex;
-        this.updateAllSelecedCells();
-        this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-
-        // Focus new panel
-        this.activePanelElement = document.querySelector(
-          `[data-panel-id="${newPanel.id}"] textarea`,
-        ) as HTMLElement;
-        this.activePanelElement?.focus();
-        return true;
-      },
-    },
+    //{
+    //  key: "<Space>pa",
+    //  desc: "[P]anel [A]dd",
+    //  execute: () => {
+    //    console.log("space pa");
+    //    this.addPanel();
+    //    this.unselectAllSelecedCells();
+    //    this.dragEndColumnIndex = this.dragStartColumnIndex;
+    //    this.dragEndRowIndex = this.dragStartRowIndex;
+    //    this.updateAllSelecedCells();
+    //    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    //  },
+    //},
+    //{
+    //  key: "<Enter>",
+    //  execute: () => {
+    //    // Add new panel
+    //    const newPanel = this.addPanel();
+    //    this.unselectAllSelecedCells();
+    //    this.dragEndColumnIndex = this.dragStartColumnIndex;
+    //    this.dragEndRowIndex = this.dragStartRowIndex;
+    //    this.updateAllSelecedCells();
+    //    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    //
+    //    // Focus new panel
+    //    this.activePanelElement = document.querySelector(
+    //      `[data-panel-id="${newPanel.id}"] textarea`,
+    //    ) as HTMLElement;
+    //    this.activePanelElement?.focus();
+    //    return true;
+    //  },
+    //},
   ];
   private mappingByCustomMode: VimCommand[] = [
-    {
-      command: VIM_COMMAND.cursorRight,
-      execute: () => {
-        const panel = this.getPanelUnderCursor();
-        panel.col += 1;
-        this.setCursorAtPanel(panel);
-      },
-      preventUndoRedo: true,
-    },
-    {
-      command: VIM_COMMAND.cursorLeft,
-      execute: () => {
-        const panel = this.getPanelUnderCursor();
-        panel.col -= 1;
-        this.setCursorAtPanel(panel);
-      },
-      preventUndoRedo: true,
-    },
-    {
-      command: VIM_COMMAND.cursorUp,
-      execute: () => {
-        const panel = this.getPanelUnderCursor();
-        panel.row -= 1;
-        this.setCursorAtPanel(panel);
-      },
-      preventUndoRedo: true,
-    },
-    {
-      command: VIM_COMMAND.cursorDown,
-      execute: () => {
-        const panel = this.getPanelUnderCursor();
-        panel.row += 1;
-        this.setCursorAtPanel(panel);
-      },
-      preventUndoRedo: true,
-    },
+    //{
+    //  command: VIM_COMMAND.cursorRight,
+    //  execute: () => {
+    //    const panel = this.getPanelUnderCursor();
+    //    panel.col += 1;
+    //    this.setCursorAtPanel(panel);
+    //  },
+    //  preventUndoRedo: true,
+    //},
+    //{
+    //  command: VIM_COMMAND.cursorLeft,
+    //  execute: () => {
+    //    const panel = this.getPanelUnderCursor();
+    //    panel.col -= 1;
+    //    this.setCursorAtPanel(panel);
+    //  },
+    //  preventUndoRedo: true,
+    //},
+    //{
+    //  command: VIM_COMMAND.cursorUp,
+    //  execute: () => {
+    //    const panel = this.getPanelUnderCursor();
+    //    panel.row -= 1;
+    //    this.setCursorAtPanel(panel);
+    //  },
+    //  preventUndoRedo: true,
+    //},
+    //{
+    //  command: VIM_COMMAND.cursorDown,
+    //  execute: () => {
+    //    const panel = this.getPanelUnderCursor();
+    //    panel.row += 1;
+    //    this.setCursorAtPanel(panel);
+    //  },
+    //  preventUndoRedo: true,
+    //},
   ];
   private mappingByMode: KeyBindingModes = {
     //{
@@ -1322,6 +1406,7 @@ export class GridTestPage {
       {
         key: "<Control>s",
         desc: "[S]ave",
+        context: ["Grid"],
         execute: () => {
           console.log("save");
           this.save();
@@ -1369,6 +1454,7 @@ export class GridTestPage {
     private eventAggregator: EventAggregator = resolve(EventAggregator),
     private vimInit: VimInit = resolve(VimInit),
     private store: Store = resolve(Store),
+    private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
   ) {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
@@ -1406,6 +1492,9 @@ export class GridTestPage {
   }
 
   attached() {
+    //const vimInputHandlerV2 = vimContainer.get(VimInputHandlerV2);
+    //vimInputHandlerV2.register("test");
+
     this.initGridNavigation();
     const [start, end] = this.activeSheet.selectedRange ?? [[], []];
     if (start[0] !== end[0] && start[1] !== end[1]) {
@@ -1724,12 +1813,12 @@ export class GridTestPage {
       //"<Control>r": () => {
       //  // return true;
       //},
-      Tab: () => {
-        return this.setActivePanelFromHTMLElement();
-      },
-      "<Shift>Tab": () => {
-        return this.setActivePanelFromHTMLElement();
-      },
+      //"<Tab>": () => {
+      //  return this.setActivePanelFromHTMLElement();
+      //},
+      //"<Shift>Tab": () => {
+      //  return this.setActivePanelFromHTMLElement();
+      //},
     };
 
     // const vimState = convertGridToVimState(
@@ -1741,6 +1830,7 @@ export class GridTestPage {
 
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
+      vimId: vimState.id,
       vimState,
       allowChaining: true,
       allowExtendedChaining: false,
@@ -1768,6 +1858,7 @@ export class GridTestPage {
     };
     // console.log("1.");
     this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode);
+    this.vimInputHandlerV2.setActiveId(vimOptions.vimId);
   }
 
   private setAndUpdateSingleCellSelection(
@@ -2418,6 +2509,7 @@ export class GridTestPage {
     this.editedCellCoords = "";
     (document.activeElement as HTMLElement).blur();
     // this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
+    this.vimInputHandlerV2.popId();
   }
 
   private putCellIntoEdit(): void {
@@ -2429,6 +2521,9 @@ export class GridTestPage {
     this.editedCellCoords = this.CELL_COORDS(
       this.dragStartColumnIndex,
       this.dragStartRowIndex,
+    );
+    this.vimInputHandlerV2.setActiveId(
+      EV_GRID_CELL(this.dragStartColumnIndex, this.dragStartRowIndex),
     );
   }
 

@@ -44,7 +44,6 @@ export class OrMenu {
 
   attached() {
     this.screenSize = getScreenSize();
-    /*prettier-ignore*/ console.log("[or-menu.ts,47] this.screenSize: ", this.screenSize);
     this.updateItemsToDisplay();
 
     window.addEventListener("resize", this.onResize);

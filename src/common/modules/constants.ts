@@ -191,6 +191,9 @@ export const _gridSection = "";
 export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
   // `cell-selected[${columnIndex}:${rowIndex}]`;
   `${columnIndex}:${rowIndex}`;
+export const EV_GRID_CELL = (columnIndex: number, rowIndex: number) =>
+  `grid-cell-[${columnIndex}:${rowIndex}]`;
+
 export const CELL_HEIGHT = 48;
 export const CELL_WIDTH = 64;
 export const INITIAL_COLUMN_COUNT = 10;

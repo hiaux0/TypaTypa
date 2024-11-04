@@ -10,6 +10,7 @@
     <!-- <template if.bind="cell.text"> </template> -->
     <div if.bind="isEdit" class="input-container editing">
       <vim-editor
+        if.bind="vimState"
         vim-state.bind="vimState"
         vim-editor-hooks.bind="vimEditorHooks"
         show-line-numbers.bind="false"

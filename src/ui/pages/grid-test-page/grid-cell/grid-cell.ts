@@ -1,7 +1,7 @@
 import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
 import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
-import { CELL_WIDTH } from "../../../../common/modules/constants";
+import { CELL_WIDTH, EV_GRID_CELL } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
@@ -18,6 +18,7 @@ import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
 import { debugFlags } from "../../../../common/modules/debug/debugFlags";
 import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/commands/KeyMappingService";
 import { featureFlags } from "../grid-modules/featureFlags";
+import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 
 const logger = new Logger("GridCell");
 
@@ -174,6 +175,7 @@ export class GridCell {
   constructor(
     private eventAggregator: EventAggregator = resolve(EventAggregator),
     private store: Store = resolve(Store),
+    private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
   ) {}
 
   attached() {
@@ -347,6 +349,6 @@ export class GridCell {
   }
 
   private getVimId(): Id {
-    return `grid-cell-${this.column}-${this.row}`;
+    return EV_GRID_CELL(this.column, this.row);
   }
 }

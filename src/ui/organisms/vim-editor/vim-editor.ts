@@ -1,4 +1,4 @@
-import { bindable } from "aurelia";
+import { bindable, resolve } from "aurelia";
 import { watch } from "@aurelia/runtime-html";
 import {
   IVimState,
@@ -21,11 +21,10 @@ export class VimEditor {
   @bindable public mappingByKey: IKeyMappingMapping;
   @bindable public mappingByMode: KeyBindingModes;
 
-  private vimInit: VimInit;
   private debugFlags = debugFlags.vimEditor;
   public isContentEditable = false;
 
-  @watch((editor) => editor.vimState.id)
+  @watch((editor) => editor?.vimState?.id)
   vimIdChanged() {
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: vim-editor.ts:20 ~ this.vimState.id:', this.vimState.id);
     this.vimInit.reload(this.vimState);
@@ -39,6 +38,8 @@ export class VimEditor {
     return is;
   }
 
+  constructor(private vimInit: VimInit = resolve(VimInit)) {}
+
   async attached() {
     // /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'orange'}`);
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: vim-editor.ts:60 ~ this.vimState:', this.vimState);
@@ -46,6 +47,7 @@ export class VimEditor {
 
     const options: VimOptions = {
       vimState: this.vimState,
+      vimId: this.vimState.id,
       container: this.inputContainerRef,
       childSelector: "inputLine",
       hooks: {
@@ -81,7 +83,6 @@ export class VimEditor {
         },
       },
     };
-    this.vimInit = new VimInit();
     // /*prettier-ignore*/ console.log("[vim-editor.ts,82] this.mappingByModes: ", this.mappingByMode);
     this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
 

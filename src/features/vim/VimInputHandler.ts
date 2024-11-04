@@ -1,5 +1,11 @@
 import { ShortcutService } from "../../common/services/ShortcutService";
-import { EventAggregator, resolve } from "aurelia";
+import {
+  DI,
+  EventAggregator,
+  Registration,
+  lifecycleHooks,
+  resolve,
+} from "aurelia";
 import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
 import { KeyMappingService } from "./vimCore/commands/KeyMappingService";
 import { VimHelper } from "./VimHelper";
@@ -17,8 +23,32 @@ import { Id } from "../../domain/types/types";
 import { container } from "../../diContainer";
 import { Logger } from "../../common/logging/logging";
 import { IKeyMappingMapping } from "../../types";
+import { IVimInputHandlerV2, VimInputHandlerV2 } from "./VimInputHandlerV2";
 
 const logger = new Logger("VimInputHandler");
+
+export class LoggerService {
+  log(message: string) {
+    console.log(message);
+  }
+}
+
+export const ILoggerService = DI.createInterface<ILoggerService>(
+  "ILoggerService",
+  (x) => x.singleton(LoggerService),
+);
+
+// Export type equal to the class to create an interface
+export type ILoggerService = LoggerService;
+
+export class PaymentProcessor {
+  processPayment(amount: number) {
+    // Payment processing logic
+  }
+}
+
+// Export type equal to the class to create an interface
+export type IPaymentProcessor = PaymentProcessor;
 
 /**
  * - Takes in input from user
@@ -26,6 +56,7 @@ const logger = new Logger("VimInputHandler");
  *   - VimCore
  *   - and VimUi
  */
+@lifecycleHooks()
 export class VimInputHandler {
   public vimCore: VimCore;
   private vimUi: VimUi;
@@ -33,7 +64,12 @@ export class VimInputHandler {
   private eventListeners: any[] = [];
   private keyMappingService: KeyMappingService;
 
-  constructor() {
+  static inject = [IVimInputHandlerV2, ILoggerService];
+
+  constructor(
+    private vimInputHandlerV2?: IVimInputHandlerV2,
+    private logg?: ILoggerService,
+  ) {
     this.keyMappingService = new KeyMappingService();
   }
 
@@ -42,10 +78,16 @@ export class VimInputHandler {
     mappings?: IKeyMappingMapping,
     additionalKeyBindings?: KeyBindingModes,
   ) {
+    this.vimInputHandlerV2?.register(
+      options.vimId,
+      mappings,
+      additionalKeyBindings,
+    );
+
     this.clearKeybord();
     /*prettier-ignore*/ logger.culogger.debug(["[VimInputHandler.ts,38] init: ", {log: true}]);
     this.options = options;
-    this.keyMappingService.id = options?.vimState.id;
+    this.keyMappingService.id = options?.vimState?.id;
     this.keyMappingService.init(mappings, additionalKeyBindings);
 
     const keyBindings = this.keyMappingService.keyBindings;
@@ -171,12 +213,17 @@ export class VimInputHandler {
   }
 
   private handleKeydown = async (event: KeyboardEvent) => {
+    return;
     const lastActiveId =
       window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
+    const newLastAcitveId = this.vimInputHandlerV2.activeId;
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,213] lastActiveId: ", lastActiveId);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,215] newLastAcitveId: ", newLastAcitveId);
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,216] id:", this.vimCore.getVimState().id);
     const isThisInstance = lastActiveId === this.vimCore.getVimState().id;
+    /*prettier-ignore*/ console.log("[VimInputHandler.ts,217] isThisInstance: ", isThisInstance);
     // /*prettier-ignore*/ console.log("2. ----------------------------");
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,153] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,169] id:", this.vimCore.getVimState().id);
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
 
     if (!isThisInstance) return;

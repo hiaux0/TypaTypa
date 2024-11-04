@@ -4,8 +4,11 @@ import { VimStateClass } from "../../../../features/vim/vim-state";
 import { VimMode, VimOptions } from "../../../../features/vim/vim-types";
 
 export class GridNavigation {
+  public static readonly inject = [VimInit];
+
+  constructor(private vimInit: VimInit) {}
+
   public init(container: HTMLElement): void {
-    const vimInit = new VimInit();
     const vimOptions: VimOptions = {
       container,
       vimState: {
@@ -23,6 +26,6 @@ export class GridNavigation {
         },
       },
     };
-    vimInit.init(vimOptions);
+    this.vimInit.init(vimOptions);
   }
 }

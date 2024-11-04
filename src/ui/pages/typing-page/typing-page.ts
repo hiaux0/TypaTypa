@@ -1,4 +1,10 @@
-import { EventAggregator, inject, resolve } from "aurelia";
+import {
+  EventAggregator,
+  ICustomElementViewModel,
+  customElement,
+  inject,
+  resolve,
+} from "aurelia";
 import { Store } from "../../../common/modules/store";
 import "./typing-page.scss";
 import { ShortcutService } from "../../../common/services/ShortcutService";
@@ -19,7 +25,8 @@ import { getRandomWordsFromSetAndRemove } from "../../../common/modules/random";
 import { ON_TOPIC_CHANGE } from "../../../common/modules/eventMessages";
 
 // @inject(EventAggregator, Store)
-export class TypingPage {
+
+export class TypingPage implements ICustomElementViewModel {
   public message = "typing-page.html";
   public currentLetter = "";
   public separateInputValue = "";
