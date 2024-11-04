@@ -15,9 +15,22 @@ import {
 import { SPECIAL_KEYS } from "../../../../common/modules/keybindings/app-keys";
 import { Logger } from "../../../../common/logging/logging";
 import { IKeyMappingMapping } from "../../../../types";
+import { DI, IContainer, Registration } from "aurelia";
 
 const logger = new Logger("KeyMappingService");
 const shouldLog = false;
+
+export function hasSimilarBinding(a: VimCommand, b: VimCommand): boolean {
+  const okayKey = a.key === b.key;
+  let okayCommand = false;
+  if (a.command || b.command) {
+    okayCommand = a.command === b.command;
+  }
+  const both = okayKey && okayCommand;
+  const one = okayKey || okayCommand;
+  const similar = one && !both;
+  return similar;
+}
 
 export function overwriteExistingKeyBindings(
   existing: VimCommand[],
@@ -36,7 +49,7 @@ export function overwriteExistingKeyBindings(
   if (finalBindings.length === 0) {
     mergedAdditionals.forEach((additionalBinding) => {
       const hasSimilar = finalBindings.find((b) =>
-        this.hasSimilarBinding(b, additionalBinding),
+        hasSimilarBinding(b, additionalBinding),
       );
       if (hasSimilar) return;
       finalBindings.push(additionalBinding);
@@ -101,6 +114,85 @@ export function overwriteExistingKeyBindings(
         // console.log("Push", additionalBinding.key, additionalBinding.command);
         finalBindings.push(additionalBinding);
       }
+
+      // if (additionalBinding.key === "<Control>s") {
+      // Reset found count
+      if (lastIndex && foundCount > 1) {
+        foundCount = 0;
+      }
+    });
+  });
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,234] updated: ", finalBindings);
+
+  return finalBindings;
+}
+
+export function enhanceBinding(
+  binding: VimCommand[],
+  ...additionals: VimCommand[][]
+): VimCommand[] {
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,179] existing: ", existing);
+  const mergedAdditionals = additionals.reduce((acc, curr) => {
+    if (!curr) return acc;
+    return acc.concat(curr);
+  }, []);
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,204] mergedAdditionals: ", mergedAdditionals);
+  const finalBindings = [...binding];
+  // const finalBindings = existing;
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,206] finalBindings: ", finalBindings);
+
+  if (finalBindings.length === 0) {
+    mergedAdditionals.forEach((additionalBinding) => {
+      const hasSimilar = finalBindings.find((b) =>
+        hasSimilarBinding(b, additionalBinding),
+      );
+      if (hasSimilar) return;
+    });
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,216] finalBindings: ", finalBindings);
+    return finalBindings;
+  }
+
+  mergedAdditionals?.forEach((additionalBinding) => {
+    if (!additionalBinding) return;
+    let foundCount = 0;
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,181] additionalBinding: ", additionalBinding);
+
+    finalBindings.forEach((existingBinding, index) => {
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,226] existingBinding: ", existingBinding);
+      if (!existingBinding) return;
+      const okayKey = existingBinding.key === additionalBinding.key;
+      let okayCommand = false;
+      if (existingBinding.command || additionalBinding.command) {
+        okayCommand = existingBinding.command === additionalBinding.command;
+      }
+      const both = okayKey && okayCommand;
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,234] both: ", both);
+      const one = okayKey || okayCommand;
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,236] one: ", one);
+      const okay = one || both;
+      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] okay: ", okay);
+      if (okay) {
+        // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,236] okay: ", okay);
+        finalBindings[index] = {
+          ...finalBindings[index],
+          ...additionalBinding,
+        };
+        foundCount++;
+        if (additionalBinding.command === "copy") {
+          /*prettier-ignore*/ shouldLog && console.log("----------------------------");
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,249] both: ", both);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,250] one: ", one);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,225] okay: ", okay);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,252] existingBinding.key: ", existingBinding.key, existingBinding.command);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,226] additionalBinding.key: ", additionalBinding.key, additionalBinding.command);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,227] index: ", index);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,228] foundCount: ", foundCount);
+          /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,83] finalBindings: ", finalBindings);
+        }
+      }
+
+      // If nothing found, then add
+      const lastIndex = index === finalBindings.length - 1;
 
       // if (additionalBinding.key === "<Control>s") {
       // Reset found count
@@ -190,6 +282,10 @@ interface IPrepareCommandReturn {
   command?: VimCommand;
 }
 
+export type IKeyMappingService = KeyMappingService;
+export const IKeyMappingService =
+  DI.createInterface<IKeyMappingService>("KeyMappingService");
+
 export class KeyMappingService {
   public keyBindings: KeyBindingModes = keyBindings;
   private potentialCommands: VimCommand[] = [];
@@ -199,8 +295,11 @@ export class KeyMappingService {
   private queuedKeys: string[] = [];
   public id = "not-set";
 
-  public create() {
-    return new KeyMappingService();
+  public static register(container: IContainer) {
+    Registration.singleton(IKeyMappingService, KeyMappingService).register(
+      container,
+    );
+    const v = container.get(IKeyMappingService);
   }
 
   public init(
@@ -209,7 +308,7 @@ export class KeyMappingService {
   ) {
     // /*prettier-ignore*/ console.trace("[KeyMappingService.ts,118] init: ");
     // /*prettier-ignore*/ logger.culogger.debug(["[KeyMappingService.ts,122] init: ", {log: true}]);
-    const converted = this.convertKeyMappingsToVimCommandMappings(mappings);
+    const converted = convertKeyMappingsToVimCommandMappings(mappings);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,125] converted: ", converted);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,126] additionalKeyBindings: ", additionalKeyBindings);
     if (!additionalKeyBindings) {
@@ -241,7 +340,7 @@ export class KeyMappingService {
   public initWithListener(mappings?: IKeyMappingMapping) {
     document.addEventListener("keydown", (event) => {
       // console.clear();
-      const finalKey = this.getKeyFromEvent(event);
+      const finalKey = ShortcutService.getKeyWithModifer(event);
       if (mappings[finalKey]) {
         const dontPrevent = mappings[finalKey]();
         if (dontPrevent === false) return;
@@ -250,23 +349,9 @@ export class KeyMappingService {
     });
   }
 
-  private convertKeyMappingsToVimCommandMappings(
-    mappings: IKeyMappingMapping,
+  private mergeKeybindings(
+    additionalKeyBindings?: KeyBindingModes,
   ): KeyBindingModes {
-    const result: KeyBindingModes = {
-      [VimMode.ALL]: [],
-    };
-    Object.entries(mappings ?? {}).forEach(([key, execute]) => {
-      const converted: VimCommand = {
-        key,
-        execute,
-      };
-      result[VimMode.ALL].push(converted);
-    });
-    return result;
-  }
-
-  private mergeKeybindings(additionalKeyBindings?: KeyBindingModes) {
     if (!additionalKeyBindings) return;
 
     // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,141] this.keyBindings: ", this.keyBindings);
@@ -306,21 +391,58 @@ export class KeyMappingService {
         ),
       ],
     };
-    this.keyBindings = merged;
+    // this.keyBindings = merged;
+    return merged;
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,174] this.keyBindings: ", this.keyBindings);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,178] this.id: ", this.id);
   }
 
-  private hasSimilarBinding(a: VimCommand, b: VimCommand): boolean {
-    const okayKey = a.key === b.key;
-    let okayCommand = false;
-    if (a.command || b.command) {
-      okayCommand = a.command === b.command;
-    }
-    const both = okayKey && okayCommand;
-    const one = okayKey || okayCommand;
-    const similar = one && !both;
-    return similar;
+  private enhanceBindingsWidthDefault(
+    additionalKeyBindings?: KeyBindingModes,
+  ): KeyBindingModes {
+    if (!additionalKeyBindings) return;
+
+    // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,141] this.keyBindings: ", this.keyBindings);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,146] this.keyBindings[VimMode.NORMAL]: ", this.keyBindings[VimMode.NORMAL]);
+    const merged = {
+      ...this.keyBindings,
+      [VimMode.NORMAL]: [
+        ...enhanceBinding(
+          additionalKeyBindings[VimMode.NORMAL],
+          additionalKeyBindings[VimMode.ALL],
+          this.keyBindings[VimMode.NORMAL],
+          this.keyBindings[VimMode.ALL],
+        ),
+      ],
+      [VimMode.INSERT]: [
+        ...enhanceBinding(
+          additionalKeyBindings[VimMode.INSERT],
+          additionalKeyBindings[VimMode.ALL],
+          this.keyBindings[VimMode.INSERT],
+          this.keyBindings[VimMode.ALL],
+        ),
+      ],
+      [VimMode.VISUAL]: [
+        ...enhanceBinding(
+          additionalKeyBindings[VimMode.VISUAL],
+          additionalKeyBindings[VimMode.ALL],
+          this.keyBindings[VimMode.VISUAL],
+          this.keyBindings[VimMode.ALL],
+        ),
+      ],
+      [VimMode.CUSTOM]: [
+        ...enhanceBinding(
+          additionalKeyBindings[VimMode.CUSTOM],
+          additionalKeyBindings[VimMode.ALL],
+          this.keyBindings[VimMode.CUSTOM],
+          this.keyBindings[VimMode.ALL],
+        ),
+      ],
+    };
+    // this.keyBindings = merged;
+    return merged;
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,174] this.keyBindings: ", this.keyBindings);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,178] this.id: ", this.id);
   }
 
   /**
@@ -386,15 +508,74 @@ export class KeyMappingService {
     };
   }
 
-  public getKeyFromEvent(event: KeyboardEvent) {
-    const { collectedModifiers } = ShortcutService.assembleModifiers(event);
-    // // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] collectedModifiers: ", collectedModifiers);
-    const pressedKey = ShortcutService.getPressedKey(event);
-    // // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] pressedKey: ", pressedKey);
-    const finalKey = collectedModifiers.join("") + pressedKey;
-    // // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] finalKey: ", finalKey);
-    /* prettier-ignore */ logger.culogger.debug(['finalKey', finalKey], {}, (...r)=>console.log(...r));
-    return finalKey;
+  /**
+   * keys mapping to
+   * 1. normal commands
+   * 2. sequence (which then gets mapped to commands executed one after another)
+   *
+   * @examples
+   * - \<Space\>tc
+   * - \<Ctrl\>v
+   *
+   * @todo
+   * - Ctrl+v
+   * - key sequence
+   */
+  public prepareCommandV2(
+    key: string,
+    mode: VimMode,
+    options?: VimOptions,
+  ): IPrepareCommandReturn | undefined {
+    const enhanced = this.enhanceBindingsWidthDefault(options.keyBindings);
+    options.keyBindings = enhanced;
+    const { targetCommand } = this.findPotentialCommandV2(
+      key,
+      [],
+      mode,
+      options,
+    );
+    // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] targetCommand: ", targetCommand);
+
+    if (!targetCommand) return;
+
+    /** Sequence mapping */
+    if (targetCommand.sequence) {
+      return {
+        command: targetCommand,
+        commandName: targetCommand.command as any,
+        commandSequence: targetCommand.sequence,
+        keySequence: key,
+      };
+    }
+
+    /** Sequence mapping */
+    if (targetCommand.execute) {
+      return {
+        command: targetCommand,
+        commandName: VIM_COMMAND.customExecute,
+        keySequence: key,
+      };
+    }
+
+    /** Standard command */
+    if (targetCommand) {
+      return {
+        command: targetCommand,
+        commandName: targetCommand.command as any,
+        keySequence: key,
+      };
+    }
+
+    const command = this.getCommandFromKey(mode, key);
+    const commandName = command?.command;
+    /* prettier-ignore */ logger.culogger.debug(['command', command], {}, (...r)=>console.log(...r));
+
+    return {
+      command: targetCommand,
+      // @ts-ignore -- TODO: adjust type
+      commandName,
+      keySequence: key,
+    };
   }
 
   public getCommandFromKey(mode: VimMode, key: string): VimCommand | undefined {
@@ -487,7 +668,7 @@ export class KeyMappingService {
     /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
 
     /*prettier-ignore*/ shouldLog && console.log("[KeyMappingSemvice.ts,386] targetKeyBinding: ", targetKeyBinding);
-    /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
+    // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
     const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
       // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
       //   return true;
@@ -497,7 +678,7 @@ export class KeyMappingService {
     });
 
     /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', finalPotentialCommands], {}, (...r) => console.log(...r));
-    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,402] finalPotentialCommands: ", finalPotentialCommands);
+    // /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,402] finalPotentialCommands: ", finalPotentialCommands);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,502] keySequence: ", keySequence);
     let targetCommand;
     if (finalPotentialCommands.length === 0) {
@@ -537,8 +718,137 @@ export class KeyMappingService {
     }
 
     /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands, input, mode);
-    /*prettier-ignore*/ console.log("[KeyMappingService.ts,542] targetCommand: ", targetCommand);
-    /*prettier-ignore*/ console.log("[KeyMappingService.ts,544] finalPotentialCommands: ", finalPotentialCommands);
+    ///*prettier-ignore*/ console.log("[KeyMappingService.ts,542] targetCommand: ", targetCommand);
+    ///*prettier-ignore*/ console.log("[KeyMappingService.ts,544] finalPotentialCommands: ", finalPotentialCommands);
+    ///*prettier-ignore*/ console.log("[KeyMappingService.ts,546] keySequence: ", keySequence);
+    return {
+      targetCommand,
+      potentialCommands: finalPotentialCommands,
+      keySequence,
+    };
+  }
+
+  /**
+   * @throws EmpytArrayException
+   * sideeffect queuedKeys
+   * sideeffect potentialCommands
+   */
+  private findPotentialCommandV2(
+    input: string,
+    modifiers: string[] = [],
+    mode: VimMode,
+    options?: VimOptions,
+  ): FindPotentialCommandReturn {
+    const commandAwaitingNextInput = getCommandAwaitingNextInput(
+      input,
+      this.queuedKeys,
+      this.potentialCommands,
+    );
+    if (commandAwaitingNextInput !== undefined) {
+      if (this.potentialCommands.length === 0) {
+        this.potentialCommands = commandAwaitingNextInput.potentialCommands;
+      } else if (this.potentialCommands.length === 1) {
+        this.potentialCommands = [];
+      }
+
+      /*prettier-ignore*/ logPotentialCommands(this.potentialCommands, input, mode);
+      return commandAwaitingNextInput;
+    }
+
+    //
+    let targetKeyBinding: VimCommand[];
+    if (this.potentialCommands?.length) {
+      targetKeyBinding = this.potentialCommands;
+    } else {
+      // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,371] this.keyBindings: ", this.keyBindings);
+      targetKeyBinding = (options.keyBindings ?? this.keyBindings)[mode] ?? [];
+    }
+    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,633] targetKeyBinding: ", targetKeyBinding);
+
+    //
+    input = this.ensureVimModifier(input);
+    /* prettier-ignore */ logger.culogger.debug(['Finding potential command for: ', input], {}, (...r) => console.log(...r));
+    let keySequence = "";
+    if (this.queuedKeys.length) {
+      keySequence = this.queuedKeys.join("").concat(input);
+    } else if (
+      this.getSynonymModifier(this.keyBindings, input) ||
+      modifiers.length
+    ) {
+      const synonymInput = this.getSynonymModifier(this.keyBindings, input);
+
+      if (modifiers.length) {
+        keySequence += modifiers.join("");
+        // Already included, then use the array
+      }
+      if (synonymInput) {
+        keySequence += synonymInput;
+      }
+    } else {
+      keySequence = input;
+    }
+    /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
+
+    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingSemvice.ts,386] targetKeyBinding: ", targetKeyBinding);
+    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,667] keySequence: ", keySequence);
+    // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
+    const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
+      // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
+      //   return true;
+      // }
+      const result = inputContainsSequence(keyBinding.key, keySequence);
+      return result;
+    });
+
+    /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', finalPotentialCommands], {}, (...r) => console.log(...r));
+    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,402] finalPotentialCommands: ", finalPotentialCommands);
+    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,502] keySequence: ", keySequence);
+    let targetCommand;
+    if (finalPotentialCommands.length === 0) {
+      // console.log("1");
+      this.emptyQueuedKeys();
+    } else if (
+      finalPotentialCommands.length === 1 &&
+      keySequence === finalPotentialCommands[0].key
+    ) {
+      // console.log("2");
+      const isChain =
+        options?.allowChaining && this.lastCommand?.key.endsWith(keySequence);
+      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] this.lastCommand: ", this.lastCommand);
+      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,510] isChain: ", isChain);
+      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] keySequence: ", keySequence);
+      const isExtendedChain = options?.allowExtendedChaining;
+      if (isExtendedChain) {
+        // console.log("2.1");
+        const commandForExtendedChain = targetKeyBinding.filter(
+          (keyBinding) => {
+            // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
+            //   return true;
+            // }
+            const result = inputContainsSequence(keyBinding.key, keySequence);
+            return result;
+          },
+        );
+        this.lastCommand?.key.startsWith(keySequence);
+        targetCommand = commandForExtendedChain[0];
+      } else if (isChain) {
+        // console.log("3");
+        targetCommand = this.lastCommand;
+        this.emptyQueuedKeys();
+      } else {
+        // console.log("4");
+        targetCommand = finalPotentialCommands[0];
+        this.emptyQueuedKeys();
+      }
+    } else {
+      // console.log("5");
+      this.queuedKeys.push(input);
+      this.potentialCommands = finalPotentialCommands;
+    }
+
+    /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands, input, mode);
+    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,542] targetCommand: ", targetCommand);
+    /*prettier-ignore*/ shouldLog && console.log("[KeyMappingService.ts,544] finalPotentialCommands: ", finalPotentialCommands);
     ///*prettier-ignore*/ console.log("[KeyMappingService.ts,546] keySequence: ", keySequence);
     return {
       targetCommand,
@@ -610,6 +920,22 @@ function logPotentialCommands(
   } else {
     /* prettier-ignore */ logger.culogger.debug([ 'No command for key: %s in Mode: %s ((vim.ts-getCommandName))', key, mode ], { isError: false }, (...r) => console.log(...r));
   }
+}
+
+export function convertKeyMappingsToVimCommandMappings(
+  mappings: IKeyMappingMapping,
+): KeyBindingModes {
+  const result: KeyBindingModes = {
+    [VimMode.ALL]: [],
+  };
+  Object.entries(mappings ?? {}).forEach(([key, execute]) => {
+    const converted: VimCommand = {
+      key,
+      execute,
+    };
+    result[VimMode.ALL].push(converted);
+  });
+  return result;
 }
 
 /**

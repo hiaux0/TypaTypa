@@ -78,11 +78,7 @@ export class VimInputHandler {
     mappings?: IKeyMappingMapping,
     additionalKeyBindings?: KeyBindingModes,
   ) {
-    this.vimInputHandlerV2?.register(
-      options.vimId,
-      mappings,
-      additionalKeyBindings,
-    );
+    this.vimInputHandlerV2?.register(options.vimId, additionalKeyBindings);
 
     this.clearKeybord();
     /*prettier-ignore*/ logger.culogger.debug(["[VimInputHandler.ts,38] init: ", {log: true}]);
@@ -213,15 +209,14 @@ export class VimInputHandler {
   }
 
   private handleKeydown = async (event: KeyboardEvent) => {
-    return;
     const lastActiveId =
       window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
     const newLastAcitveId = this.vimInputHandlerV2.activeId;
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,213] lastActiveId: ", lastActiveId);
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,215] newLastAcitveId: ", newLastAcitveId);
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,216] id:", this.vimCore.getVimState().id);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,213] lastActiveId: ", lastActiveId);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,215] newLastAcitveId: ", newLastAcitveId);
+    ///*prettier-ignore*/ console.log("[VimInputHandler.ts,216] id:", this.vimCore.getVimState().id);
     const isThisInstance = lastActiveId === this.vimCore.getVimState().id;
-    /*prettier-ignore*/ console.log("[VimInputHandler.ts,217] isThisInstance: ", isThisInstance);
+    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,217] isThisInstance: ", isThisInstance);
     // /*prettier-ignore*/ console.log("2. ----------------------------");
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,153] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,154] lastActiveId: ", lastActiveId);
@@ -229,7 +224,7 @@ export class VimInputHandler {
     if (!isThisInstance) return;
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
 
-    const finalKey = this.keyMappingService.getKeyFromEvent(event);
+    const finalKey = ShortcutService.getKeyWithModifer(event);
     const mode = this.vimCore.getVimState().mode;
     if (mode === VimMode.INSERT) {
       if (isEnter(finalKey)) {
@@ -255,6 +250,7 @@ export class VimInputHandler {
     }
     // /*prettier-ignore*/ console.log("[VimInputHandler.ts,192] finalCommand: ", finalCommand);
 
+    return;
     let preventDefault = false;
     if (finalCommand?.execute) {
       const vimState = this.vimCore.getVimState();

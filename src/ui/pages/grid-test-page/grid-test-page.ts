@@ -744,6 +744,8 @@ export class GridTestPage {
     },
     {
       key: "e",
+      desc: "Word end",
+      context: ["Grid"],
       execute: () => {
         let nextColWithContent = NaN;
         let nextRowWithContent = NaN;
@@ -958,6 +960,8 @@ export class GridTestPage {
     },
     {
       key: "<Control>x",
+      desc: "Cut current cell",
+      context: ["Grid"],
       execute: () => {
         const text = this.getCurrentCell()?.text ?? "";
         this.lastCellContentArray = [[text]];
@@ -967,6 +971,8 @@ export class GridTestPage {
     },
     {
       key: "zt",
+      desc: "Scroll to top",
+      context: ["Grid"],
       execute: () => {
         const col = this.dragStartColumnIndex;
         const row = this.dragStartRowIndex;
@@ -982,6 +988,8 @@ export class GridTestPage {
     },
     {
       key: "zz",
+      desc: "Scroll to middle",
+      context: ["Grid"],
       execute: () => {
         const col = this.dragStartColumnIndex;
         const row = this.dragStartRowIndex;
@@ -1007,6 +1015,8 @@ export class GridTestPage {
     },
     {
       key: "zb",
+      desc: "Scroll to [b]ottom",
+      context: ["Grid"],
       execute: () => {
         const col = this.dragStartColumnIndex;
         const row = this.dragStartRowIndex;

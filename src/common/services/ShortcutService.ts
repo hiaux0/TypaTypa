@@ -9,6 +9,9 @@ import {
 import { KeyBindingModes } from "../../features/vim/vim-types";
 import { isMac } from "../modules/platform/platform-check";
 import { legacyKeyCodes } from "../modules/constants";
+import { Logger } from "../logging/logging";
+
+const logger = new Logger("ShortcutService");
 
 export class ShortcutService {
   public static clickGlobalShortcut(key: string): void {
@@ -134,5 +137,16 @@ export class ShortcutService {
     });
 
     return result;
+  }
+
+  public static getKeyWithModifer(event: KeyboardEvent) {
+    const { collectedModifiers } = this.assembleModifiers(event);
+    // // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,238] collectedModifiers: ", collectedModifiers);
+    const pressedKey = this.getPressedKey(event);
+    // // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] pressedKey: ", pressedKey);
+    const finalKey = collectedModifiers.join("") + pressedKey;
+    // // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] finalKey: ", finalKey);
+    /* prettier-ignore */ logger.culogger.debug(['finalKey', finalKey], {}, (...r)=>console.log(...r));
+    return finalKey;
   }
 }

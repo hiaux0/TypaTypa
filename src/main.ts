@@ -39,6 +39,7 @@ import {
 } from "./features/vim/VimInputHandler";
 import type { IPaymentProcessor } from "./features/vim/VimInputHandler";
 import { VimInit } from "./features/vim/VimInit";
+import { KeyMappingService } from "./features/vim/vimCore/commands/KeyMappingService";
 
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
@@ -81,6 +82,7 @@ const appContainer = Aurelia.register(
   .register([...atoms, ...attributes, ...molecules, ...organisms, Scratch])
   .register(Registration.singleton(Store, Store))
   // .register(VimInit)
+  .register(KeyMappingService)
   .register(VimInputHandler)
   .register(VimInputHandlerV2)
   // .register(vimContainer)
