@@ -21,3 +21,31 @@ Port 9000 is in use, trying another one...
   ➜  Local:   http://localhost:9001/
   ➜  Network: http://192.168.1.15:9001/
   ➜  Network: http://10.130.67.54:9001/
+
+> decorator-bug@0.1.0 start
+> vite --force
+
+Forced re-optimization of dependencies
+Port 9000 is in use, trying another one...
+Port 9001 is in use, trying another one...
+Port 9002 is in use, trying another one...
+
+  VITE v5.4.1  ready in 371 ms
+
+  ➜  Local:   http://localhost:9003/
+  ➜  Network: http://192.168.100.163:9003/
+  ➜  Network: http://10.130.67.54:9003/
+
+> decorator-bug@0.1.0 start
+> vite --force
+
+Forced re-optimization of dependencies
+Port 9000 is in use, trying another one...
+Port 9001 is in use, trying another one...
+Port 9002 is in use, trying another one...
+
+  VITE v5.4.1  ready in 349 ms
+
+  ➜  Local:   http://localhost:9003/
+  ➜  Network: http://192.168.100.163:9003/
+  ➜  Network: http://10.130.67.54:9003/

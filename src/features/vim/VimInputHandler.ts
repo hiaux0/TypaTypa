@@ -171,7 +171,6 @@ export class VimInputHandler {
   }
 
   private handleKeydown = async (event: KeyboardEvent) => {
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,171] event: ", event);
     const lastActiveId =
       window.activeVimInstancesIdMap[window.activeVimInstancesIdMap.length - 1];
     const isThisInstance = lastActiveId === this.vimCore.getVimState().id;
@@ -184,12 +183,15 @@ export class VimInputHandler {
     ///*prettier-ignore*/ console.log("[VimInputHandler.ts,157] isThisInstance: ", isThisInstance);
 
     const finalKey = this.keyMappingService.getKeyFromEvent(event);
-    // /*prettier-ignore*/ console.log("[VimInputHandler.ts,152] finalKey: ", finalKey);
-    //if (isEnter(finalKey)) {
-    //  event.preventDefault();
-    //}
-    if (getIsInputActive() && !isEscape(finalKey) && !isEnter(finalKey)) return;
     const mode = this.vimCore.getVimState().mode;
+    if (mode === VimMode.INSERT) {
+      if (isEnter(finalKey)) {
+        event.preventDefault();
+        return;
+      }
+    }
+
+    if (getIsInputActive() && !isEscape(finalKey) && !isEnter(finalKey)) return;
     const options = this.vimCore.options;
     // /*prettier-ignore*/ console.log("1. [VimInputHandler.ts,151] mode: ", mode);
     if (!mode) return;
@@ -239,7 +241,6 @@ export class VimInputHandler {
         VIM_COMMAND[finalCommand.command],
         finalPressedKey,
       );
-      // /*prettier-ignore*/ console.log("[VimInputHandler.ts,234] vimState: ", vimState);
       // if (!vimState) return; // issue: space in insert got too early returned
 
       if (vimState) {

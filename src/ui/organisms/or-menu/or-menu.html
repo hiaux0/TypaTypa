@@ -7,7 +7,7 @@
     ${item.title}
   </a>
 
-  <popover close-on-click.bind="true">
+  <popover close-on-click.bind="true" if.bind="remainingItems.length">
     <button au-slot="trigger" class="icon-button reset-button">v</button>
     <template au-slot="content">
       <ul>

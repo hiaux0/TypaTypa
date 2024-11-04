@@ -78,6 +78,7 @@ $editorLineHeight: 21.4667px;
     #caret {
       background: transparent;
       border: none;
+      display: none;
       // border-left: $carentWidth solid grey;
 
       // &.caret-blinking {

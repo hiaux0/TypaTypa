@@ -16,6 +16,7 @@ import {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const logger = new Logger("VimUi");
+const shouldLog_getTextFromHtml = false;
 type Direction = "up" | "down" | "left" | "right" | "none";
 
 /**
@@ -326,14 +327,14 @@ export class VimUi {
    *   ```
    */
   public getTextFromHtml(): VimLine[] {
-    // /*prettier-ignore*/ console.log("[VimUi.ts,329] getTextFromHtml: ", );
+    /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,329] getTextFromHtml: ", );
     const $children = this.querySelectorService.getInputContainerChildrenText();
     const lines: VimLine[] = [];
 
     $children?.forEach((child) => {
       /* 0. just empty line */
       const { childNodes } = child;
-      // /*prettier-ignore*/ console.log("[VimUi.ts,335] childNodes: ", childNodes);
+      /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,335] childNodes: ", childNodes);
       if (!childNodes) return;
 
       const [first, second, third, ...others] = childNodes;
@@ -350,8 +351,8 @@ export class VimUi {
         childNodes.length === 2 && firstIsText && secondIsBr;
       const simpleCase = onlyOneNode && onlyOneNodeWithBr && thirdIsEmpty;
       if (simpleCase) {
+        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
         if (!child.textContent) return;
-        // /*prettier-ignore*/ console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
         lines.push({ text: child.textContent });
         return;
       }
@@ -361,20 +362,20 @@ export class VimUi {
       const isTextOnlyMultiLinePaste = moreThan3ChildNodes && !thirdIsEmpty;
       if (isTextOnlyMultiLinePaste) {
         const textNodes = getTextNodes(child);
-         ///*prettier-ignore*/ console.log("[VimUi.ts,355] child: ", child);
-         ///*prettier-ignore*/ console.log("[VimUi.ts,355] textNodes: ", textNodes);
+        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,355] child: ", child);
+        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,355] textNodes: ", textNodes);
         // debugger;
         const linesToJoin: VimLine[] = []; // issue with empty text nodes in html conversio
         textNodes.forEach((textNode) => {
           textNode.normalize;
           if (!textNode.nodeValue.trim()) return;
-          // /*prettier-ignore*/ console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
+          /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
           const text = textNode.nodeValue;
-          // /*prettier-ignore*/ console.log("[VimUi.ts,369] text: ", text);
+          /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,369] text: ", text);
           linesToJoin.push({ text });
         });
         const joined = linesToJoin.map((l) => l.text).join("");
-        // /*prettier-ignore*/ console.log("[VimUi.ts,374] joined: ", joined);
+        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,374] joined: ", joined);
         // debugger;
         lines.push({ text: joined });
         return;
@@ -386,7 +387,7 @@ export class VimUi {
         const childrenOfDivs = Array.from((first as Element).children);
         childrenOfDivs.forEach((child) => {
           if (!child.textContent) return;
-          // /*prettier-ignore*/ console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
+          /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
           lines.push({ text: child.textContent });
         });
         return;

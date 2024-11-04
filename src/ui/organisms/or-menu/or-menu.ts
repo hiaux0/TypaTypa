@@ -1,4 +1,4 @@
-import { bindable } from "aurelia";
+import { bindable, observable } from "aurelia";
 import "./or-menu.scss";
 import {
   DeviceType,
@@ -17,9 +17,9 @@ const collapseRation = 0.66; // document.body.width / menuContainerRef.width
 export class OrMenu {
   @bindable items: OrMenuItem[] = [];
   @bindable config: OrMenuConfig = {
-    Smartphone: 2,
-    BetwPhoneAndTablet: 3,
-    Tablet: 3,
+    Smartphone: 1,
+    BetwPhoneAndTablet: 2,
+    Tablet: 5,
     Laptop: 5,
     Monitor: 5,
   };
@@ -40,10 +40,27 @@ export class OrMenu {
     return ration;
   }
 
-  attached() {
-    const screenSize = getScreenSize();
-    const amountOfItemsToShow = this.config[screenSize];
+  private screenSize: DeviceType;
 
+  attached() {
+    this.screenSize = getScreenSize();
+    /*prettier-ignore*/ console.log("[or-menu.ts,47] this.screenSize: ", this.screenSize);
+    this.updateItemsToDisplay();
+
+    window.addEventListener("resize", this.onResize);
+  }
+
+  detached() {
+    window.removeEventListener("resize", this.onResize);
+  }
+
+  private onResize = () => {
+    this.screenSize = getScreenSize();
+    this.updateItemsToDisplay();
+  };
+
+  private updateItemsToDisplay() {
+    const amountOfItemsToShow = this.config[this.screenSize];
     this.finalItems = this.items.slice(0, amountOfItemsToShow);
     this.remainingItems = this.items.slice(amountOfItemsToShow);
   }

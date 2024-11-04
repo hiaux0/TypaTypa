@@ -160,7 +160,6 @@ export class GridCell {
     this.vimState = vimState;
     // /*prettier-ignore*/ console.log("[grid-cell.ts,162] id: ", id);
     window.activeVimInstancesIdMap.push(id);
-    // /*prettier-ignore*/ console.log("[grid-cell.ts,164] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 
     window.setTimeout(() => {
       this.getInput()?.focus();

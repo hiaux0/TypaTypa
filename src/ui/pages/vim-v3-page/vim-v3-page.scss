@@ -66,31 +66,33 @@ $caretWidth: 10px;
   justify-content: end;
 }
 
-.input-container {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  background: gray;
-  margin-right: 24px;
-  @include caretStylesPerMode();
-
-  input {
-    width: 100%;
-    height: $caretHeight;
-    outline: none;
-    @include resetInput();
-  }
-
-  #caret {
-    position: absolute;
-    top: 0;
-    left: 0;
-    /* height: $caretSizeHeight; */
-    height: $caretHeight;
-    width: $caretWidth;
-    border: 1px solid black;
+vim-v3 {
+  .input-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
     background: gray;
-    opacity: 0.5;
+    margin-right: 24px;
+    @include caretStylesPerMode();
+
+    input {
+      width: 100%;
+      height: $caretHeight;
+      outline: none;
+      @include resetInput();
+    }
+
+    #caret {
+      position: absolute;
+      top: 0;
+      left: 0;
+      /* height: $caretSizeHeight; */
+      height: $caretHeight;
+      width: $caretWidth;
+      border: 1px solid black;
+      background: gray;
+      opacity: 0.5;
+    }
   }
 }
 

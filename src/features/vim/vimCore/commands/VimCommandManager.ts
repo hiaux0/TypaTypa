@@ -212,7 +212,6 @@ export class VimCommandManager {
     const currentLine = activeLine.text;
     const newLineIndex = vimState.cursor.line + 1;
     const tempLines = [...vimState.lines];
-    /*prettier-ignore*/ console.log("[VimCommandManager.ts,215] tempLines: ", tempLines);
     const numOfWs = StringUtil.getLeadingWhitespaceNum(currentLine);
     tempLines.splice(newLineIndex, 0, { text: " ".repeat(numOfWs) });
     vimState.cursor.col = numOfWs;

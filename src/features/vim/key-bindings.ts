@@ -167,8 +167,8 @@ export const keyBindings: KeyBindingModes = {
   ],
   [VimMode.ALL]: [
     {
-      key: "<Space>c",
-      desc: "[c]ear console",
+      key: "<Space>cl",
+      desc: "[cl]ear console",
       execute: () => {
         console.clear();
       },
