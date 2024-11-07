@@ -16,6 +16,7 @@ import { VimHelper } from "./VimHelper";
 import { SelectionService } from "../../common/services/SelectionService";
 import { cursorAllModes } from "./key-bindings";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
+import { shouldLog } from "../../common/logging/logging";
 
 export type InputMap = Record<Id, KeyBindingModes>;
 export interface KeyToCommandMap {
@@ -26,33 +27,6 @@ export interface KeyToCommandMap {
 export type IVimInputHandlerV2 = VimInputHandlerV2;
 export const IVimInputHandlerV2 =
   DI.createInterface<IVimInputHandlerV2>("VimInputHandlerV2");
-
-interface LogConfig {
-  log: boolean;
-  level: number; // 0 - don't log
-  onlyLevels: [number]; // only log specified levels
-  allowedCallerNames: string[];
-}
-const logConfig: LogConfig = {
-  log: false,
-  level: 1,
-  onlyLevels: [4],
-  allowedCallerNames: [],
-};
-
-function shouldLog(level?: number, error?: Error) {
-  const callerName = getCallerFunctionName(error);
-  let levelOkay = level <= logConfig.level;
-  if (logConfig.onlyLevels.length > 0) {
-    levelOkay = logConfig.onlyLevels.includes(level);
-  }
-
-  const nameOkay =
-    logConfig.allowedCallerNames.find((name) => name.includes(callerName)) ??
-    true;
-  const should = logConfig.log && levelOkay && nameOkay;
-  return should;
-}
 
 /**
  * Delegate mapping to command in the correct context
@@ -80,17 +54,23 @@ export class VimInputHandlerV2 {
   }
 
   public static readonly inject = [IKeyMappingService];
-  constructor(private keyMappingService: IKeyMappingService) {
-    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,83] this.keyMappingService: ", this.keyMappingService);
-  }
+  constructor(private keyMappingService: IKeyMappingService) {}
 
-  public register(id: Id, additionalKeyBindings?: KeyBindingModes): void {
+  public registerAndInit(
+    options: VimOptions,
+    additionalKeyBindings?: KeyBindingModes,
+  ): void {
+    /*                                                                                           prettier-ignore*/ shouldLog(31) && console.log("additionalKeyBindings", additionalKeyBindings);
+    const id = options.vimState?.id ?? options.vimId;
+    /*                                                                                           prettier-ignore*/ shouldLog(31) && console.log("id", id);
     const already = this.inputMap[id];
+    /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("already", already);
     if (already) return;
 
+    this.pushIdToHistory(id);
     this.inputMap[id] = additionalKeyBindings;
 
-    this.setVimCore();
+    this.setVimCore(options);
     this.debugLogMappings(additionalKeyBindings);
   }
 
@@ -114,27 +94,28 @@ export class VimInputHandlerV2 {
 
   private initEventHandlers() {
     document.addEventListener("keydown", async (event) => {
+      console.clear();
       /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("----------------------------: ", this.activeId, event);
       const mode = this.vimCore.getVimState().mode;
       if (!mode) return;
 
       const finalKeyWithModifier = ShortcutService.getKeyWithModifer(event);
-      /*                                                                                           prettier-ignore*/ shouldLog(4) && console.log("[VimInputHandlerV2.ts,110] finalKeyWithModifier: ", finalKeyWithModifier);
+      /*                                                                                           prettier-ignore*/ shouldLog(30) && console.log("[VimInputHandlerV2.ts,110] finalKeyWithModifier: ", finalKeyWithModifier);
       const pressedKey = ShortcutService.getPressedKey(event);
       /*                                                                                           prettier-ignore*/ shouldLog(4) && console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKey);
       const currentBindings = this.inputMap[this.activeId];
-      /*                                                                                           prettier-ignore*/ shouldLog(4) && console.log("[VimInputHandlerV2.ts,90] currentBindings: ", currentBindings);
+      /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("this.activeId", this.activeId);
+      /*                                                                                           prettier-ignore*/ shouldLog(42) && console.log("[VimInputHandlerV2.ts,90] currentBindings: ", currentBindings);
       const options = this.vimCore.options;
       options.keyBindings = currentBindings;
-
       const { command, commandName, commandSequence } =
         this.keyMappingService.prepareCommandV2(
           finalKeyWithModifier,
           mode,
           options,
         ) ?? {};
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,127] command: ", command);
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,127] commandName: ", commandName);
+      /*                                                                                           prettier-ignore*/ shouldLog(15) && console.log("command", command);
+      /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("commandName", commandName);
       let finalCommand = command;
       let finalPressedKey = pressedKey;
       if (commandName === VIM_COMMAND.repeatLastCommand) {
@@ -181,6 +162,7 @@ export class VimInputHandlerV2 {
         );
         // if (!vimState) return; // issue: space in insert got too early returned
 
+        /*                                                                                           prettier-ignore*/ shouldLog(35) && console.log("(vimState)", (vimState));
         if (vimState) {
           this.updateVimState(vimState);
 
@@ -260,7 +242,7 @@ export class VimInputHandlerV2 {
     });
   }
 
-  private setVimCore(options?: VimOptions) {
+  private setVimCore(options: VimOptions) {
     const keyBindings = this.keyMappingService.keyBindings;
     const vimCore = VimCore.create({
       keyBindings,

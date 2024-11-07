@@ -41,6 +41,7 @@ import type { IPaymentProcessor } from "./features/vim/VimInputHandler";
 import { VimInit } from "./features/vim/VimInit";
 import { KeyMappingService } from "./features/vim/vimCore/commands/KeyMappingService";
 
+console.clear();
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 
@@ -73,7 +74,7 @@ const organisms = [
 // .register(RouterConfiguration.customize({ useUrlFragmentHash: true }))
 const appContainer = Aurelia.register(
   RouterConfiguration.customize({
-    useUrlFragmentHash: false,
+    useUrlFragmentHash: true,
     basePath: "/",
     activeClass: "noop",
     useHref: false,

@@ -194,6 +194,26 @@ export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
 export const EV_GRID_CELL = (columnIndex: number, rowIndex: number) =>
   `grid-cell-[${columnIndex}:${rowIndex}]`;
 
+export const VIM_ID_MAP = {
+  gridCell: "gridCell",
+  gridNavigation: "gridNavigation",
+};
+
+//export const VIM_CONTEXT = {
+//  ...pickKeysFromObject(VIM_ID_MAP, ["gridCell"]),
+//};
+
+export function pickKeysFromObject<T, Keys extends keyof T>(
+  obj: T,
+  keys: Keys[],
+): T {
+  const picked = keys.reduce((acc, key) => {
+    acc[key] = obj[key];
+    return acc;
+  }, {} as T);
+  return picked;
+}
+
 export const CELL_HEIGHT = 48;
 export const CELL_WIDTH = 64;
 export const INITIAL_COLUMN_COUNT = 10;

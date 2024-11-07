@@ -38,6 +38,7 @@ import {
   INITIAL_COLUMN_COUNT,
   INITIAL_ROW_COUNT,
   PADDING,
+  VIM_ID_MAP,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -1124,16 +1125,6 @@ export class GridTestPage {
     },
   ];
   private mappingByVisualMode: VimCommand[] = [
-    //{
-    //  key: "<Escape>",
-    //  command: VIM_COMMAND.enterNormalMode,
-    //  execute: () => {
-    //    console.log("hi");
-    //    this.putCellIntoUnfocus();
-    //    this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
-    //  },
-    //},
-
     {
       command: VIM_COMMAND.cursorRight,
       desc: "expand selection right",
@@ -1842,7 +1833,7 @@ export class GridTestPage {
       container: this.gridTestContainerRef,
       vimId: vimState.id,
       vimState,
-      allowChaining: true,
+      allowChaining: false,
       allowExtendedChaining: false,
       hooks: {
         modeChanged: (payload) => {
@@ -1868,7 +1859,7 @@ export class GridTestPage {
     };
     // console.log("1.");
     this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode);
-    this.vimInputHandlerV2.setActiveId(vimOptions.vimId);
+    this.vimInputHandlerV2.registerAndInit(vimOptions, this.mappingByMode);
   }
 
   private setAndUpdateSingleCellSelection(
@@ -2532,9 +2523,7 @@ export class GridTestPage {
       this.dragStartColumnIndex,
       this.dragStartRowIndex,
     );
-    this.vimInputHandlerV2.setActiveId(
-      EV_GRID_CELL(this.dragStartColumnIndex, this.dragStartRowIndex),
-    );
+    this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridCell);
   }
 
   private getScrollLeftOfCurrentSelection(): number {

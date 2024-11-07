@@ -1,3 +1,4 @@
+import { getCallerFunctionName } from "../modules/debugging";
 import { CuLogger as Culogger, LogOptions } from "./localCulog";
 
 interface ILogOptions extends LogOptions {
@@ -97,4 +98,52 @@ export class Logger {
   }
 }
 
-// export function 
+// export function
+
+export interface LogConfig {
+  log: boolean;
+  maxLevel: number; // 0 - don't log
+  onlyLevels: number[]; // only log specified levels
+  logDepth: number; // 1: 1-9, 2: 10-99, 3: 100-999
+  allowedCallerNames: string[];
+}
+export const defaultLogConfig: LogConfig = {
+  log: true,
+  maxLevel: 1,
+  onlyLevels: [2], // KeyMappingService, command with bindings array
+  // onlyLevels: [3], //
+  // onlyLevels: [4], // checkout how bindings are handled: base other merged
+  // onlyLevels: [5], // 
+  // onlyLevels: [2],
+  // onlyLevels: [9], // test
+  logDepth: 2,
+  allowedCallerNames: [],
+};
+
+export function shouldLog(givenLevel?: number, error?: Error) {
+  if (givenLevel === 0) return true;
+
+  const callerName = getCallerFunctionName(error);
+  const { maxLevel, logDepth } = defaultLogConfig;
+
+  // let levelOkay = givenLevel <= maxLevel;
+  let levelOkay = false;
+  if (givenLevel < 10 && logDepth === 1) {
+    const mainLevel = givenLevel;
+    if (defaultLogConfig.onlyLevels.length > 0) {
+      levelOkay = defaultLogConfig.onlyLevels.includes(mainLevel);
+    }
+  } else if (givenLevel >= 10 && givenLevel < 100 && logDepth === 2) {
+    const secondaryLevel = givenLevel % 10;
+    if (defaultLogConfig.onlyLevels.length > 0) {
+      levelOkay = defaultLogConfig.onlyLevels.includes(secondaryLevel);
+    }
+  }
+
+  const nameOkay =
+    defaultLogConfig.allowedCallerNames.find((name) =>
+      name.includes(callerName),
+    ) ?? true;
+  const should = defaultLogConfig.log && levelOkay && nameOkay;
+  return should;
+}

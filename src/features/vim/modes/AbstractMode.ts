@@ -158,25 +158,20 @@ export abstract class AbstractMode {
   cursorWordForwardEnd(): VimStateClass {
     if (!this.vimState.cursor) return this.vimState;
     const tokenUnderCursor = this.getTokenUnderCursor();
-    tokenUnderCursor; /*?*/
 
     const isAtEnd = tokenUnderCursor?.end === this.vimState.cursor.col;
-    isAtEnd;
     const isNotAtEnd = tokenUnderCursor === undefined;
 
     let resultCol: number;
     if (isAtEnd) {
       const nextToken = this.getTokenAtIndex(tokenUnderCursor.index + 1);
-      nextToken;
       if (nextToken) resultCol = nextToken?.end;
     } else if (isNotAtEnd) {
       const nextToken = this.getNexToken();
       if (!nextToken) return this.vimState;
-      nextToken;
       resultCol = nextToken?.end;
     } else {
       resultCol = tokenUnderCursor.end;
-      resultCol;
     }
 
     // @ts-ignore

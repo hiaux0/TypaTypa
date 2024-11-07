@@ -56,6 +56,8 @@ export class VimUi {
         this.container,
         this.childSelector,
       );
+    } else {
+      /*prettier-ignore*/ logger.culogger.debug(["[VimUi.ts,69] no options. This means, no insert mode available"], {logLevel: "WARNING"});
     }
 
     this.caretWidth = getCssVar("--caret-size-width");

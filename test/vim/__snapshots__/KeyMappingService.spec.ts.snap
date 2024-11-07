@@ -1,0 +1,44 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - Normal 1`] = `
+[
+  {
+    "key": "<Enter>",
+  },
+  {
+    "key": "<Space>cl",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - add key to base 1`] = `
+[
+  {
+    "command": "cursorUp",
+  },
+  {
+    "command": "cursorUp",
+    "key": "<ArrowUp>",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - add key to other 1`] = `
+[
+  {
+    "command": "cursorUp",
+    "key": "k",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteExistingKeyBindingsV2 1`] = `
+[
+  {
+    "key": "<Enter>",
+  },
+  {
+    "key": "<Space>cl",
+  },
+]
+`;

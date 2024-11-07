@@ -1,12 +1,16 @@
 import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
 import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
-import { CELL_WIDTH, EV_GRID_CELL } from "../../../../common/modules/constants";
+import {
+  CELL_WIDTH,
+  EV_GRID_CELL,
+  VIM_ID_MAP,
+} from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
 import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
 import { Store } from "../../../../common/modules/store";
-import { Logger } from "../../../../common/logging/logging";
+import { Logger, shouldLog } from "../../../../common/logging/logging";
 import {
   IVimState,
   KeyBindingModes,
@@ -26,7 +30,7 @@ const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
 
-const shouldLog = false;
+const allowLog = false;
 const c = 0;
 const r = 19;
 
@@ -72,6 +76,8 @@ export class GridCell {
     [VimMode.ALL]: [
       {
         key: "<Enter>",
+        desc: "Accept changes and exit edit mode",
+        context: [VIM_ID_MAP.gridCell],
         execute: () => {
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
@@ -87,9 +93,11 @@ export class GridCell {
       {
         key: "<Escape>",
         desc: "Cancel edit and revert changes",
+        context: [VIM_ID_MAP.gridCell],
         execute: (mode) => {
           if (mode === VimMode.NORMAL) {
-            this.textareaValue = this.cell.text;
+            console.log("1");
+            this.textareaValue = this.cell?.text;
             this.onEscape();
           }
         },
@@ -131,7 +139,7 @@ export class GridCell {
     const width = measureTextWidth(this.cell.text);
     const otherWidth = this.columnSettings?.colWidth ?? this.CELL_WIDTH;
     const is = width > otherWidth;
-    if (this.column === c && this.row === r && shouldLog) {
+    if (this.column === c && this.row === r && allowLog) {
       /*prettier-ignore*/ console.log("[grid-cell.ts,123] width: ", width);
       /*prettier-ignore*/ console.log("[grid-cell.ts,125] otherWidth: ", otherWidth);
       /*prettier-ignore*/ console.log("[grid-cell.ts,127] is: ", is);
@@ -197,9 +205,6 @@ export class GridCell {
       this.mappingByMode[VimMode.NORMAL] ?? [],
       this.mappingByModeCell[VimMode.NORMAL] ?? [],
     );
-    if (this.column === c && this.row === r && shouldLog) {
-      // /*prettier-ignore*/ console.log("[grid-cell.ts,200] this.finalMappingByMode[VimMode.NORMAL]: ", this.finalMappingByMode[VimMode.NORMAL]);
-    }
     this.finalMappingByMode[VimMode.INSERT] = overwriteExistingKeyBindings(
       this.mappingByMode[VimMode.INSERT] ?? [],
       this.mappingByModeCell[VimMode.INSERT] ?? [],
@@ -207,6 +212,13 @@ export class GridCell {
     this.finalMappingByMode[VimMode.VISUAL] = overwriteExistingKeyBindings(
       this.mappingByMode[VimMode.VISUAL] ?? [],
       this.mappingByModeCell[VimMode.VISUAL] ?? [],
+    );
+    if (this.debug_onlyLogCell(7, 1)) {
+      /*                                                                                           prettier-ignore*/ shouldLog(31) && console.log("this.finalMappingByMode", this.finalMappingByMode);
+    }
+    this.vimInputHandlerV2.registerAndInit(
+      { vimId: VIM_ID_MAP.gridCell },
+      this.finalMappingByMode,
     );
   }
 
@@ -232,7 +244,7 @@ export class GridCell {
 
       const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;
       if (!cell.text) {
-        if (this.column === c && this.row === r && shouldLog) {
+        if (this.column === c && this.row === r && allowLog) {
           /*prettier-ignore*/ console.log("1. [grid-cell.ts,45] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
           /*prettier-ignore*/ console.log( cell.text, this.cellContentRef.innerText, this.column, this.row,);
         }
@@ -247,7 +259,7 @@ export class GridCell {
           cellScrollWidth + PADDING_LEFT,
           adjustedInitialCellWidth,
         );
-        if (this.column === c && this.row === r && shouldLog) {
+        if (this.column === c && this.row === r && allowLog) {
           // /*prettier-ignore*/ console.log("2. [grid-cell.ts,50] cellScrollWidth,: ", cellScrollWidth,);
           // /*prettier-ignore*/ console.log("[grid-cell.ts,52] adjustedInitialCellWidth,: ", adjustedInitialCellWidth,);
           /*prettier-ignore*/ console.log("[grid-cell.ts,49] finalWidth: ", finalWidth);
@@ -281,7 +293,7 @@ export class GridCell {
         finalWidthOfCurrent,
         cellScrollWidth + PADDING_LEFT,
       );
-      if (this.column === c && this.row === r && shouldLog) {
+      if (this.column === c && this.row === r && allowLog) {
         /*prettier-ignore*/ console.log("AAAA. -------------------------------------------------------------------");
         /*prettier-ignore*/ console.log("[grid-cell.ts,96] cell.text: ", cell.text);
         // /*prettier-ignore*/ console.log("[grid-cell.ts,97] this.cellContentRef.innerText: ", this.cellContentRef.innerText);
@@ -335,6 +347,7 @@ export class GridCell {
   private updateAutocomplete(inputValue = ""): void {
     const source = [];
     this.store.activeSheet.content.forEach((row, rowIndex) => {
+      if (!row) return;
       row.forEach((cell, cellIndex) => {
         if (!cell?.text) return;
         if (this.column === cellIndex && this.row === rowIndex) return;
@@ -349,6 +362,11 @@ export class GridCell {
   }
 
   private getVimId(): Id {
-    return EV_GRID_CELL(this.column, this.row);
+    // return EV_GRID_CELL(this.column, this.row);
+    return VIM_ID_MAP.gridCell;
+  }
+
+  private debug_onlyLogCell(c, r): boolean {
+    return this.column === c && this.row === r;
   }
 }

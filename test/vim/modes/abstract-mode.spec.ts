@@ -20,12 +20,11 @@ class TestAbstractMode extends AbstractMode {
 }
 
 describe("AbstractMode", () => {
-  test.only("cursorWordForwardEnd", () => {
+  test("cursorWordForwardEnd", () => {
     const testVimState = VimStateClass.createEmpty();
     testVimState.lines = [{ text: "01234. Yes" }];
     const abstractMode = new TestAbstractMode(testVimState);
     const updated = abstractMode.cursorWordForwardEnd();
-    /*prettier-ignore*/ console.log("[abstract-mode.spec.ts,28] updated: ", updated);
     expect(updated.cursor.col).toBe(4);
   });
 });

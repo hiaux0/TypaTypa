@@ -11,6 +11,7 @@ import { VimInit } from "../../../features/vim/VimInit";
 import { debugFlags } from "../../../common/modules/debug/debugFlags";
 import { IKeyMappingMapping } from "../../../types";
 import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
+import { IVimInputHandlerV2 } from "../../../features/vim/VimInputHandlerV2";
 
 export class VimEditor {
   @bindable public vimState: IVimState;
@@ -38,7 +39,10 @@ export class VimEditor {
     return is;
   }
 
-  constructor(private vimInit: VimInit = resolve(VimInit)) {}
+  constructor(
+    private vimInit: VimInit = resolve(VimInit),
+    private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+  ) {}
 
   async attached() {
     // /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'orange'}`);
@@ -85,6 +89,7 @@ export class VimEditor {
     };
     // /*prettier-ignore*/ console.log("[vim-editor.ts,82] this.mappingByModes: ", this.mappingByMode);
     this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
+    this.vimInputHandlerV2.registerAndInit(options, this.mappingByMode);
 
     this.initVimEditorHooks();
   }

@@ -58,10 +58,10 @@ src/features/vim/key-bindings.ts
 src/ui/organisms/vim-editor/vim-editor.ts
 src/ui/organisms/vim-editor/vim-editor.html
 src/common/modules/database/gridDatabase.ts
-src/ui/pages/grid-test-page/grid-modules/gridModules.ts
-test/sheets/gridModules.spec.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
 src/ui/pages/grid-test-page/grid-cell/grid-cell.html
+src/ui/pages/grid-test-page/grid-modules/gridModules.ts
+test/sheets/gridModules.spec.ts
 src/ui/colors.scss
 src/ui/mixins.scss
 src/ui/molecules/autocomplete-input/autocomplete-input.ts
@@ -71,6 +71,7 @@ src/features/vim/vimCore/VimCore.ts
 src/features/vim/VimInputHandler.ts
 src/features/vim/vimCore/commands/KeyMappingService.ts
 src/features/vim/VimInputHandlerV2.ts
+
 
 %% Grid Vim Editor
 docs/todo.md

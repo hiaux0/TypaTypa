@@ -78,8 +78,6 @@ export class VimInputHandler {
     mappings?: IKeyMappingMapping,
     additionalKeyBindings?: KeyBindingModes,
   ) {
-    this.vimInputHandlerV2?.register(options.vimId, additionalKeyBindings);
-
     this.clearKeybord();
     /*prettier-ignore*/ logger.culogger.debug(["[VimInputHandler.ts,38] init: ", {log: true}]);
     this.options = options;

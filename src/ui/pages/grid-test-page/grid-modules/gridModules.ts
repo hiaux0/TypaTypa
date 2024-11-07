@@ -1,5 +1,5 @@
 import { jsonStringify } from "@aurelia/testing";
-import { CELL_WIDTH } from "../../../../common/modules/constants";
+import { CELL_WIDTH, VIM_ID_MAP } from "../../../../common/modules/constants";
 import {
   IVimState,
   VimLine,
@@ -321,11 +321,11 @@ export function convertRangeToVimState(
   const [col, line] = startRange ?? range[0];
   const cursor = { line, col };
   const result = {
-    id: "grid-navigation",
+    id: VIM_ID_MAP.gridNavigation,
     mode: VimMode.NORMAL,
     cursor,
     lines,
   };
   return result;
 }
-window.measureTextWidth = measureTextWidth
+window.measureTextWidth = measureTextWidth;

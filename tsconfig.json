@@ -10,5 +10,5 @@
     "sourceMap": true
   },
   "include": ["src", "test", "./*.ts"],
-  "files": ["src/resource.d.ts", "./src/appContainer.ts"]
+  "files": ["src/resource.d.ts", "./src/appContainer.ts", "./test/vim/newFile.ts"]
 }
