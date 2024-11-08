@@ -216,10 +216,10 @@ export class GridCell {
     if (this.debug_onlyLogCell(7, 1)) {
       /*                                                                                           prettier-ignore*/ shouldLog(31) && console.log("this.finalMappingByMode", this.finalMappingByMode);
     }
-    this.vimInputHandlerV2.registerAndInit(
-      { vimId: VIM_ID_MAP.gridCell },
-      this.finalMappingByMode,
-    );
+    //this.vimInputHandlerV2.registerAndInit(
+    //  { vimId: VIM_ID_MAP.gridCell },
+    //  this.finalMappingByMode,
+    //);
   }
 
   public setWidthPx(

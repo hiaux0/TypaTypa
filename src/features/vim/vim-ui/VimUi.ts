@@ -251,6 +251,7 @@ export class VimUi {
   }
 
   public enterInsertMode(cursor: Cursor | undefined) {
+    /*prettier-ignore*/ console.log("[VimUi.ts,254] enterInsertMode: ", );
     /**
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view

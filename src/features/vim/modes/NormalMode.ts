@@ -35,6 +35,7 @@ export class NormalMode extends AbstractMode {
   }
 
   enterInsertMode(): VimStateClass {
+    /*prettier-ignore*/ console.log("[NormalMode.ts,38] enterInsertMode: ", );
     this.vimState.mode = VimMode.INSERT;
     return this.vimState;
   }

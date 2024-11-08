@@ -14,7 +14,7 @@ import { Logger } from "../../../../common/logging/logging";
 import { VimHelper } from "../../VimHelper";
 import { InsertMode } from "../../modes/InsertMode";
 
-const logger = new Logger("VimCommandManagerv3");
+const l = new Logger("VimCommandManagerv3");
 
 /**
  * - execute commands
@@ -126,7 +126,7 @@ export class VimCommandManager {
   }
 
   public executeModeChange(commandName: VIM_COMMAND): IVimState | undefined {
-    logger.culogger.debug(["Mode change command", commandName]);
+    l.culogger.debug(["Mode change command", commandName]);
 
     // @ts-ignore
     if (!this[commandName]) return;
@@ -180,7 +180,7 @@ export class VimCommandManager {
 
   private visualStartLineWise(vimState: IVimState) {
     if (!vimState?.cursor) return;
-    /* prettier-ignore */ logger.culogger.debug(["Enter Visual Line mode"], {}, (...r) => console.log(...r),);
+    /* prettier-ignore */ l.culogger.debug(["Enter Visual Line mode"], {}, (...r) => console.log(...r),);
 
     const vimStateClass = new VimStateClass(vimState);
     vimState.visualStartCursor = {
@@ -197,6 +197,7 @@ export class VimCommandManager {
   }
 
   private enterInsertMode(vimState: IVimState) {
+    /*prettier-ignore*/ if(l.shouldLog(36)) console.log("[VimCommandManager.ts,200] enterInsertMode: ", );
     vimState.mode = VimMode.INSERT;
     return vimState;
   }

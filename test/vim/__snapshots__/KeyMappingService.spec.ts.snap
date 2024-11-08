@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`KeyMappingService > Key, but no command 1`] = `
+[
+  {
+    "command": "newLine",
+    "key": "<Enter>",
+  },
+]
+`;
+
 exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > add key to base 1`] = `
 [
   {
@@ -91,6 +100,20 @@ exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > overwrite, i
   {
     "command": "cursorUp",
     "key": "<ArrowUp>",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > sequence 1`] = `
+[
+  {
+    "context": [
+      "Grid",
+    ],
+    "desc": "[S]ave",
+    "key": "<Control>s",
+    "preventUndoRedo": true,
+    "sequence": "^elrx",
   },
 ]
 `;

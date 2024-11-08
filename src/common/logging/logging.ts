@@ -16,6 +16,29 @@ interface ILogOptions extends LogOptions {
   highlight?: boolean;
 }
 
+export interface ShouldLogConfig {
+  log: boolean;
+  maxLevel: number; // 0 - don't log
+  onlyLevels?: number[]; // only log specified levels
+  logDepth: number; // 1: 1-9, 2: 10-99, 3: 100-999
+  allowedCallerNames: string[];
+}
+export const defaultLogConfig: ShouldLogConfig = {
+  log: true,
+  maxLevel: 1,
+  // onlyLevels: [2], // keysequence and findingPotentialCommands
+  // onlyLevels: [3], //
+  // onlyLevels: [4], // checkout how bindings are handled: base other merged
+  // onlyLevels: [5], //
+  onlyLevels: [6], // after correct merged, still command undefined -- from keypress to command
+  // onlyLevels: [7], // checkout how bindings are handled: base other merged
+  // onlyLevels: [8], // zoom into mergedv2
+  // onlyLevels: [2],
+  // onlyLevels: [9], //
+  logDepth: 2,
+  allowedCallerNames: [],
+};
+
 export function logOptionsGuard(input: any): input is ILogOptions {
   if (typeof input !== "object") {
     return false;
@@ -79,6 +102,39 @@ export class Logger {
     this.logMessage(message, options);
   }
 
+  public shouldLog(givenLevel?: number | number[], error?: Error) {
+    if (givenLevel === 0) return true;
+
+    const callerName = getCallerFunctionName(error);
+    const { maxLevel, logDepth } = defaultLogConfig;
+
+    const asArray = Array.isArray(givenLevel) ? givenLevel : [givenLevel];
+    const levelOkay = asArray.some((level) => checkGivenLevel(level));
+
+    const nameOkay =
+      defaultLogConfig.allowedCallerNames.find((name) =>
+        name.includes(callerName),
+      ) ?? true;
+    const should = defaultLogConfig.log && levelOkay && nameOkay;
+    return should;
+
+    function checkGivenLevel(level: number): boolean {
+      let okay = false;
+      if (level < 10 && logDepth === 1) {
+        const mainLevel = level;
+        if (defaultLogConfig.onlyLevels?.length > 0) {
+          okay = defaultLogConfig.onlyLevels.includes(mainLevel);
+        }
+      } else if (level >= 10 && level < 100 && logDepth === 2) {
+        const secondaryLevel = level % 10;
+        if (defaultLogConfig.onlyLevels?.length > 0) {
+          okay = defaultLogConfig.onlyLevels.includes(secondaryLevel);
+        }
+      }
+      return okay;
+    }
+  }
+
   private logMessage(
     message: string,
     options: ILogOptions = DEFAULT_LOG_OPTIONS,
@@ -98,55 +154,5 @@ export class Logger {
   }
 }
 
+export const shouldLog = new Logger().shouldLog;
 // export function
-
-export interface LogConfig {
-  log: boolean;
-  maxLevel: number; // 0 - don't log
-  onlyLevels: number[]; // only log specified levels
-  logDepth: number; // 1: 1-9, 2: 10-99, 3: 100-999
-  allowedCallerNames: string[];
-}
-export const defaultLogConfig: LogConfig = {
-  log: true,
-  maxLevel: 1,
-  // onlyLevels: [2], // KeyMappingService, command with bindings array
-  // onlyLevels: [3], //
-  // onlyLevels: [4], // checkout how bindings are handled: base other merged
-  // onlyLevels: [5], //
-  // onlyLevels: [6], // after correct merged, still command undefined
-  // onlyLevels: [7], // checkout how bindings are handled: base other merged
-  onlyLevels: [8], // zoom into mergedv2
-  // onlyLevels: [2],
-  // onlyLevels: [9], // test
-  logDepth: 2,
-  allowedCallerNames: [],
-};
-
-export function shouldLog(givenLevel?: number, error?: Error) {
-  if (givenLevel === 0) return true;
-
-  const callerName = getCallerFunctionName(error);
-  const { maxLevel, logDepth } = defaultLogConfig;
-
-  // let levelOkay = givenLevel <= maxLevel;
-  let levelOkay = false;
-  if (givenLevel < 10 && logDepth === 1) {
-    const mainLevel = givenLevel;
-    if (defaultLogConfig.onlyLevels.length > 0) {
-      levelOkay = defaultLogConfig.onlyLevels.includes(mainLevel);
-    }
-  } else if (givenLevel >= 10 && givenLevel < 100 && logDepth === 2) {
-    const secondaryLevel = givenLevel % 10;
-    if (defaultLogConfig.onlyLevels.length > 0) {
-      levelOkay = defaultLogConfig.onlyLevels.includes(secondaryLevel);
-    }
-  }
-
-  const nameOkay =
-    defaultLogConfig.allowedCallerNames.find((name) =>
-      name.includes(callerName),
-    ) ?? true;
-  const should = defaultLogConfig.log && levelOkay && nameOkay;
-  return should;
-}

@@ -69,7 +69,6 @@ export class VimInputHandlerV2 {
 
     this.pushIdToHistory(id);
     this.inputMap[id] = additionalKeyBindings;
-
     this.setVimCore(options);
     this.debugLogMappings(additionalKeyBindings);
   }
@@ -114,7 +113,7 @@ export class VimInputHandlerV2 {
           mode,
           options,
         ) ?? {};
-      /*                                                                                           prettier-ignore*/ shouldLog(16) && console.log("command", command);
+      /*                                                                                           prettier-ignore*/ shouldLog([16, 13]) && console.log("command", command);
       /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("commandName", commandName);
       let finalCommand = command;
       let finalPressedKey = pressedKey;
@@ -162,7 +161,7 @@ export class VimInputHandlerV2 {
         );
         // if (!vimState) return; // issue: space in insert got too early returned
 
-        /*                                                                                           prettier-ignore*/ shouldLog(35) && console.log("(vimState)", (vimState));
+        /*                                                                                           prettier-ignore*/ shouldLog([33, 36]) && console.log("(vimState)", (vimState));
         if (vimState) {
           this.updateVimState(vimState);
 
@@ -197,7 +196,6 @@ export class VimInputHandlerV2 {
             event.preventDefault();
           }
 
-          if (!options.hooks.onInsertInput) return; // mostly for custom insert mode, do this early return. In normal vim editor, insert should just be inside input/textarea thing
           const isCursorMovementCommand = cursorAllModes.find(
             (command) => command.command === finalCommand?.command,
           );
@@ -207,6 +205,7 @@ export class VimInputHandlerV2 {
             !isCursorMovementCommand
           )
             return;
+          if (!options.hooks.onInsertInput) return; // mostly for custom insert mode, do this early return. In normal vim editor, insert should just be inside input/textarea thing
           const response = options.hooks.onInsertInput(finalPressedKey);
           if (response === true) {
             event.preventDefault();

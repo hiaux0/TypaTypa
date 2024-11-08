@@ -227,5 +227,67 @@ describe("KeyMappingService", () => {
 
       expect(result).toMatchSnapshot();
     });
+
+    test("sequence", () => {
+      // test("sequence", () => {
+      const baseNormal: VimCommand[] = [
+        { key: "<Space>tc", sequence: "^elrx" },
+      ];
+
+      const baseAll = [];
+
+      const otherNormal: VimCommand[] = [
+        {
+          key: "<Control>s",
+          desc: "[S]ave",
+          context: ["Grid"],
+          preventUndoRedo: true,
+        },
+      ];
+
+      const otherAll = [];
+
+      const result = overwriteAndAddExistingKeyBindingsV2(
+        baseNormal,
+        baseAll,
+        otherNormal,
+        otherAll,
+      );
+
+      // result; /*?*/
+      expect(result).toMatchSnapshot();
+    });
+  });
+
+    // test("sequence", () => {
+  test.only("Key, but no command", () => {
+    const baseNormal: VimCommand[] = [
+      {
+        key: "<Enter>",
+        command: "newLine",
+      },
+    ];
+
+    const baseAll = [];
+
+    const otherNormal: VimCommand[] = [
+      {
+        key: "<Enter>",
+        desc: "Accept changes and exit edit mode",
+        context: ["gridCell"],
+      },
+    ];
+
+    const otherAll = [];
+
+    const result = overwriteAndAddExistingKeyBindingsV2(
+      baseNormal,
+      baseAll,
+      otherNormal,
+      otherAll,
+    );
+
+    result; /*?*/
+    // expect(result).toMatchSnapshot();
   });
 });
