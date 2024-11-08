@@ -19,6 +19,14 @@ import { DI, IContainer, Registration } from "aurelia";
 
 const logger = new Logger("KeyMappingService");
 const logAllowed = false;
+class Commentary {
+  // how can I define the type of a function with variable argument length?
+  public static log(...args: any[]): void {
+    const [message, condition] = args as [message: string, condition: boolean];
+    if (args.length === 1) console.log();
+    if (condition) console.log(message);
+  }
+}
 
 export function hasSimilarBinding(a: VimCommand, b: VimCommand): boolean {
   const okayKey = a.key === b.key;
@@ -124,17 +132,17 @@ export function overwriteExistingKeyBindings(
   return finalBindings;
 }
 
-export function overwriteExistingKeyBindingsV2(
-  existing: VimCommand[], // assume existing always has key and command defined
+export function overwriteAndAddExistingKeyBindingsV2(
+  base: VimCommand[], // assume existing always has key and command defined
   ...additionals: VimCommand[][]
 ): VimCommand[] {
   const mergedAdditionals = additionals.reduce((acc, curr) => {
     if (!curr) return acc;
     return acc.concat(curr);
   }, []);
-  const finalBindings = [...(existing ?? [])];
-  /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("finalBindings", finalBindings.length, finalBindings);
-  /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("mergedAdditionals", mergedAdditionals.length, mergedAdditionals);
+  const finalBindings = [...(base ?? [])];
+  /*                                                                                           prettier-ignore*/ if(shouldLog(38)) console.log("finalBindings", finalBindings.length, finalBindings);
+  /*                                                                                           prettier-ignore*/ if(shouldLog(38)) console.log("mergedAdditionals", mergedAdditionals.length, mergedAdditionals);
 
   if (finalBindings.length === 0) {
     mergedAdditionals.forEach((additionalBinding) => {
@@ -148,78 +156,115 @@ export function overwriteExistingKeyBindingsV2(
   }
 
   mergedAdditionals?.forEach((additionalBinding) => {
+    (""); /*?*/
+    ("A. mergedAdditionals ---------------"); /*?*/
+    finalBindings; /*?*/
+    additionalBinding; /*?*/
     if (!additionalBinding) return;
     let foundCount = 0;
 
-    finalBindings.forEach((existingBinding, index) => {
-      if (!existingBinding) return;
-      const keyExists = !!additionalBinding.key;
-      const baseKeyExists = existingBinding.key;
-      const sameKey = existingBinding.key === additionalBinding.key;
-      let okayCommand = false;
-      if (existingBinding.command || additionalBinding.command) {
-        okayCommand = existingBinding.command === additionalBinding.command;
-      }
-      okayCommand; /*?*/
+    /**
+     * Cases:
+     *          base                additional                result
+     * 1. { key, command }   { command }                   --> take key from base
+     * 2. { key, command }   { key, command }              --> overwrite additional to base
+     * 3. { key, command }   { differentKey, command }     --> overwrite additional to base
+     */
 
-      // if both, then overwrite
-
-      const both = sameKey && okayCommand;
-      const oneOkay = sameKey || okayCommand;
-      if (both) {
-        ("1"); /*?*/
-        finalBindings[index] = {
-          ...finalBindings[index],
-          ...additionalBinding,
-        };
-        foundCount++;
-      } else if (oneOkay) {
-        ("2"); /*?*/
-        if (!baseKeyExists) {
-          finalBindings[index] = {
-            ...finalBindings[index],
-            ...additionalBinding,
-          };
-          ("2.1"); /*?*/
-        } else if (keyExists) {
-          ("2.2"); /*?*/
-          finalBindings.push(additionalBinding);
-        } else {
-          ("2.3"); /*?*/
-        }
-      }
-
-      //both; /*?*/
-      //one; /*?*/
-      const okay = oneOkay || both;
-      //okay; /*?*/
-      //if (okay) {
-      //  finalBindings[index] = {
-      //    ...finalBindings[index],
-      //    ...additionalBinding,
-      //  };
-      //  foundCount++;
-      //  foundCount; /*?*/
-      //}
-
-      // If nothing found, then add
-      const lastIndex = index === finalBindings.length - 1;
-      lastIndex; /*?*/
-      const notFound = lastIndex && !okay && foundCount === 0;
-      notFound; /*?*/
-      if (notFound) {
-        finalBindings.push(additionalBinding);
-      }
-
-      const reset = lastIndex && foundCount > 1;
-      reset; /*?*/
-      if (reset) {
-        foundCount = 0;
+    const maybeIndeces: number[] = [];
+    finalBindings.forEach((binding, index) => {
+      const keyOkay = binding.key === additionalBinding.key;
+      const commandOkay = binding.command === additionalBinding.command;
+      const okay = keyOkay || commandOkay;
+      if (okay) {
+        maybeIndeces.push(index);
       }
     });
+    // maybeIndeces; /*?*/
+
+    const sameKeyAndCommand = maybeIndeces.filter((index) => {
+      const binding = finalBindings[index];
+      const keyOkay = binding.key === additionalBinding.key;
+      const commandOkay = binding.command === additionalBinding.command;
+      const okay = keyOkay && commandOkay;
+      return okay;
+    });
+    const onlyOne = sameKeyAndCommand.length === 1;
+    /*prettier-ignore*/ Commentary.log("1. SAME key AND a command, then OVERWRITE base", onlyOne);
+    // sameKeyAndCommand; /*?*/
+    if (onlyOne) {
+      ("B"); /*?*/
+      const index = sameKeyAndCommand[0];
+      const binding = finalBindings[index];
+      finalBindings[index] = {
+        ...binding,
+        ...additionalBinding,
+      };
+      sameKeyAndCommand; /*?*/
+      return;
+    } else if (sameKeyAndCommand.length > 1) {
+      throw new Error("[ERROR][KeyMappingService]: not possible");
+    }
+    // finalBindings; /*?*/
+
+    const onlySameCommandsAndNoKeys = maybeIndeces.filter((index) => {
+      const binding = finalBindings[index];
+      const hasKey = !!additionalBinding.key;
+      const commandOkay = binding.command === additionalBinding.command;
+      const okay = !hasKey && commandOkay;
+      return okay;
+    });
+    // onlySameCommandsAndNoKeys; /*?*/
+    const isOnlySame = onlySameCommandsAndNoKeys.length;
+    /*prettier-ignore*/ Commentary.log("2. If the additional binding only specified a command and NO key, then OVERWRITE all bases to get the key+additions", isOnlySame);
+    if (onlySameCommandsAndNoKeys.length) {
+      ("A"); /*?*/
+      onlySameCommandsAndNoKeys.forEach((index) => {
+        const binding = finalBindings[index];
+        finalBindings[index] = {
+          ...binding,
+          ...additionalBinding,
+        };
+      });
+      return;
+    }
+
+    /*prettier-ignore*/ Commentary.log("3. DIFFERENT key, BUT SAME command, then OVERWRITE base based on key");
+    const sameCommandButDifferentKey = maybeIndeces.filter((index) => {
+      const binding = finalBindings[index];
+      [binding.key, binding.command]; /*?*/
+      const sameKey = binding.key === additionalBinding.key;
+      const commandOkay = binding.command === additionalBinding.command;
+      const okay = !sameKey && commandOkay;
+      return okay;
+    });
+    sameCommandButDifferentKey; /*?*/
+    const hasOnlyOneSameButDifferent = sameCommandButDifferentKey.length === 1;
+    hasOnlyOneSameButDifferent; /*?*/
+    const hasMultipleSameButDifferent = sameCommandButDifferentKey.length > 1;
+    /*prettier-ignore*/ Commentary.log("3.1 DIFFERENT key, BUT SAME command ONLY one hit, then OVERWRITE base based on key", hasOnlyOneSameButDifferent);
+    if (hasOnlyOneSameButDifferent) {
+      ("C"); /*?*/
+      const index = sameCommandButDifferentKey[0];
+      const binding = finalBindings[index];
+      finalBindings[index] = {
+        ...binding,
+        ...additionalBinding,
+      };
+      return;
+    }
+    hasMultipleSameButDifferent; /*?*/
+    /*prettier-ignore*/ Commentary.log("3.2 DIFFERENT key, BUT SAME command MULTIPLE hits, then push", hasMultipleSameButDifferent);
+    if (hasMultipleSameButDifferent) {
+      finalBindings.push(additionalBinding);
+    }
+
+    finalBindings; /*?*/
   });
 
-  /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("finalBindings;", finalBindings.length, finalBindings);
+  /*                                                                                           prettier-ignore*/ if(shouldLog(38)) console.log("finalBindings;", finalBindings.length, finalBindings);
+  // const logMe = finalBindings.filter(b=>b.key === "l")
+  // /*prettier-ignore*/ console.log("[KeyMappingService.ts,224] logMe: ", logMe);
   return finalBindings;
 }
 
@@ -497,15 +542,15 @@ export class KeyMappingService {
     base: KeyBindingModes,
     other?: KeyBindingModes,
   ): KeyBindingModes {
-    /*                                                                                           prettier-ignore*/ shouldLog(34) && console.log("base", base);
-    /*                                                                                           prettier-ignore*/ shouldLog(34) && console.log("other", other);
+    /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("base", base);
+    /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("other", other);
     if (!other) return base;
     if (!base) return other;
 
     const merged = {
       ...(base ?? {}),
       [VimMode.NORMAL]: [
-        ...overwriteExistingKeyBindingsV2(
+        ...overwriteAndAddExistingKeyBindingsV2(
           base[VimMode.NORMAL],
           base[VimMode.ALL],
           other[VimMode.NORMAL],
@@ -513,7 +558,7 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.INSERT]: [
-        ...overwriteExistingKeyBindingsV2(
+        ...overwriteAndAddExistingKeyBindingsV2(
           base[VimMode.INSERT],
           base[VimMode.ALL],
           other[VimMode.INSERT],
@@ -521,7 +566,7 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.VISUAL]: [
-        ...overwriteExistingKeyBindingsV2(
+        ...overwriteAndAddExistingKeyBindingsV2(
           base[VimMode.VISUAL],
           base[VimMode.ALL],
           other[VimMode.VISUAL],
@@ -529,7 +574,7 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.CUSTOM]: [
-        ...overwriteExistingKeyBindingsV2(
+        ...overwriteAndAddExistingKeyBindingsV2(
           base[VimMode.CUSTOM],
           base[VimMode.ALL],
           other[VimMode.CUSTOM],
@@ -537,13 +582,13 @@ export class KeyMappingService {
         ),
       ],
       [VimMode.ALL]: [
-        ...overwriteExistingKeyBindingsV2(
+        ...overwriteAndAddExistingKeyBindingsV2(
           base[VimMode.ALL],
           other[VimMode.ALL],
         ),
       ],
     };
-    /*                                                                                           prettier-ignore*/ shouldLog(34) && console.log("merged", merged);
+    /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("merged", merged);
     return merged;
   }
 
@@ -919,13 +964,13 @@ export class KeyMappingService {
     if (this.potentialCommands?.length) {
       targetKeyBinding = this.potentialCommands;
     } else {
-      /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("options.keyBindings", options.keyBindings);
-      /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("this.keyBindings", this.keyBindings);
+      /*                                                                                           prettier-ignore*/ shouldLog(37) && console.log("options.keyBindings", options.keyBindings);
+      /*                                                                                           prettier-ignore*/ shouldLog(37) && console.log("this.keyBindings", this.keyBindings);
       const merged = this.mergeKeybindingsV2(
         this.keyBindings,
         options.keyBindings,
       );
-      /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("merged", merged);
+      /*                                                                                           prettier-ignore*/ shouldLog(37) && console.log("merged", merged);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,815] options.vimId: ", options);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,815] merged: ", merged);
       targetKeyBinding = merged[mode] ?? [];
@@ -956,7 +1001,7 @@ export class KeyMappingService {
     }
     /* prettier-ignore */ logger.culogger.debug(['keySequence: %s', keySequence], {}, (...r) => console.log(...r));
 
-    /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("targetKeyBinding", targetKeyBinding);
+    /*                                                                                           prettier-ignore*/ shouldLog(36) && console.log("targetKeyBinding", targetKeyBinding);
     /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("keySequence", keySequence);
     // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
     const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
@@ -968,17 +1013,17 @@ export class KeyMappingService {
     });
 
     /* prettier-ignore */ logger.culogger.debug(['potentialCommands: %o', finalPotentialCommands], {}, (...r) => console.log(...r));
-    /*prettier-ignore*/ logAllowed && console.log("[KeyMappingService.ts,402] finalPotentialCommands: ", finalPotentialCommands);
+    /*                                                                                           prettier-ignore*/ shouldLog(36) && console.log("finalPotentialCommands", finalPotentialCommands);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,502] keySequence: ", keySequence);
     let targetCommand;
     if (finalPotentialCommands.length === 0) {
-      /*                                                                                             prettier-ignore*/ shouldLog(52) && console.log("1");
+      /*                                                                                             prettier-ignore*/ shouldLog(56) && console.log("1");
       this.emptyQueuedKeys();
     } else if (
       finalPotentialCommands.length === 1 &&
       keySequence === finalPotentialCommands[0].key
     ) {
-      /*                                                                                             prettier-ignore*/ shouldLog(52) && console.log("2");
+      /*                                                                                             prettier-ignore*/ shouldLog(56) && console.log("2");
       const isChain =
         options?.allowChaining && this.lastCommand?.key.endsWith(keySequence);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] this.lastCommand: ", this.lastCommand);
@@ -986,7 +1031,7 @@ export class KeyMappingService {
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] keySequence: ", keySequence);
       const isExtendedChain = options?.allowExtendedChaining;
       if (isExtendedChain) {
-        /*                                                                                           prettier-ignore*/ shouldLog(52) && console.log("2.1");
+        /*                                                                                           prettier-ignore*/ shouldLog(56) && console.log("2.1");
         const commandForExtendedChain = targetKeyBinding.filter(
           (keyBinding) => {
             // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
@@ -999,11 +1044,11 @@ export class KeyMappingService {
         this.lastCommand?.key.startsWith(keySequence);
         targetCommand = commandForExtendedChain[0];
       } else if (isChain) {
-        /*                                                                                           prettier-ignore*/ shouldLog(52) && console.log("3");
+        /*                                                                                           prettier-ignore*/ shouldLog(56) && console.log("3");
         targetCommand = this.lastCommand;
         this.emptyQueuedKeys();
       } else {
-        /*                                                                                           prettier-ignore*/ shouldLog(52) && console.log("4");
+        /*                                                                                           prettier-ignore*/ shouldLog(56) && console.log("4");
         targetCommand = finalPotentialCommands[0];
         /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("finalPotentialCommands", finalPotentialCommands);
         this.emptyQueuedKeys();
@@ -1015,7 +1060,8 @@ export class KeyMappingService {
     }
 
     /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands, input, mode);
-    /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("targetCommand", targetCommand);
+    /*                                                                                           prettier-ignore*/ shouldLog(36) && console.log("finalPotentialCommands,", finalPotentialCommands,);
+    /*                                                                                           prettier-ignore*/ shouldLog(36) && console.log("targetCommand", targetCommand);
     ///*prettier-ignore*/ console.log("[KeyMappingService.ts,546] keySequence: ", keySequence);
     return {
       targetCommand,

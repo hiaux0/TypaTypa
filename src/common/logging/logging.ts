@@ -110,10 +110,13 @@ export interface LogConfig {
 export const defaultLogConfig: LogConfig = {
   log: true,
   maxLevel: 1,
-  onlyLevels: [2], // KeyMappingService, command with bindings array
+  // onlyLevels: [2], // KeyMappingService, command with bindings array
   // onlyLevels: [3], //
   // onlyLevels: [4], // checkout how bindings are handled: base other merged
-  // onlyLevels: [5], // 
+  // onlyLevels: [5], //
+  // onlyLevels: [6], // after correct merged, still command undefined
+  // onlyLevels: [7], // checkout how bindings are handled: base other merged
+  onlyLevels: [8], // zoom into mergedv2
   // onlyLevels: [2],
   // onlyLevels: [9], // test
   logDepth: 2,

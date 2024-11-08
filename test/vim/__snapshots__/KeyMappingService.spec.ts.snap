@@ -1,21 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - Normal 1`] = `
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > add key to base 1`] = `
 [
-  {
-    "key": "<Enter>",
-  },
-  {
-    "key": "<Space>cl",
-  },
-]
-`;
-
-exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - add key to base 1`] = `
-[
-  {
-    "command": "cursorUp",
-  },
   {
     "command": "cursorUp",
     "key": "<ArrowUp>",
@@ -23,7 +9,7 @@ exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - add key to base 1`
 ]
 `;
 
-exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - add key to other 1`] = `
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > add key to other 1`] = `
 [
   {
     "command": "cursorUp",
@@ -32,13 +18,79 @@ exports[`KeyMappingService > overwriteExistingKeyBindingsV2 - add key to other 1
 ]
 `;
 
-exports[`KeyMappingService > overwriteExistingKeyBindingsV2 1`] = `
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > combo - overwrite and push 1`] = `
 [
   {
-    "key": "<Enter>",
+    "command": "cursorRight",
+    "key": "<ArrowRight>",
   },
   {
+    "command": "cursorRight",
+    "key": "l",
+  },
+  {
+    "command": "redo",
+    "key": "l",
+  },
+  {
+    "command": "cursorRight",
+    "context": [
+      "Grid",
+    ],
+    "key": "<leader>l",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > init 1`] = `
+[
+  {
     "key": "<Space>cl",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > overwrite with base 1`] = `
+[
+  {
+    "command": "cursorRight",
+    "key": "<ArrowRight>",
+  },
+  {
+    "command": "cursorRight",
+    "context": [
+      "Grid",
+    ],
+    "key": "l",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > overwrite, but keep different key 1`] = `
+[
+  {
+    "command": "cursorRight",
+    "key": "<ArrowRight>",
+  },
+  {
+    "command": "cursorRight",
+    "key": "l",
+  },
+  {
+    "command": "cursorRight",
+    "context": [
+      "Grid",
+    ],
+    "key": "r",
+  },
+]
+`;
+
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > overwrite, if not matching key 1`] = `
+[
+  {
+    "command": "cursorUp",
+    "key": "<ArrowUp>",
   },
 ]
 `;

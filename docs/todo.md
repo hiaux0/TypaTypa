@@ -116,6 +116,10 @@ I want to have live-editor
   - [ ] if no overflow, then until next empty cell 
 - [ ] vimeditor
 - [ ] space+o
+- [ ] fix highlight in visual mode, with mulitple cells class="cell selected-cell"
+  - problem: overflown cell
+- [ ] sidebar, when highlight
+
 
 
 # Done
@@ -294,4 +298,43 @@ const mappingByKey = {
 
 hello
 helmet
+
+
+# user experiments
+validate nang lucwj ngon ngu
+- in real life is good, but in academy failed
+
+## task breakdown
+- desire to change
+  - what do you want to change?
+- strategy
+  - from goal to application
+- practice
+  - repeat
+
+1. I want to clean up
+  - Why
+    - interior
+    - cleaniness
+  - time
+    - how long can you spare for this task
+2. strategy
+  - work load breakdown
+  - goal defintion
+    - resources
+    - match "dot and lines"
+      - powder, sink, sponge
+    - step by step
+      - spray
+      - wait
+3. practice
+  
+- "I want to learn psycholgy"
+  - Why?
+    - Want to help friends -> healer
+  - What in psychology, can you help me?
+
+
+## How
+- leave empty spaces
 

@@ -104,8 +104,8 @@ export class VimInputHandlerV2 {
       const pressedKey = ShortcutService.getPressedKey(event);
       /*                                                                                           prettier-ignore*/ shouldLog(4) && console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKey);
       const currentBindings = this.inputMap[this.activeId];
-      /*                                                                                           prettier-ignore*/ shouldLog(32) && console.log("this.activeId", this.activeId);
-      /*                                                                                           prettier-ignore*/ shouldLog(42) && console.log("[VimInputHandlerV2.ts,90] currentBindings: ", currentBindings);
+      /*                                                                                           prettier-ignore*/ shouldLog(36) && console.log("this.activeId", this.activeId);
+      /*                                                                                           prettier-ignore*/ shouldLog(46) && console.log("[VimInputHandlerV2.ts,90] currentBindings: ", currentBindings);
       const options = this.vimCore.options;
       options.keyBindings = currentBindings;
       const { command, commandName, commandSequence } =
@@ -114,7 +114,7 @@ export class VimInputHandlerV2 {
           mode,
           options,
         ) ?? {};
-      /*                                                                                           prettier-ignore*/ shouldLog(15) && console.log("command", command);
+      /*                                                                                           prettier-ignore*/ shouldLog(16) && console.log("command", command);
       /*                                                                                           prettier-ignore*/ shouldLog(3) && console.log("commandName", commandName);
       let finalCommand = command;
       let finalPressedKey = pressedKey;

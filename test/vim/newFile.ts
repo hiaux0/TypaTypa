@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
     KeyMappingService,
-    overwriteExistingKeyBindingsV2
+    overwriteAndAddExistingKeyBindingsV2
 } from "../../src/features/vim/vimCore/commands/KeyMappingService";
 import { current, additional } from "./KeyMappingService.spec";
 
@@ -14,7 +14,7 @@ describe("KeyMappingService", () => {
     });
 
     test.only("overwriteExistingKeyBindingsV2", () => {
-        const result = overwriteExistingKeyBindingsV2();
+        const result = overwriteAndAddExistingKeyBindingsV2();
         expect(result).toBe(true);
     });
 });
