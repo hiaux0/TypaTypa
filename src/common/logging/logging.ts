@@ -1,6 +1,15 @@
 import { getCallerFunctionName } from "../modules/debugging";
 import { CuLogger as Culogger, LogOptions } from "./localCulog";
 
+export interface ShouldLogConfig {
+  log: boolean;
+  maxLevel: number; // 0 - don't log
+  onlyLevels?: number[]; // only log specified levels
+  logDepth: number; // 1: 1-9, 2: 10-99, 3: 100-999
+  allowedCallerNames?: string[];
+  allowedCallerNameParts?: string[];
+}
+
 interface ILogOptions extends LogOptions {
   log?: boolean;
   focusedLogging?: boolean;
@@ -14,29 +23,34 @@ interface ILogOptions extends LogOptions {
    */
   reset?: boolean;
   highlight?: boolean;
+  shouldLogConfig?: ShouldLogConfig;
 }
 
-export interface ShouldLogConfig {
-  log: boolean;
-  maxLevel: number; // 0 - don't log
-  onlyLevels?: number[]; // only log specified levels
-  logDepth: number; // 1: 1-9, 2: 10-99, 3: 100-999
-  allowedCallerNames: string[];
-}
-export const defaultLogConfig: ShouldLogConfig = {
+export const defaultShouldLogConfig: ShouldLogConfig = {
   log: true,
   maxLevel: 1,
   // onlyLevels: [2], // keysequence and findingPotentialCommands
   // onlyLevels: [3], //
   // onlyLevels: [4], // checkout how bindings are handled: base other merged
   // onlyLevels: [5], //
-  onlyLevels: [6], // after correct merged, still command undefined -- from keypress to command
+  // onlyLevels: [6], // after correct merged, still command undefined -- from keypress to command
   // onlyLevels: [7], // checkout how bindings are handled: base other merged
   // onlyLevels: [8], // zoom into mergedv2
   // onlyLevels: [2],
   // onlyLevels: [9], //
   logDepth: 2,
   allowedCallerNames: [],
+  allowedCallerNameParts: ["Vim"],
+};
+
+const DEFAULT_LOG_OPTIONS: ILogOptions = {
+  log: false,
+  focusedLogging: true,
+  measurePerf: false,
+  focusedPerf: true,
+  logPerf: false,
+  reset: false,
+  shouldLogConfig: defaultShouldLogConfig,
 };
 
 export function logOptionsGuard(input: any): input is ILogOptions {
@@ -62,20 +76,11 @@ export function logOptionsGuard(input: any): input is ILogOptions {
   return true;
 }
 
-const DEFAULT_LOG_OPTIONS: ILogOptions = {
-  log: false,
-  focusedLogging: true,
-  measurePerf: false,
-  focusedPerf: true,
-  logPerf: false,
-  reset: false,
-};
-
 export class Logger {
   public readonly culogger: Culogger;
 
   constructor(
-    scope = "Aurelia",
+    public scope = "Aurelia",
     private readonly options: ILogOptions = DEFAULT_LOG_OPTIONS,
   ) {
     this.culogger = new Culogger({ scope });
@@ -102,38 +107,44 @@ export class Logger {
     this.logMessage(message, options);
   }
 
-  public shouldLog(givenLevel?: number | number[], error?: Error) {
+  public shouldLog = (givenLevel?: number | number[], error?: Error) => {
     if (givenLevel === 0) return true;
 
     const callerName = getCallerFunctionName(error);
-    const { maxLevel, logDepth } = defaultLogConfig;
+    const { maxLevel, logDepth, allowedCallerNameParts } =
+      this.options.shouldLogConfig ?? {};
 
+    // Scope
+    const scopeHasPart = allowedCallerNameParts.find((namePart) =>
+      this.scope.includes(namePart),
+    );
+    // Level
     const asArray = Array.isArray(givenLevel) ? givenLevel : [givenLevel];
     const levelOkay = asArray.some((level) => checkGivenLevel(level));
-
     const nameOkay =
-      defaultLogConfig.allowedCallerNames.find((name) =>
+      defaultShouldLogConfig.allowedCallerNames.find((name) =>
         name.includes(callerName),
       ) ?? true;
-    const should = defaultLogConfig.log && levelOkay && nameOkay;
+    const should =
+      defaultShouldLogConfig.log && levelOkay && nameOkay && scopeHasPart;
     return should;
 
     function checkGivenLevel(level: number): boolean {
       let okay = false;
       if (level < 10 && logDepth === 1) {
         const mainLevel = level;
-        if (defaultLogConfig.onlyLevels?.length > 0) {
-          okay = defaultLogConfig.onlyLevels.includes(mainLevel);
+        if (defaultShouldLogConfig.onlyLevels?.length > 0) {
+          okay = defaultShouldLogConfig.onlyLevels.includes(mainLevel);
         }
       } else if (level >= 10 && level < 100 && logDepth === 2) {
         const secondaryLevel = level % 10;
-        if (defaultLogConfig.onlyLevels?.length > 0) {
-          okay = defaultLogConfig.onlyLevels.includes(secondaryLevel);
+        if (defaultShouldLogConfig.onlyLevels?.length > 0) {
+          okay = defaultShouldLogConfig.onlyLevels.includes(secondaryLevel);
         }
       }
       return okay;
     }
-  }
+  };
 
   private logMessage(
     message: string,
@@ -154,5 +165,5 @@ export class Logger {
   }
 }
 
-export const shouldLog = new Logger().shouldLog;
+export const shouldLog = new Logger("default").shouldLog;
 // export function

@@ -89,7 +89,9 @@ export class VimEditor {
     };
     // /*prettier-ignore*/ console.log("[vim-editor.ts,82] this.mappingByModes: ", this.mappingByMode);
     this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
-    this.vimInputHandlerV2.registerAndInit(options, this.mappingByMode);
+    this.vimInputHandlerV2.registerAndInit(options, this.mappingByMode, {
+      reInit: true,
+    });
 
     this.initVimEditorHooks();
   }

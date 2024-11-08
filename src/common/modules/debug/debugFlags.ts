@@ -1,4 +1,5 @@
 export const debugFlags = {
+  clearConsole: true,
   showLineNumbers: false,
   vimEditor: {
     showDebugSection: true,

@@ -15,7 +15,7 @@ import {
 } from "../vim-types";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-const logger = new Logger("VimUi");
+const l = new Logger("VimUi");
 const shouldLog_getTextFromHtml = false;
 type Direction = "up" | "down" | "left" | "right" | "none";
 
@@ -57,7 +57,7 @@ export class VimUi {
         this.childSelector,
       );
     } else {
-      /*prettier-ignore*/ logger.culogger.debug(["[VimUi.ts,69] no options. This means, no insert mode available"], {logLevel: "WARNING"});
+      /*prettier-ignore*/ l.culogger.debug(["[VimUi.ts,69] no options. This means, no insert mode available"], {logLevel: "WARNING"});
     }
 
     this.caretWidth = getCssVar("--caret-size-width");
@@ -251,7 +251,7 @@ export class VimUi {
   }
 
   public enterInsertMode(cursor: Cursor | undefined) {
-    /*prettier-ignore*/ console.log("[VimUi.ts,254] enterInsertMode: ", );
+    /*prettier-ignore*/ if(l.shouldLog(36)) console.log("[VimUi.ts,254] enterInsertMode: ", );
     /**
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view
@@ -284,6 +284,8 @@ export class VimUi {
 
   private focusContainer() {
     this.container?.focus();
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog(36)) console.log("this.vimState", this.vimState);
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog(36)) console.log("this.container", this.container);
   }
 
   /**
