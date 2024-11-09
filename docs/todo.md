@@ -91,6 +91,7 @@ I want to have live-editor
 - [ ] feat:
 - [ ] refac:
 
+- [ ] feat: sidebar, when highlight
 - [ ] feat: grid: todo cell
 - [ ] feat: grid: inline lookup / definition / comments / notes
 - [ ] feat: add custom column name
@@ -118,7 +119,6 @@ I want to have live-editor
 - [ ] space+o
 - [ ] fix highlight in visual mode, with mulitple cells class="cell selected-cell"
   - problem: overflown cell
-- [ ] sidebar, when highlight
 
 
 
