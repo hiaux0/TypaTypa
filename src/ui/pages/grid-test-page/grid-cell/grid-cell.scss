@@ -12,7 +12,7 @@
     /* width: 100vw; // to show all the cell content */
   }
   &.selected-cell {
-    /* background: $orange1; */
+    background: $orange;
     z-index: $zIndexHover2;
     /* opacity: 0.5; */
 
@@ -108,7 +108,7 @@
         white-space: normal;
         width: 95vw;
         /* background: $backgroundColor1; */
-        background: $black0;
+        background: $backgroundColor1;
       }
     }
   }

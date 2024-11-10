@@ -259,7 +259,7 @@ describe("KeyMappingService", () => {
     });
   });
 
-    // test("sequence", () => {
+  // test("sequence", () => {
   test.only("Key, but no command", () => {
     const baseNormal: VimCommand[] = [
       {

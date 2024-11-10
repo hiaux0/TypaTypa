@@ -220,6 +220,9 @@ export class VimInputHandlerV2 {
           }
         },
         normal: () => {
+          if (pressedKey === SPACE) {
+            event.preventDefault();
+          }
           if (commandName) {
             // /*prettier-ignore*/ console.log("[VimInputHandler.ts,223] commandName: ", commandName);
             // /*prettier-ignore*/ console.log("[VimInputHandler.ts,225] preventDefault: ", preventDefault);
@@ -228,16 +231,15 @@ export class VimInputHandlerV2 {
           }
         },
         visual: () => {
+          if (pressedKey === SPACE) {
+            event.preventDefault();
+          }
           if (commandName) {
             if (!preventDefault) return;
             event.preventDefault();
           }
         },
       });
-
-      if (pressedKey === SPACE) {
-        event.preventDefault();
-      }
 
       const saveLast =
         commandName !== VIM_COMMAND.repeatLastCommand &&
