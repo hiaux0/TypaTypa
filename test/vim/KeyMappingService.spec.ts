@@ -260,7 +260,7 @@ describe("KeyMappingService", () => {
   });
 
   // test("sequence", () => {
-  test.only("Key, but no command", () => {
+  test("Key, but no command", () => {
     const baseNormal: VimCommand[] = [
       {
         key: "<Enter>",

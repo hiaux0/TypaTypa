@@ -12,7 +12,8 @@ const fullReloadAlways = {
 
 export default defineConfig({
   server: {
-    open: !process.env.CI,
+    // open: !process.env.CI,
+    open: false,
     port: 9000,
     host: true,
     hmr: true,

@@ -2,10 +2,10 @@ import { getCallerFunctionName } from "../modules/debugging";
 import { CuLogger as Culogger, LogOptions } from "./localCulog";
 
 export interface ShouldLogConfig {
-  log: boolean;
-  maxLevel: number; // 0 - don't log
+  log?: boolean;
+  maxLevel?: number; // 0 - don't log
   onlyLevels?: number[]; // only log specified levels
-  logDepth: number; // 1: 1-9, 2: 10-99, 3: 100-999
+  logDepth?: number; // 1: 1-9, 2: 10-99, 3: 100-999
   allowedCallerNames?: string[];
   allowedCallerNameParts?: string[];
 }
@@ -29,6 +29,8 @@ interface ILogOptions extends LogOptions {
 export const defaultShouldLogConfig: ShouldLogConfig = {
   log: true,
   maxLevel: 1,
+  // onlyLevels: [, 1], // keysequence and findingPotentialCommands
+  onlyLevels: [, 2], // command and vimstate in VimV2
   // onlyLevels: [2], // keysequence and findingPotentialCommands
   // onlyLevels: [3], //
   // onlyLevels: [4], // checkout how bindings are handled: base other merged
@@ -40,7 +42,7 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   // onlyLevels: [9], //
   logDepth: 2,
   allowedCallerNames: [],
-  allowedCallerNameParts: ["Vim"],
+  // allowedCallerNameParts: ["Vim"],
 };
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
@@ -107,39 +109,59 @@ export class Logger {
     this.logMessage(message, options);
   }
 
-  public shouldLog = (givenLevel?: number | number[], error?: Error) => {
+  public shouldLog = (
+    givenLevel?: number | (number | undefined)[],
+    error?: Error,
+  ) => {
     if (givenLevel === 0) return true;
 
     const callerName = getCallerFunctionName(error);
-    const { maxLevel, logDepth, allowedCallerNameParts } =
-      this.options.shouldLogConfig ?? {};
+    const finalOptions = {
+      ...defaultShouldLogConfig,
+      ...this.options.shouldLogConfig,
+    };
+    const {
+      maxLevel,
+      logDepth,
+      onlyLevels,
+      allowedCallerNames,
+      allowedCallerNameParts,
+    } = finalOptions;
+    onlyLevels; /*?*/
 
     // Scope
-    const scopeHasPart = allowedCallerNameParts.find((namePart) =>
-      this.scope.includes(namePart),
-    );
+    let scopeHasPart = "okay";
+    if (allowedCallerNameParts) {
+      scopeHasPart = allowedCallerNameParts?.find((namePart) =>
+        this.scope.includes(namePart),
+      );
+    }
+
     // Level
     const asArray = Array.isArray(givenLevel) ? givenLevel : [givenLevel];
     const levelOkay = asArray.some((level) => checkGivenLevel(level));
     const nameOkay =
-      defaultShouldLogConfig.allowedCallerNames.find((name) =>
-        name.includes(callerName),
-      ) ?? true;
-    const should =
-      defaultShouldLogConfig.log && levelOkay && nameOkay && scopeHasPart;
-    return should;
+      allowedCallerNames?.find((name) => name.includes(callerName)) ?? true;
+    nameOkay; /*?*/
+    const should = finalOptions.log && levelOkay && nameOkay && scopeHasPart;
+    should; /*?*/
+    return !!should;
 
-    function checkGivenLevel(level: number): boolean {
+    function checkGivenLevel(level: number | undefined): boolean {
+      level; /*?*/
+      if (!level) return false;
       let okay = false;
       if (level < 10 && logDepth === 1) {
         const mainLevel = level;
-        if (defaultShouldLogConfig.onlyLevels?.length > 0) {
-          okay = defaultShouldLogConfig.onlyLevels.includes(mainLevel);
+        if (onlyLevels?.length > 0) {
+          okay = onlyLevels.includes(mainLevel);
         }
       } else if (level >= 10 && level < 100 && logDepth === 2) {
         const secondaryLevel = level % 10;
-        if (defaultShouldLogConfig.onlyLevels?.length > 0) {
-          okay = defaultShouldLogConfig.onlyLevels.includes(secondaryLevel);
+        secondaryLevel; /*?*/
+        if (onlyLevels?.length > 0) {
+          okay = onlyLevels.includes(secondaryLevel);
+          okay; /*?*/
         }
       }
       return okay;

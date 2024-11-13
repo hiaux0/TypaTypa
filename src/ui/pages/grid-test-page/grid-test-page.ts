@@ -77,7 +77,7 @@ import {
   VimInputHandlerV2,
 } from "../../../features/vim/VimInputHandlerV2";
 
-const logger = new Logger("GridTestPage");
+const l = new Logger("GridTestPage");
 const debugLog = false;
 
 interface CellRect {
@@ -508,7 +508,7 @@ export class GridTestPage {
             Array.isArray(is1Dor2DimStringArray) &&
             typeof is1Dor2DimStringArray[0] === "string"
           ) {
-            /*prettier-ignore*/ logger.culogger.debug(["Is 1 dim string array, convert, and then invoke pasteVimBefore"])
+            /*prettier-ignore*/ l.culogger.debug(["Is 1 dim string array, convert, and then invoke pasteVimBefore"])
             this.lastCellContentArray = is1Dor2DimStringArray.map((a) => [a]);
             this.getCommand(
               VIM_COMMAND.pasteVimBefore,
@@ -521,7 +521,7 @@ export class GridTestPage {
             Array.isArray(is1Dor2DimStringArray[0]) &&
             typeof is1Dor2DimStringArray[0][0] === "string"
           ) {
-            /*prettier-ignore*/ logger.culogger.debug(["Is 2 dim string array, so invoke pasteVimBefore"])
+            /*prettier-ignore*/ l.culogger.debug(["Is 2 dim string array, so invoke pasteVimBefore"])
             this.lastCellContentArray = is1Dor2DimStringArray;
             const pasteVimBeforeCommand = this.mappingByNormalMode.find(
               (a) => a.command === VIM_COMMAND.pasteVimBefore,
@@ -1493,6 +1493,8 @@ export class GridTestPage {
   }
 
   attached() {
+    /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,329] getTextFromHtml: ", );
+
     //const vimInputHandlerV2 = vimContainer.get(VimInputHandlerV2);
     //vimInputHandlerV2.register("test");
 

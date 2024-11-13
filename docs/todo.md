@@ -8,6 +8,47 @@
 - Grid
   - be able to create a diary
 
+# Think about
+## contenteditable vs input
+- contenteditable
+  - annoying to deal with white spaces
+  + directly edit text without much processing?
+    + handles new lines
+  - <span class="bruh-line" contenteditable="">h<br>i</span>
+    - note the "br", when I enter
+      - this messes with new lines and repeat.for
+
+- input
+  - need to handle new line case
+
+# Acceptance criteria
+- Use contenteditable
+    Reasons
+        - use existing browser implementation
+        - can help with clipboard permissions
+        - supports Vietnamese out of the box (composition event)
+    - Use DIV
+        - keeps the elements
+        - SPAN inserts <BR>
+        - BUT
+            - within DIV, <BR>s can still occur
+- Have highlighting update correctly
+    - Means, to re-highlight on every keystroke
+    - HAVE to accept constant re-rendering?
+        - [ ] Performance impact
+
+- Have internal vim code be aware of the lines
+    - parse HTML to array of lines
+        - Start: Normal = JS 
+        - Enter Insert = HTML
+        - Edit in Insert = HTML
+        - Escape to Normal = HTML -> JS
+        - Back to Normal = JS
+                         = HTML repeat.for from JS
+
+- LETS ACCEPT RERENDERING for now
+
+
 # Todo
 
 ## Typing

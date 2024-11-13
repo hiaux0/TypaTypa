@@ -103,7 +103,7 @@ export class VimInputHandlerV2 {
     document.addEventListener("keydown", async (event) => {
       debugFlags.clearConsole && console.clear();
       /*                                                                                           prettier-ignore*/ if(l.shouldLog(3))  console.log("----------------------------: ", this.activeId, event);
-      const mode = this.vimCore.getVimState().mode;
+      const mode = this.vimCore?.getVimState().mode;
       if (!mode) return;
 
       const finalKeyWithModifier = ShortcutService.getKeyWithModifer(event);
@@ -121,7 +121,8 @@ export class VimInputHandlerV2 {
           mode,
           options,
         ) ?? {};
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([16, 13]))  console.log("command", command);
+      console.log(l.shouldLog([16, 12]));
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([16, 12]))  console.log("command", command);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog(3))  console.log("commandName", commandName);
       let finalCommand = command;
       let finalPressedKey = pressedKey;
@@ -169,7 +170,7 @@ export class VimInputHandlerV2 {
         );
         // if (!vimState) return; // issue: space in insert got too early returned
 
-        /*                                                                                           prettier-ignore*/ if(l.shouldLog([33, 36]))  console.log("(vimState)", (vimState));
+        /*                                                                                           prettier-ignore*/ if(l.shouldLog([33, 32]))  console.log("(vimState)", (vimState));
         if (vimState) {
           this.updateVimState(vimState);
 
@@ -320,6 +321,7 @@ export class VimInputHandlerV2 {
   }
 
   private debugLogMappings(additionalKeyBindings: KeyBindingModes): void {
+    if (!additionalKeyBindings) return;
     Object.entries(additionalKeyBindings).forEach(([mode, binding]) => {
       const typedBinding = binding as VimCommand[];
       const mapped = typedBinding.map((b) =>

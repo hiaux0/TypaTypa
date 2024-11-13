@@ -11,27 +11,28 @@
       </div>
     </div>
 
-    <div class="mainEditorContainer">
+    <div class="vim-container">
       <div
         ref="inputContainerRef"
-        class="inputContainer"
+        class="vim-lines"
         contenteditable.bind="contenteditable"
       >
-        <note-line
-          repeat.for="line of vimState.lines"
-          show.bind="!vimState.foldMap[$index]"
-          editor-line-class="inputLine"
-          line.bind="line"
-          line-index.bind="$index"
-          line-highlight-end.bind="vimState.visualEndCursor"
-          line-highlight-start.bind="vimState.visualStartCursor"
-          fold-map.bind="vimState.foldMap"
-        ></note-line>
+        <template repeat.for="line of vimState.lines">
+          <note-line
+            show.bind="!vimState.foldMap[$index]"
+            editor-line-class="vim-line"
+            line.bind="line"
+            line-index.bind="$index"
+            line-highlight-end.bind="vimState.visualEndCursor"
+            line-highlight-start.bind="vimState.visualStartCursor"
+            fold-map.bind="vimState.foldMap"
+          ></note-line>
+        </template>
       </div>
     </div>
   </div>
 
-  <div class="debugContainer" if.bind="debugFlags.showDebugSection && debug">
+  <div class="debugContainer" if.bind="debugFlags.showDebugSection">
     <div style="text-decoration: underline">Debug mode (${vimState.mode})</div>
     <div>
       <strong>Id</strong>

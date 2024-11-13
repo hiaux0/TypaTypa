@@ -13,10 +13,10 @@ import {
   IVimState,
   FoldMap,
 } from "../vim-types";
+import "./vim-ui.scss";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const l = new Logger("VimUi");
-const shouldLog_getTextFromHtml = false;
 type Direction = "up" | "down" | "left" | "right" | "none";
 
 /**
@@ -332,22 +332,30 @@ export class VimUi {
    *   ```
    */
   public getTextFromHtml(): VimLine[] {
-    /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,329] getTextFromHtml: ", );
+    /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,329] getTextFromHtml: ", );
     const $children = this.querySelectorService.getInputContainerChildrenText();
     const lines: VimLine[] = [];
 
     $children?.forEach((child) => {
+      /*prettier-ignore*/ if(l.shouldLog([,1])) console.log("-------------------------------------------------------------------");
       /* 0. just empty line */
       const { childNodes } = child;
-      /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,335] childNodes: ", childNodes);
+      /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,335] childNodes: ", childNodes);
       if (!childNodes) return;
 
       const [first, second, third, ...others] = childNodes;
 
+      if (others.length) {
+        console.error("More than 3 child nodes, check out the logic: ", others);
+      }
+
       const firstIsText = HtmlService.isTextNode(first);
+      /*prettier-ignore*/ if(l.shouldLog([,1])) console.log("[VimUi.ts,351] firstIsText: ", firstIsText);
       const secondIsBr = HtmlService.isBr(second);
+      /*prettier-ignore*/ if(l.shouldLog([,1])) console.log("[VimUi.ts,353] secondIsBr: ", secondIsBr);
       const thirdIsEmpty =
         HtmlService.isTextNode(third) && third.nodeValue === "";
+      /*prettier-ignore*/ if(l.shouldLog([,1])) console.log("[VimUi.ts,355] thirdIsEmpty: ", thirdIsEmpty);
 
       /** A. */
       /** B.i */
@@ -356,7 +364,7 @@ export class VimUi {
         childNodes.length === 2 && firstIsText && secondIsBr;
       const simpleCase = onlyOneNode && onlyOneNodeWithBr && thirdIsEmpty;
       if (simpleCase) {
-        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
+        /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,344] simpleCase: ", simpleCase);
         if (!child.textContent) return;
         lines.push({ text: child.textContent });
         return;
@@ -367,20 +375,20 @@ export class VimUi {
       const isTextOnlyMultiLinePaste = moreThan3ChildNodes && !thirdIsEmpty;
       if (isTextOnlyMultiLinePaste) {
         const textNodes = getTextNodes(child);
-        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,355] child: ", child);
-        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,355] textNodes: ", textNodes);
+        /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,355] child: ", child);
+        /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,355] textNodes: ", textNodes);
         // debugger;
         const linesToJoin: VimLine[] = []; // issue with empty text nodes in html conversio
         textNodes.forEach((textNode) => {
           textNode.normalize;
           if (!textNode.nodeValue.trim()) return;
-          /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
+          /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
           const text = textNode.nodeValue;
-          /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,369] text: ", text);
+          /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,369] text: ", text);
           linesToJoin.push({ text });
         });
         const joined = linesToJoin.map((l) => l.text).join("");
-        /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,374] joined: ", joined);
+        /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,374] joined: ", joined);
         // debugger;
         lines.push({ text: joined });
         return;
@@ -392,7 +400,7 @@ export class VimUi {
         const childrenOfDivs = Array.from((first as Element).children);
         childrenOfDivs.forEach((child) => {
           if (!child.textContent) return;
-          /*prettier-ignore*/ shouldLog_getTextFromHtml && console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
+          /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,366] firstIsDiv: ", firstIsDiv);
           lines.push({ text: child.textContent });
         });
         return;
@@ -403,6 +411,8 @@ export class VimUi {
       // console.log("WHAT");
       lines.push({ text: child.textContent });
     });
+    /*prettier-ignore*/ console.log("[VimUi.ts,404] lines: ", lines);
+    // debugger;
     return lines;
   }
 
