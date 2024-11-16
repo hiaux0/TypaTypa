@@ -48,6 +48,8 @@ export class VimEditor {
   ) {}
 
   async attached() {
+    // @ts-ignore
+    window.ve = this;
     // /* prettier-ignore */ console.log('%c------------------------------------------------------------------------------------------', `background: ${'orange'}`);
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: vim-editor.ts:60 ~ this.vimState:', this.vimState);
     // this.vimState.mode = VimMode.INSERT;
@@ -77,7 +79,7 @@ export class VimEditor {
           this.vimEditorHooks.commandListener(result);
         },
         vimStateUpdated: (vimState) => {
-          /*prettier-ignore*/ console.trace("[vim-editor.ts,79] vimStateUpdated: ", );
+          // /*prettier-ignore*/ console.trace("[vim-editor.ts,79] vimStateUpdated: ", );
           const logtext = vimState.lines[0].text
           /*prettier-ignore*/ console.log("[vim-editor.ts,82] logtext: ", logtext);
           this.setVimState(vimState);

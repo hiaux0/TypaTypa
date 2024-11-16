@@ -111,8 +111,13 @@ export class VimUi {
     const lineOffsetLeft = this.getLineRectOffsetLeft();
     if (lineOffsetLeft == null) return;
 
-    const vertDirection =
-      this.currentLineNumber > newCursorLine ? "up" : "down";
+    let vertDirection = "none";
+    if (this.currentLineNumber > newCursorLine) {
+      vertDirection = "up";
+    } else if (this.currentLineNumber < newCursorLine) {
+      vertDirection = "down";
+    }
+
     const vertSame = this.currentLineNumber === newCursorLine;
     const vertDelta = Math.abs(this.currentLineNumber - newCursorLine);
 
@@ -121,9 +126,8 @@ export class VimUi {
       newCursorLine = getAdjustedCursorLineWithFoldmap(
         this.vimState.foldMap,
         this.vimState.cursor,
-        Math.abs(this.currentLineNumber - newCursorLine),
+        Math.abs(newCursorLine),
       );
-      // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: VimUi.ts:106 ~ newCursorLine:', newCursorLine);
     }
 
     const horiDirection =
@@ -145,8 +149,10 @@ export class VimUi {
     this.currentCaretCol = newCursorCol;
 
     const newTop = newCursorLine * this.caretHeight;
+    /*prettier-ignore*/ console.log("[VimUi.ts,148] newTop: ", newTop);
     this.caret.style.top = `${newTop}px`;
     const newLeft = newCursorCol * this.caretWidth;
+    /*prettier-ignore*/ console.log("[VimUi.ts,151] newLeft: ", newLeft);
     this.caret.style.left = `${lineOffsetLeft + newLeft}px`;
 
     if (debugFlags.vimUi.enableScrollEditor) {
