@@ -74,77 +74,77 @@ export class KhongAPage {
     const vimState = VimStateClass.createEmpty();
     vimState.id = "bruh";
     vimState.lines = [{ text: "hi, world what are" }];
-    const options: VimOptions = {
-      vimState,
-      vimId: vimState.id,
-      container: this.containerRef,
-      childSelector: "vim-line",
-      hooks: {
-        vimStateUpdated: (vimState: IVimState) => {
-          this.vimState = vimState;
-        },
-      },
-    };
-    this.vimInit.init(options);
-    this.vimInputHandler.registerAndInit(options);
+    //const options: VimOptions = {
+    //  vimState,
+    //  vimId: vimState.id,
+    //  container: this.containerRef,
+    //  childSelector: "vim-line",
+    //  hooks: {
+    //    vimStateUpdated: (vimState: IVimState) => {
+    //      this.vimState = vimState;
+    //    },
+    //  },
+    //};
+    // this.vimInit.init(options);
+    // this.vimInputHandler.registerAndInit(options);
     this.vimState = vimState;
-    this.initEvents();
+    // this.initEvents();
   }
 
   private initEvents() {
-    //this.containerRef.addEventListener("keydown", (event) => {
-    //  console.clear();
-    //  const key = event.key;
-    //  /*prettier-ignore*/ console.log("[khong-a-page.ts,90] key: ", key);
-    //  const $lines = this.containerRef.querySelectorAll(".vim-line");
-    //  //if (key === "i") {
-    //  //  this.containerRef.contentEditable = "true";
-    //  //  this.containerRef.focus();
-    //  //  return;
-    //  //}
-    //  // if (!isEscape(key)) return;
-    //  if (isEnter(key)) {
-    //    const selection = window.getSelection();
-    //    const range = selection.getRangeAt(0);
-    //    const cursor = range.startOffset;
-    //    const $currentLine = Array.from($lines)[
-    //      this.vimState.cursor.line
-    //    ] as HTMLElement;
-    //    const text = $currentLine.innerText;
-    //
-    //    const beforeText = text.slice(0, cursor);
-    //    const afterText = text.slice(cursor);
-    //
-    //    $currentLine.innerText = beforeText;
-    //    this.vimState.lines[this.vimState.cursor.line] = { text: beforeText };
-    //    this.vimState.lines.push({ text: afterText });
-    //    event.preventDefault();
-    //    this.vimInit.vimCore.setVimState(this.vimState);
-    //    return;
-    //  }
-    //
-    //  //window.requestAnimationFrame(() => {
-    //  //  // this.containerRef.contentEditable = "false";
-    //  //  const lines = Array.from($text).map((line) => {
-    //  //    return { text: (line as HTMLElement).innerText };
-    //  //  });
-    //  //
-    //  //  //const text = this.containerRef.innerText;
-    //  //  //const fixEmptyNewLines = text.replace(/\n\n/g, "\n");
-    //  //  //const asLines = fixEmptyNewLines.split("\n");
-    //  //  //// const asLines = fixEmptyNewLines.split(/(?<=[\n|\r\n])/);
-    //  //  //// const asLines = text.split(/\s*(\n|\r\n)\s*/);
-    //  //  ////const splitResult = inputString
-    //  //  ////.split("\n");
-    //  //  //
-    //  //  ///*                                                                                           prettier-ignore*/ if(l.shouldLog([,1])) console.log("asLines", asLines);
-    //  //  ///*prettier-ignore*/ console.log("[khong-a-page.ts,68] asLines: ", asLines);
-    //  //  this.lines = [];
-    //  //  /*prettier-ignore*/ console.log("[khong-a-page.ts,117] lines: ", [...lines]);
-    //  //  this.lines = lines;
-    //  //  //this.signaler.dispatchSignal("refresh-lines");
-    //  //  /*                                                                                           prettier-ignore*/ if(l.shouldLog([,1])) console.log("this.lines", this.lines);
-    //  //});
-    //});
+    this.containerRef.addEventListener("keydown", (event) => {
+      console.clear();
+      const key = event.key;
+      /*prettier-ignore*/ console.log("[khong-a-page.ts,90] key: ", key);
+      const $lines = this.containerRef.querySelectorAll(".vim-line");
+      //if (key === "i") {
+      //  this.containerRef.contentEditable = "true";
+      //  this.containerRef.focus();
+      //  return;
+      //}
+      // if (!isEscape(key)) return;
+      if (isEnter(key)) {
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const cursor = range.startOffset;
+        const $currentLine = Array.from($lines)[
+          this.vimState.cursor.line
+        ] as HTMLElement;
+        const text = $currentLine.innerText;
+
+        const beforeText = text.slice(0, cursor);
+        const afterText = text.slice(cursor);
+
+        $currentLine.innerText = beforeText;
+        this.vimState.lines[this.vimState.cursor.line] = { text: beforeText };
+        this.vimState.lines.push({ text: afterText });
+        event.preventDefault();
+        this.vimInit.vimCore.setVimState(this.vimState);
+        return;
+      }
+
+      //window.requestAnimationFrame(() => {
+      //  // this.containerRef.contentEditable = "false";
+      //  const lines = Array.from($text).map((line) => {
+      //    return { text: (line as HTMLElement).innerText };
+      //  });
+      //
+      //  //const text = this.containerRef.innerText;
+      //  //const fixEmptyNewLines = text.replace(/\n\n/g, "\n");
+      //  //const asLines = fixEmptyNewLines.split("\n");
+      //  //// const asLines = fixEmptyNewLines.split(/(?<=[\n|\r\n])/);
+      //  //// const asLines = text.split(/\s*(\n|\r\n)\s*/);
+      //  ////const splitResult = inputString
+      //  ////.split("\n");
+      //  //
+      //  ///*                                                                                           prettier-ignore*/ if(l.shouldLog([,1])) console.log("asLines", asLines);
+      //  ///*prettier-ignore*/ console.log("[khong-a-page.ts,68] asLines: ", asLines);
+      //  this.lines = [];
+      //  /*prettier-ignore*/ console.log("[khong-a-page.ts,117] lines: ", [...lines]);
+      //  this.lines = lines;
+      //  //this.signaler.dispatchSignal("refresh-lines");
+      //  /*                                                                                           prettier-ignore*/ if(l.shouldLog([,1])) console.log("this.lines", this.lines);
+      //});
+    });
   }
 }

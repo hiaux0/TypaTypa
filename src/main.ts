@@ -40,6 +40,7 @@ import {
 import type { IPaymentProcessor } from "./features/vim/VimInputHandler";
 import { VimInit } from "./features/vim/VimInit";
 import { KeyMappingService } from "./features/vim/vimCore/commands/KeyMappingService";
+import { VimCustomAttribute } from "./ui/attributes/vim";
 
 console.clear();
 window.activeVimInstancesIdMap = [];
@@ -49,6 +50,7 @@ const attributes = [
   AutosizeCustomAttribute,
   DraggableCustomAttribute,
   ResizeCustomAttribute,
+  VimCustomAttribute,
 ];
 const atoms = [UploadButton];
 const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];

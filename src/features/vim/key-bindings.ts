@@ -127,17 +127,17 @@ export const keyBindings: KeyBindingModes = {
   ],
   insert: [],
   [VimMode.INSERT]: [
-    { key: "<Backspace>", command: "backspace" },
-    { key: "<Delete>", command: "delete" },
-    { key: "<Enter>", command: "newLine" },
-    { key: "<Shift>", command: "shift" },
+    //{ key: "<Backspace>", command: "backspace" },
+    //{ key: "<Delete>", command: "delete" },
+    //{ key: "<Enter>", command: "newLine" },
+    //{ key: "<Shift>", command: "shift" },
     { key: Modifier["<Space>"], command: "space" },
-    { key: "<Control>", command: "nothing" },
-    { key: "<Tab>", command: "indentRight" },
-    { key: "<Shift><Tab>", command: "indentLeft" },
+    //{ key: "<Control>", command: "nothing" },
+    //{ key: "<Tab>", command: "indentRight" },
+    //{ key: "<Shift><Tab>", command: "indentLeft" },
     // snippets
     ...commandsAllModes,
-    ...cursorAllModes,
+    // ...cursorAllModes, // Don't handle because we let contetneditable do it
   ],
   visual: [],
   [VimMode.VISUAL]: [

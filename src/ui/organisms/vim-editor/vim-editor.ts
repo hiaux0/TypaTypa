@@ -12,6 +12,9 @@ import { debugFlags } from "../../../common/modules/debug/debugFlags";
 import { IKeyMappingMapping } from "../../../types";
 import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
 import { IVimInputHandlerV2 } from "../../../features/vim/VimInputHandlerV2";
+import { isEnter } from "../../../features/vim/key-bindings";
+import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
+import { SelectionService } from "../../../common/services/SelectionService";
 
 export class VimEditor {
   @bindable public vimState: IVimState;
@@ -51,9 +54,9 @@ export class VimEditor {
 
     const options: VimOptions = {
       vimState: this.vimState,
-      vimId: this.vimState.id,
+      vimId: this.vimState.id + "-vim-editor",
       container: this.inputContainerRef,
-      childSelector: "inputLine",
+      childSelector: "vim-line",
       hooks: {
         afterInit: (vim) => {
           // console.clear();
@@ -65,6 +68,8 @@ export class VimEditor {
         },
         commandListener: (result) => {
           if (!result.vimState) return;
+          if (result.vimState.mode === VimMode.INSERT) return;
+          /*prettier-ignore*/ console.log("[vim-editor.ts,70] commandListener: ", );
 
           this.setVimState(result.vimState);
 
@@ -72,6 +77,9 @@ export class VimEditor {
           this.vimEditorHooks.commandListener(result);
         },
         vimStateUpdated: (vimState) => {
+          /*prettier-ignore*/ console.trace("[vim-editor.ts,79] vimStateUpdated: ", );
+          const logtext = vimState.lines[0].text
+          /*prettier-ignore*/ console.log("[vim-editor.ts,82] logtext: ", logtext);
           this.setVimState(vimState);
 
           const text = vimState.lines.map((l) => l.text).join(" ");
@@ -82,22 +90,61 @@ export class VimEditor {
           this.vimEditorHooks.vimStateUpdated(vimState);
         },
         modeChanged: ({ vimState }) => {
+          /*prettier-ignore*/ console.log("[vim-editor.ts,90] modeChanged: ", );
           if (!vimState) return;
           this.setVimState(vimState);
+        },
+        onInsertInput: (key) => {
+          const vimState = this.vimInit.vimCore.getVimState();
+          if (this.handleEnter(key, vimState)) return true;
         },
       },
     };
     // /*prettier-ignore*/ console.log("[vim-editor.ts,82] this.mappingByModes: ", this.mappingByMode);
-    this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
     this.vimInputHandlerV2.registerAndInit(options, this.mappingByMode, {
       reInit: true,
     });
+    this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
 
     this.initVimEditorHooks();
   }
 
   detaching() {
     this.vimInit.clear();
+  }
+
+  private handleEnter(key: string, vimState: IVimState): boolean {
+    if (!isEnter(key)) return;
+
+    const $lines = this.inputContainerRef.querySelectorAll(".vim-line");
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const cursor = range.startOffset;
+    const currentLine = vimState.cursor.line;
+    const $currentLine = Array.from($lines)[currentLine] as HTMLElement;
+    const text = $currentLine.innerText;
+    const beforeText = text.slice(0, cursor);
+    const afterText = text.slice(cursor);
+    vimState.lines[vimState.cursor.line] = { text: beforeText };
+    vimState.lines.splice(currentLine + 1, 0, { text: afterText });
+    this.vimInit.vimCore.setVimState(vimState);
+
+    window.requestAnimationFrame(() => {
+      const nextLine = currentLine + 1;
+      const $updatedLines =
+        this.inputContainerRef.querySelectorAll(".vim-line");
+      const $nextLine = Array.from($updatedLines)[nextLine] as HTMLElement;
+      /*prettier-ignore*/ console.log("[vim-editor.ts,142] nextLine: ", $nextLine);
+      const cursor = { ...vimState.cursor };
+      cursor.line = nextLine;
+      cursor.col = 0;
+      const { textNode, newCursor } = getTextNodeToFocus($nextLine, cursor);
+      const range = SelectionService.createRange(textNode, newCursor);
+      // /*prettier-ignore*/ console.log("[VimUi.ts,284] range: ", range);
+      SelectionService.setSingleRange(range);
+    });
+
+    return true;
   }
 
   private initVimEditorHooks() {

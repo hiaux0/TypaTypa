@@ -30,7 +30,9 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   log: true,
   maxLevel: 1,
   // onlyLevels: [, 1], // keysequence and findingPotentialCommands
-  onlyLevels: [, 2], // command and vimstate in VimV2
+  // onlyLevels: [, 2], // command and vimstate in VimV2
+  // onlyLevels: [, 3], // fix enter
+  onlyLevels: [, 4], // escape insert -> normal
   // onlyLevels: [2], // keysequence and findingPotentialCommands
   // onlyLevels: [3], //
   // onlyLevels: [4], // checkout how bindings are handled: base other merged
@@ -139,28 +141,34 @@ export class Logger {
 
     // Level
     const asArray = Array.isArray(givenLevel) ? givenLevel : [givenLevel];
-    const levelOkay = asArray.some((level) => checkGivenLevel(level));
+    const levelOkay = asArray.some((level, index) =>
+      checkGivenLevel(level, index),
+    );
+    // levelOkay; /*?*/
     const nameOkay =
       allowedCallerNames?.find((name) => name.includes(callerName)) ?? true;
-    nameOkay; /*?*/
+    // nameOkay; /*?*/
     const should = finalOptions.log && levelOkay && nameOkay && scopeHasPart;
-    should; /*?*/
+    // should; /*?*/
     return !!should;
 
-    function checkGivenLevel(level: number | undefined): boolean {
+    function checkGivenLevel(
+      level: number | undefined,
+      index: number,
+    ): boolean {
       level; /*?*/
       if (!level) return false;
       let okay = false;
       if (level < 10 && logDepth === 1) {
         const mainLevel = level;
         if (onlyLevels?.length > 0) {
-          okay = onlyLevels.includes(mainLevel);
+          okay = onlyLevels[index] === mainLevel;
         }
       } else if (level >= 10 && level < 100 && logDepth === 2) {
         const secondaryLevel = level % 10;
         secondaryLevel; /*?*/
         if (onlyLevels?.length > 0) {
-          okay = onlyLevels.includes(secondaryLevel);
+          okay = onlyLevels[index] === secondaryLevel;
           okay; /*?*/
         }
       }

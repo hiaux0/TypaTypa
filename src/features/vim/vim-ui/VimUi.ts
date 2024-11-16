@@ -14,6 +14,7 @@ import {
   FoldMap,
 } from "../vim-types";
 import "./vim-ui.scss";
+import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const l = new Logger("VimUi");
@@ -90,6 +91,7 @@ export class VimUi {
   }
 
   private setCursorMovement(newCursor?: Cursor) {
+    // /*prettier-ignore*/ console.log("[VimUi.ts,93] setCursorMovement: ", );
     if (!this.caret) return;
 
     //
@@ -263,6 +265,8 @@ export class VimUi {
   }
 
   private setCursorInInsert(cursor?: Cursor) {
+    ///*prettier-ignore*/ console.log("[VimUi.ts,266] setCursorInInsert: ", );
+    ///*prettier-ignore*/ console.log("[VimUi.ts,267] cursor: ", cursor);
     if (!cursor) return;
 
     const children = this.querySelectorService.getInputContainerChildren();
@@ -279,6 +283,7 @@ export class VimUi {
      */
     // const textNode = document.createTextNode($childToFocus.textContent);
     const range = SelectionService.createRange(textNode, newCursor);
+    // /*prettier-ignore*/ console.log("[VimUi.ts,284] range: ", range);
     SelectionService.setSingleRange(range);
   }
 
@@ -447,49 +452,6 @@ function getTextNodes($childToFocus: Element) {
   }
 
   return resultNodes;
-}
-
-/**
- * [[B1]]
- *
- * Text nodes:
- * [0]|[12345]
- *
- * 1. Iterate over each node
- * 2. Keep track of iteration index "|"
- * 3. Return len of previous nodes for setting cursor
- */
-function getTextNodeToFocus(
-  $childToFocus: Element,
-  cursor: Cursor,
-): { textNode: Node; newCursor: Cursor } {
-  const col = cursor.col;
-  const iter = document.createNodeIterator($childToFocus, NodeFilter.SHOW_TEXT);
-  let textNode: Node | null;
-
-  let iterIndex = 0;
-  let previousIterIndex = 0;
-  do {
-    textNode = iter.nextNode();
-    if (!textNode) {
-      textNode = document.createTextNode("");
-      $childToFocus.appendChild(textNode);
-      break;
-    }
-
-    const text = textNode.textContent;
-    if (text) {
-      const len = text.length;
-      previousIterIndex = iterIndex;
-      iterIndex += len;
-    }
-  } while (col > iterIndex);
-
-  const newCursor = {
-    ...cursor,
-    col: col - previousIterIndex,
-  };
-  return { textNode, newCursor };
 }
 
 /**

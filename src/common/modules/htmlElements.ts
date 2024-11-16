@@ -1,3 +1,4 @@
+import { Cursor } from "../../features/vim/vim-types";
 import { getValueFromPixelString } from "./strings";
 
 export function getIsInputActive(): boolean | null {
@@ -116,4 +117,47 @@ export function getRelativePosition(parent: HTMLElement, inner: HTMLElement) {
     left: relativeLeft,
     top: relativeTop,
   };
+}
+
+/**
+ * [[B1]]
+ *
+ * Text nodes:
+ * [0]|[12345]
+ *
+ * 1. Iterate over each node
+ * 2. Keep track of iteration index "|"
+ * 3. Return len of previous nodes for setting cursor
+ */
+export function getTextNodeToFocus(
+  $childToFocus: Element,
+  cursor: Cursor,
+): { textNode: Node; newCursor: Cursor } {
+  const col = cursor.col;
+  const iter = document.createNodeIterator($childToFocus, NodeFilter.SHOW_TEXT);
+  let textNode: Node | null;
+
+  let iterIndex = 0;
+  let previousIterIndex = 0;
+  do {
+    textNode = iter.nextNode();
+    if (!textNode) {
+      textNode = document.createTextNode("");
+      $childToFocus.appendChild(textNode);
+      break;
+    }
+
+    const text = textNode.textContent;
+    if (text) {
+      const len = text.length;
+      previousIterIndex = iterIndex;
+      iterIndex += len;
+    }
+  } while (col > iterIndex);
+
+  const newCursor = {
+    ...cursor,
+    col: col - previousIterIndex,
+  };
+  return { textNode, newCursor };
 }
