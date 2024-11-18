@@ -146,3 +146,18 @@ src/ui/pages/vim-v3-page/vim-v3-page.ts
 src/ui/pages/vim-v3-page/vim-v3-page.html
 src/ui/pages/vim-v3-page/vim-v3-page.scss
 
+%% Vim 18/11/24
+docs/todo.md
+arrow
+src/common/logging/logging.ts
+src/ui/organisms/vim-editor/vim-editor.ts
+src/ui/organisms/vim-editor/vim-editor.html
+
+src/ui/organisms/vim-editor/note-line/note-line.ts
+src/ui/organisms/vim-editor/note-line/note-line.html
+
+src/ui/pages/khong-a-page/khong-a-page.ts
+src/ui/pages/khong-a-page/khong-a-page.html
+src/features/vim/vim-ui/VimUi.ts
+src/features/vim/VimInputHandlerV2.ts
+

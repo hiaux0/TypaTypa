@@ -283,4 +283,33 @@ export class VimCommandManager {
     vimState.mode = VimMode.INSERT;
     return vimState;
   }
+
+  batchResults(resultList: QueueInputReturn[]): QueueInputReturn[] {
+    const accumulatedResult = resultList.filter((result) => result.vimState);
+    return groupByCommand(accumulatedResult);
+
+    function groupByCommand(input: QueueInputReturn[]) {
+      const grouped = groupBy(input, (commandResult) => {
+        return commandResult.targetCommand;
+      });
+      const result = Object.values(grouped).map((commandOutputs) => {
+        return commandOutputs[commandOutputs.length - 1];
+      });
+      return result;
+    }
+
+    function groupBy<T>(array: T[], key: (item: T) => string) {
+      return array.reduce(
+        (accumulatedResult, item) => {
+          const group = key(item);
+          if (!accumulatedResult[group]) {
+            accumulatedResult[group] = [];
+          }
+          accumulatedResult[group].push(item);
+          return accumulatedResult;
+        },
+        {} as Record<string, T[]>,
+      );
+    }
+  }
 }

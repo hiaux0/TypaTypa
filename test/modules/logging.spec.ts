@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Logger } from "../../src/common/logging/logging";
 
 describe("Logging", () => {
-  test.only("shouldLog", () => {
+  test("shouldLog", () => {
     const testLogger = new Logger("VimInit.spec.ts", {
       shouldLogConfig: { onlyLevels: [, 1], logDepth: 1 },
     });

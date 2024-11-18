@@ -158,12 +158,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
   }
 
   mergedAdditionals?.forEach((additionalBinding) => {
-    (""); /*?*/
-    ("A. mergedAdditionals ---------------"); /*?*/
-    finalBaseBindings; /*?*/
-    additionalBinding; /*?*/
     if (!additionalBinding) return;
-    let foundCount = 0;
 
     /**
      * Cases:
@@ -184,9 +179,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
         maybeIndeces.push(index);
       }
     });
-    maybeIndeces; /*?*/
     if (maybeIndeces.length === 0) {
-      /*prettier-ignore*/ Commentary.log("1. Nothing in common. Just push", maybeIndeces.length);
       finalBaseBindings.push(additionalBinding);
       return;
     }
@@ -220,14 +213,12 @@ export function overwriteAndAddExistingKeyBindingsV2(
       /*prettier-ignore*/ Commentary.log("2. SAME key AND a command, then OVERWRITE base", onlyOne);
       // sameKeyAndCommand; /*?*/
       if (onlyOne) {
-        ("B"); /*?*/
         const index = sameKeyAndCommand[0];
         const binding = finalBaseBindings[index];
         finalBaseBindings[index] = {
           ...binding,
           ...additionalBinding,
         };
-        sameKeyAndCommand; /*?*/
         return true;
       } else if (sameKeyAndCommand.length > 1) {
         throw new Error("[ERROR][KeyMappingService]: not possible");
@@ -756,11 +747,12 @@ export class KeyMappingService {
   public prepareCommandV2(
     key: string,
     mode: VimMode,
-    options?: VimOptions,
+    options: VimOptions = {},
   ): IPrepareCommandReturn | undefined {
     // /*                                                                                           prettier-ignore*/ l.shouldLog(33) && console.log("options.keyBindings", options.keyBindings);
     // /*                                                                                           prettier-ignore*/ l.shouldLog(33) && console.log("this.keyBindings", this.keyBindings);
-    const enhanced = this.completeBindingsWidthDefault(options.keyBindings);
+    const bindings = options?.keyBindings ?? this.keyBindings;
+    const enhanced = this.completeBindingsWidthDefault(bindings);
     // /*                                                                                           prettier-ignore*/ l.shouldLog(33) && console.log("enhanced", enhanced);
     options.keyBindings = enhanced;
     const { targetCommand } = this.findPotentialCommandV2(

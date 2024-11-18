@@ -38,6 +38,10 @@ export class VimStateClass {
     return new VimStateClass({ mode: VimMode.NORMAL, cursor, lines, id: "" });
   }
 
+  public static createFromVimState(vimState: IVimState) {
+    return new VimStateClass(vimState);
+  }
+
   public static createEmpty() {
     return new VimStateClass({
       mode: VimMode.NORMAL,
@@ -88,18 +92,18 @@ export class VimStateClass {
     return previous;
   }
 
-  public getNextLine() {
+  public getNextLine(): VimLine {
     if (!this.cursor) return;
     if (!this.lines) return;
 
     const nextIndex = this.getNextCursorLine();
     if (!nextIndex) return;
-    const previous = this.getLineAt(nextIndex);
+    const current = this.getLineAt(nextIndex);
 
-    return previous;
+    return current;
   }
 
-  public getNextCursorLine() {
+  public getNextCursorLine(): number {
     if (!this.cursor) return;
     if (!this.lines) return;
 
@@ -107,6 +111,12 @@ export class VimStateClass {
     const next = Math.min(this.cursor.line + 1, lineLength - 1);
 
     return next;
+  }
+
+  public getPreviousCursorLine(): number {
+    if (!this.cursor) return;
+    const previous = Math.max(this.cursor.line - 1, 0);
+    return previous;
   }
 
   public insertLine(lineIndex: number, newLine: VimLine) {

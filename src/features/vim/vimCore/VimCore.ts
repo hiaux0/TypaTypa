@@ -1,4 +1,10 @@
-import { VimOptions, IVimState, VimMode } from "../vim-types";
+import {
+  VimOptions,
+  IVimState,
+  VimMode,
+  VimExecutingMode,
+  QueueInputReturn,
+} from "../vim-types";
 import { VimCommandManager as VimCommandManager } from "./commands/VimCommandManager";
 import { VIM_COMMAND } from "../vim-commands-repository";
 import { ShortcutService } from "../../../common/services/ShortcutService";
@@ -80,5 +86,51 @@ export class VimCore {
 
     const lastResult = resultList[resultList.length - 1];
     return lastResult;
+  }
+
+  private queueInput(input: string): QueueInputReturn | undefined {
+    const prepared = this.keyMappingService.prepareCommandV2(
+      input,
+      this.getVimState().mode,
+    );
+
+    const result: QueueInputReturn = {
+      vimState: this.getVimState(),
+      targetCommand: prepared.commandName,
+      targetCommandFull: prepared.command,
+      keys: input,
+    };
+
+    return result;
+  }
+
+  /** */
+  public async queueInputSequence(
+    inputSequence: string | string[],
+    vimExecutingMode: VimExecutingMode = VimExecutingMode.INDIVIDUAL,
+  ): Promise<QueueInputReturn[]> {
+    const resultList: QueueInputReturn[] = [];
+    let givenInputSequence: string[];
+
+    if (typeof inputSequence === "string") {
+      givenInputSequence = ShortcutService.splitInputSequence(inputSequence);
+    } else {
+      givenInputSequence = inputSequence;
+    }
+
+    await Promise.all(
+      givenInputSequence.map(async (input) => {
+        const subResult = this.queueInput(input);
+        if (subResult?.targetCommand !== undefined) {
+          resultList.push(subResult);
+        }
+      }),
+    );
+
+    if (vimExecutingMode === VimExecutingMode.INDIVIDUAL) {
+      return resultList;
+    }
+
+    return this.manager.batchResults(resultList);
   }
 }

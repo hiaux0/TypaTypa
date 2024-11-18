@@ -45,6 +45,10 @@ export abstract class AbstractMode {
     this.vimStateClass = this.vimState;
   }
 
+  public setVimState(vimState: IVimState): void {
+    this.vimState = VimStateClass.create(vimState.cursor, vimState.lines);
+  }
+
   public executeCommand(
     vimState: IVimState,
     commandName: string,
@@ -159,11 +163,22 @@ export abstract class AbstractMode {
     if (!this.vimState.cursor) return this.vimState;
     const tokenUnderCursor = this.getTokenUnderCursor();
 
-    const isAtEnd = tokenUnderCursor?.end === this.vimState.cursor.col;
+    const line = this.vimState.getActiveLine();
+    const isAtEndOfLine = this.vimState.cursor.col === line.text.length - 1;
+    const nextCursorLine = this.vimState.getNextCursorLine();
+    const isLineBelow = nextCursorLine > this.vimState.cursor.line;
+    const shouldGoToNextLine = isAtEndOfLine && isLineBelow;
+    const isAtEndOfWord = tokenUnderCursor?.end === this.vimState.cursor.col;
     const isNotAtEnd = tokenUnderCursor === undefined;
 
     let resultCol: number;
-    if (isAtEnd) {
+    if (shouldGoToNextLine) {
+      const nextLine = this.vimState.getLineAt(nextCursorLine);
+      const tokenizedInput = this.reTokenizeInput(nextLine.text);
+      const nextToken = tokenizedInput[0];
+      resultCol = nextToken?.end;
+      this.setCursorLine(nextCursorLine);
+    } else if (isAtEndOfWord) {
       const nextToken = this.getTokenAtIndex(tokenUnderCursor.index + 1);
       if (nextToken) resultCol = nextToken?.end;
     } else if (isNotAtEnd) {
@@ -185,13 +200,28 @@ export abstract class AbstractMode {
     if (!this.vimState.cursor) return this.vimState;
     const nextToken = this.getNexToken();
 
-    const isAtEnd = nextToken?.end === this.vimState.cursor.col;
+    const { col } = this.vimState.cursor;
+    const line = this.vimState.getActiveLine();
+    const isAtEndOfLine = this.vimState.cursor.col === line.text.length - 1;
+    const nextCursorLine = this.vimState.getNextCursorLine();
+    const isNextLineBelow = nextCursorLine > this.vimState.cursor.line;
+    const shouldGoToNextLine = isAtEndOfLine && isNextLineBelow;
+    const isAtEndOfWord = nextToken?.end === col;
+    const isAtLastWord = nextToken.start <= col && col < nextToken.end;
     const isNotAtEnd = nextToken === undefined;
 
     let resultCol: number;
-    if (isAtEnd) {
+    if (shouldGoToNextLine) {
+      const nextLine = this.vimState.getLineAt(nextCursorLine);
+      const tokenizedInput = this.reTokenizeInput(nextLine.text);
+      const nextToken = tokenizedInput[0];
+      resultCol = nextToken?.start;
+      this.setCursorLine(nextCursorLine);
+    } else if (isAtEndOfWord) {
       const nextNextToken = this.getTokenAtIndex(nextToken.index + 1);
       if (nextNextToken) resultCol = nextNextToken?.end;
+    } else if (isAtLastWord) {
+      resultCol = nextToken.end;
     } else if (isNotAtEnd) {
       const nextToken = this.getNexToken();
       if (nextToken) resultCol = nextToken?.end;
@@ -199,8 +229,7 @@ export abstract class AbstractMode {
       resultCol = nextToken.start;
     }
 
-    // @ts-ignore
-    if (resultCol) {
+    if (resultCol != null) {
       this.setCursorCol(resultCol);
     }
 
@@ -212,13 +241,29 @@ export abstract class AbstractMode {
     if (!tokenUnderCursor) {
       tokenUnderCursor = this.getPreviousToken();
     }
+    /*prettier-ignore*/ console.log("[AbstractMode.ts,245] tokenUnderCursor: ", tokenUnderCursor);
     if (!tokenUnderCursor) return this.vimState;
 
-    const isAtStart = tokenUnderCursor?.start === this.vimState.cursor.col;
+    const activeLine = this.vimState.getActiveLine();
+    const [firstToken] = this.reTokenizeInput(activeLine.text);
+    const { col, line } = this.vimState.cursor;
+    const isAtStart = col === firstToken?.start;
+    const prevCursorLine = this.vimState.getPreviousCursorLine();
+    const isPrevious = prevCursorLine < line;
+    const shouldGoToPreviousLine = isAtStart && isPrevious;
+    shouldGoToPreviousLine; /*?*/
+    const isAtStartOfWord =
+      tokenUnderCursor?.start === this.vimState.cursor.col;
     const tokenNotUnderCursor = tokenUnderCursor === undefined;
 
     let resultCol: number;
-    if (isAtStart) {
+    if (shouldGoToPreviousLine) {
+      const previousLine = this.vimState.getLineAt(prevCursorLine);
+      const tokenizedInput = this.reTokenizeInput(previousLine.text);
+      const lastToken = tokenizedInput[tokenizedInput.length - 1];
+      resultCol = lastToken?.start;
+      this.setCursorLine(prevCursorLine);
+    } else if (isAtStartOfWord) {
       const previousToken = this.getTokenAtIndex(tokenUnderCursor.index - 1);
       if (previousToken) resultCol = previousToken?.start;
     } else if (tokenNotUnderCursor) {
@@ -448,8 +493,8 @@ export abstract class AbstractMode {
 
     return this.vimStateClass;
   }
-  getTokenUnderCursor(): TokenizedString | undefined {
-    const activeLine = this.vimState.getActiveLine();
+  getTokenUnderCursor(line?: VimLine): TokenizedString | undefined {
+    const activeLine = line ?? this.vimState.getActiveLine();
     if (!activeLine) return;
     const tokenizedInput = this.reTokenizeInput(activeLine.text);
     const targetToken = tokenizedInput?.find((input) => {
@@ -464,8 +509,8 @@ export abstract class AbstractMode {
 
     return targetToken;
   }
-  getTokenAtIndex(index: number): TokenizedString | undefined {
-    const activeLine = this.vimState.getActiveLine();
+  getTokenAtIndex(index: number, line?: VimLine): TokenizedString | undefined {
+    const activeLine = line ?? this.vimState.getActiveLine();
     if (!activeLine) return;
     const tokenizedInput = this.reTokenizeInput(activeLine.text);
     if (!tokenizedInput) return;
@@ -480,12 +525,12 @@ export abstract class AbstractMode {
 
     return targetToken;
   }
-  getNexToken(): TokenizedString | undefined {
-    const activeLine = this.vimState.getActiveLine();
+  getNexToken(line?: VimLine): TokenizedString | undefined {
+    const activeLine = line ?? this.vimState.getActiveLine();
     if (!activeLine) return;
     const tokenizedInput = this.reTokenizeInput(activeLine.text);
     if (!tokenizedInput) return;
-    const currentToken = this.getTokenUnderCursor();
+    const currentToken = this.getTokenUnderCursor(line);
 
     let nextIndex = NaN;
     if (currentToken == null) {

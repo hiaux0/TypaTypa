@@ -129,7 +129,7 @@ export class Logger {
       allowedCallerNames,
       allowedCallerNameParts,
     } = finalOptions;
-    onlyLevels; /*?*/
+    // onlyLevels; /*?*/
 
     // Scope
     let scopeHasPart = "okay";
@@ -156,7 +156,7 @@ export class Logger {
       level: number | undefined,
       index: number,
     ): boolean {
-      level; /*?*/
+      // level; /*?*/
       if (!level) return false;
       let okay = false;
       if (level < 10 && logDepth === 1) {
@@ -166,10 +166,10 @@ export class Logger {
         }
       } else if (level >= 10 && level < 100 && logDepth === 2) {
         const secondaryLevel = level % 10;
-        secondaryLevel; /*?*/
+        // secondaryLevel; /*?*/
         if (onlyLevels?.length > 0) {
           okay = onlyLevels[index] === secondaryLevel;
-          okay; /*?*/
+          // okay; /*?*/
         }
       }
       return okay;

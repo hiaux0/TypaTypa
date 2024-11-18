@@ -74,7 +74,7 @@ export class KhongAPage {
     const vimState = VimStateClass.createEmpty();
     vimState.id = "bruh";
     vimState.lines = [{ text: "01234 6789" }, { text: "abcd fghifkl" }];
-    vimState.cursor = { line: 1, col: 2 };
+    vimState.cursor = { line: 1, col: 0 };
     //const options: VimOptions = {
     //  vimState,
     //  vimId: vimState.id,
