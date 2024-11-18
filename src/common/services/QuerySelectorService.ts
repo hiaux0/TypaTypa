@@ -13,7 +13,6 @@ export class QuerySelectorService {
   }
 
   public getInputContainerChildrenText() {
-    /*prettier-ignore*/ console.log("[QuerySelectorService.ts,17] this.container: ", this.container);
     const $children = QuerySelectorService.getInputContainerChildren(
       this.container,
       this.childSelector,

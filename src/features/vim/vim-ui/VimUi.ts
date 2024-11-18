@@ -111,7 +111,7 @@ export class VimUi {
     const lineOffsetLeft = this.getLineRectOffsetLeft();
     if (lineOffsetLeft == null) return;
 
-    let vertDirection = "none";
+    let vertDirection: Direction = "none";
     if (this.currentLineNumber > newCursorLine) {
       vertDirection = "up";
     } else if (this.currentLineNumber < newCursorLine) {
@@ -149,10 +149,10 @@ export class VimUi {
     this.currentCaretCol = newCursorCol;
 
     const newTop = newCursorLine * this.caretHeight;
-    /*prettier-ignore*/ console.log("[VimUi.ts,148] newTop: ", newTop);
+    // /*prettier-ignore*/ console.log("[VimUi.ts,148] newTop: ", newTop);
     this.caret.style.top = `${newTop}px`;
     const newLeft = newCursorCol * this.caretWidth;
-    /*prettier-ignore*/ console.log("[VimUi.ts,151] newLeft: ", newLeft);
+    // /*prettier-ignore*/ console.log("[VimUi.ts,151] newLeft: ", newLeft);
     this.caret.style.left = `${lineOffsetLeft + newLeft}px`;
 
     if (debugFlags.vimUi.enableScrollEditor) {
@@ -259,7 +259,6 @@ export class VimUi {
   }
 
   public enterInsertMode(cursor: Cursor | undefined) {
-    /*prettier-ignore*/ if(l.shouldLog(36)) console.log("[VimUi.ts,254] enterInsertMode: ", );
     /**
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view
@@ -271,9 +270,7 @@ export class VimUi {
   }
 
   private setCursorInInsert(cursor?: Cursor) {
-    ///*prettier-ignore*/ console.log("[VimUi.ts,266] setCursorInInsert: ", );
-    ///*prettier-ignore*/ console.log("[VimUi.ts,267] cursor: ", cursor);
-    if (!cursor) return;
+    if (!cursor) return
 
     const children = this.querySelectorService.getInputContainerChildren();
     if (!children) return;
@@ -422,7 +419,6 @@ export class VimUi {
       // console.log("WHAT");
       lines.push({ text: child.textContent });
     });
-    /*prettier-ignore*/ console.log("[VimUi.ts,404] lines: ", lines);
     // debugger;
     return lines;
   }

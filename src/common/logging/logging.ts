@@ -29,20 +29,8 @@ interface ILogOptions extends LogOptions {
 export const defaultShouldLogConfig: ShouldLogConfig = {
   log: true,
   maxLevel: 1,
-  // onlyLevels: [, 1], // keysequence and findingPotentialCommands
-  // onlyLevels: [, 2], // command and vimstate in VimV2
-  // onlyLevels: [, 3], // fix enter
-  onlyLevels: [, 4], // escape insert -> normal
-  // onlyLevels: [2], // keysequence and findingPotentialCommands
-  // onlyLevels: [3], //
-  // onlyLevels: [4], // checkout how bindings are handled: base other merged
-  // onlyLevels: [5], //
-  // onlyLevels: [6], // after correct merged, still command undefined -- from keypress to command
-  // onlyLevels: [7], // checkout how bindings are handled: base other merged
-  // onlyLevels: [8], // zoom into mergedv2
-  // onlyLevels: [2],
-  // onlyLevels: [9], //
-  logDepth: 2,
+  // onlyLevels: [3], // keysequence and findingPotentialCommands
+  logDepth: 1,
   allowedCallerNames: [],
   // allowedCallerNameParts: ["Vim"],
 };

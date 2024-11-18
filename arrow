@@ -158,6 +158,8 @@ src/ui/organisms/vim-editor/note-line/note-line.html
 
 src/ui/pages/khong-a-page/khong-a-page.ts
 src/ui/pages/khong-a-page/khong-a-page.html
-src/features/vim/vim-ui/VimUi.ts
+
 src/features/vim/VimInputHandlerV2.ts
+src/features/vim/vim-ui/VimUi.ts
+src/features/vim/modes/AbstractMode.ts
 

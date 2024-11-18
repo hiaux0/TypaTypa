@@ -16,7 +16,7 @@ import { VimLine, VimMode, VimOptions, IVimState } from "../vim-types";
 import { CRUDService } from "../../../common/services/CRUDService";
 import { specialCharsSet } from "../../../common/modules/constants";
 
-const logger = new Logger("AbstractMode");
+const l = new Logger("AbstractMode");
 
 const deleteLineRegister = "*";
 
@@ -241,7 +241,6 @@ export abstract class AbstractMode {
     if (!tokenUnderCursor) {
       tokenUnderCursor = this.getPreviousToken();
     }
-    /*prettier-ignore*/ console.log("[AbstractMode.ts,245] tokenUnderCursor: ", tokenUnderCursor);
     if (!tokenUnderCursor) return this.vimState;
 
     const activeLine = this.vimState.getActiveLine();
@@ -457,6 +456,8 @@ export abstract class AbstractMode {
     return this.vimState;
   }
   toCharacterBefore(commandInput: string): VimStateClass {
+    /*prettier-ignore*/ console.log("[AbstractMode.ts,459] toCharacterBefore: ", );
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.trace("toCharacterBefore(commandInput:", )
     if (!this.vimState.cursor) return this.vimState;
     const { cursor } = this.vimState;
     const activeLine = this.vimState.getActiveLine();
@@ -505,7 +506,7 @@ export abstract class AbstractMode {
       return isUnderCursor;
     });
 
-    /* prettier-ignore */ logger.culogger.debug(['Token under curor: %o', targetToken], { onlyVerbose: true, });
+    /* prettier-ignore */ l.culogger.debug(['Token under curor: %o', targetToken], { onlyVerbose: true, });
 
     return targetToken;
   }
@@ -923,7 +924,7 @@ export abstract class AbstractMode {
 
     const tokenizedInput = tokenizeInput(input);
 
-    logger.culogger.debug(["reTokenizeInput: %o", tokenizedInput], {
+    l.culogger.debug(["reTokenizeInput: %o", tokenizedInput], {
       onlyVerbose: true,
     });
 

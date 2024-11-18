@@ -15,6 +15,9 @@ import { IVimInputHandlerV2 } from "../../../features/vim/VimInputHandlerV2";
 import { isEnter } from "../../../features/vim/key-bindings";
 import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
 import { SelectionService } from "../../../common/services/SelectionService";
+import { Logger } from "../../../common/logging/logging";
+
+const l = new Logger('VimEditor')
 
 export class VimEditor {
   @bindable public vimState: IVimState;
@@ -69,9 +72,9 @@ export class VimEditor {
           this.vimEditorHooks.afterInit(vim);
         },
         commandListener: (result) => {
+          /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("commandListener:");
           if (!result.vimState) return;
           if (result.vimState.mode === VimMode.INSERT) return;
-          /*prettier-ignore*/ console.log("[vim-editor.ts,70] commandListener: ", );
 
           this.setVimState(result.vimState);
 
@@ -79,9 +82,10 @@ export class VimEditor {
           this.vimEditorHooks.commandListener(result);
         },
         vimStateUpdated: (vimState) => {
+          /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("vimStateUpdated:");
           // /*prettier-ignore*/ console.trace("[vim-editor.ts,79] vimStateUpdated: ", );
-          const logtext = vimState.lines[0].text
-          /*prettier-ignore*/ console.log("[vim-editor.ts,82] logtext: ", logtext);
+          // const logtext = vimState.lines[0].text
+          // /*prettier-ignore*/ console.log("[vim-editor.ts,82] logtext: ", logtext);
           this.setVimState(vimState);
 
           const text = vimState.lines.map((l) => l.text).join(" ");
@@ -92,11 +96,11 @@ export class VimEditor {
           this.vimEditorHooks.vimStateUpdated(vimState);
         },
         modeChanged: ({ vimState }) => {
-          /*prettier-ignore*/ console.log("[vim-editor.ts,90] modeChanged: ", );
           if (!vimState) return;
           this.setVimState(vimState);
         },
         onInsertInput: (key) => {
+          /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("onInsertInput:", );
           const vimState = this.vimInit.vimCore.getVimState();
           if (this.handleEnter(key, vimState)) return true;
         },
