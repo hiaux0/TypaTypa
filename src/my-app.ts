@@ -7,6 +7,7 @@ import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
 import { VimV3Page } from "./ui/pages/vim-v3-page/vim-v3-page";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
+import { Playground } from "./ui/pages/playground/playground";
 
 const routes = [
   {
@@ -23,6 +24,11 @@ const routes = [
     path: "typins",
     component: TypingPage,
     title: "Typing",
+  },
+  {
+    path: "playground",
+    component: Playground,
+    title: "Playground",
   },
   {
     path: "propaganda",

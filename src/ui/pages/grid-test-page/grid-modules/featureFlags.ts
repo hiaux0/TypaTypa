@@ -1,5 +1,5 @@
 export const featureFlags = {
-  autosave: false,
+  autosave: true,
   llm: {
     printPrompts: true,
   },

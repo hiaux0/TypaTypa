@@ -13,8 +13,7 @@
   }
   &.selected-cell {
     background: $orange;
-    z-index: $zIndexHover2;
-    /* opacity: 0.5; */
+    /* z-index: $zIndexHover2; */
 
     // .content.overflown {
     //   background: $orange1;
@@ -22,6 +21,7 @@
     // }
     .content.overflown {
       overflow: unset;
+      z-index: $zIndexEditing;
     }
   }
 

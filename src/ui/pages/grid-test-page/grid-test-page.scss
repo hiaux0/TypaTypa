@@ -41,8 +41,9 @@
       @include cell();
       position: sticky;
       top: 0;
-      z-index: $zIndexEditing2;
+      color: $gridHeaderCellColor;
       background: $secondaryLight0;
+      z-index: $zIndexEditing2;
 
       &:hover {
         background: blue;

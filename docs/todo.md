@@ -160,7 +160,14 @@ I want to have live-editor
 - [ ] space+o
 - [ ] fix highlight in visual mode, with mulitple cells class="cell selected-cell"
   - problem: overflown cell
-
+- [ ] fix: grid: highlight overflow in cell more to the right not same as to the left
+  - should be adjusted properly
+    current position - screenRight
+- [ ] feat: grid: hide overflow
+  - ? how to handle wrapped lines "within a line"?
+    - maybe have the VimLine text prop, also be an array?
+      - so I can navigate with vim motions
+- [ ] feat: grid: join (J), if below line is empty, than delete it
 
 
 # Done

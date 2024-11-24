@@ -1,6 +1,5 @@
-// Define theme variable
-$theme: dark;
-/* $theme: light; */
+/* $theme: dark; */
+$theme: light;
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -84,10 +83,12 @@ $textColor0: if($theme == dark, $dark-white0, $light-black);
 $textColor: if($theme == dark, $dark-white1, $light-black);
 $borderColor0: if($theme == dark, $grey, $light-black1);
 $borderColor: if($theme == dark, $dark-black, $light-black1);
-$borderColor1: if($theme == dark, $dark-grey1, $light-black1);
+$borderColor1: if($theme == dark, $dark-grey1, $light-grey0);
 $backgroundColor: $secondaryLight0;
 $backgroundColor1: $secondaryLight;
 $hoverColor: $primaryDark;
+
+$gridHeaderCellColor: if($theme == dark, $dark-grey1, $light-black);
 
 // Other variables
 $borderRadius0: 0.1rem;

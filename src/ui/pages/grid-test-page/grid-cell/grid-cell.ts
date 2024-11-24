@@ -29,6 +29,7 @@ const logger = new Logger("GridCell");
 const PADDING = 6;
 const PADDING_LEFT = 6;
 const BORDER_WIDTH = 1;
+const ADJUST_RIGHT_OVERFLOW = 40; // needed to have the highlight on cell content wrap, when it is going over the screen
 
 const allowLog = false;
 const c = 0;
@@ -122,10 +123,10 @@ export class GridCell {
   public get overflownWidthWhenSelected(): string {
     const vw = document.body.clientWidth;
     const textWidth = measureTextWidth(this.cell.text);
-    if (textWidth > vw) {
+    if (textWidth > vw- ADJUST_RIGHT_OVERFLOW) {
       return "95vw";
     }
-    const adjusted = textWidth + PADDING * 2;
+    const adjusted = textWidth + PADDING * 2 ;
     const minMax = Math.min(getValueFromPixelString(this.widthPxNew), adjusted);
     ///*prettier-ignore*/ console.log("[grid-cell.ts,119] this.widthPxNew: ", this.widthPxNew);
     ///*prettier-ignore*/ console.log("[grid-cell.ts,120] adjusted: ", adjusted);
