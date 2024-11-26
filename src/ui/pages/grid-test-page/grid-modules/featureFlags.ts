@@ -11,7 +11,7 @@ export const featureFlags = {
     },
   },
   paste: {
-    splitByPeriodAndComma: true,
+    splitByPeriodAndComma: false,
   },
   mode: {
     enterCellInInsertMode: false,

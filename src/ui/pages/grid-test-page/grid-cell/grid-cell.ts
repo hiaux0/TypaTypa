@@ -27,7 +27,7 @@ import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 const logger = new Logger("GridCell");
 
 const PADDING = 6;
-const PADDING_LEFT = 6;
+const PADDING_LEFT = 7;
 const BORDER_WIDTH = 1;
 const ADJUST_RIGHT_OVERFLOW = 40; // needed to have the highlight on cell content wrap, when it is going over the screen
 

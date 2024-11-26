@@ -76,6 +76,7 @@ import {
   IVimInputHandlerV2,
   VimInputHandlerV2,
 } from "../../../features/vim/VimInputHandlerV2";
+import { openFullscreen } from "../../../common/modules/platform/fullscreen";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -122,6 +123,7 @@ export class GridTestPage {
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
   public CELL_COORDS = CELL_COORDS;
+  public openFullscreen = openFullscreen;
   // Drag and select //
   // Container needs to keep track of these values, because the grid cells are not aware of each other
   public dragStartColumnIndex = 0;
