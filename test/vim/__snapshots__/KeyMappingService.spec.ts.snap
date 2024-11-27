@@ -9,6 +9,21 @@ exports[`KeyMappingService > Key, but no command 1`] = `
 ]
 `;
 
+exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > add command to multiple existing 1`] = `
+[
+  {
+    "command": "cursorUp",
+    "desc": "test",
+    "key": "k",
+  },
+  {
+    "command": "cursorUp",
+    "desc": "test",
+    "key": "<ArrowUp>",
+  },
+]
+`;
+
 exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > add key to base 1`] = `
 [
   {

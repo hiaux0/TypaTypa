@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Logger } from "../../src/common/logging/logging";
 import {
   KeyMappingService,
+  completeBinding,
   overwriteAndAddExistingKeyBindingsV2,
 } from "../../src/features/vim/vimCore/commands/KeyMappingService";
 import { KeyBindingModes } from "../../src/features/vim/vim-types";
@@ -13,12 +14,36 @@ import {
 const logger = new Logger("VimInit.spec.ts", { terminalColor: "FgMagenta" });
 
 describe("KeyMappingService", () => {
-  //test("mergeKeybindingsV2", () => {
-  //  const keyMappingService = new KeyMappingService();
-  //  const result = keyMappingService.mergeKeybindingsV2(current, additional);
-  //  /*prettier-ignore*/ console.log("[KeyMappingService.spec.ts,996] result: ", result);
-  //  expect(result).toBe(true);
-  //});
+  describe("mergeKeybindingsV2", () => {
+    test("mergeKeybindingsV2", () => {
+      const current = {
+        NORMAL: [
+          {
+            key: "k",
+            command: "cursorUp",
+          },
+          {
+            key: "<ArrowUp>",
+            command: "cursorUp",
+          },
+        ],
+      } as KeyBindingModes;
+      const additional = {
+        NORMAL: [
+          {
+            command: "cursorUp",
+            desc: "expected",
+          },
+        ],
+      } as KeyBindingModes;
+
+      const keyMappingService = new KeyMappingService();
+      const result = keyMappingService.mergeKeybindingsV2(current, additional);
+      result; /*?*/
+      /*prettier-ignore*/ console.log("[KeyMappingService.spec.ts,996] result: ", result['NORMAL']);
+      expect(result).toBe(true);
+    });
+  });
 
   describe("overwriteAndAddExistingKeyBindingsV2", () => {
     test("init", () => {
@@ -104,6 +129,41 @@ describe("KeyMappingService", () => {
         {
           key: "<ArrowUp>",
           command: "cursorUp",
+        },
+      ];
+
+      const otherAll = [];
+
+      const result = overwriteAndAddExistingKeyBindingsV2(
+        baseNormal,
+        baseAll,
+        otherNormal,
+        otherAll,
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("add command to multiple existing", () => {
+      const baseNormal: VimCommand[] = [
+        {
+          key: "<ArrowDown>",
+          command: "cursorDown",
+        },
+        {
+          key: "u",
+          command: "cursorDown",
+        },
+      ];
+
+      const baseAll = [];
+
+      const otherNormal: VimCommand[] = [
+        {
+          command: "cursorDown",
+          desc: "cursorDown",
+          context: ["Grid"],
+          preventUndoRedo: true,
+          key: "u",
         },
       ];
 
@@ -256,6 +316,32 @@ describe("KeyMappingService", () => {
 
       // result; /*?*/
       expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe("completeBinding", () => {
+    test.only("should add key to binding", () => {
+      const binding = [
+        {
+          command: "cursorDown",
+          desc: "cursorDown",
+          context: ["Grid"],
+          preventUndoRedo: true,
+        },
+      ] as VimCommand[];
+      const additional = [
+        {
+          key: "<ArrowDown>",
+          command: "cursorDown",
+        },
+        {
+          key: "u",
+          command: "cursorDown",
+        },
+      ] as VimCommand[];
+      const result = overwriteAndAddExistingKeyBindingsV2(additional, binding);
+      result; /*?*/
+      // expect(result).toMatchSnapshot();
     });
   });
 

@@ -223,7 +223,7 @@ export class VimInputHandlerV2 {
         finalCommand = this.keyMappingService.getLastCommand();
         finalPressedKey = this.keyMappingService.getLastKey();
       }
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("finalCommand", finalCommand);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("finalCommand", finalCommand);
 
       let preventDefault = false;
       let vimState: IVimState;
