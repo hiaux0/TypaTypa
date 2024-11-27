@@ -129,6 +129,7 @@ export const specialCharsSet = new Set(specialChars);
 export const APP_NAME = "TypaTypa";
 
 export const INITIAL_APP_STATE = {
+  zen: true,
   typing: {
     tabs: {
       isDrawerOpen: false,

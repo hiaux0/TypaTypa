@@ -3,10 +3,14 @@
 <import from="./grid-cell/grid-cell"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <div>Mode: ${mode}</div>
-  <div click.trigger="openFullscreen">fullscreen</div>
+  <div if.bind="!store.isZen">Mode: ${mode}</div>
+  <section style="display: flex; margin-bottom: 12px; opacity: 0.2;">
+    <div click.trigger="openFullscreen">fullscreen</div>
+    <div click.trigger="store.toggleZenMode">zen</div>
+  </section>
+
   <!-- Toolbar -->
-  <section class="toolbar-container">
+  <section class="toolbar-container" if.bind="!store.isZen">
     <button
       class="undo-button ${gridUndoRedo.undoStack.length ? '' : 'inactive'}"
       type="button"
@@ -26,7 +30,7 @@
   </section>
 
   <!-- Function Bar -->
-  <section class="function-bar-container">
+  <section class="function-bar-container" if.bind="!store.isZen">
     <div class="cell-range-display">${orderedSelectedRangeToString}</div>
     <div class="function-bar"></div>
   </section>
@@ -127,6 +131,7 @@
   </section>
 
   <or-tabs
+    if.bind="!store.isZen"
     tabs.bind="sheetTabs"
     active-tab-id.two-way="activeSheetId"
     tab-hooks.bind="sheetTabHooks"
@@ -135,7 +140,7 @@
   <br />
   <br />
   <br />
-  <section class="data-container">
+  <section class="data-container" if.bind="!store.isZen">
     <button click.trigger="downloadData()" style="height: 30px">
       Download data
     </button>

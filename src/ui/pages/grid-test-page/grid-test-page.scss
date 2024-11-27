@@ -46,7 +46,7 @@
       z-index: $zIndexEditing2;
 
       &:hover {
-        background: blue;
+        background: $gridHeaderCellHoverColor;
       }
     }
 

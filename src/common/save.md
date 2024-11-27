@@ -1,4 +1,36 @@
 -----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------
+
+    "------------------------------"; /*?*/
+    withBinding; /*?*/
+    if (!withBinding) return;
+
+    finalBaseBindings.forEach((baseBinding, index) => {
+      index; /*?*/
+      baseBinding; /*?*/
+      if (!baseBinding) return;
+      const okayKey = baseBinding.key === withBinding.key;
+      okayKey; /*?*/
+      let okayCommand = false;
+      if (baseBinding.command || withBinding.command) {
+        okayCommand = baseBinding.command === withBinding.command;
+      }
+      okayCommand; /*?*/
+      const both = okayKey && okayCommand;
+      both; /*?*/
+      const one = okayKey || okayCommand;
+      one; /*?*/
+      const okay = one || both;
+      okay; /*?*/
+      if (okay) {
+        finalBaseBindings[index] = {
+          ...finalBaseBindings[index],
+          ...withBinding,
+        };
+      }
+    });
 
 -----------------------------------------------------------------------------------------------
     this.inputRef.addEventListener("paste", (e) => {

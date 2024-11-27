@@ -1,4 +1,4 @@
-import { inject } from "aurelia";
+import { inject, resolve } from "aurelia";
 import { APP_NAME } from "./common/modules/constants";
 import { initDebugShortcuts } from "./common/modules/debugging";
 import { route, Router } from "@aurelia/router-lite";
@@ -8,6 +8,7 @@ import { VimV3Page } from "./ui/pages/vim-v3-page/vim-v3-page";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
 import { Playground } from "./ui/pages/playground/playground";
+import { Store } from "./common/modules/store";
 
 const routes = [
   {
@@ -55,7 +56,10 @@ export class MyApp {
   //public isDrawerOpen = false;
   //public activeTabName = "";
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private store: Store = resolve(Store),
+  ) {}
 
   attached() {
     // this.router.load(TypingPage);

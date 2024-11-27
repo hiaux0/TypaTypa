@@ -14,6 +14,7 @@ import { ON_TOPIC_CHANGE } from "./eventMessages";
 export class Store {
   public message = "store.html";
   public isDrawerOpen = INITIAL_APP_STATE.typing.tabs.isDrawerOpen ?? false;
+  public isZen = INITIAL_APP_STATE.zen;
   public activeTabName = SELECTED_TAB_TITLE;
   public wordToLookUp = WORD_TO_LOOK_UP;
   public dictionaryLookedUpList: Set<string> = new Set();
@@ -26,4 +27,8 @@ export class Store {
   public onTopicChange = (topic: Topic): void => {
     this.ea?.publish(ON_TOPIC_CHANGE, topic);
   };
+
+  public toggleZenMode = (): void => {
+    this.isZen = !this.isZen;
+  }
 }

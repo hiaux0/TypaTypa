@@ -8,11 +8,11 @@
   /* height: calc(#{$columnHeight} - 1px); */
 
   &:hover {
-    background: $red;
+    background: $gridCellHoverBackground;
     /* width: 100vw; // to show all the cell content */
   }
   &.selected-cell {
-    background: $orange;
+    background: $gridCellSelectedBackground;
     /* z-index: $zIndexHover2; */
 
     // .content.overflown {
