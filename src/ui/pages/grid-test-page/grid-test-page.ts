@@ -269,7 +269,10 @@ export class GridTestPage {
           this.dragEndColumnIndex = mostRight;
           this.updateAllSelecedCells();
           this.updateContentMapChangedForView();
-          this.scrollEditor("right", 1);
+          this.scrollEditor(
+            "right",
+            featureFlags.grid.cursor.cell.scrollAmountHorizontal,
+          );
           return;
         } else {
           next = Math.min(next, this.colSize - 1);
@@ -280,7 +283,10 @@ export class GridTestPage {
         if (this.dragStartColumnIndex === 0) {
           this.spreadsheetContainerRef.scrollLeft = 0;
         } else {
-          this.scrollEditor("right", 1);
+          this.scrollEditor(
+            "right",
+            featureFlags.grid.cursor.cell.scrollAmountHorizontal,
+          );
         }
       },
       preventUndoRedo: true,
@@ -298,7 +304,10 @@ export class GridTestPage {
           this.dragEndColumnIndex = 0;
           this.updateAllSelecedCells();
           this.updateContentMapChangedForView();
-          this.scrollEditor("left", 1);
+          this.scrollEditor(
+            "left",
+            featureFlags.grid.cursor.cell.scrollAmountHorizontal,
+          );
           return;
         } else {
           next = Math.max(0, next);
@@ -310,7 +319,10 @@ export class GridTestPage {
         if (this.dragStartColumnIndex === this.colSize - 1) {
           this.spreadsheetContainerRef.scrollLeft = this.colSize * CELL_WIDTH;
         } else {
-          this.scrollEditor("left", 1);
+          this.scrollEditor(
+            "left",
+            featureFlags.grid.cursor.cell.scrollAmountHorizontal,
+          );
         }
       },
       preventUndoRedo: true,
@@ -321,7 +333,8 @@ export class GridTestPage {
       context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
-        let next = this.dragStartRowIndex - 1;
+        const { scrollAmount } = featureFlags.grid.cursor.cell;
+        let next = this.dragStartRowIndex - scrollAmount;
 
         // 1. Add new row above
         if (next < 0 && featureFlags.mode.autoExpandGrid) {
@@ -330,7 +343,7 @@ export class GridTestPage {
           this.dragEndRowIndex = 0;
           this.updateAllSelecedCells();
           this.updateContentMapChangedForView();
-          this.scrollEditor("up", 1);
+          this.scrollEditor("up", featureFlags.grid.cursor.cell.scrollAmount);
           return;
         } else {
           next = Math.max(0, next);
@@ -341,9 +354,10 @@ export class GridTestPage {
         this.dragEndRowIndex = next;
         this.updateAllSelecedCells();
         if (this.dragStartRowIndex === this.rowSize - 1) {
-          this.spreadsheetContainerRef.scrollTop = this.rowSize * CELL_HEIGHT;
+          this.spreadsheetContainerRef.scrollTop =
+            this.rowSize * (CELL_HEIGHT * scrollAmount);
         } else {
-          this.scrollEditor("up", 1);
+          this.scrollEditor("up", scrollAmount);
         }
       },
       preventUndoRedo: true,
@@ -376,7 +390,8 @@ export class GridTestPage {
       context: ["Grid"],
       execute: () => {
         this.unselectAllSelecedCells();
-        let next = this.dragStartRowIndex + 1;
+        const { scrollAmount } = featureFlags.grid.cursor.cell;
+        let next = this.dragStartRowIndex + scrollAmount;
         const mostBottom = this.rowSize;
         if (next >= mostBottom && featureFlags.mode.autoExpandGrid) {
           this.addRowBelow();
@@ -384,7 +399,7 @@ export class GridTestPage {
           this.dragEndRowIndex = mostBottom;
           this.updateAllSelecedCells();
           this.updateContentMapChangedForView();
-          this.scrollEditor("down", 1);
+          this.scrollEditor("down", scrollAmount);
           return;
         } else {
           next = Math.min(next, this.rowSize - 1);
@@ -396,7 +411,7 @@ export class GridTestPage {
         if (this.dragStartRowIndex === 0) {
           this.spreadsheetContainerRef.scrollTop = 0;
         } else {
-          this.scrollEditor("down", 1);
+          this.scrollEditor("down", scrollAmount);
         }
       },
       preventUndoRedo: true,

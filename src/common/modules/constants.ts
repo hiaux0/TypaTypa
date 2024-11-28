@@ -2,6 +2,10 @@ import { TypingDatabaseType, Topic, Tabs } from "../../types";
 import { generateId } from "./random";
 import { getTranslation } from "./translations";
 
+export const STORE_KEYS = {
+  APP_STATE: "typaTypaAppState",
+};
+
 /**
  * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
  */
