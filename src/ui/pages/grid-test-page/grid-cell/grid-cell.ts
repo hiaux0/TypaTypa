@@ -65,6 +65,7 @@ export class GridCell {
   public autocompleteValue = "";
   public autoCompleteSource: string[] = [];
   public measureTextWidth = measureTextWidth;
+  public clipText = featureFlags.grid.cells.clipText;
   public vimState: IVimState;
   public vimEditorHooks: VimHooks = {
     afterInit: (vim) => {
@@ -123,10 +124,11 @@ export class GridCell {
   public get overflownWidthWhenSelected(): string {
     const vw = document.body.clientWidth;
     const textWidth = measureTextWidth(this.cell.text);
-    if (textWidth > vw- ADJUST_RIGHT_OVERFLOW) {
+    if (textWidth > vw - ADJUST_RIGHT_OVERFLOW) {
       return "95vw";
     }
-    const adjusted = textWidth + PADDING * 2 ;
+    const adjusted = textWidth + PADDING * 2;
+    // const adjusted = 60;
     const minMax = Math.min(getValueFromPixelString(this.widthPxNew), adjusted);
     ///*prettier-ignore*/ console.log("[grid-cell.ts,119] this.widthPxNew: ", this.widthPxNew);
     ///*prettier-ignore*/ console.log("[grid-cell.ts,120] adjusted: ", adjusted);
@@ -230,8 +232,12 @@ export class GridCell {
     rowLength?: number,
   ) {
     // logger.culogger.debug(["hi"], { log: true }, (...r) => console.log(...r));
-    const getWidth = () => {
+    const getWidth = (): string => {
       if (!cell) return;
+      if (this.clipText) {
+        // return columnWidth - PADDING_LEFT + "px";
+        return columnWidth - 1 + "px";
+      }
 
       // xx 1. Show all content in edit mode --> Don't need anymore?!
       const cellScrollWidth = measureTextWidth(cell.text);
@@ -257,7 +263,7 @@ export class GridCell {
       // 2. Show all content if no cells with text to the right
       if (!cell.colsToNextText) {
         const finalWidth = Math.max(
-          cellScrollWidth + PADDING_LEFT,
+          cellScrollWidth + PADDING_LEFT * 2,
           adjustedInitialCellWidth,
         );
         if (this.column === c && this.row === r && allowLog) {

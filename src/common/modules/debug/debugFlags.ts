@@ -10,5 +10,12 @@ export const debugFlags = {
   grid: {
     enterIntoNewLine: false,
     startCellAtCol0WhenEnterNormalMode: true,
+    scroll: {
+      scrollIntoView: false,
+      scrollTop: true,
+    }
   },
 };
+
+// debugFlags
+// debugFlags.grid.scroll.scrollIntoView

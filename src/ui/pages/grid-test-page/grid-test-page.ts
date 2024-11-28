@@ -77,6 +77,7 @@ import {
   VimInputHandlerV2,
 } from "../../../features/vim/VimInputHandlerV2";
 import { openFullscreen } from "../../../common/modules/platform/fullscreen";
+import { debugFlags } from "../../../common/modules/debug/debugFlags";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -332,33 +333,16 @@ export class GridTestPage {
       desc: "cursorUp",
       context: ["Grid"],
       execute: () => {
-        this.unselectAllSelecedCells();
-        const { scrollAmount } = featureFlags.grid.cursor.cell;
-        let next = this.dragStartRowIndex - scrollAmount;
-
-        // 1. Add new row above
-        if (next < 0 && featureFlags.mode.autoExpandGrid) {
-          this.addRowAbove();
-          this.dragStartRowIndex = 0;
-          this.dragEndRowIndex = 0;
-          this.updateAllSelecedCells();
-          this.updateContentMapChangedForView();
-          this.scrollEditor("up", featureFlags.grid.cursor.cell.scrollAmount);
-          return;
-        } else {
-          next = Math.max(0, next);
-        }
-
-        // 2. Move normally
-        this.dragStartRowIndex = next;
-        this.dragEndRowIndex = next;
-        this.updateAllSelecedCells();
-        if (this.dragStartRowIndex === this.rowSize - 1) {
-          this.spreadsheetContainerRef.scrollTop =
-            this.rowSize * (CELL_HEIGHT * scrollAmount);
-        } else {
-          this.scrollEditor("up", scrollAmount);
-        }
+        this.cursorUp(1);
+      },
+      preventUndoRedo: true,
+    },
+    {
+      command: VIM_COMMAND.cursorDown,
+      desc: "cursorDown",
+      context: ["Grid"],
+      execute: () => {
+        this.cursorDown(1);
       },
       preventUndoRedo: true,
     },
@@ -383,38 +367,6 @@ export class GridTestPage {
 
         return;
       },
-    },
-    {
-      command: VIM_COMMAND.cursorDown,
-      desc: "cursorDown",
-      context: ["Grid"],
-      execute: () => {
-        this.unselectAllSelecedCells();
-        const { scrollAmount } = featureFlags.grid.cursor.cell;
-        let next = this.dragStartRowIndex + scrollAmount;
-        const mostBottom = this.rowSize;
-        if (next >= mostBottom && featureFlags.mode.autoExpandGrid) {
-          this.addRowBelow();
-          this.dragStartRowIndex = mostBottom;
-          this.dragEndRowIndex = mostBottom;
-          this.updateAllSelecedCells();
-          this.updateContentMapChangedForView();
-          this.scrollEditor("down", scrollAmount);
-          return;
-        } else {
-          next = Math.min(next, this.rowSize - 1);
-        }
-
-        this.dragStartRowIndex = next;
-        this.dragEndRowIndex = next;
-        this.updateAllSelecedCells();
-        if (this.dragStartRowIndex === 0) {
-          this.spreadsheetContainerRef.scrollTop = 0;
-        } else {
-          this.scrollEditor("down", scrollAmount);
-        }
-      },
-      preventUndoRedo: true,
     },
     {
       key: "<Space>csb",
@@ -1366,6 +1318,28 @@ export class GridTestPage {
     //},
   ];
   private mappingByCustomMode: VimCommand[] = [
+    {
+      command: VIM_COMMAND.cursorUp,
+      desc: "cursorUp",
+      context: ["Grid:Custom"],
+      execute: () => {
+        const { scrollAmount } = featureFlags.grid.cursor.cell;
+        this.cursorUp(scrollAmount);
+      },
+      preventUndoRedo: true,
+    },
+
+    {
+      command: VIM_COMMAND.cursorDown,
+      desc: "cursorDown",
+      context: ["Grid:Custom"],
+      execute: () => {
+        const { scrollAmount } = featureFlags.grid.cursor.cell;
+        this.cursorDown(scrollAmount);
+      },
+      preventUndoRedo: true,
+    },
+
     //{
     //  command: VIM_COMMAND.cursorRight,
     //  execute: () => {
@@ -1530,7 +1504,9 @@ export class GridTestPage {
 
     this.gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
-    this.scrollSelectdeIntoView();
+    if (debugFlags.grid.scroll.scrollIntoView) this.scrollSelectdeIntoView();
+    if (debugFlags.grid.scroll.scrollTop)
+      this.spreadsheetContainerRef.scrollTop = 0;
   }
 
   public startMouseDragGridCell = (columnIndex: number, rowIndex: number) => {
@@ -2383,12 +2359,15 @@ export class GridTestPage {
     const relCursorBottom = cursorRect.bottom; //  - containerRect.top;
     const relCursorRight = cursorRect.right; //  - containerRect.top;
 
-    const THRESHOLD_VALUE = 70; // - 40: 40 away from <direction>, then should scroll
+    const { scrollOffset } = featureFlags.grid.cursor.cell;
+    const THRESHOLD_VALUE = scrollOffset * delta;
+    const SCROLL_UP_THRESHOLD_ADJUST = 20;
     // bottom = right, up = left
 
     const bottomThreshold = containerRect.bottom - THRESHOLD_VALUE;
     const shouldScrollDown = relCursorBottom > bottomThreshold;
-    const topThreshold = containerRect.top + THRESHOLD_VALUE;
+    const topThreshold =
+      containerRect.top + THRESHOLD_VALUE + SCROLL_UP_THRESHOLD_ADJUST;
     const shouldScrollUp = relCursorTop < topThreshold;
 
     const rightThreshold = containerRect.right - THRESHOLD_VALUE;
@@ -2823,6 +2802,61 @@ export class GridTestPage {
       this.scrollDownToCell(col, row);
     } else if (y === "up") {
       this.scrollUpToCell(col, row);
+    }
+  }
+
+  private cursorUp(scrollAmount: number) {
+    this.unselectAllSelecedCells();
+    let next = this.dragStartRowIndex - scrollAmount;
+
+    // 1. Add new row above
+    if (next < 0 && featureFlags.mode.autoExpandGrid) {
+      this.addRowAbove();
+      this.dragStartRowIndex = 0;
+      this.dragEndRowIndex = 0;
+      this.updateAllSelecedCells();
+      this.updateContentMapChangedForView();
+      this.scrollEditor("up", scrollAmount);
+      return;
+    } else {
+      next = Math.max(0, next);
+    }
+
+    // 2. Move normally
+    this.dragStartRowIndex = next;
+    this.dragEndRowIndex = next;
+    this.updateAllSelecedCells();
+    if (this.dragStartRowIndex === this.rowSize - 1) {
+      this.spreadsheetContainerRef.scrollTop =
+        this.rowSize * (CELL_HEIGHT * scrollAmount);
+    } else {
+      this.scrollEditor("up", scrollAmount);
+    }
+  }
+
+  private cursorDown(scrollAmount: number) {
+    this.unselectAllSelecedCells();
+    let next = this.dragStartRowIndex + scrollAmount;
+    const mostBottom = this.rowSize;
+    if (next >= mostBottom && featureFlags.mode.autoExpandGrid) {
+      this.addRowBelow();
+      this.dragStartRowIndex = mostBottom;
+      this.dragEndRowIndex = mostBottom;
+      this.updateAllSelecedCells();
+      this.updateContentMapChangedForView();
+      this.scrollEditor("down", scrollAmount);
+      return;
+    } else {
+      next = Math.min(next, this.rowSize - 1);
+    }
+
+    this.dragStartRowIndex = next;
+    this.dragEndRowIndex = next;
+    this.updateAllSelecedCells();
+    if (this.dragStartRowIndex === 0) {
+      this.spreadsheetContainerRef.scrollTop = 0;
+    } else {
+      this.scrollEditor("down", scrollAmount);
     }
   }
 }

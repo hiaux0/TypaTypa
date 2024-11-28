@@ -3,8 +3,16 @@
 <import from="./grid-cell/grid-cell"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <div if.bind="!store.isZen">Mode: ${mode}</div>
-  <section style="display: flex; margin-bottom: 12px; opacity: 0.2;">
+  <section
+    style="
+      display: flex;
+      margin-bottom: 12px;
+      opacity: 0.2;
+      width: 50vw;
+      justify-content: space-evenly;
+    "
+  >
+    <div>Mode: ${mode}</div>
     <div click.trigger="openFullscreen">fullscreen</div>
     <div click.trigger="store.toggleZenMode">zen</div>
   </section>
@@ -60,12 +68,13 @@
           class="cell-header column-header"
           click.trigger="selectColumn(columnIndex)"
           data-col-index.bind="columnIndex"
+          ref="colHeaderRef"
         >
           <!-- ${numberToAlphabet(columnIndex)} -->
           <div>${(columnIndex)}</div>
           <div
             class="resize-handler"
-            resize="resize-container.bind: spreadsheetContainerRef; on-resize.bind: onResizeColumns(columnIndex); on-resize-end.bind: updateResizeColumns;"
+            resize="resize-container.bind: colHeaderRef; on-resize.bind: onResizeColumns(columnIndex); on-resize-end.bind: updateResizeColumns;"
           >
             &nbsp
           </div>

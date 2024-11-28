@@ -1,3 +1,5 @@
+import { CELL_HEIGHT } from "../../../../common/modules/constants";
+
 export const featureFlags = {
   autosave: true,
   llm: {
@@ -11,9 +13,13 @@ export const featureFlags = {
     },
   },
   grid: {
+    cells: {
+      clipText: false,
+    },
     cursor: {
       cell: {
         scrollAmount: 6,
+        scrollOffset: CELL_HEIGHT * 2,
         scrollAmountHorizontal: 1,
       },
     },

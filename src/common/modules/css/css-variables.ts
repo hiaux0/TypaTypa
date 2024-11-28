@@ -1,3 +1,5 @@
+import { kebabCase } from "aurelia";
+
 export function getCssVar(
   varName: string,
   isPixel = true,
@@ -12,7 +14,13 @@ export function getCssVar(
 }
 
 export function setCssVariable(varName: string, value: string): void {
-  document.documentElement.style.setProperty(varName, value);
+  if (varName.startsWith("--")) {
+    document.documentElement.style.setProperty(varName, value);
+    return;
+  }
+
+  const finalVarName = `--${kebabCase(varName)}`;
+  document.documentElement.style.setProperty(finalVarName, value);
 }
 
 /**

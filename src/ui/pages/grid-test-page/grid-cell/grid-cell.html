@@ -2,7 +2,7 @@
   <!-- Content -->
   <section
     ref="cellContentRef"
-    class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''}"
+    class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''} ${clipText ? 'clip-text' : ''}"
     css="width: ${isEdit ? getEditWidth : widthPxNew};"
     data-compute-width.bind="setWidthPx(cell, columnSettings?.colWidth, wholeRow.length, cell.colsToNextText, isEdit)"
   >
@@ -33,9 +33,7 @@
         if.bind="isOverflown && selected"
         class="read-only overflown"
         css="width: ${overflownWidthWhenSelected};"
-      >
-${cell.text}</pre
-      >
+      >${cell.text}</pre>
       <pre else class="read-only">${cell.text}</pre>
     </template>
   </section>

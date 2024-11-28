@@ -5,6 +5,7 @@ import {
 } from "../../common/modules/htmlElements";
 
 export class ResizeCustomAttribute {
+  // used for better resize experience. When only use `this.element`, then the mouse moves too fast
   @bindable() resizeContainer: HTMLElement;
   @bindable() onResize: (moveByX: number, moveByY: number) => {};
   @bindable() onResizeEnd: () => {};
@@ -32,6 +33,7 @@ export class ResizeCustomAttribute {
 
   private addPointerEventListeners = (): void => {
     this.resizeContainer.addEventListener("pointerdown", (event) => {
+      /*prettier-ignore*/ console.log("[resize.ts,37] event.target: ", event.target);
       this.draggedElement = findParentElement(
         event.target as HTMLElement,
         this.element,
@@ -49,6 +51,7 @@ export class ResizeCustomAttribute {
       );
       this.draggedElementMouseDownX = event.clientX;
       this.draggedElementMouseDownY = event.clientY;
+      event.stopPropagation();
     });
 
     this.resizeContainer.addEventListener("pointermove", (event) => {
@@ -64,13 +67,15 @@ export class ResizeCustomAttribute {
       // /*prettier-ignore*/ console.log("[resize.ts,65] relativeX: ", relativeX);
       // this.draggedElement.style.left = `${relativeX}px`;
       this.onResize?.(diffX, diffY);
+      event.stopPropagation();
     });
 
-    this.resizeContainer.addEventListener("pointerup", () => {
+    this.resizeContainer.addEventListener("pointerup", (event) => {
       if (!this.draggedElement) return;
       this.isDraggedElement = false;
       this.draggedElement = null;
       this.onResizeEnd();
+      event.stopPropagation();
     });
   };
 }

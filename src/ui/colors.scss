@@ -1,5 +1,5 @@
-$theme: dark;
-/* $theme: light; */
+/* $theme: dark; */
+$theme: light;
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -12,7 +12,8 @@ $light-primaryDark1: #292a27; // darker black olive
 $light-primaryDark2: #1f201d; // darker black olive
 $light-secondaryLight0: #fcfbef; // lighter beige
 $light-secondaryLight: #fefae0; // beige
-$light-secondaryLight1: #eeeacd; // beige
+$light-secondaryLight1: #eeeacd; // dark beige
+$light-secondaryLight2: #dfdbbc; // darker beige
 $light-secondary: #faedce; // beige
 $light-black0: #252815; // lighter
 $light-black: #181b0e; // main black
@@ -63,6 +64,7 @@ $primaryDark2: if($theme == dark, $dark-primaryDark2, $light-primaryDark2);
 /*prettier-ignore*/
 $secondaryLight0: if($theme == dark, $dark-secondaryLight0, $light-secondaryLight0);
 $secondaryLight1: if($theme == dark, $dark-secondaryLight1, $light-secondaryLight1);
+$secondaryLight2: if($theme == dark, $dark-secondaryLight1, $light-secondaryLight2);
 /*prettier-ignore*/
 $secondaryLight: if($theme == dark, $dark-secondaryLight, $light-secondaryLight);
 $secondary: if($theme == dark, $dark-secondary, $light-secondary);
@@ -92,10 +94,10 @@ $backgroundColor1: $secondaryLight;
 $hoverColor: $primaryDark;
 
 $gridHeaderCellColor: if($theme == dark, $dark-grey1, $light-grey);
-$gridHeaderCellHoverColor: $secondaryLight1;
+$gridHeaderCellHoverColor: $secondaryLight2;
 /* $gridCellHoverBackground: $orange; */
-$gridCellHoverBackground: $secondaryLight1;
-$gridCellSelectedBackground: $secondaryLight;
+$gridCellHoverBackground: $secondaryLight2;
+$gridCellSelectedBackground: $secondaryLight1;
 
 // Other variables
 $borderRadius0: 0.1rem;

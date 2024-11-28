@@ -22,6 +22,9 @@
     .content.overflown {
       overflow: unset;
       z-index: $zIndexEditing;
+      &.clip-text {
+        overflow: unset;
+      }
     }
   }
 
@@ -42,9 +45,11 @@
         height: 32px;
         border: unset;
         border-bottom: 1px solid $borderColor1; // based on cell()
+        background: $gridCellHoverBackground;
         z-index: $zIndexHover2 + 1;
-
-        background: $red;
+      }
+      &.clip-text {
+        overflow: hidden;
       }
     }
 
@@ -93,6 +98,7 @@
     }
 
     .read-only {
+      overflow: hidden;
       &.overflown {
         position: absolute;
         /* top: 0; */
@@ -105,7 +111,7 @@
         /* line-height: calc(#{$columnHeight} - 1px); */
         line-height: calc(#{$columnHeight} - 0px);
         color: unset;
-        white-space: normal;
+        /* white-space: normal; */ // ON->OFF: when cells seleced, had weird behavior
         width: 95vw;
         /* background: $backgroundColor1; */
         background: $gridCellHoverBackground;

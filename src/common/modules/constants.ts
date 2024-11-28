@@ -1,4 +1,6 @@
+import { camelCase } from "aurelia";
 import { TypingDatabaseType, Topic, Tabs } from "../../types";
+import { setCssVariable } from "./css/css-variables";
 import { generateId } from "./random";
 import { getTranslation } from "./translations";
 
@@ -219,7 +221,8 @@ export function pickKeysFromObject<T, Keys extends keyof T>(
   return picked;
 }
 
-export const CELL_HEIGHT = 48;
+export const CELL_HEIGHT = 32;
+setCssVariable('--cell-height', `${CELL_HEIGHT}px`);
 export const CELL_WIDTH = 64;
 export const INITIAL_COLUMN_COUNT = 10;
 export const INITIAL_ROW_COUNT = 5;
