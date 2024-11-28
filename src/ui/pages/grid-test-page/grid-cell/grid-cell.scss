@@ -12,8 +12,10 @@
     /* width: 100vw; // to show all the cell content */
   }
   &.selected-cell {
-    background: $gridCellSelectedBackground;
-    /* z-index: $zIndexHover2; */
+    /* background: $backgroundColor; */
+    /* border: 1px solid $gridCellSelectedBackground; */
+    border: 1px solid $red;
+    z-index: $zIndexHover2;
 
     // .content.overflown {
     //   background: $orange1;
@@ -127,7 +129,7 @@
     height: 100%;
     top: 0;
     /* border: 2px solid green; */
-    background: $black;
+    /* background: $black; */
     opacity: 0.5;
     z-index: $zIndexBaseBelow;
   }
