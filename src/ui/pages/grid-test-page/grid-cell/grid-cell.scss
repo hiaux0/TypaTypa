@@ -101,6 +101,7 @@
 
     .read-only {
       overflow: hidden;
+      height: $columnHeight;
       &.overflown {
         position: absolute;
         /* top: 0; */

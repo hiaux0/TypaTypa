@@ -170,7 +170,12 @@ export class GridCell {
       id,
       lines: [{ text }],
     };
+    if (featureFlags.vim.mode.putCursorAtFirstNonWhiteSpace) {
+      vimState.cursor.col = text.search(/\S/);
+    }
+
     this.vimState = vimState;
+    // /*prettier-ignore*/ console.log("[grid-cell.ts,174] vimState: ", vimState);
     // /*prettier-ignore*/ console.log("[grid-cell.ts,162] id: ", id);
     window.activeVimInstancesIdMap.push(id);
 

@@ -32,12 +32,18 @@ export const featureFlags = {
     enterCellInInsertMode: false,
     autoExpandGrid: false,
   },
+  vim: {
+    mode: {
+      putCursorAtFirstNonWhiteSpace: true,
+    }
+  }
 };
 
 // featureFlags
+// featureFlags.copy.autopasteIntoRow
 // featureFlags.grid.cursor.cell.scrollAmount
 // featureFlags.grid.cells.clipTextOffset;
 // featureFlags.llm.printPrompts
-// featureFlags.copy.autopasteIntoRow
 // featureFlags.mode.enterCellInInsertMode
 // featureFlags.mode.autoExpandGrid
+// featureFlags.vim.mode.putCursorAtFirstNonWhiteSpace

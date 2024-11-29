@@ -93,7 +93,7 @@ $backgroundColor: $secondaryLight0;
 $backgroundColor1: $secondaryLight;
 $hoverColor: $primaryDark;
 
-$gridHeaderCellColor: if($theme == dark, $dark-grey1, $light-grey);
+$gridHeaderCellColor: $grey1;
 $gridHeaderCellHoverColor: $secondaryLight2;
 /* $gridCellHoverBackground: $orange; */
 $gridCellHoverBackground: $secondaryLight2;

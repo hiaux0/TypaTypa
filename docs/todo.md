@@ -170,7 +170,7 @@ I want to have live-editor
 - [ ] feat: grid: join (J), if below line is empty, than delete it
 - [ ] feat: grid: how to invoke settings on specific cells
   - eg. this cell has this settings, how to change the settings of everything involved with this cell?
-
+- [ ] feat: grid: highlight text, then be able to hide other text
 
 # Done
 ## Grid
