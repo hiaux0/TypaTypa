@@ -168,11 +168,16 @@ I want to have live-editor
     - maybe have the VimLine text prop, also be an array?
       - so I can navigate with vim motions
 - [ ] feat: grid: join (J), if below line is empty, than delete it
+- [ ] feat: grid: how to invoke settings on specific cells
+  - eg. this cell has this settings, how to change the settings of everything involved with this cell?
 
 
 # Done
 ## Grid
 
+- [x] feat: grid: overflow cells, but leave a cell margin left
+  - bg: overflow cut off, but hard to read with the cell on the right
+  - idea: leave some cells to the left empty
 - [x] b scroll
 - [x] fix: grid: onInputWidthChanged, has scrollbar -> should auto increase cell
 - [x] feat: grid: zz

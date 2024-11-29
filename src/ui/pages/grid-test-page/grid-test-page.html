@@ -68,13 +68,12 @@
           class="cell-header column-header"
           click.trigger="selectColumn(columnIndex)"
           data-col-index.bind="columnIndex"
-          ref="colHeaderRef"
         >
           <!-- ${numberToAlphabet(columnIndex)} -->
           <div>${(columnIndex)}</div>
           <div
             class="resize-handler"
-            resize="resize-container.bind: colHeaderRef; on-resize.bind: onResizeColumns(columnIndex); on-resize-end.bind: updateResizeColumns;"
+            resize="resize-container.bind: spreadsheetContainerRef; on-resize.bind: onResizeColumns(columnIndex); on-resize-end.bind: updateResizeColumns;"
           >
             &nbsp
           </div>
@@ -88,6 +87,7 @@
             whole-row.bind="this.contentMap[rowIndex]"
             column.bind="columnIndex"
             selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+            sheet.bind="activeSheet"
             sheet-settings.bind="activeSheet.settings"
             column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
             is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"

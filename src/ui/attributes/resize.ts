@@ -33,7 +33,6 @@ export class ResizeCustomAttribute {
 
   private addPointerEventListeners = (): void => {
     this.resizeContainer.addEventListener("pointerdown", (event) => {
-      /*prettier-ignore*/ console.log("[resize.ts,37] event.target: ", event.target);
       this.draggedElement = findParentElement(
         event.target as HTMLElement,
         this.element,

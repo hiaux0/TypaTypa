@@ -15,6 +15,7 @@ export const featureFlags = {
   grid: {
     cells: {
       clipText: false,
+      clipTextOffset: 1, // measured in cells
     },
     cursor: {
       cell: {
@@ -35,6 +36,7 @@ export const featureFlags = {
 
 // featureFlags
 // featureFlags.grid.cursor.cell.scrollAmount
+// featureFlags.grid.cells.clipTextOffset;
 // featureFlags.llm.printPrompts
 // featureFlags.copy.autopasteIntoRow
 // featureFlags.mode.enterCellInInsertMode

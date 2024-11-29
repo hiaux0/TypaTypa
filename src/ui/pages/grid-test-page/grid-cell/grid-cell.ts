@@ -1,6 +1,6 @@
 import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
-import { Cell, ColHeaderMap, SheetSettings } from "../../../../types";
+import { Cell, ColHeaderMap, Sheet, SheetSettings } from "../../../../types";
 import {
   CELL_WIDTH,
   EV_GRID_CELL,
@@ -44,6 +44,7 @@ export class GridCell {
   @bindable public row: number;
   @bindable public wholeRow: Cell[];
   @bindable public selected: boolean = false;
+  @bindable public sheet: Sheet;
   @bindable public sheetSettings: SheetSettings;
   @bindable public columnSettings: ColHeaderMap[string];
   @bindable public isEdit: boolean;
@@ -296,7 +297,7 @@ export class GridCell {
       // 3.2 Calculate final width of cell to show
       const finalWidthOfCurrent = colHeaderWidth + otherColWidth;
       // const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
-      const finalWidth = Math.min(
+      let finalWidth = Math.min(
         finalWidthOfCurrent,
         cellScrollWidth + PADDING_LEFT,
       );
@@ -313,8 +314,31 @@ export class GridCell {
         /*prettier-ignore*/ console.log("[grid-cell.ts,104] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
         /*prettier-ignore*/ console.log("[grid-cell.ts,105] finalWidth: ", finalWidth);
       }
+
+      const clipTextOffset = featureFlags.grid.cells.clipTextOffset;
+      if (clipTextOffset) {
+        finalWidth = adjustWithClipTextOffset.bind(this)(
+          finalWidth,
+          clipTextOffset,
+        );
+      }
+
       const asPx = `${finalWidth}px`;
       return asPx;
+
+      function adjustWithClipTextOffset(width: number, offset: number): number {
+        if (!this.isOverflown) return width;
+        let result = width;
+        const nextCellCol = this.column + colsToNextText;
+        const start = nextCellCol - offset;
+        for (let i = start; i < nextCellCol; i++) {
+          const adjusted =
+            this.sheet.colHeaderMap[i]?.colWidth ?? this.CELL_WIDTH;
+          result -= adjusted;
+        }
+        result = Math.max(result, adjustedInitialCellWidth);
+        return result;
+      }
     };
 
     const result = getWidth();

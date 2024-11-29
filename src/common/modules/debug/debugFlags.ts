@@ -11,8 +11,8 @@ export const debugFlags = {
     enterIntoNewLine: false,
     startCellAtCol0WhenEnterNormalMode: true,
     scroll: {
-      scrollIntoView: false,
-      scrollTop: true,
+      scrollIntoView: true,
+      scrollTop: false,
     }
   },
 };
