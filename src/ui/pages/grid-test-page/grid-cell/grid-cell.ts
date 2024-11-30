@@ -304,7 +304,7 @@ export class GridCell {
       // const finalWidth = Math.max(finalWidthOfCurrent, adjustedInitialCellWidth);
       let finalWidth = Math.min(
         finalWidthOfCurrent,
-        cellScrollWidth + PADDING_LEFT,
+        cellScrollWidth + PADDING_LEFT * 2,
       );
       if (this.column === c && this.row === r && allowLog) {
         /*prettier-ignore*/ console.log("AAAA. -------------------------------------------------------------------");
