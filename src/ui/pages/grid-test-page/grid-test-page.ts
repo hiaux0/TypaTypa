@@ -343,6 +343,7 @@ export class GridTestPage {
       context: ["Grid"],
       execute: () => {
         this.cursorDown(1);
+        return true;
       },
       preventUndoRedo: true,
     },
@@ -1853,8 +1854,8 @@ export class GridTestPage {
       },
     };
     // console.log("1.");
-    this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode);
-    this.vimInputHandlerV2.registerAndInit(vimOptions, this.mappingByMode);
+    this.vimInputHandlerV2.registerAndInit(vimOptions, this.mappingByMode); // 1. init vimCore
+    this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode); // 2. need vimCore
   }
 
   private setAndUpdateSingleCellSelection(
@@ -1906,7 +1907,7 @@ export class GridTestPage {
     row = this.dragStartRowIndex,
     option?: { skipUpdate: boolean },
   ) {
-    if (this.contentMap[row] === undefined) {
+    if (this.contentMap[row] == null) {
       this.contentMap[row] = [];
     }
     this.contentMap[row][col] = { text: content } as Cell;

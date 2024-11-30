@@ -132,6 +132,10 @@ I want to have live-editor
 - [ ] feat:
 - [ ] refac:
 
+- [ ] feat: quick way to add unknown words hedonic
+- [ ] feat: reader mode, bottom to top
+  - bg: jump to the bottom to get summary and gist
+    - only then start to read "up"
 - [ ] feat: sidebar, when highlight
 - [ ] feat: grid: todo cell
 - [ ] feat: grid: inline lookup / definition / comments / notes
@@ -171,6 +175,10 @@ I want to have live-editor
 - [ ] feat: grid: how to invoke settings on specific cells
   - eg. this cell has this settings, how to change the settings of everything involved with this cell?
 - [ ] feat: grid: highlight text, then be able to hide other text
+- [ ] feat: grid: flash previous selected cell, when moving multiple cells at once
+  - bg: sometimes lose the reading position, when scrolling to many rows
+  - idea: blink a short second, where the old cell was scrolled to (the top)
+- [ ] feat: grid: multi-row cells
 
 # Done
 ## Grid
