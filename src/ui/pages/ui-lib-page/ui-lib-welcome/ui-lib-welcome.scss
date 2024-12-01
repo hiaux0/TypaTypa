@@ -1,0 +1,10 @@
+.uilib-welcome-container {
+  display: flex;
+  width: 100vw;
+  .left {
+    width: 30%;
+  }
+  .right {
+    width: 70%;
+  }
+}

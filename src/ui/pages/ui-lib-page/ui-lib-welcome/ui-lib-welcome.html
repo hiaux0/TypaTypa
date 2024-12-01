@@ -1,0 +1,8 @@
+<a if.bind="componentPath" href="#/uilib">Uilib</a>
+<au-compose
+  if.bind="componentPath"
+  template.bind="templatePath | loadTemplate"
+  component.bind="componentPath | loadComponent"
+  class="${viewModelName}"
+  scope-behavior="auto"
+></au-compose>

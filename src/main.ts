@@ -25,6 +25,7 @@ import { DraggableCustomAttribute } from "./ui/attributes/draggable";
 import { OrTabs } from "./ui/molecules/or-tabs/or-tabs";
 import { UploadButton } from "./ui/atoms/upload-button/upload-button";
 import { ResizeCustomAttribute } from "./ui/attributes/resize";
+import { LoadTemplateValueConverter } from "./ui/value-converters/load-template-value-converter";
 import { VimEditor } from "./ui/organisms/vim-editor/vim-editor";
 import { OrMenu } from "./ui/organisms/or-menu/or-menu";
 import {
@@ -41,6 +42,7 @@ import type { IPaymentProcessor } from "./features/vim/VimInputHandler";
 import { VimInit } from "./features/vim/VimInit";
 import { KeyMappingService } from "./features/vim/vimCore/commands/KeyMappingService";
 import { VimCustomAttribute } from "./ui/attributes/vim";
+import { LoadComponentValueConverter } from "./ui/value-converters/load-component-value-converter";
 
 console.clear();
 window.activeVimInstancesIdMap = [];
@@ -62,6 +64,10 @@ const organisms = [
   Topics,
   VimEditor,
 ];
+const valueConverters = [
+  LoadComponentValueConverter,
+  LoadTemplateValueConverter,
+];
 
 // DI.createContainer()
 //  Registration.instance(IPlatform, PLATFORM),
@@ -82,7 +88,14 @@ const appContainer = Aurelia.register(
     useHref: false,
   }),
 )
-  .register([...atoms, ...attributes, ...molecules, ...organisms, Scratch])
+  .register([
+    ...atoms,
+    ...attributes,
+    ...molecules,
+    ...organisms,
+    ...valueConverters,
+    Scratch,
+  ])
   .register(Registration.singleton(Store, Store))
   // .register(VimInit)
   .register(KeyMappingService)

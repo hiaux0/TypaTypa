@@ -9,6 +9,8 @@ import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
 import { Playground } from "./ui/pages/playground/playground";
 import { Store } from "./common/modules/store";
+import { UiLibPage } from "./ui/pages/ui-lib-page/ui-lib-page";
+import { UiLibWelcome } from "./ui/pages/ui-lib-page/ui-lib-welcome/ui-lib-welcome";
 
 const routes = [
   {
@@ -25,6 +27,15 @@ const routes = [
     path: "typins",
     component: TypingPage,
     title: "Typing",
+  },
+  {
+    path: "uilib",
+    component: UiLibPage,
+    title: "uilib",
+  },
+  {
+    path: "uilib/:category/*viewModelName",
+    component: UiLibWelcome,
   },
   {
     path: "playground",
