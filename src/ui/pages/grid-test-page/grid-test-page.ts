@@ -202,10 +202,10 @@ export class GridTestPage {
         command: VIM_COMMAND.yank,
         afterExecute: async (mode, _, vimCore) => {
           const { autopasteIntoRow } = featureFlags.copy;
-          const okay =
+          const autopaste =
             autopasteIntoRow.enabled &&
             autopasteIntoRow.method.includes("yank");
-          if (okay) {
+          if (autopaste) {
             const modeHandler = vimCore.manager.getMode(mode) as VisualMode;
             const text = modeHandler.getSelectedText();
             const col = featureFlags.copy.autopasteIntoRow.col;
@@ -417,6 +417,14 @@ export class GridTestPage {
         const endCol = startCol + this.lastCellContentArray[0]?.length - 1;
         const endRow =
           this.dragStartRowIndex + this.lastCellContentArray.length - 1;
+        //
+        ///*prettier-ignore*/ console.log("[grid-test-page.ts,422] this.lastCellContentArray: ", this.lastCellContentArray);
+        //if (
+        //  Array.isArray(this.lastCellContentArray) &&
+        //  typeof this.lastCellContentArray[0] === "string"
+        //) {
+        //  this.lastCellContentArray = this.lastCellContentArray.map((a) => [a]);
+        //}
         iterateOverRangeBackwards(
           [startCol, startRow],
           [endCol, endRow],
@@ -941,6 +949,28 @@ export class GridTestPage {
       },
     },
     {
+      key: "yiw",
+      desc: "yank cell",
+      context: ["Grid"],
+      execute: () => {
+        console.log("yiw");
+        const { autopasteIntoRow } = featureFlags.copy;
+        const autopaste =
+          autopasteIntoRow.enabled && autopasteIntoRow.method.includes("yank");
+        if (autopaste) {
+          const text = this.getCurrentCell()?.text;
+          const col = featureFlags.copy.autopasteIntoRow.col;
+          const isCellEmpty = this.isCellEmpty(col);
+          if (isCellEmpty) {
+            this.setCurrentCellContent(text, col);
+            return;
+          }
+          this.addCellBelowAndMaybeNewRow(text, col);
+          return true;
+        }
+      },
+    },
+    {
       key: "zt",
       desc: "Scroll to top",
       context: ["Grid"],
@@ -1212,10 +1242,10 @@ export class GridTestPage {
       desc: "yank",
       context: ["Grid"],
       execute: () => {
-        const collectDeleted = [];
+        const collectDeleted: string[][] = [];
         this.iterateOverCol(
           (col, row) => {
-            collectDeleted.push(this.getCurrentCell(col, row)?.text ?? "");
+            collectDeleted.push([this.getCurrentCell(col, row)?.text ?? ""]);
           },
           {
             startRow: this.dragStartRowIndex,
@@ -1223,6 +1253,7 @@ export class GridTestPage {
           },
         );
         this.lastCellContentArray = collectDeleted;
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1248] this.lastCellContentArray: ", this.lastCellContentArray);
         this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         this.setAndUpdateSingleCellSelection(
           this.dragStartColumnIndex,

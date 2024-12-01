@@ -221,7 +221,9 @@ export class VimInputHandlerV2 {
       let finalPressedKey = pressedKey;
       if (commandName === VIM_COMMAND.repeatLastCommand) {
         finalCommand = this.keyMappingService.getLastCommand();
+        /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,224] finalCommand: ", finalCommand);
         finalPressedKey = this.keyMappingService.getLastKey();
+        /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,226] finalPressedKey: ", finalPressedKey);
       }
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("finalCommand", finalCommand);
 
