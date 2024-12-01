@@ -18,6 +18,7 @@ import { cursorAllModes, isEnter } from "./key-bindings";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
 import { Logger } from "../../common/logging/logging";
 import { debugFlags } from "../../common/modules/debug/debugFlags";
+import { VIM_ID_MAP } from "../../common/modules/constants";
 
 const l = new Logger("VimInputHandlerV2");
 
@@ -206,11 +207,17 @@ export class VimInputHandlerV2 {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,110] finalKeyWithModifier: ", finalKeyWithModifier);
       const pressedKey = ShortcutService.getPressedKey(event);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKey);
+
       const currentBindings = this.inputMap[this.activeId];
+      const globalBindings = this.inputMap[VIM_ID_MAP.global];
+      const mergedWithGlobal = this.keyMappingService.mergeKeybindingsV2(
+        currentBindings,
+        globalBindings,
+      );
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("this.activeId", this.activeId);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,90] currentBindings: ", currentBindings);
       const options = this.vimCore.options;
-      options.keyBindings = currentBindings;
+      options.keyBindings = mergedWithGlobal;
       const { command, commandName, commandSequence } =
         this.keyMappingService.prepareCommandV2(
           finalKeyWithModifier,

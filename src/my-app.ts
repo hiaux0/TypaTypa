@@ -1,5 +1,5 @@
 import { inject, resolve } from "aurelia";
-import { APP_NAME } from "./common/modules/constants";
+import { APP_NAME, VIM_ID_MAP } from "./common/modules/constants";
 import { initDebugShortcuts } from "./common/modules/debugging";
 import { route, Router } from "@aurelia/router-lite";
 import { TypingPage } from "./ui/pages/typing-page/typing-page";
@@ -81,13 +81,13 @@ export class MyApp {
     // this.router.load(GridTestPage);
     // this.router.load(KhongAPage);
     this.vimInputHandlerV2.registerAndInit(
-      { vimId: "App" },
+      { vimId: VIM_ID_MAP.global },
       {
         [VimMode.ALL]: [
           {
-            key: "<Ctrl>p",
+            key: "<Control>p",
             execute: () => {
-              console.log("Ctrl+p");
+              this.store.toggleCommandPaletteOpen();
               return true;
             },
             preventUndoRedo: true,
