@@ -43,6 +43,7 @@ import { VimInit } from "./features/vim/VimInit";
 import { KeyMappingService } from "./features/vim/vimCore/commands/KeyMappingService";
 import { VimCustomAttribute } from "./ui/attributes/vim";
 import { LoadComponentValueConverter } from "./ui/value-converters/load-component-value-converter";
+import { PopoverTwo } from "./ui/molecules/popover-two/popover-two";
 
 console.clear();
 window.activeVimInstancesIdMap = [];
@@ -55,7 +56,13 @@ const attributes = [
   VimCustomAttribute,
 ];
 const atoms = [UploadButton];
-const molecules = [AutocompleteInput, LabeledWordList, OrTabs, Popover];
+const molecules = [
+  AutocompleteInput,
+  LabeledWordList,
+  OrTabs,
+  Popover,
+  PopoverTwo,
+];
 const organisms = [
   CustomTable,
   Dictionary,

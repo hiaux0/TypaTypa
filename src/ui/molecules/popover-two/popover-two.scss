@@ -1,0 +1,40 @@
+@import "../../colors.scss";
+@import "../../mixins.scss";
+
+.popover-two-overlay {
+  position: absolute;
+  width: 100vw;
+
+  .popover-two-container {
+    position: relative;
+    width: 600px;
+    min-height: 200px;
+    margin: 0 auto;
+    padding: 6px;
+    right: 10px;
+    @include border;
+    background: $secondaryLight;
+    z-index: $zIndex30;
+
+    .title-container {
+      // position: absolute;
+      // right: 50%;
+      display: flex;
+      justify-content: center;
+
+      .title {
+        width: fit-content;
+        margin-top: -17px;
+        padding: 4px 16px;
+        background: $secondaryLight;
+      }
+    }
+
+    .content-container {
+      margin-top: 12px;
+      .content {
+        color: red;
+      }
+    }
+  }
+}

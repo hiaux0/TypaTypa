@@ -1,0 +1,20 @@
+<span click.trigger="triggerClicked()" ref="clickTriggerRef">
+  <au-slot name="trigger">
+    &lt;button au-slot="trigger"&gt;&lt;\button&gt;
+  </au-slot>
+</span>
+
+<template if.bind="isOpen">
+  <div class="popover-two-overlay">
+    <section class="popover-two-container" ref="popoverContainerRef">
+      <div class="title-container">
+        <div class="title">${title}</div>
+      </div>
+      <p class="content-container">
+        <au-slot name="content">
+          &lt;template au-slot="trigger"&gt;&lt;\template&gt;
+        </au-slot>
+      </p>
+    </section>
+  </div>
+</template>

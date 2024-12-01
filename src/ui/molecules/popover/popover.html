@@ -1,5 +1,7 @@
 <span click.trigger="triggerClicked()" ref="clickTriggerRef">
-  <au-slot name="trigger">.. trigger here ..</au-slot>
+  <au-slot name="trigger">
+    &lt;button au-slot="trigger"&gt;&lt;\button&gt;
+  </au-slot>
 </span>
 
 <template if.bind="isOpen">
@@ -15,7 +17,9 @@
       </div>
     </div>
     <p class="content-container">
-      <au-slot name="content">.. content here ..</au-slot>
+      <au-slot name="content">
+        &lt;template au-slot="trigger"&gt;&lt;\template&gt;
+      </au-slot>
     </p>
   </section>
 </template>
