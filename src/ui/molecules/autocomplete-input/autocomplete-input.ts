@@ -6,10 +6,21 @@ import { getLongestCommonSubstring } from "../../../common/modules/strings";
 
 const debugLog = false;
 
+/**
+ *
+ * ```html
+ *  <autocomplete-input
+ *    value.two-way="value"
+ *    source.bind="source"
+ *  ></autocomplete-input>
+ * ```
+ */
 export class AutocompleteInput {
   @bindable() value = "";
-  @bindable() placeholder = `${translations.search}...`;
   @bindable() source: string[] = [];
+  @bindable() alwaysVisible = false;
+  @bindable() placeholder = `${translations.search}...`;
+  @bindable() autofocus: boolean;
   /**
    * If is a string, that means, in the view just the attribute was used
    */
@@ -50,6 +61,28 @@ export class AutocompleteInput {
     this.hideInput = this.hideInput === "" || this.hideInput;
     this.updateSuggestions(this.value);
     this.initKeyboardEvents();
+    this.handleRequired();
+    this.handleBindables();
+  }
+
+  private handleRequired(): void {
+    if (!this.source) {
+      /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: You need to provide a source attribute");
+    }
+  }
+
+  private handleBindables(): void {
+    /*prettier-ignore*/ console.log("[autocomplete-input.ts,76] this.autofocus: ", this.autofocus);
+    if (this.alwaysVisible) {
+      this.convertSourceToSuggestions();
+    }
+  }
+
+  private convertSourceToSuggestions() {
+    this.suggestions = this.source.map((s) => ({
+      highlighted: s,
+      original: s,
+    }));
   }
 
   public selectSuggestion(suggestionName: string): void {
@@ -60,12 +93,18 @@ export class AutocompleteInput {
   }
 
   private clearSuggestions(): void {
+    //if (this.alwaysVisible) {
+    //  return;
+    //}
     this.suggestions = [];
   }
 
   private updateSuggestions(searchValue: string | undefined): void {
     this.clearSuggestions();
-    if (!searchValue) return;
+    if (!searchValue) {
+      if (this.alwaysVisible) this.convertSourceToSuggestions();
+      return;
+    }
     /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
     /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
     this.source.forEach((word) => {

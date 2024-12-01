@@ -1,5 +1,5 @@
 import './uilib-popover.scss';
 
 export class UilibPopover {
-  public message = "uilib-popover.html";
+  public source = ["one", "two", "three"];
 }

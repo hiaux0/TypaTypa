@@ -51,6 +51,8 @@
 
 # Todo
 
+- [ ] autocomplete: add 110/110, on type 65/110 in input
+
 ## Typing
 
 - ui

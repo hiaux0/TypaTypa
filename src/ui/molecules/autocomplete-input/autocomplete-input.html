@@ -8,7 +8,7 @@
     tabindex="1"
   />
   <ul
-    if.bind="value && suggestions.length"
+    if.bind="value && suggestions.length || alwaysVisible"
     class="suggesion-list"
     ref="suggesionListRef"
     css="width: ${width};"
