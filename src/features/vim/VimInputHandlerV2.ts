@@ -35,18 +35,20 @@ export interface RegisterOptions {
 }
 
 export type IVimInputHandlerV2 = VimInputHandlerV2;
-export const IVimInputHandlerV2 =
-  DI.createInterface<IVimInputHandlerV2>("VimInputHandlerV2");
+export const IVimInputHandlerV2 = DI.createInterface<IVimInputHandlerV2>(
+  "VimInputHandlerV2",
+  (x) => x.singleton(VimInputHandlerV2),
+);
 
 /**
  * Delegate mapping to command in the correct context
  */
 export class VimInputHandlerV2 {
+  public inputMap: InputMap = {};
+  public vimCore: VimCore;
   private idHistory: Id[] = [];
-  private inputMap: InputMap = {};
   private instancesMap: InstancesMap = {};
   private vimUi: VimUi;
-  public vimCore: VimCore;
 
   public get activeId(): Id {
     const active = this.idHistory[this.idHistory.length - 1];

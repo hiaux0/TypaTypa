@@ -163,3 +163,26 @@ src/features/vim/VimInputHandlerV2.ts
 src/features/vim/vim-ui/VimUi.ts
 src/features/vim/modes/AbstractMode.ts
 
+
+%% Command palette
+src/ui/pages/ui-lib-page/ui-lib-page.html
+
+
+src/ui/organisms/command-palette/command-palette.ts
+src/ui/organisms/command-palette/command-palette.html
+src/ui/organisms/command-palette/command-palette.scss
+src/ui/molecules/autocomplete-input/autocomplete-input.ts
+src/ui/molecules/autocomplete-input/autocomplete-input.html
+src/ui/molecules/autocomplete-input/autocomplete-input.scss
+src/ui/molecules/popover-two/popover-two.ts
+src/ui/molecules/popover-two/popover-two.html
+src/ui/molecules/popover-two/popover-two.scss
+src/ui/pages/ui-lib-page/uilib-organisms/uilib-command-palette/uilib-command-palette.ts
+src/ui/pages/ui-lib-page/uilib-organisms/uilib-command-palette/uilib-command-palette.html
+src/ui/pages/ui-lib-page/uilib-organisms/uilib-command-palette/uilib-command-palette.scss
+src/ui/pages/ui-lib-page/uilib-molecules/uilib-popover/uilib-popover.ts
+src/ui/pages/ui-lib-page/uilib-molecules/uilib-popover/uilib-popover.html
+src/ui/pages/ui-lib-page/uilib-molecules/uilib-popover/uilib-popover.scss
+src/ui/pages/ui-lib-page/uilib-molecules/uilib-autocomplete-input/uilib-autocomplete-input.ts
+src/ui/pages/ui-lib-page/uilib-molecules/uilib-autocomplete-input/uilib-autocomplete-input.html
+src/ui/pages/ui-lib-page/uilib-molecules/uilib-autocomplete-input/uilib-autocomplete-input.scss

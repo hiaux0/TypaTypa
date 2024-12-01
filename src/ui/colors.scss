@@ -1,5 +1,5 @@
-/* $theme: dark; */
-$theme: light;
+$theme: dark;
+/* $theme: light; */
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -87,7 +87,7 @@ $orange1: #ffb016;
 $textColor0: if($theme == dark, $dark-white0, $light-black);
 $textColor: if($theme == dark, $dark-white1, $light-black);
 $borderColor0: if($theme == dark, $grey, $light-black1);
-$borderColor: if($theme == dark, $dark-black, $light-black1);
+$borderColor: if($theme == dark, $light-grey, $light-black1);
 $borderColor1: if($theme == dark, $dark-grey1, $light-grey0);
 $backgroundColor: $secondaryLight0;
 $backgroundColor1: $secondaryLight;
@@ -131,6 +131,7 @@ $zIndexEditing: 1000;
 $zIndexEditing2: 2000;
 $zIndexEditing21: 2100;
 $zIndexEditing3: 3000;
+$zIndexAboveAll: 10000;
 
 $columnWidth: 64px;
 $columnHeight: var(--cell-height);

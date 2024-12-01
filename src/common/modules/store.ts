@@ -14,6 +14,7 @@ import { ON_TOPIC_CHANGE } from "./eventMessages";
 // @inject(EventAggregator)
 export class Store {
   public isDrawerOpen: boolean;
+  public isCommandPaletteOpen: boolean;
   public isZen: boolean;
   public activeTabName: string;
   public wordToLookUp: string;
@@ -32,6 +33,11 @@ export class Store {
 
   public toggleZenMode = (): void => {
     this.isZen = !this.isZen;
+    this.updateLocalStorage();
+  };
+
+  public toggleCommandPaletteOpen = (): void => {
+    this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
     this.updateLocalStorage();
   };
 

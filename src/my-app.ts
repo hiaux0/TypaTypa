@@ -11,6 +11,8 @@ import { Playground } from "./ui/pages/playground/playground";
 import { Store } from "./common/modules/store";
 import { UiLibPage } from "./ui/pages/ui-lib-page/ui-lib-page";
 import { UiLibWelcome } from "./ui/pages/ui-lib-page/ui-lib-welcome/ui-lib-welcome";
+import { IVimInputHandlerV2 } from "./features/vim/VimInputHandlerV2";
+import { VimMode, VimOptions } from "./features/vim/vim-types";
 
 const routes = [
   {
@@ -70,6 +72,7 @@ export class MyApp {
   constructor(
     private router: Router,
     private store: Store = resolve(Store),
+    private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
   ) {}
 
   attached() {
@@ -77,7 +80,24 @@ export class MyApp {
     // this.router.load(PropagandaPage);
     // this.router.load(GridTestPage);
     // this.router.load(KhongAPage);
+    this.vimInputHandlerV2.registerAndInit(
+      { vimId: "App" },
+      {
+        [VimMode.ALL]: [
+          {
+            key: "<Ctrl>p",
+            execute: () => {
+              console.log("Ctrl+p");
+              return true;
+            },
+            preventUndoRedo: true,
+          },
+        ],
+      },
+    );
 
     initDebugShortcuts();
   }
+
+  private openCommandPalette(): void {}
 }

@@ -7,6 +7,13 @@ declare global {
   }
 }
 
+export interface AutocompleteSource {
+  text: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+}
+
 export interface Tabs {
   title: string;
   shortcut: string;

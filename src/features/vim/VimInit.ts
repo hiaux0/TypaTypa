@@ -28,7 +28,6 @@ export class VimInit {
 
     if (!options) return;
     this.options = options;
-    this.vimInputHandlerV2;
     this.vimCore = this.vimInputHandlerV2.vimCore;
   }
 

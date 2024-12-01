@@ -1,9 +1,16 @@
-<popover-two close-on-click="false" is-open="true">
+<popover-two
+  close-on-click="false"
+  is-open="true"
+  title="Command Palette"
+  if.bind="isOpen"
+>
   <template au-slot="content">
     <autocomplete-input
       value.two-way="value"
-      source.bind="source"
+      source.bind="autocompleteSource"
       always-visible="true"
+      autofocus
+      width="600px"
     ></autocomplete-input>
   </template>
 </popover-two>

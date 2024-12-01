@@ -110,6 +110,7 @@ const appContainer = Aurelia.register(
   .register(KeyMappingService)
   .register(VimInputHandler)
   .register(VimInputHandlerV2)
+  // .register(Registration.singleton(VimInputHandlerV2, VimInputHandlerV2))
   // .register(vimContainer)
   // .register()
   .register(

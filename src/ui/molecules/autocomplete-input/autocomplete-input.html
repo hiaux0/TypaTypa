@@ -19,7 +19,10 @@
       click.trigger="selectSuggestion(suggestion.original)"
       data-scroll-index="${$index}"
     >
-      <span innerhtml.bind="suggestion.highlighted"></span>
+      <div class="suggestion-content">
+        <span innerhtml.bind="suggestion.highlighted"></span>
+        <div class="right">${suggestion.right}</div>
+      </div>
     </li>
   </ul>
 </div>

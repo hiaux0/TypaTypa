@@ -3,6 +3,7 @@ import "./autocomplete-input.scss";
 import { UiSuggestion } from "../../../domain/types/uiTypes";
 import { translations } from "../../../common/modules/translations";
 import { getLongestCommonSubstring } from "../../../common/modules/strings";
+import { AutocompleteSource } from "../../../types";
 
 const debugLog = false;
 
@@ -17,7 +18,7 @@ const debugLog = false;
  */
 export class AutocompleteInput {
   @bindable() value = "";
-  @bindable() source: string[] = [];
+  @bindable() source: AutocompleteSource[];
   @bindable() alwaysVisible = false;
   @bindable() placeholder = `${translations.search}...`;
   @bindable() autofocus: boolean;
@@ -72,16 +73,18 @@ export class AutocompleteInput {
   }
 
   private handleBindables(): void {
-    /*prettier-ignore*/ console.log("[autocomplete-input.ts,76] this.autofocus: ", this.autofocus);
     if (this.alwaysVisible) {
       this.convertSourceToSuggestions();
+    }
+    if (this.autofocus != null) {
+      this.searchInputRef?.focus();
     }
   }
 
   private convertSourceToSuggestions() {
     this.suggestions = this.source.map((s) => ({
-      highlighted: s,
-      original: s,
+      ...s,
+      highlighted: s.text,
     }));
   }
 
@@ -107,26 +110,31 @@ export class AutocompleteInput {
     }
     /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
     /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
-    this.source.forEach((word) => {
-      const included = word.toLowerCase().includes(searchValue.toLowerCase());
+    this.source.forEach((suggestion) => {
+      const included = suggestion.text
+        ?.toLowerCase()
+        .includes(searchValue.toLowerCase());
       if (!included) return;
 
-      this.collectSuggestion(word);
+      suggestion.text;
+      this.collectSuggestion(suggestion);
     });
     // // /*prettier-ignore*/ console.log("[autocomplete-input.ts,71] this.suggestions: ", this.suggestions);
   }
 
-  private collectSuggestion(searchValue: string): void {
+  private collectSuggestion(suggestion: AutocompleteSource): void {
     if (this.value.length === 0) return;
 
+    const searchValue = suggestion.text;
     const index = searchValue.toLowerCase().indexOf(this.value.toLowerCase());
     const before = searchValue.substring(0, index);
     const match = searchValue.substring(index, index + this.value.length);
     const after = searchValue.substring(index + this.value.length);
 
     this.suggestions.push({
+      ...suggestion,
       highlighted: `${before}<span class="highlight">${match}</span>${after}`,
-      original: searchValue,
+      text: searchValue,
     });
   }
 
@@ -170,7 +178,7 @@ export class AutocompleteInput {
         const suggestion = this.suggestions[this.activeCursorIndex];
         if (!suggestion) return;
 
-        this.selectSuggestion(suggestion.original);
+        this.selectSuggestion(suggestion.text);
         return;
       }
       if (event.key === "Escape") {
@@ -189,7 +197,7 @@ export class AutocompleteInput {
         }
         event.preventDefault();
         // /*prettier-ignore*/ console.log("----------------------------");
-        const rawSuggestions = this.suggestions.map((s) => s.original);
+        const rawSuggestions = this.suggestions.map((s) => s.text);
         // /*prettier-ignore*/ console.log("AI.0 [autocomplete-input.ts,148] rawSuggestions: ", rawSuggestions);
         // /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,151] this.value: ", this.value);
         const substring = getLongestCommonSubstring(rawSuggestions, this.value);
@@ -200,7 +208,7 @@ export class AutocompleteInput {
         // /*prettier-ignore*/ console.log("AI.3. [autocomplete-input.ts,153] useSuggestion: ", useSuggestion);
         let completion = substring;
         if (useSuggestion) {
-          const suggestion = this.suggestions[this.activeCursorIndex]?.original;
+          const suggestion = this.suggestions[this.activeCursorIndex]?.text;
           completion = suggestion;
         }
         // /*prettier-ignore*/ console.log("AI.4. [autocomplete-input.ts,155] completion: ", completion);

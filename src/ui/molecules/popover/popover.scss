@@ -10,7 +10,7 @@
   right: 10px;
   @include border;
   background: $secondaryLight;
-  z-index: $zIndex30;
+  z-index: $zIndexAboveAll;
 
   .content-header {
     display: flex;

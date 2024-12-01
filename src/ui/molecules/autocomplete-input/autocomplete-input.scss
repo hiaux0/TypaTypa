@@ -13,7 +13,7 @@
     margin: 0;
 
     .suggestion {
-      padding: 6px;
+      padding: 8px 12px;
       list-style: none;
       border-bottom: 1px solid $grey;
       .highlight {
@@ -25,6 +25,11 @@
       }
       &.active {
         background-color: $secondary;
+      }
+
+      .suggestion-content {
+        display: flex;
+        justify-content: space-between;
       }
     }
   }

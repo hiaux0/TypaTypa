@@ -4,6 +4,7 @@
 .popover-two-overlay {
   position: absolute;
   width: 100vw;
+  top: 30px;
 
   .popover-two-container {
     position: relative;
@@ -13,8 +14,9 @@
     padding: 6px;
     right: 10px;
     @include border;
+    /* border-color: ; */
     background: $secondaryLight;
-    z-index: $zIndex30;
+    z-index: $zIndexAboveAll;
 
     .title-container {
       // position: absolute;
@@ -26,7 +28,7 @@
         width: fit-content;
         margin-top: -17px;
         padding: 4px 16px;
-        background: $secondaryLight0;
+        background: $secondaryLight;
         border-radius: 6px;
       }
     }
