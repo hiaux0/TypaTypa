@@ -3,7 +3,6 @@ import { IKeyMappingMapping } from "../../types";
 import { VIM_COMMAND } from "./vim-commands-repository";
 import { IVimState, KeyBindingModes, VimOptions } from "./vim-types";
 import { VimCore } from "./vimCore/VimCore";
-import { VimInputHandler } from "./VimInputHandler";
 import { IVimInputHandlerV2, VimInputHandlerV2 } from "./VimInputHandlerV2";
 
 const logger = new Logger("VimInit");

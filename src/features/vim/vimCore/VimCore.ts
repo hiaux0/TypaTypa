@@ -76,7 +76,7 @@ export class VimCore {
     splitSequence.forEach((key) => {
       /*prettier-ignore*/ console.log("[VimCore.ts,72] this.keyMappingService.id: ", this.keyMappingService.id);
       const { commandName } =
-        this.keyMappingService.prepareCommand(key, mode) ?? {};
+        this.keyMappingService.prepareCommandV2(key, mode) ?? {};
       if (!commandName) return;
 
       const result = this.executeCommand(commandName, key);

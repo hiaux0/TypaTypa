@@ -1,13 +1,6 @@
-import Aurelia, {
-  DI,
-  IContainer,
-  IPlatform,
-  PLATFORM,
-  Registration,
-} from "aurelia";
+import Aurelia, { Registration } from "aurelia";
 import { RouterConfiguration } from "@aurelia/router-lite";
 import { AureliaSlickGridConfiguration } from "aurelia-slickgrid";
-import { StandardConfiguration } from "@aurelia/runtime-html";
 import * as SlickerModule from "@slickgrid-universal/vanilla-bundle";
 
 import { MyApp } from "./my-app";
@@ -28,18 +21,7 @@ import { ResizeCustomAttribute } from "./ui/attributes/resize";
 import { LoadTemplateValueConverter } from "./ui/value-converters/load-template-value-converter";
 import { VimEditor } from "./ui/organisms/vim-editor/vim-editor";
 import { OrMenu } from "./ui/organisms/or-menu/or-menu";
-import {
-  IVimInputHandlerV2,
-  VimInputHandlerV2,
-} from "./features/vim/VimInputHandlerV2";
-import {
-  ILoggerService,
-  LoggerService,
-  PaymentProcessor,
-  VimInputHandler,
-} from "./features/vim/VimInputHandler";
-import type { IPaymentProcessor } from "./features/vim/VimInputHandler";
-import { VimInit } from "./features/vim/VimInit";
+import { VimInputHandlerV2 } from "./features/vim/VimInputHandlerV2";
 import { KeyMappingService } from "./features/vim/vimCore/commands/KeyMappingService";
 import { VimCustomAttribute } from "./ui/attributes/vim";
 import { LoadComponentValueConverter } from "./ui/value-converters/load-component-value-converter";
@@ -108,7 +90,6 @@ const appContainer = Aurelia.register(
   .register(Registration.singleton(Store, Store))
   // .register(VimInit)
   .register(KeyMappingService)
-  .register(VimInputHandler)
   .register(VimInputHandlerV2)
   // .register(Registration.singleton(VimInputHandlerV2, VimInputHandlerV2))
   // .register(vimContainer)
