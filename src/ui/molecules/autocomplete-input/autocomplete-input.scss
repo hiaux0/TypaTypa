@@ -4,7 +4,7 @@
 .autocomplete-container {
   .suggesion-list {
     position: absolute;
-    max-height: 400px;
+    max-height: 75vh;
     overflow: scroll;
     padding: unset;
     background: $white;
@@ -28,8 +28,19 @@
       }
 
       .suggestion-content {
-        display: flex;
-        justify-content: space-between;
+        .suggestion-main-row {
+          display: flex;
+          justify-content: space-between;
+
+          .right {
+            font-size: $fontSizeS;
+          }
+        }
+        .bottom {
+          margin-top: 6px;
+          font-size: $fontSizeS;
+          color: $grey1;
+        }
       }
     }
   }

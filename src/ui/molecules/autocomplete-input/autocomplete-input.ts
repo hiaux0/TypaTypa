@@ -36,7 +36,7 @@ export class AutocompleteInput {
    * Provide your own input
    */
   @bindable() target: HTMLElement;
-  @bindable() onAccept: (suggestion: string) => void;
+  @bindable() onAccept: (suggestion: UiSuggestion) => void;
   @bindable() onPartialAccept: (suggestion: string) => void;
 
   public suggestions: UiSuggestion[] = [];
@@ -88,10 +88,11 @@ export class AutocompleteInput {
     }));
   }
 
-  public selectSuggestion(suggestionName: string): void {
+  public selectSuggestion(suggestion: UiSuggestion): void {
+    const suggestionName = suggestion.text;
     this.value = suggestionName;
     // console.log("B.3 suggestionName: ", suggestionName);
-    this.onAccept?.(suggestionName);
+    this.onAccept?.(suggestion);
     this.clearSuggestions();
   }
 
@@ -178,7 +179,7 @@ export class AutocompleteInput {
         const suggestion = this.suggestions[this.activeCursorIndex];
         if (!suggestion) return;
 
-        this.selectSuggestion(suggestion.text);
+        this.selectSuggestion(suggestion);
         return;
       }
       if (event.key === "Escape") {

@@ -99,7 +99,6 @@ export class GridCell {
         context: [VIM_ID_MAP.gridCell],
         execute: (mode) => {
           if (mode === VimMode.NORMAL) {
-            console.log("1");
             this.textareaValue = this.cell?.text;
             this.onEscape();
           }

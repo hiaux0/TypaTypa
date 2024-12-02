@@ -1,5 +1,5 @@
-$theme: dark;
-/* $theme: light; */
+/* $theme: dark; */
+$theme: light;
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -58,7 +58,7 @@ $primary: if($theme == dark, $dark-primary, $light-primary);
 $primary1: if($theme == dark, $dark-primary1, $light-primary1);
 $primary2: if($theme == dark, $dark-primary2, $light-primary2);
 $primaryDark0: if($theme == dark, $dark-primaryDark0, $light-primaryDark0);
-$primaryDark: if($theme == dark, $dark-primaryDark, $light-primaryDark);
+$primaryDark: if($theme == dark, $dark-primaryDark, $light-secondaryLight);
 $primaryDark1: if($theme == dark, $dark-primaryDark1, $light-primaryDark1);
 $primaryDark2: if($theme == dark, $dark-primaryDark2, $light-primaryDark2);
 /*prettier-ignore*/

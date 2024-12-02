@@ -36,8 +36,14 @@ export class Store {
     this.updateLocalStorage();
   };
 
+  public closeCommandPaletteOpen = (): void => {
+    this.isCommandPaletteOpen = false;
+    this.updateLocalStorage();
+  };
+
   public toggleCommandPaletteOpen = (): void => {
     this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
+    /*prettier-ignore*/ console.log("[store.ts,46] this.isCommandPaletteOpen: ", this.isCommandPaletteOpen);
     this.updateLocalStorage();
   };
 

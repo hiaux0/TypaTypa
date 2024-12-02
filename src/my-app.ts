@@ -2,72 +2,21 @@ import { inject, resolve } from "aurelia";
 import { APP_NAME, VIM_ID_MAP } from "./common/modules/constants";
 import { initDebugShortcuts } from "./common/modules/debugging";
 import { route, Router } from "@aurelia/router-lite";
-import { TypingPage } from "./ui/pages/typing-page/typing-page";
-import { PropagandaPage } from "./ui/pages/propaganda-page/propaganda-page";
-import { VimV3Page } from "./ui/pages/vim-v3-page/vim-v3-page";
-import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
-import { KhongAPage } from "./ui/pages/khong-a-page/khong-a-page";
-import { Playground } from "./ui/pages/playground/playground";
 import { Store } from "./common/modules/store";
-import { UiLibPage } from "./ui/pages/ui-lib-page/ui-lib-page";
-import { UiLibWelcome } from "./ui/pages/ui-lib-page/ui-lib-welcome/ui-lib-welcome";
 import { IVimInputHandlerV2 } from "./features/vim/VimInputHandlerV2";
 import { VimMode, VimOptions } from "./features/vim/vim-types";
-
-const routes = [
-  {
-    path: "grid-test",
-    component: GridTestPage,
-    title: "Grid Test",
-  },
-  {
-    path: "khong-a",
-    component: KhongAPage,
-    title: "Khong a",
-  },
-  {
-    path: "typins",
-    component: TypingPage,
-    title: "Typing",
-  },
-  {
-    path: "uilib",
-    component: UiLibPage,
-    title: "uilib",
-  },
-  {
-    path: "uilib/:category/*viewModelName",
-    component: UiLibWelcome,
-  },
-  {
-    path: "playground",
-    component: Playground,
-    title: "Playground",
-  },
-  {
-    path: "propaganda",
-    component: PropagandaPage,
-    title: "Propaganda",
-  },
-  {
-    path: "vim-V3",
-    component: VimV3Page,
-    title: "Vim V3",
-  },
-];
+import { mainAppRoutes } from "./common/modules/constants/routeConstants";
+import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
 
 @route({
   title: APP_NAME,
-  routes,
+  routes: mainAppRoutes,
 })
 @inject(Router)
 export class MyApp {
   public appName = APP_NAME;
-  public routes = routes;
-
-  //public wordToLookUp = "";
-  //public isDrawerOpen = false;
-  //public activeTabName = "";
+  public routes = mainAppRoutes;
+  private contextId = VIM_ID_MAP.global;
 
   constructor(
     private router: Router,
@@ -78,16 +27,34 @@ export class MyApp {
   attached() {
     // this.router.load(TypingPage);
     // this.router.load(PropagandaPage);
-    // this.router.load(GridTestPage);
+    this.router.load(GridTestPage);
     // this.router.load(KhongAPage);
+
+    this.initKeyBindings();
+    initDebugShortcuts();
+  }
+
+  private initKeyBindings() {
     this.vimInputHandlerV2.registerAndInit(
-      { vimId: VIM_ID_MAP.global },
+      { vimId: this.contextId },
       {
         [VimMode.ALL]: [
           {
             key: "<Control>p",
+            desc: "Toggle Command Palette",
+            context: [this.contextId],
             execute: () => {
               this.store.toggleCommandPaletteOpen();
+              this.vimInputHandlerV2.setActiveId(this.contextId);
+              return true;
+            },
+            preventUndoRedo: true,
+          },
+          {
+            key: "<Escape>",
+            context: [this.contextId],
+            execute: () => {
+              this.store.closeCommandPaletteOpen();
               return true;
             },
             preventUndoRedo: true,
@@ -95,9 +62,5 @@ export class MyApp {
         ],
       },
     );
-
-    initDebugShortcuts();
   }
-
-  private openCommandPalette(): void {}
 }

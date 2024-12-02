@@ -1,6 +1,6 @@
 <popover-two
   close-on-click="false"
-  is-open="true"
+  is-open.bind="isOpen"
   title="Command Palette"
   if.bind="isOpen"
 >
@@ -9,6 +9,8 @@
       value.two-way="value"
       source.bind="autocompleteSource"
       always-visible="true"
+      on-accept.bind="hello"
+      on-close.bind="hello"
       autofocus
       width="600px"
     ></autocomplete-input>

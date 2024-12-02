@@ -29,6 +29,68 @@ class Commentary {
   }
 }
 
+export function mergeKeybindings(
+  base: KeyBindingModes,
+  other?: KeyBindingModes,
+): KeyBindingModes {
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("base", base);
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("other", other);
+  if (!other) return base;
+  if (!base) return other;
+
+  const merged = {
+    ...(base ?? {}),
+    [VimMode.NORMAL]: [
+      ...merge(
+        base[VimMode.NORMAL],
+        base[VimMode.ALL],
+        other[VimMode.NORMAL],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.INSERT]: [
+      ...merge(
+        base[VimMode.INSERT],
+        base[VimMode.ALL],
+        other[VimMode.INSERT],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.VISUAL]: [
+      ...merge(
+        base[VimMode.VISUAL],
+        base[VimMode.ALL],
+        other[VimMode.VISUAL],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.CUSTOM]: [
+      ...merge(
+        base[VimMode.CUSTOM],
+        base[VimMode.ALL],
+        other[VimMode.CUSTOM],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.ALL]: [...merge(base[VimMode.ALL], other[VimMode.ALL])],
+  };
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("merged", merged);
+  return merged;
+
+  function merge(
+    base: VimCommand[], // assume existing always has key and command defined
+    ...additionals: VimCommand[][]
+  ): VimCommand[] {
+    const mergedAdditionals = additionals.reduce((acc, curr) => {
+      if (!curr) return acc;
+      return acc.concat(curr);
+    }, []);
+    const finalBaseBindings = [...(base ?? [])];
+    const merged = finalBaseBindings.concat(mergedAdditionals);
+    return merged;
+  }
+}
+
 export function hasSimilarBinding(a: VimCommand, b: VimCommand): boolean {
   const okayKey = a.key === b.key;
   let okayCommand = false;
@@ -483,7 +545,7 @@ export class KeyMappingService {
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,178] this.id: ", this.id);
   }
 
-  public mergeKeybindingsV2(
+  public overwriteKeybindingsV2(
     base: KeyBindingModes,
     other?: KeyBindingModes,
   ): KeyBindingModes {
@@ -623,7 +685,7 @@ export class KeyMappingService {
     // /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("options.keyBindings", options.keyBindings);
     // /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("this.keyBindings", this.keyBindings);
     const bindings = options?.keyBindings ?? this.keyBindings;
-    const enhanced = options.keyBindings
+    const enhanced = options.keyBindings;
     // const enhanced = this.mergeKeybindingsV2(bindings, this.keyBindings);
     // const enhanced = overwriteAndAddExistingKeyBindingsV2(bindings, this.keyBindings);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([1])) console.log("enhanced", enhanced);
@@ -862,7 +924,7 @@ export class KeyMappingService {
     } else {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.keyBindings", this.keyBindings);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("options.keyBindings", options.keyBindings);
-      const merged = this.mergeKeybindingsV2(
+      const merged = this.overwriteKeybindingsV2(
         this.keyBindings,
         options.keyBindings,
       );

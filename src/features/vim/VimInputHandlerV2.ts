@@ -101,6 +101,11 @@ export class VimInputHandlerV2 {
     this.idHistory.pop();
   }
 
+  public popIdIf(id: string): void {
+    const is = this.idHistory[this.idHistory.length - 1] === id;
+    if (is) this.popId();
+  }
+
   public executeCommandSequence(sequence: string): void {
     this.vimCore.executeCommandSequence(sequence);
   }
@@ -210,12 +215,12 @@ export class VimInputHandlerV2 {
 
       const currentBindings = this.inputMap[this.activeId];
       const globalBindings = this.inputMap[VIM_ID_MAP.global];
-      const mergedWithGlobal = this.keyMappingService.mergeKeybindingsV2(
+      const mergedWithGlobal = this.keyMappingService.overwriteKeybindingsV2(
         currentBindings,
         globalBindings,
       );
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("this.activeId", this.activeId);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,90] currentBindings: ", currentBindings);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("[VimInputHandlerV2.ts,223] mergedWithGlobal: ", mergedWithGlobal);
       const options = this.vimCore.options;
       options.keyBindings = mergedWithGlobal;
       const { command, commandName, commandSequence } =

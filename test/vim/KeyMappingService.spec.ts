@@ -38,7 +38,7 @@ describe("KeyMappingService", () => {
       } as KeyBindingModes;
 
       const keyMappingService = new KeyMappingService();
-      const result = keyMappingService.mergeKeybindingsV2(current, additional);
+      const result = keyMappingService.overwriteKeybindingsV2(current, additional);
       result; /*?*/
       /*prettier-ignore*/ console.log("[KeyMappingService.spec.ts,996] result: ", result['NORMAL']);
       expect(result).toBe(true);
