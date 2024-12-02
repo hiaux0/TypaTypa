@@ -29,7 +29,7 @@ interface ILogOptions extends LogOptions {
 export const defaultShouldLogConfig: ShouldLogConfig = {
   log: true,
   maxLevel: 1,
-  onlyLevels: [3], // keysequence and findingPotentialCommands
+  // onlyLevels: [3], // keysequence and findingPotentialCommands
   // onlyLevels: [4], // mergeKeybindingsV2 and overwriteAndAddExistingKeyBindingsV2
   logDepth: 1,
   allowedCallerNames: [],

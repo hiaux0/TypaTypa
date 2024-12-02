@@ -1,13 +1,8 @@
 import { DI, IContainer, Registration } from "aurelia";
 import { Id } from "../../domain/types/types";
-import { IKeyMappingMapping } from "../../types";
+import { InputMap, InstancesMap, RegisterOptions } from "../../types";
 import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
-import { getCallerFunctionName } from "../../common/modules/debugging";
-import {
-  IKeyMappingService,
-  KeyMappingService,
-  convertKeyMappingsToVimCommandMappings,
-} from "./vimCore/commands/KeyMappingService";
+import { IKeyMappingService } from "./vimCore/commands/KeyMappingService";
 import { VIM_COMMAND, VimCommand } from "./vim-commands-repository";
 import { ShortcutService } from "../../common/services/ShortcutService";
 import { VimCore } from "./vimCore/VimCore";
@@ -21,19 +16,6 @@ import { debugFlags } from "../../common/modules/debug/debugFlags";
 import { VIM_ID_MAP } from "../../common/modules/constants";
 
 const l = new Logger("VimInputHandlerV2");
-
-export type InputMap = Record<Id, KeyBindingModes>;
-export type InstancesMap = Record<
-  Id,
-  { options: VimOptions; bindings?: KeyBindingModes }
->;
-export interface KeyToCommandMap {
-  mappings: IKeyMappingMapping;
-  additionalKeyBindings: KeyBindingModes;
-}
-export interface RegisterOptions {
-  reInit?: boolean;
-}
 
 export type IVimInputHandlerV2 = VimInputHandlerV2;
 export const IVimInputHandlerV2 = DI.createInterface<IVimInputHandlerV2>(

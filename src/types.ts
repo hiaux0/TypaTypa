@@ -1,4 +1,5 @@
 import { Id } from "./domain/types/types";
+import { KeyBindingModes, VimOptions } from "./features/vim/vim-types";
 
 declare global {
   interface Window {
@@ -7,11 +8,13 @@ declare global {
   }
 }
 
-export interface AutocompleteSource {
+export interface AutocompleteSource<T extends Record<string, any>> {
   text: string;
   left?: string;
   right?: string;
-  bottom?: string;
+  bottomRight?: string;
+  bottomLeft?: string;
+  data?: T;
 }
 
 export interface Tabs {
@@ -130,4 +133,17 @@ export interface IKeyMappingMapping {
    * Return `false` to prevent default
    */
   [key: EventKeyName]: () => boolean | void;
+}
+
+export type InputMap = Record<Id, KeyBindingModes>;
+export type InstancesMap = Record<
+  Id,
+  { options: VimOptions; bindings?: KeyBindingModes }
+>;
+export interface KeyToCommandMap {
+  mappings: IKeyMappingMapping;
+  additionalKeyBindings: KeyBindingModes;
+}
+export interface RegisterOptions {
+  reInit?: boolean;
 }

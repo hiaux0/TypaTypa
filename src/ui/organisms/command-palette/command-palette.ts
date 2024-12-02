@@ -10,27 +10,38 @@ import { AutocompleteSource } from "../../../types";
 import { VIM_ID_MAP } from "../../../common/modules/constants";
 import { VimCommand } from "../../../features/vim/vim-commands-repository";
 import { UiSuggestion } from "../../../domain/types/uiTypes";
+import {
+  CommandsService,
+  ICommandsService,
+} from "../../../common/services/CommandsService";
 
 export class CommandPalette {
   @bindable() isOpen: boolean;
   isOpenChanged(): void {
-    this.init();
     if (!this.isOpen) {
-      this.vimInputHandler.popIdIf(VIM_ID_MAP.global);
+      // so the key handler triggers the command palette, and not the previous context
+      window.requestAnimationFrame(() => {
+        this.vimInputHandler.popIdIf(VIM_ID_MAP.global);
+      });
+    } else {
+      this.init();
     }
   }
 
   public message = "command-palette.html";
-  public autocompleteSource: AutocompleteSource[];
+  public autocompleteSource: AutocompleteSource<VimCommand>[];
 
   constructor(
     private keyMappingService: IKeyMappingService = resolve(IKeyMappingService),
     private vimInputHandler: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+    private commandsService: CommandsService = resolve(ICommandsService),
   ) {}
 
-  public hello(suggestion: UiSuggestion): void {
+  public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     /*prettier-ignore*/ console.log("[command-palette.ts,29] suggestion: ", suggestion);
-  }
+    this.commandsService.executeCommand(suggestion.data);
+    this.close();
+  };
 
   private init(): void {
     this.convertToAutocompleteSource();
@@ -44,23 +55,29 @@ export class CommandPalette {
     //  right: binding.key,
     //}));
     //
-    const { inputMap } = this.vimInputHandler;
-    const first = inputMap[VIM_ID_MAP.global];
-    const second = inputMap[VIM_ID_MAP.gridNavigation];
+    const commandsRepository = this.commandsService.commandsRepository;
+    const first = commandsRepository[VIM_ID_MAP.global];
+    const second = commandsRepository[VIM_ID_MAP.gridNavigation];
     const merged = mergeKeybindings(first, second);
 
-    const converted: AutocompleteSource[] = [];
+    const converted: AutocompleteSource<VimCommand>[] = [];
     Object.entries(merged).forEach((entry) => {
       const [key, bindings] = entry as [string, VimCommand[]];
       bindings.forEach((binding) => {
         converted.push({
           text: binding.desc || binding.sequence || binding.command,
           right: binding.key,
-          bottom: key,
+          bottomLeft: binding.context.join(", "),
+          bottomRight: key,
+          data: binding,
         });
       });
     });
 
     this.autocompleteSource = converted;
+  }
+
+  private close(): void {
+    this.isOpen = false;
   }
 }

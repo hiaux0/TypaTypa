@@ -78,6 +78,7 @@ import {
 } from "../../../features/vim/VimInputHandlerV2";
 import { openFullscreen } from "../../../common/modules/platform/fullscreen";
 import { debugFlags } from "../../../common/modules/debug/debugFlags";
+import { ICommandsService } from "../../../common/services/CommandsService";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -1479,6 +1480,7 @@ export class GridTestPage {
     private vimInit: VimInit = resolve(VimInit),
     private store: Store = resolve(Store),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+    private commandsService: ICommandsService = resolve(ICommandsService),
   ) {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
@@ -1887,6 +1889,7 @@ export class GridTestPage {
     // console.log("1.");
     this.vimInputHandlerV2.registerAndInit(vimOptions, this.mappingByMode); // 1. init vimCore
     this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode); // 2. need vimCore
+    this.commandsService.registerCommands(vimOptions.vimId, this.mappingByMode);
   }
 
   private setAndUpdateSingleCellSelection(

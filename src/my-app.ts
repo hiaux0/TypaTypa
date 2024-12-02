@@ -7,6 +7,10 @@ import { IVimInputHandlerV2 } from "./features/vim/VimInputHandlerV2";
 import { VimMode, VimOptions } from "./features/vim/vim-types";
 import { mainAppRoutes } from "./common/modules/constants/routeConstants";
 import { GridTestPage } from "./ui/pages/grid-test-page/grid-test-page";
+import {
+  CommandsService,
+  ICommandsService,
+} from "./common/services/CommandsService";
 
 @route({
   title: APP_NAME,
@@ -22,6 +26,7 @@ export class MyApp {
     private router: Router,
     private store: Store = resolve(Store),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+    private commandsService: CommandsService = resolve(ICommandsService),
   ) {}
 
   attached() {
@@ -32,35 +37,39 @@ export class MyApp {
 
     this.initKeyBindings();
     initDebugShortcuts();
+
+    window.setTimeout(() => {
+      /*prettier-ignore*/ console.log("[my-app.ts,40] this.commandsService.commandsRepository: ", this.commandsService.commandsRepository);
+    }, 0);
   }
 
   private initKeyBindings() {
-    this.vimInputHandlerV2.registerAndInit(
-      { vimId: this.contextId },
-      {
-        [VimMode.ALL]: [
-          {
-            key: "<Control>p",
-            desc: "Toggle Command Palette",
-            context: [this.contextId],
-            execute: () => {
-              this.store.toggleCommandPaletteOpen();
-              this.vimInputHandlerV2.setActiveId(this.contextId);
-              return true;
-            },
-            preventUndoRedo: true,
+    const bindings = {
+      [VimMode.ALL]: [
+        {
+          key: "<Control>p",
+          desc: "Toggle Command Palette",
+          context: [this.contextId],
+          execute: () => {
+            this.store.toggleCommandPaletteOpen();
+            this.vimInputHandlerV2.setActiveId(this.contextId);
+            return true;
           },
-          {
-            key: "<Escape>",
-            context: [this.contextId],
-            execute: () => {
-              this.store.closeCommandPaletteOpen();
-              return true;
-            },
-            preventUndoRedo: true,
+          preventUndoRedo: true,
+        },
+        {
+          key: "<Escape>",
+          desc: "Cancel all",
+          context: [this.contextId],
+          execute: () => {
+            this.store.closeCommandPaletteOpen();
+            return true;
           },
-        ],
-      },
-    );
+          preventUndoRedo: true,
+        },
+      ],
+    };
+    this.vimInputHandlerV2.registerAndInit({ vimId: this.contextId }, bindings);
+    this.commandsService.registerCommands(this.contextId, bindings);
   }
 }

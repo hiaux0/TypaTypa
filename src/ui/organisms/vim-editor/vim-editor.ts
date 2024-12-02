@@ -16,8 +16,9 @@ import { isEnter } from "../../../features/vim/key-bindings";
 import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
 import { SelectionService } from "../../../common/services/SelectionService";
 import { Logger } from "../../../common/logging/logging";
+import { ICommandsService } from "../../../common/services/CommandsService";
 
-const l = new Logger('VimEditor')
+const l = new Logger("VimEditor");
 
 export class VimEditor {
   @bindable public vimState: IVimState;
@@ -48,6 +49,7 @@ export class VimEditor {
   constructor(
     private vimInit: VimInit = resolve(VimInit),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+    private commandsService: ICommandsService = resolve(ICommandsService),
   ) {}
 
   async attached() {
@@ -111,6 +113,7 @@ export class VimEditor {
       reInit: true,
     });
     this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
+    this.commandsService.registerCommands(options.vimId, this.mappingByMode);
 
     this.initVimEditorHooks();
   }

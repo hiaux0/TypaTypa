@@ -24,7 +24,12 @@
           <span innerhtml.bind="suggestion.highlighted"></span>
           <div class="right">${suggestion.right}</div>
         </section>
-        <section class="bottom">${suggestion.bottom}</section>
+        <section class="suggestion-bottom-row">
+          <div class="bottom-left">
+            ${suggestion.bottom ?? suggestion.bottomLeft}
+          </div>
+          <div class="bottom-right">${suggestion.bottomRight}</div>
+        </section>
       </section>
     </li>
   </ul>
