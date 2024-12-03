@@ -39,7 +39,8 @@ export class CommandPalette {
 
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     /*prettier-ignore*/ console.log("[command-palette.ts,29] suggestion: ", suggestion);
-    this.commandsService.executeCommand(suggestion.data);
+    const vimCore = this.vimInputHandler.vimCore;
+    this.commandsService.executeCommand(vimCore, suggestion.data);
     this.close();
   };
 

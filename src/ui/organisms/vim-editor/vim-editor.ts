@@ -114,6 +114,7 @@ export class VimEditor {
     });
     this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
     this.commandsService.registerCommands(options.vimId, this.mappingByMode);
+    /*prettier-ignore*/ console.log("[vim-editor.ts,118] this.commandsService.commandsRepository: ", this.commandsService.commandsRepository);
 
     this.initVimEditorHooks();
   }

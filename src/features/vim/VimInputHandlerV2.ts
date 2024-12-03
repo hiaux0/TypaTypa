@@ -2,7 +2,10 @@ import { DI, IContainer, Registration } from "aurelia";
 import { Id } from "../../domain/types/types";
 import { InputMap, InstancesMap, RegisterOptions } from "../../types";
 import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
-import { IKeyMappingService } from "./vimCore/commands/KeyMappingService";
+import {
+  IKeyMappingService,
+  overwriteKeybindingsV2,
+} from "./vimCore/commands/KeyMappingService";
 import { VIM_COMMAND, VimCommand } from "./vim-commands-repository";
 import { ShortcutService } from "../../common/services/ShortcutService";
 import { VimCore } from "./vimCore/VimCore";
@@ -65,7 +68,7 @@ export class VimInputHandlerV2 {
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("already", already);
     if (already && !reload) return;
 
-    this.pushIdToHistory(id);
+    if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
     this.inputMap[id] = additionalKeyBindings;
     this.instancesMap[id] = { options };
     this.initVimCore(options);
@@ -192,12 +195,12 @@ export class VimInputHandlerV2 {
 
       const finalKeyWithModifier = ShortcutService.getKeyWithModifer(event);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,110] finalKeyWithModifier: ", finalKeyWithModifier);
-      const pressedKey = ShortcutService.getPressedKey(event);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKey);
+      const pressedKeyWithoutModifier = ShortcutService.getPressedKey(event);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKeyWithoutModifier);
 
       const currentBindings = this.inputMap[this.activeId];
       const globalBindings = this.inputMap[VIM_ID_MAP.global];
-      const mergedWithGlobal = this.keyMappingService.overwriteKeybindingsV2(
+      const mergedWithGlobal = overwriteKeybindingsV2(
         currentBindings,
         globalBindings,
       );
@@ -214,12 +217,10 @@ export class VimInputHandlerV2 {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("command", command);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("commandName", commandName);
       let finalCommand = command;
-      let finalPressedKey = pressedKey;
+      let finalPressedKey = pressedKeyWithoutModifier;
       if (commandName === VIM_COMMAND.repeatLastCommand) {
         finalCommand = this.keyMappingService.getLastCommand();
-        /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,224] finalCommand: ", finalCommand);
         finalPressedKey = this.keyMappingService.getLastKey();
-        /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,226] finalPressedKey: ", finalPressedKey);
       }
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("finalCommand", finalCommand);
 
@@ -326,7 +327,7 @@ export class VimInputHandlerV2 {
           }
         },
         normal: () => {
-          if (pressedKey === SPACE) {
+          if (pressedKeyWithoutModifier === SPACE) {
             event.preventDefault();
           }
           if (commandName) {
@@ -337,7 +338,7 @@ export class VimInputHandlerV2 {
           }
         },
         visual: () => {
-          if (pressedKey === SPACE) {
+          if (pressedKeyWithoutModifier === SPACE) {
             event.preventDefault();
           }
           if (commandName) {

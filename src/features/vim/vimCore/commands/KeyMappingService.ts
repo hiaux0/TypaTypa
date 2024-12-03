@@ -16,6 +16,7 @@ import { SPECIAL_KEYS } from "../../../../common/modules/keybindings/app-keys";
 import { Logger } from "../../../../common/logging/logging";
 import { IKeyMappingMapping } from "../../../../types";
 import { DI, IContainer, Registration } from "aurelia";
+import { VIM_ID_MAP } from "../../../../common/modules/constants";
 
 const l = new Logger("KeyMappingService");
 const logAllowed = false;
@@ -89,6 +90,62 @@ export function mergeKeybindings(
     const merged = finalBaseBindings.concat(mergedAdditionals);
     return merged;
   }
+}
+
+export function overwriteKeybindingsV2(
+  base: KeyBindingModes,
+  other?: KeyBindingModes,
+): KeyBindingModes {
+  base; /*?*/
+  other; /*?*/
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("base", base);
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("other", other);
+  if (!other) return base;
+  if (!base) return other;
+
+  const merged = {
+    ...(base ?? {}),
+    [VimMode.NORMAL]: [
+      ...overwriteAndAddExistingKeyBindingsV2(
+        base[VimMode.NORMAL],
+        base[VimMode.ALL],
+        other[VimMode.NORMAL],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.INSERT]: [
+      ...overwriteAndAddExistingKeyBindingsV2(
+        base[VimMode.INSERT],
+        base[VimMode.ALL],
+        other[VimMode.INSERT],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.VISUAL]: [
+      ...overwriteAndAddExistingKeyBindingsV2(
+        base[VimMode.VISUAL],
+        base[VimMode.ALL],
+        other[VimMode.VISUAL],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.CUSTOM]: [
+      ...overwriteAndAddExistingKeyBindingsV2(
+        base[VimMode.CUSTOM],
+        base[VimMode.ALL],
+        other[VimMode.CUSTOM],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.ALL]: [
+      ...overwriteAndAddExistingKeyBindingsV2(
+        base[VimMode.ALL],
+        other[VimMode.ALL],
+      ),
+    ],
+  };
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("merged", merged);
+  return merged;
 }
 
 export function hasSimilarBinding(a: VimCommand, b: VimCommand): boolean {
@@ -236,6 +293,16 @@ export function overwriteAndAddExistingKeyBindingsV2(
       const keyOkay = binding.key === additionalBinding.key;
       const hasCommand = !!additionalBinding.command;
       const commandOkay = binding.command === additionalBinding.command;
+      const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
+      const skipGlobal = isGlobal && (keyOkay || commandOkay);
+      // if (binding.key === "<Control>p") {
+      //if (binding.key === "<Escape>") {
+      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,244] binding.command: ", binding.command);
+      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,245] binding: ", binding);
+      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] isGlobal: ", isGlobal);
+      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,243] skipGlobal: ", skipGlobal);
+      //}
+      // const okay = (keyOkay || (hasCommand && commandOkay)) && !skipGlobal;
       const okay = keyOkay || (hasCommand && commandOkay);
       if (okay) {
         maybeIndeces.push(index);
@@ -256,19 +323,20 @@ export function overwriteAndAddExistingKeyBindingsV2(
 
     const index = maybeIndeces[0];
     const binding = finalBaseBindings[index];
+    if (additionalBinding.context?.includes(VIM_ID_MAP.global)) return;
     finalBaseBindings[index] = {
       ...binding,
       ...additionalBinding,
     };
 
-    finalBaseBindings; /*?*/
-
     function getSameKeyAndCommand(): boolean {
       const sameKeyAndCommand = maybeIndeces.filter((index) => {
         const binding = finalBaseBindings[index];
+        if (binding.desc === "Cancel all") console.log("here 0");
         const keyOkay = binding.key === additionalBinding.key;
         const commandOkay = binding.command === additionalBinding.command;
-        const okay = keyOkay && commandOkay;
+        const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
+        const okay = keyOkay && commandOkay && !isGlobal;
         return okay;
       });
       const onlyOne = sameKeyAndCommand.length === 1;
@@ -291,9 +359,14 @@ export function overwriteAndAddExistingKeyBindingsV2(
     function getOnlySameCommandsAndNoKeys(): boolean {
       const onlySameCommandsAndNoKeys = maybeIndeces.filter((index) => {
         const binding = finalBaseBindings[index];
+        if (binding.desc === "Cancel all") {
+          /*prettier-ignore*/ console.log("[KeyMappingService.ts,309] binding.desc: ", binding.desc);
+          console.log("here 1");
+        }
         const hasKey = !!additionalBinding.key;
         const commandOkay = binding.command === additionalBinding.command;
-        const okay = !hasKey && commandOkay;
+        const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
+        const okay = !hasKey && commandOkay && !isGlobal;
         return okay;
       });
       // onlySameCommandsAndNoKeys; /*?*/
@@ -315,10 +388,12 @@ export function overwriteAndAddExistingKeyBindingsV2(
     function getSameCommandButDifferentKey(): boolean {
       const sameCommandButDifferentKey = maybeIndeces.filter((index) => {
         const binding = finalBaseBindings[index];
+        if (binding.desc === "Cancel all") console.log("here 2");
         // [binding.key, binding.command]; /*?*/
         const sameKey = binding.key === additionalBinding.key;
         const commandOkay = binding.command === additionalBinding.command;
-        const okay = !sameKey && commandOkay;
+        const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
+        const okay = !sameKey && commandOkay && !isGlobal;
         return okay;
       });
       // sameCommandButDifferentKey; /*?*/
@@ -379,7 +454,6 @@ function getCommandAwaitingNextInput(
      */
     (command) => command.key === keySequence,
   );
-  // if (input === "t") debugger;
   if (awaitingCommand) {
     return {
       targetCommand: undefined,
@@ -524,62 +598,6 @@ export class KeyMappingService {
     return merged;
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,174] this.keyBindings: ", this.keyBindings);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,178] this.id: ", this.id);
-  }
-
-  public overwriteKeybindingsV2(
-    base: KeyBindingModes,
-    other?: KeyBindingModes,
-  ): KeyBindingModes {
-    base; /*?*/
-    other; /*?*/
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("base", base);
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("other", other);
-    if (!other) return base;
-    if (!base) return other;
-
-    const merged = {
-      ...(base ?? {}),
-      [VimMode.NORMAL]: [
-        ...overwriteAndAddExistingKeyBindingsV2(
-          base[VimMode.NORMAL],
-          base[VimMode.ALL],
-          other[VimMode.NORMAL],
-          other[VimMode.ALL],
-        ),
-      ],
-      [VimMode.INSERT]: [
-        ...overwriteAndAddExistingKeyBindingsV2(
-          base[VimMode.INSERT],
-          base[VimMode.ALL],
-          other[VimMode.INSERT],
-          other[VimMode.ALL],
-        ),
-      ],
-      [VimMode.VISUAL]: [
-        ...overwriteAndAddExistingKeyBindingsV2(
-          base[VimMode.VISUAL],
-          base[VimMode.ALL],
-          other[VimMode.VISUAL],
-          other[VimMode.ALL],
-        ),
-      ],
-      [VimMode.CUSTOM]: [
-        ...overwriteAndAddExistingKeyBindingsV2(
-          base[VimMode.CUSTOM],
-          base[VimMode.ALL],
-          other[VimMode.CUSTOM],
-          other[VimMode.ALL],
-        ),
-      ],
-      [VimMode.ALL]: [
-        ...overwriteAndAddExistingKeyBindingsV2(
-          base[VimMode.ALL],
-          other[VimMode.ALL],
-        ),
-      ],
-    };
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("merged", merged);
-    return merged;
   }
 
   /**
@@ -730,11 +748,11 @@ export class KeyMappingService {
     } else {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.keyBindings", this.keyBindings);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("options.keyBindings", options.keyBindings);
-      const merged = this.overwriteKeybindingsV2(
+      const merged = overwriteKeybindingsV2(
         this.keyBindings,
         options.keyBindings,
       );
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("merged", merged);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("merged", merged);
       // /*prettier-ignore*/ console.log("[KeyMappingService.ts,815] options.vimId: ", options);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,815] merged: ", merged);
       targetKeyBinding = merged[mode] ?? [];

@@ -1,6 +1,21 @@
-import { DI } from "aurelia";
+import { DI, resolve } from "aurelia";
 import { Logger } from "../logging/logging";
-import { VimCommand } from "../../features/vim/vim-commands-repository";
+import {
+  VIM_COMMAND,
+  VimCommand,
+} from "../../features/vim/vim-commands-repository";
+import {
+  IVimState,
+  KeyBindingModes,
+  VimMode,
+} from "../../features/vim/vim-types";
+import { isEnter } from "../../features/vim/key-bindings";
+import { VimCore } from "../../features/vim/vimCore/VimCore";
+import {
+  IKeyMappingService,
+  KeyMappingService,
+  overwriteKeybindingsV2,
+} from "../../features/vim/vimCore/commands/KeyMappingService";
 
 const l = new Logger("CommandsService");
 
@@ -13,11 +28,39 @@ export const ICommandsService = DI.createInterface<ICommandsService>(
 export class CommandsService {
   public commandsRepository = {};
 
-  public registerCommands(context: string, commands: any): void {
-    this.commandsRepository[context] = commands;
+  constructor(
+    private keyMappingService: KeyMappingService = resolve(IKeyMappingService),
+  ) {}
+
+  public registerCommands(context: string, commands: KeyBindingModes): void {
+    const merged = overwriteKeybindingsV2(
+      commands,
+      this.keyMappingService.keyBindings,
+    );
+
+    this.commandsRepository[context] = merged;
   }
 
-  public executeCommand(data: VimCommand) {
-    /*prettier-ignore*/ console.log("[CommandsService.ts,22] data: ", data);
+  public async executeCommand(vimCore: VimCore, finalCommand: VimCommand) {
+    let vimState: IVimState;
+    // const allowHook = mode === VimMode.INSERT && !isEnter(finalPressedKey);
+    const mode = vimCore.getVimState().mode;
+    if (finalCommand?.execute) {
+      vimState = vimCore.getVimState();
+      await finalCommand.execute(mode, vimState, vimCore);
+
+      //if (options?.hooks?.commandListener && allowHook)
+      //  options.hooks.commandListener({
+      //    vimState: vimCore.getVimState(),
+      //    targetCommand: VIM_COMMAND[finalCommand.command],
+      //    targetCommandFull: finalCommand,
+      //    keys: finalKeyWithModifier,
+      //  });
+    }
+
+    if (finalCommand?.afterExecute) {
+      // const vimState = vimCore.getVimState();
+      await finalCommand?.afterExecute();
+    }
   }
 }
