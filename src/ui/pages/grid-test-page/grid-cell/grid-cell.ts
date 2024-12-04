@@ -84,6 +84,7 @@ export class GridCell {
         execute: () => {
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
+            /*prettier-ignore*/ console.log("[grid-cell.ts,87] this.cell.text: ", this.cell.text);
             // /*prettier-ignore*/ debugLog && console.log("A.1 [grid-cell.ts,196] this.cell.text: ", this.cell.text);
             this.onCellUpdate(this.column, this.row, this.cell);
             this.onEnter();

@@ -60,6 +60,7 @@ export class CommandPalette {
     const first = commandsRepository[VIM_ID_MAP.global];
     const second = commandsRepository[VIM_ID_MAP.gridNavigation];
     const merged = mergeKeybindings(first, second);
+    /*prettier-ignore*/ console.log("[command-palette.ts,63] merged: ", merged);
 
     const converted: AutocompleteSource<VimCommand>[] = [];
     Object.entries(merged).forEach((entry) => {
@@ -68,7 +69,7 @@ export class CommandPalette {
         converted.push({
           text: binding.desc || binding.sequence || binding.command,
           right: binding.key,
-          bottomLeft: binding.context.join(", "),
+          bottomLeft: binding.context?.join(", "),
           bottomRight: key,
           data: binding,
         });

@@ -294,7 +294,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
       const hasCommand = !!additionalBinding.command;
       const commandOkay = binding.command === additionalBinding.command;
       const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
-      const skipGlobal = isGlobal && (keyOkay || commandOkay);
+      // const skipGlobal = isGlobal && (keyOkay || commandOkay);
       // if (binding.key === "<Control>p") {
       //if (binding.key === "<Escape>") {
       //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,244] binding.command: ", binding.command);
@@ -497,13 +497,6 @@ function isCommonCommand(
   return targetCommand;
 }
 
-interface IPrepareCommandReturn {
-  commandName: VIM_COMMAND;
-  commandSequence?: string;
-  keySequence: string;
-  command?: VimCommand;
-}
-
 export type IKeyMappingService = KeyMappingService;
 export const IKeyMappingService =
   DI.createInterface<IKeyMappingService>("KeyMappingService");
@@ -594,10 +587,7 @@ export class KeyMappingService {
         ),
       ],
     };
-    // this.keyBindings = merged;
     return merged;
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,174] this.keyBindings: ", this.keyBindings);
-    // /*prettier-ignore*/ console.log("[KeyMappingService.ts,178] this.id: ", this.id);
   }
 
   /**
@@ -617,13 +607,8 @@ export class KeyMappingService {
     key: string,
     mode: VimMode,
     options: VimOptions = {},
-  ): IPrepareCommandReturn | undefined {
-    // /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("options.keyBindings", options.keyBindings);
-    // /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("this.keyBindings", this.keyBindings);
-    const bindings = options?.keyBindings ?? this.keyBindings;
+  ): VimCommand | undefined {
     const enhanced = options.keyBindings;
-    // const enhanced = this.mergeKeybindingsV2(bindings, this.keyBindings);
-    // const enhanced = overwriteAndAddExistingKeyBindingsV2(bindings, this.keyBindings);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([1])) console.log("enhanced", enhanced);
     options.keyBindings = enhanced;
     const { targetCommand } = this.findPotentialCommandV2(
@@ -632,48 +617,18 @@ export class KeyMappingService {
       mode,
       options,
     );
-    // // /*prettier-ignore*/ console.log("[KeyMappingService.ts,240] targetCommand: ", targetCommand);
 
     if (!targetCommand) return;
 
     /** Sequence mapping */
-    if (targetCommand.sequence) {
-      return {
-        command: targetCommand,
-        commandName: targetCommand.command as any,
-        commandSequence: targetCommand.sequence,
-        keySequence: key,
-      };
-    }
-
-    /** Sequence mapping */
     if (targetCommand.execute) {
-      return {
-        command: targetCommand,
-        commandName: VIM_COMMAND.customExecute,
-        keySequence: key,
-      };
-    }
-
-    /** Standard command */
-    if (targetCommand) {
-      return {
-        command: targetCommand,
-        commandName: targetCommand.command as any,
-        keySequence: key,
-      };
+      targetCommand.command = VIM_COMMAND.customExecute;
+      return targetCommand;
     }
 
     const command = this.getCommandFromKey(mode, key);
-    const commandName = command?.command;
-    /* prettier-ignore */ l.culogger.debug(['command', command], {}, (...r)=>console.log(...r));
 
-    return {
-      command: targetCommand,
-      // @ts-ignore -- TODO: adjust type
-      commandName,
-      keySequence: key,
-    };
+    return targetCommand;
   }
 
   public getCommandFromKey(mode: VimMode, key: string): VimCommand | undefined {
@@ -753,11 +708,9 @@ export class KeyMappingService {
         options.keyBindings,
       );
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("merged", merged);
-      // /*prettier-ignore*/ console.log("[KeyMappingService.ts,815] options.vimId: ", options);
-      ///*prettier-ignore*/ console.log("[KeyMappingService.ts,815] merged: ", merged);
       targetKeyBinding = merged[mode] ?? [];
     }
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("targetKeyBinding", targetKeyBinding);
+    /*                                                                                             prettier-ignore*/ if(l.shouldLog([3])) console.log("targetKeyBinding", targetKeyBinding);
 
     //
     input = this.ensureVimModifier(input);

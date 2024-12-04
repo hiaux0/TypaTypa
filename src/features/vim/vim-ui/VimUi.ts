@@ -270,7 +270,7 @@ export class VimUi {
   }
 
   private setCursorInInsert(cursor?: Cursor) {
-    if (!cursor) return
+    if (!cursor) return;
 
     const children = this.querySelectorService.getInputContainerChildren();
     if (!children) return;
@@ -285,9 +285,11 @@ export class VimUi {
      * Make sure, there is a text node.
      */
     // const textNode = document.createTextNode($childToFocus.textContent);
-    const range = SelectionService.createRange(textNode, newCursor);
-    // /*prettier-ignore*/ console.log("[VimUi.ts,284] range: ", range);
-    SelectionService.setSingleRange(range);
+    try {
+      const range = SelectionService.createRange(textNode, newCursor);
+      // /*prettier-ignore*/ console.log("[VimUi.ts,284] range: ", range);
+      SelectionService.setSingleRange(range);
+    } catch {}
   }
 
   private focusContainer() {

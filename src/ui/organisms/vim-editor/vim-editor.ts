@@ -91,7 +91,6 @@ export class VimEditor {
           this.setVimState(vimState);
 
           const text = vimState.lines.map((l) => l.text).join(" ");
-          // /*prettier-ignore*/ console.log(">>>> [vim-editor.ts,63] text: ", text);
           this.value = text;
 
           if (!this.vimEditorHooks?.vimStateUpdated) return;
