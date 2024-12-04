@@ -21,7 +21,7 @@ import { Id } from "../../../../domain/types/SecondBrainDataModel";
 import { VIM_COMMAND } from "../../../../features/vim/vim-commands-repository";
 import { debugFlags } from "../../../../common/modules/debug/debugFlags";
 import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/commands/KeyMappingService";
-import { featureFlags } from "../grid-modules/featureFlags";
+import { FF, featureFlags } from "../grid-modules/featureFlags";
 import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 
 const logger = new Logger("GridCell");
@@ -66,7 +66,7 @@ export class GridCell {
   public autocompleteValue = "";
   public autoCompleteSource: string[] = [];
   public measureTextWidth = measureTextWidth;
-  public clipText = featureFlags.grid.cells.clipText;
+  public clipText = FF.canClipText();
   public vimState: IVimState;
   public vimEditorHooks: VimHooks = {
     afterInit: (vim) => {
@@ -171,7 +171,8 @@ export class GridCell {
       lines: [{ text }],
     };
     if (featureFlags.vim.mode.putCursorAtFirstNonWhiteSpace) {
-      vimState.cursor.col = text.search(/\S/);
+      const firstNonWhitespaceIndex = Math.max(0, text.search(/\S/));
+      vimState.cursor.col = firstNonWhitespaceIndex;
     }
 
     this.vimState = vimState;
@@ -320,7 +321,7 @@ export class GridCell {
         /*prettier-ignore*/ console.log("[grid-cell.ts,105] finalWidth: ", finalWidth);
       }
 
-      const clipTextOffset = featureFlags.grid.cells.clipTextOffset;
+      const clipTextOffset = FF.getClipTextOffset();
       if (clipTextOffset) {
         finalWidth = adjustWithClipTextOffset.bind(this)(
           finalWidth,

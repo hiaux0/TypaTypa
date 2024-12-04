@@ -1,5 +1,11 @@
 import { CELL_HEIGHT } from "../../../../common/modules/constants";
 
+/**
+ * Priority
+ * 0: Base
+ * 1: Medium
+ * 2: High
+ */
 export const featureFlags = {
   autosave: true,
   llm: {
@@ -14,8 +20,9 @@ export const featureFlags = {
   },
   grid: {
     cells: {
-      clipText: false,
-      clipTextOffset: 1, // measured in cells
+      flag: true,        // 0
+      clipText: true,    // 1
+      clipTextOffset: 1, // 2 measured in cells
     },
     cursor: {
       cell: {
@@ -35,9 +42,32 @@ export const featureFlags = {
   vim: {
     mode: {
       putCursorAtFirstNonWhiteSpace: true,
-    }
-  }
+    },
+  },
 };
+
+export class FF {
+  static get(key: string) {
+    return featureFlags[key];
+  }
+
+  static getClipTextFlag(): boolean {
+    return featureFlags.grid.cells.flag;
+  }
+
+  static canClipText(): boolean {
+    if (!this.getClipTextFlag()) return;
+    const { cells } = featureFlags.grid;
+    const should = cells.clipText && !cells.clipTextOffset;
+    return should;
+  }
+
+  static getClipTextOffset(): number {
+    if (!this.getClipTextFlag()) return;
+    if (this.canClipText()) return;
+    return featureFlags.grid.cells.clipTextOffset;
+  }
+}
 
 // featureFlags
 // featureFlags.copy.autopasteIntoRow
