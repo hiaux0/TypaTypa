@@ -78,12 +78,17 @@ export const defaultGridSelectionRange: GridSelectionRange = [
   [0, 0],
 ];
 
+export interface CellStyles {
+  color?: string;
+}
+
 // export type ContentMap = Record<string, string>;
 export interface Cell {
   text: string;
   col?: number;
   row?: number;
   colsToNextText?: number;
+  styles: CellStyles;
 }
 export type ContentMap = Cell[][];
 export type ColHeaderMap = Record<

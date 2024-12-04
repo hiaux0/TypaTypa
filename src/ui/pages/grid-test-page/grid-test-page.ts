@@ -34,11 +34,11 @@ import {
   CELL_COORDS,
   CELL_HEIGHT,
   CELL_WIDTH,
-  EV_GRID_CELL,
   INITIAL_COLUMN_COUNT,
   INITIAL_ROW_COUNT,
   PADDING,
   VIM_ID_MAP,
+  COLORS,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -53,7 +53,6 @@ import {
   GridIteratorOptions,
   calculateDiff,
   checkCellOverflow,
-  convertGridToVimState,
   convertRangeToVimState,
   defaultGridIteratorOptions,
   iterateOverGrid,
@@ -64,10 +63,7 @@ import {
 } from "./grid-modules/gridModules";
 import { Store } from "../../../common/modules/store";
 import { Logger } from "../../../common/logging/logging";
-import {
-  getComputedValueFromPixelString,
-  getCssVar,
-} from "../../../common/modules/css/css-variables";
+import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
 import { popVimInstanceId } from "../../../features/vim/mulitple-vim-instances-handle";
 import { featureFlags } from "./grid-modules/featureFlags";
 import { splitByEndingAndSeparator } from "../../../common/modules/strings";
@@ -79,6 +75,11 @@ import {
 import { openFullscreen } from "../../../common/modules/platform/fullscreen";
 import { debugFlags } from "../../../common/modules/debug/debugFlags";
 import { ICommandsService } from "../../../common/services/CommandsService";
+import {
+  SheetsService,
+  addMarkdownStyling,
+  addMarkdownStylingToCell,
+} from "./grid-modules/SheetsService";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -222,7 +223,7 @@ export class GridTestPage {
       },
     ],
   };
-  @observable public activeSheetId = "";
+  @observable public activeSheetId;
 
   private isRowEmpty(row: number): boolean {
     return !this.contentMap[row]?.some((cell) => cell.text);
@@ -1469,7 +1470,8 @@ export class GridTestPage {
     return prev;
   }
 
-  activeSheetIdChanged() {
+  activeSheetIdChanged(_, before: string) {
+    if (!before) return;
     if (!this.activeSheetId) return;
     this.sheetsData.selectedSheetId = this.activeSheetId;
     this.updateContentMap(this.sheetsData, this.activeSheetId);
@@ -1511,17 +1513,11 @@ export class GridTestPage {
       },
     };
 
-    this.contentMap;
-    // this.sheetsData.sheets[this.sheetsData.selectedSheetId].content;
-
     this.autosave();
   }
 
   attached() {
     /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,329] getTextFromHtml: ", );
-
-    //const vimInputHandlerV2 = vimContainer.get(VimInputHandlerV2);
-    //vimInputHandlerV2.register("test");
 
     this.initGridNavigation();
     const [start, end] = this.activeSheet.selectedRange ?? [[], []];
@@ -1701,9 +1697,11 @@ export class GridTestPage {
 
   public onCellUpdate = (col: number, row: number, cell: Cell): void => {
     if (!this.contentMap) return;
+    cell = addMarkdownStylingToCell(cell);
     // /*prettier-ignore*/ console.log("C.1 [grid-test-page.ts,1713] cell.text: ", col, row,cell.text);
-    this.setCurrentCellContent(cell.text, col, row);
+    this.setCurrentCell(cell, col, row);
     this.onCellContentChangedInternal(col, row);
+    this.updateContentMapChangedForView();
   };
 
   public save(): void {
@@ -1717,14 +1715,12 @@ export class GridTestPage {
   };
 
   private initSheets(sheetsData: GridDatabaseType): void {
-    let updatedSheetData = runGridMigrations(sheetsData);
-    updatedSheetData = checkCellOverflow(updatedSheetData);
-    // // /*prettier-ignore*/ console.log("[grid-test-page.ts,488] updatedSheetData: ", updatedSheetData);
-    this.sheetsData = updatedSheetData;
-    this.sheetTabs = updatedSheetData.sheets.map((sheet) => ({
+    this.sheetTabs = this.sheetsData.sheets.map((sheet) => ({
       id: sheet.id,
       name: sheet.title,
     }));
+    let updatedSheetData = runGridMigrations(sheetsData);
+    updatedSheetData = checkCellOverflow(updatedSheetData);
     const sheetId = updatedSheetData.selectedSheetId;
     this.activeSheetId = sheetId;
     this.updateContentMap(updatedSheetData, sheetId);
@@ -1737,7 +1733,8 @@ export class GridTestPage {
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === sheetId,
     );
-    const activeSheet = sheetsData.sheets[activeIndex];
+    let activeSheet = sheetsData.sheets[activeIndex];
+    activeSheet = addMarkdownStyling(activeSheet);
     if (!activeSheet) return;
     this.activeSheet = activeSheet;
     this.rowSize = Math.max(this.rowSize, this.activeSheet.content.length);
@@ -1784,6 +1781,7 @@ export class GridTestPage {
       if (!col) return;
       col.forEach((cell, cellIndex) => {
         if (!cell) return;
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1784] !cell: ", cell);
         converted[CELL_COORDS(colIndex, cellIndex)] = cell;
       });
     });
@@ -1816,7 +1814,7 @@ export class GridTestPage {
     }
 
     this.spreadsheetContainerRef.addEventListener("click", () => {
-      this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridNavigation)
+      this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridNavigation);
     });
   }
 
@@ -1843,18 +1841,6 @@ export class GridTestPage {
   }
 
   private initGridNavigation(): void {
-    const mappingByKey = {
-      //"<Control>r": () => {
-      //  // return true;
-      //},
-      //"<Tab>": () => {
-      //  return this.setActivePanelFromHTMLElement();
-      //},
-      //"<Shift>Tab": () => {
-      //  return this.setActivePanelFromHTMLElement();
-      //},
-    };
-
     // const vimState = convertGridToVimState(
     const vimState = convertRangeToVimState(
       this.contentMap,
@@ -1892,7 +1878,7 @@ export class GridTestPage {
     };
     // console.log("1.");
     this.vimInputHandlerV2.registerAndInit(vimOptions, this.mappingByMode); // 1. init vimCore
-    this.vimInit.init(vimOptions, mappingByKey, this.mappingByMode); // 2. need vimCore
+    this.vimInit.init(vimOptions, {}, this.mappingByMode); // 2. need vimCore
     this.commandsService.registerCommands(vimOptions.vimId, this.mappingByMode);
   }
 
@@ -1935,8 +1921,23 @@ export class GridTestPage {
     row = this.dragStartRowIndex,
   ): Cell {
     const cell = this.contentMap[row]?.[col];
-    // const cell = this.sheetsData.sheets[1].content[row]?.[col];
     return cell;
+  }
+
+  private setCurrentCell(
+    cell: Cell,
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+    option?: { skipUpdate: boolean },
+  ) {
+    if (this.contentMap[row] == null) {
+      this.contentMap[row] = [];
+    }
+    this.contentMap[row][col] = cell;
+    this.onCellContentChangedInternal(col, row);
+
+    if (option?.skipUpdate) return;
+    this.updateContentMapChangedForView();
   }
 
   private setCurrentCellContent(

@@ -32,9 +32,9 @@
       <pre
         if.bind="isOverflown && selected"
         class="read-only overflown"
-        css="width: ${overflownWidthWhenSelected};"
+        css="width: ${overflownWidthWhenSelected}; color: ${cell.styles?.color}"
       >${cell.text}</pre>
-      <pre else class="read-only">${cell.text}</pre>
+      <pre else class="read-only" css="color: ${cell.styles?.color}">${cell.text}</pre>
     </template>
   </section>
 

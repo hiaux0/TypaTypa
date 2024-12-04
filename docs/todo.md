@@ -156,7 +156,6 @@ I want to have live-editor
     - for this, check `scrollEditor`, but make it take coords
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
-- [ ] feat: ui styling
 - [ ] feat: quickly toggle settings
 - [ ] fix: grid: paste: newlines at start should be reduced (when copying code blocks)
 - [ ] E
@@ -181,10 +180,12 @@ I want to have live-editor
   - bg: sometimes lose the reading position, when scrolling to many rows
   - idea: blink a short second, where the old cell was scrolled to (the top)
 - [ ] feat: grid: multi-row cells
+- [ ] bug: fix undo redo
 
 # Done
 ## Grid
 
+- [x] feat: ui styling
 - [x] feat: grid: overflow cells, but leave a cell margin left
   - bg: overflow cut off, but hard to read with the cell on the right
   - idea: leave some cells to the left empty

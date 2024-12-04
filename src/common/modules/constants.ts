@@ -7,6 +7,17 @@ export const STORE_KEYS = {
   APP_STATE: "typaTypaAppState",
 };
 
+export const COLORS = {
+  headings: {
+    h1: `hsl(154, 90%, 48%)`, //  - A nice blue-green color.
+    h2: `hsl(240, 70%, 80%)`, //  - A soft and calming green-blue color.
+    h3: `hsl(36, 95%, 55%)`, //  - A rich and warm red-brown color.
+    h4: `hsl(60, 80%, 90%)`, //  - A bright and sunny yellow-orange color.
+    h5: `hsl(270, 70%, 50%)`, //  - A deep purple-blue color.
+    h6: `hsl(24, 100%, 58%)`, //  - A vibrant and energetic orange-red color.
+  },
+};
+
 /**
  * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
  */
