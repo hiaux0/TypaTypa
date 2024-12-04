@@ -2,6 +2,43 @@
 -----------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------
+// 2. use css variables from 1. to define light and dark theme
+@function darkMode2($color) {
+  @return scale-color($color, $lightness: -100%);
+}
+
+@function get-rgb($variable) {
+  @return unquote(
+    "rgb(#{red($variable)}, #{green($variable)}, #{blue($variable)})"
+  );
+}
+
+---
+@function darkMode($hsl, $amount: 50%) {
+  // Split the HSL value into its components
+  $hue: nth($hsl, 1);
+  // $saturation: nth($hsl, 2);
+  // $lightness: nth($hsl, 3);
+  //
+  // // Add 50% to the lightness, ensuring it doesn't exceed 100%
+  // $new-lightness: min($lightness + $amount, 100%);
+  //
+  // // Return the new HSL value with updated lightness
+  @return hsl($hue, 0%, 10%);
+}
+
+@mixin smoke($color, $l) {
+  background: scale-color($color, $lightness: $l);
+}
+
+@function smokeFn($color, $l) {
+  @return scale-color($color, $lightness: $l);
+}
+
+$red: var(--red);
+$darkred: smokeFn(hsl(0, 100%, 50%), +50%);
+
+-----------------------------------------------------------------------------------------------
 
     "------------------------------"; /*?*/
     withBinding; /*?*/

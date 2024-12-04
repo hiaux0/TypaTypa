@@ -1814,6 +1814,10 @@ export class GridTestPage {
         //this.setCurrentCellContent(text, nextEmptyCol);
       });
     }
+
+    this.spreadsheetContainerRef.addEventListener("click", () => {
+      this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridNavigation)
+    });
   }
 
   private getActiveSheet(): Sheet {

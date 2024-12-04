@@ -1,0 +1,101 @@
+@import "../../../../colors.scss";
+
+/**
+ *
+```md
+# Hue
+on color wheel
+Red: 0
+Green: 120
+Blue: 240
+
+# Saturation
+intensity
+0: shade of grey
+100%: most intense
+
+# Lightness
+control brightness
+0   Black
+50  Base
+100 White
+```
+ */
+
+
+// 1. Define your palette in css variables
+:root {
+  --ff: "Roboto", sans-serif;
+  --h1: bold 1.125rem/1.4em var(--ff); // 1.4em: line-height acts as margin
+  --h2: bold 1rem/1.4em var(--ff);
+  --p: lrem/1.4em var(--ff);
+  --p2: 0.875rem/1.4em var(--ff);
+}
+
+
+/* $white: get-rgb(var(--white90)); */
+$white90: hsl(0, 0%, 90%);
+$grey60: hsl(0, 0%, 60%);
+$grey50: hsl(0, 0%, 50%);
+$grey40: hsl(0, 0%, 40%);
+$black10: hsl(0, 0%, 10%);
+$white: $white90;
+$grey: $grey50;
+$black: $black10;
+
+$background: if( $theme == dark, $black, scale-color($black, $lightness: +100%));
+$defaultTextColor: if($theme == dark, $white, scale-color($white, $lightness: -100%));
+
+// assign scss variables to css variables
+
+// Headings & Key Elements
+// Headings & Key Elements
+// Default/Body text size
+// Secondary Information
+// Secondary Information
+
+// $h1: var(--h1);
+// $h2: var(--h2);
+// $defaultText: var(--p);
+// $bodyText: $defaultText;
+// $secondary: var(--asht);
+// $secondarySmall: var(--asht);
+
+$primaryTextColor: hsl(0, 0%, 100%);
+$secondaryTextColor: hsl(0, 0%, 60%);
+
+.uilib-typography {
+  background: $background;
+  color: $defaultTextColor;
+
+  .white{color: $white;}
+  .white90{color: $white90;}
+  .grey60{color: $grey60;}
+  .grey{color: $grey;}
+  .grey40{color: $grey40;}
+  .black10{color: $black10;}
+  .black{color: $black;}
+  .red{color: $red;}
+
+  .defaultTextColor {
+    color: $defaultTextColor;
+  }
+
+  .first {
+    color: $primaryTextColor;
+  }
+  .second {
+    color: $secondaryTextColor;
+  }
+
+  // @include createColorVarClass(white);
+  // @include createColorVarClass(white90);
+  // @include createColorVarClass(grey60);
+  // @include createColorVarClass(grey);
+  // @include createColorVarClass(grey40);
+  // @include createColorVarClass(black10);
+  // @include createColorVarClass(black);
+  // @include createColorVarClass(red);
+  // @include createColorVarClass(darkred);
+}
+

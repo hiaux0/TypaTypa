@@ -32,7 +32,7 @@ export class MyApp {
   attached() {
     // this.router.load(TypingPage);
     // this.router.load(PropagandaPage);
-    this.router.load(GridTestPage);
+    // this.router.load(GridTestPage);
     // this.router.load(KhongAPage);
 
     this.initKeyBindings();
