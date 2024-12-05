@@ -241,7 +241,7 @@ export class VimInputHandlerV2 {
 
       let preventDefault = false;
       let vimState: IVimState;
-      const allowHook = mode === VimMode.INSERT && !isEnter(finalPressedKey);
+      const allowHook = mode !== VimMode.INSERT && !isEnter(finalPressedKey);
       if (finalCommand?.execute) {
         vimState = this.vimCore.getVimState();
         const response = await finalCommand.execute(

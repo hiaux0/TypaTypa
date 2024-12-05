@@ -1781,7 +1781,6 @@ export class GridTestPage {
       if (!col) return;
       col.forEach((cell, cellIndex) => {
         if (!cell) return;
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,1784] !cell: ", cell);
         converted[CELL_COORDS(colIndex, cellIndex)] = cell;
       });
     });
@@ -1859,7 +1858,7 @@ export class GridTestPage {
           this.mode = payload.vimState.mode;
         },
         commandListener: (result) => {
-          // // // /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] result: ", result);
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] result: ", result);
           window.setTimeout(() => {
             if (!this.contentMap) return;
             if (

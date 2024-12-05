@@ -161,7 +161,6 @@ I want to have live-editor
 - [ ] E
   - [x] until cell with no content
   - [ ] if no overflow, then until next empty cell 
-- [ ] vimeditor
 - [ ] space+o
 - [ ] fix highlight in visual mode, with mulitple cells class="cell selected-cell"
   - problem: overflown cell
@@ -185,6 +184,7 @@ I want to have live-editor
 # Done
 ## Grid
 
+- [x] vimeditor
 - [x] feat: ui styling
 - [x] feat: grid: overflow cells, but leave a cell margin left
   - bg: overflow cut off, but hard to read with the cell on the right
