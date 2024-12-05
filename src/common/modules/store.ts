@@ -11,6 +11,8 @@ import { ON_TOPIC_CHANGE } from "./eventMessages";
 //export type IStore = Store;
 //export const IStore = DI.createInterface<IStore>('IStore');
 
+type ServicesStorageKeys = "RecentlyUsedService";
+
 // @inject(EventAggregator)
 export class Store {
   public isDrawerOpen: boolean;
@@ -19,12 +21,23 @@ export class Store {
   public activeTabName: string;
   public wordToLookUp: string;
   public dictionaryLookedUpList: Set<string>;
+  public servicesDatabase: Record<ServicesStorageKeys, any> = {
+    RecentlyUsedService: {},
+  };
 
   // Grid
   public activeSheet: Sheet;
 
+
   constructor(private ea: EventAggregator = resolve(EventAggregator)) {
     this.setVariables();
+  }
+
+  public setServiceItem(key: ServicesStorageKeys, item: any): void {
+    this.servicesDatabase[key] = item;
+  }
+  public getServiceItem(key: ServicesStorageKeys) {
+    return this.servicesDatabase[key];
   }
 
   public onTopicChange = (topic: Topic): void => {
@@ -36,7 +49,7 @@ export class Store {
     this.updateLocalStorage();
   };
 
-  public closeCommandPaletteOpen = (): void => {
+  public closeCommandPalette = (): void => {
     this.isCommandPaletteOpen = false;
     this.updateLocalStorage();
   };
@@ -57,6 +70,8 @@ export class Store {
     this.wordToLookUp = localState?.wordToLookUp ?? WORD_TO_LOOK_UP;
     this.dictionaryLookedUpList =
       localState?.dictionaryLookedUpList ?? new Set();
+    this.servicesDatabase =
+      localState?.servicesDatabase ?? this.servicesDatabase;
   }
 
   private loadLocalStorage() {

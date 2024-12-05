@@ -19,7 +19,10 @@
       click.trigger="selectSuggestion(suggestion.original)"
       data-scroll-index="${$index}"
     >
-      <section class="suggestion-content">
+      <div class="suggestion-content">
+        <section class="suggestion-top-row" if.bind="suggestion.top">
+          ${suggestion.top}
+        </section>
         <section class="suggestion-main-row">
           <span innerhtml.bind="suggestion.highlighted"></span>
           <div class="right">${suggestion.right}</div>
@@ -30,7 +33,7 @@
           </div>
           <div class="bottom-right">${suggestion.bottomRight}</div>
         </section>
-      </section>
+      </div>
     </li>
   </ul>
 </div>

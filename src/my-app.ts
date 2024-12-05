@@ -62,7 +62,7 @@ export class MyApp {
           desc: "Cancel all",
           context: [this.contextId],
           execute: () => {
-            this.store.closeCommandPaletteOpen();
+            this.store.closeCommandPalette();
             return true;
           },
           preventUndoRedo: true,

@@ -41,6 +41,13 @@ export class CommandsService {
     this.commandsRepository[context] = merged;
   }
 
+  public updateCommand(context: string, command: VimCommand): void {
+    const commandInRepo = this.commandsRepository[context].find(
+      (c: VimCommand) => c.command === command.command,
+    );
+    /*prettier-ignore*/ console.log("[CommandsService.ts,46] commandInRepo: ", commandInRepo);
+  }
+
   public async executeCommand(vimCore: VimCore, finalCommand: VimCommand) {
     let vimState: IVimState;
     // const allowHook = mode === VimMode.INSERT && !isEnter(finalPressedKey);

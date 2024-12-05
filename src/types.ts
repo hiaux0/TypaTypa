@@ -10,6 +10,7 @@ declare global {
 
 export interface AutocompleteSource<T extends Record<string, any>> {
   text: string;
+  top?: string;
   left?: string;
   right?: string;
   bottomRight?: string;

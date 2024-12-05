@@ -28,6 +28,11 @@
       }
 
       .suggestion-content {
+        .suggestion-top-row {
+          font-size: $fontSizeS;
+          color: $grey1;
+          margin-bottom: 6px;
+        }
         .suggestion-main-row {
           display: flex;
           justify-content: space-between;
@@ -42,8 +47,6 @@
           margin-top: 6px;
           font-size: $fontSizeS;
           color: $grey1;
-          .bottom-right {
-          }
         }
       }
     }

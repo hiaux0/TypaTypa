@@ -181,6 +181,7 @@ I want to have live-editor
 - [ ] feat: grid: multi-row cells
 - [ ] feat: status line
   - mode, commands
+- [ ] feat: command palette: recent
 
 # Done
 ## Grid
