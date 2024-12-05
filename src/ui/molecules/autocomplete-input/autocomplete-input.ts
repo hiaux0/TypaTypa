@@ -1,9 +1,15 @@
-import { bindable } from "aurelia";
+import { bindable, resolve } from "aurelia";
 import "./autocomplete-input.scss";
 import { UiSuggestion } from "../../../domain/types/uiTypes";
 import { translations } from "../../../common/modules/translations";
 import { getLongestCommonSubstring } from "../../../common/modules/strings";
 import { AutocompleteSource } from "../../../types";
+import {
+  IVimInputHandlerV2,
+  VimInputHandlerV2,
+} from "../../../features/vim/VimInputHandlerV2";
+import { VIM_ID_MAP } from "../../../common/modules/constants";
+import { VimMode } from "../../../features/vim/vim-types";
 
 const debugLog = false;
 
@@ -52,13 +58,16 @@ export class AutocompleteInput {
     this.updateSuggestions(newValue);
   }
 
+  constructor(
+    private vimInputHandlerV2: VimInputHandlerV2 = resolve(IVimInputHandlerV2),
+  ) {}
+
   attached() {
     this.attachCount++;
     if (!this.container && this.target) {
       /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: Need also to provide a container if you provide a target");
     }
 
-    /*prettier-ignore*/ debugLog && console.log("AI.1. [autocomplete-input.ts,46] this.value: ", this.value);
     this.hideInput = this.hideInput === "" || this.hideInput;
     this.updateSuggestions(this.value);
     this.initKeyboardEvents();
@@ -88,7 +97,6 @@ export class AutocompleteInput {
   public selectSuggestion(suggestion: UiSuggestion<any>): void {
     const suggestionName = suggestion.text;
     this.value = suggestionName;
-    // console.log("B.3 suggestionName: ", suggestionName);
     this.onAccept?.(suggestion);
     this.clearSuggestions();
   }
@@ -136,84 +144,104 @@ export class AutocompleteInput {
 
   private initKeyboardEvents(): void {
     if (this.attachCount > 1) return;
-    const host = this.container ?? this.autocompleteContainerRef;
-    host?.addEventListener("keydown", (event) => {
-      if (this.container && !this.target) {
-        /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: Need also to provide a target if you provide a container");
-      }
-
-      const finalInput = this.target ?? this.searchInputRef;
-      const isActive = document.activeElement === finalInput;
-      if (!isActive) return;
-
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        this.activeCursorIndex = Math.min(
-          this.suggestions.length - 1,
-          this.activeCursorIndex + 1,
-        );
-        // /*prettier-ignore*/ console.log("[autocomplete-input.ts,97] this.activeCursorIndex: ", this.activeCursorIndex);
-        this.scrollToSuggestion();
-        return;
-      }
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        this.activeCursorIndex = Math.max(0, this.activeCursorIndex - 1);
-        this.scrollToSuggestion();
-        return;
-      }
-      if (event.key === "Enter") {
-        if (
-          typeof this.onAccept !== "function" &&
-          typeof this.onPartialAccept !== "function"
-        ) {
-          /*prettier-ignore*/ console.error("[WARNING:<autocomplete-input>]: You need to provide a function to the onAccept attribute. Consider the `this` context. You may want to provide an arrow function");
-          return;
-        }
-        event.preventDefault();
-        const suggestion = this.suggestions[this.activeCursorIndex];
-        if (!suggestion) return;
-
-        this.selectSuggestion(suggestion);
-        return;
-      }
-      if (event.key === "Escape") {
-        event.preventDefault();
-        this.value = "";
-        this.clearSuggestions();
-        return;
-      }
-      if (event.key === "Tab") {
-        if (
-          typeof this.onPartialAccept !== "function" &&
-          typeof this.onAccept !== "function"
-        ) {
-          /*prettier-ignore*/ console.error("[WARNING:<autocomplete-input>]: You need to provide a function to the onPartialAccept attribute. Consider the `this` context. You may want to provide an arrow function");
-          return;
-        }
-        event.preventDefault();
-        // /*prettier-ignore*/ console.log("----------------------------");
-        const rawSuggestions = this.suggestions.map((s) => s.text);
-        // /*prettier-ignore*/ console.log("AI.0 [autocomplete-input.ts,148] rawSuggestions: ", rawSuggestions);
-        // /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,151] this.value: ", this.value);
-        const substring = getLongestCommonSubstring(rawSuggestions, this.value);
-        // /*prettier-ignore*/ console.log("AI.1.2 [autocomplete-input.ts,149] substring: ", substring);
-        const isSame = substring === this.value;
-        // /*prettier-ignore*/ console.log("AI.2. [autocomplete-input.ts,151] isSame: ", isSame);
-        const useSuggestion = isSame && substring.length > 0;
-        // /*prettier-ignore*/ console.log("AI.3. [autocomplete-input.ts,153] useSuggestion: ", useSuggestion);
-        let completion = substring;
-        if (useSuggestion) {
-          const suggestion = this.suggestions[this.activeCursorIndex]?.text;
-          completion = suggestion;
-        }
-        // /*prettier-ignore*/ console.log("AI.4. [autocomplete-input.ts,155] completion: ", completion);
-        this.value = completion;
-        // /*prettier-ignore*/ console.log(">>>> [autocomplete-input.ts,165] this.value: ", this.value);
-        this.onPartialAccept?.(completion);
-        return;
-      }
-    });
+    // const host = this.container ?? this.autocompleteContainerRef;
+    //host?.addEventListener("keydown", (event) => {
+    //  if (this.container && !this.target) {
+    //    /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: Need also to provide a target if you provide a container");
+    //  }
+    //
+    //  const finalInput = this.target ?? this.searchInputRef;
+    //  const isActive = document.activeElement === finalInput;
+    //  if (!isActive) return;
+    //});
+    this.vimInputHandlerV2.registerAndInit(
+      { vimId: VIM_ID_MAP.commandPalette },
+      {
+        [VimMode.NORMAL]: [
+          {
+            key: "<Escape>",
+            execute: () => {
+              this.value = "";
+              this.clearSuggestions();
+              return true;
+            },
+          },
+          {
+            key: "<Tab>",
+            execute: () => {
+              if (
+                typeof this.onPartialAccept !== "function" &&
+                typeof this.onAccept !== "function"
+              ) {
+                /*prettier-ignore*/ console.error("[WARNING:<autocomplete-input>]: You need to provide a function to the onPartialAccept attribute. Consider the `this` context. You may want to provide an arrow function");
+                return;
+              }
+              event.preventDefault();
+              const rawSuggestions = this.suggestions.map((s) => s.text);
+              // /*prettier-ignore*/ console.log("AI.0 [autocomplete-input.ts,148] rawSuggestions: ", rawSuggestions);
+              // /*prettier-ignore*/ console.log("AI.1.1 [autocomplete-input.ts,151] this.value: ", this.value);
+              const substring = getLongestCommonSubstring(
+                rawSuggestions,
+                this.value,
+              );
+              // /*prettier-ignore*/ console.log("AI.1.2 [autocomplete-input.ts,149] substring: ", substring);
+              const isSame = substring === this.value;
+              // /*prettier-ignore*/ console.log("AI.2. [autocomplete-input.ts,151] isSame: ", isSame);
+              const useSuggestion = isSame && substring.length > 0;
+              // /*prettier-ignore*/ console.log("AI.3. [autocomplete-input.ts,153] useSuggestion: ", useSuggestion);
+              let completion = substring;
+              if (useSuggestion) {
+                const suggestion =
+                  this.suggestions[this.activeCursorIndex]?.text;
+                completion = suggestion;
+              }
+              // /*prettier-ignore*/ console.log("AI.4. [autocomplete-input.ts,155] completion: ", completion);
+              this.value = completion;
+              // /*prettier-ignore*/ console.log(">>>> [autocomplete-input.ts,165] this.value: ", this.value);
+              this.onPartialAccept?.(completion);
+              return true;
+            },
+          },
+          {
+            key: "<Enter>",
+            execute: () => {
+              if (
+                typeof this.onAccept !== "function" &&
+                typeof this.onPartialAccept !== "function"
+              ) {
+                /*prettier-ignore*/ console.error("[WARNING:<autocomplete-input>]: You need to provide a function to the onAccept attribute. Consider the `this` context. You may want to provide an arrow function");
+                return;
+              }
+              console.log("Enter");
+              const suggestion = this.suggestions[this.activeCursorIndex];
+              /*prettier-ignore*/ console.log("[autocomplete-input.ts,221] suggestion: ", suggestion);
+              if (!suggestion) return;
+              this.selectSuggestion(suggestion);
+              return true;
+            },
+          },
+          {
+            key: "<ArrowUp>",
+            execute: () => {
+              this.activeCursorIndex = Math.max(0, this.activeCursorIndex - 1);
+              this.scrollToSuggestion();
+              return true;
+            },
+          },
+          {
+            key: "<ArrowDown>",
+            execute: () => {
+              this.activeCursorIndex = Math.min(
+                this.suggestions.length - 1,
+                this.activeCursorIndex + 1,
+              );
+              this.scrollToSuggestion();
+              return true;
+            },
+          },
+        ],
+      },
+    );
   }
 
   private scrollToSuggestion(): void {

@@ -5,6 +5,7 @@ import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
 import {
   IKeyMappingService,
   KeyMappingService,
+  enhanceWithIdsAndMode,
   overwriteKeybindingsV2,
 } from "./vimCore/commands/KeyMappingService";
 import { VIM_COMMAND, VimCommand } from "./vim-commands-repository";
@@ -77,6 +78,7 @@ export class VimInputHandlerV2 {
     if (already && !reload) return;
 
     if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
+    additionalKeyBindings = enhanceWithIdsAndMode(additionalKeyBindings);
     this.inputMap[id] = additionalKeyBindings;
     this.instancesMap[id] = { options };
     this.initVimCore(options);

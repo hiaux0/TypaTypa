@@ -16,6 +16,7 @@ import {
   KeyMappingService,
   overwriteKeybindingsV2,
 } from "../../features/vim/vimCore/commands/KeyMappingService";
+import { hashStringArray } from "../modules/strings";
 
 const l = new Logger("CommandsService");
 
@@ -25,8 +26,20 @@ export const ICommandsService = DI.createInterface<ICommandsService>(
   (x) => x.singleton(CommandsService),
 );
 
+export function createCommandId(command: VimCommand): string {
+  const id = hashStringArray(
+    command.desc,
+    command.key,
+    command.command,
+    command.context?.join(","),
+    command.sequence,
+  );
+  return id;
+}
+
 export class CommandsService {
   public commandsRepository = {};
+  public createId = createCommandId;
 
   constructor(
     private keyMappingService: KeyMappingService = resolve(IKeyMappingService),
@@ -39,6 +52,14 @@ export class CommandsService {
     );
 
     this.commandsRepository[context] = merged;
+  }
+
+  public getCommand(context: string, command: VimCommand): VimCommand {
+    const mode = command.mode;
+    const commandInRepo = this.commandsRepository[context][mode].find(
+      (c: VimCommand) => c.id === command.id,
+    );
+    return commandInRepo;
   }
 
   public updateCommand(context: string, command: VimCommand): void {

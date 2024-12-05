@@ -137,6 +137,11 @@ export interface VimCommand {
    * Full: <modA><modB>keyAkeyB
    */
   key?: string;
+  /**
+   * (Unique) id hased based on properties
+   */
+  id?: string;
+  mode?: string;
   command?: VimCommandNames;
   sequence?: string;
   /**

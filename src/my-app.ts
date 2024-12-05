@@ -11,6 +11,7 @@ import {
   CommandsService,
   ICommandsService,
 } from "./common/services/CommandsService";
+import { RecentlyUsedService } from "./common/services/RecentlyUsedService";
 
 @route({
   title: APP_NAME,
@@ -27,6 +28,9 @@ export class MyApp {
     private store: Store = resolve(Store),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
     private commandsService: CommandsService = resolve(ICommandsService),
+    private recentlyUsedService: RecentlyUsedService = resolve(
+      RecentlyUsedService,
+    ),
   ) {}
 
   attached() {
@@ -52,7 +56,7 @@ export class MyApp {
           context: [this.contextId],
           execute: () => {
             this.store.toggleCommandPaletteOpen();
-            this.vimInputHandlerV2.setActiveId(this.contextId);
+            this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.commandPalette);
             return true;
           },
           preventUndoRedo: true,
@@ -64,6 +68,14 @@ export class MyApp {
           execute: () => {
             this.store.closeCommandPalette();
             return true;
+          },
+          preventUndoRedo: true,
+        },
+        {
+          desc: "Clear recently used items",
+          context: [this.contextId],
+          execute: () => {
+            this.recentlyUsedService.clearCommands();
           },
           preventUndoRedo: true,
         },

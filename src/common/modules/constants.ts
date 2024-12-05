@@ -215,6 +215,7 @@ export const VIM_ID_MAP = {
   global: "global",
   gridCell: "gridCell",
   gridNavigation: "gridNavigation",
+  commandPalette: "commandPalette",
 };
 
 //export const VIM_CONTEXT = {

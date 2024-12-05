@@ -16,7 +16,7 @@
     <li
       repeat.for="suggestion of suggestions"
       class="suggestion ${$index === activeCursorIndex ? 'active ' : ''}"
-      click.trigger="selectSuggestion(suggestion.original)"
+      click.trigger="selectSuggestion(suggestion)"
       data-scroll-index="${$index}"
     >
       <div class="suggestion-content">

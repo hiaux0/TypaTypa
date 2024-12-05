@@ -16,7 +16,7 @@ import { SPECIAL_KEYS } from "../../../../common/modules/keybindings/app-keys";
 import { Logger } from "../../../../common/logging/logging";
 import { IKeyMappingMapping } from "../../../../types";
 import { DI, IContainer, Registration } from "aurelia";
-import { VIM_ID_MAP } from "../../../../common/modules/constants";
+import { createCommandId } from "../../../../common/services/CommandsService";
 
 const l = new Logger("KeyMappingService");
 const logAllowed = false;
@@ -28,6 +28,18 @@ class Commentary {
     if (args.length === 1) console.log(message);
     if (condition) console.log(message);
   }
+}
+
+export function enhanceWithIdsAndMode(base: KeyBindingModes): KeyBindingModes {
+  (Object.entries(base) as [VimMode, VimCommand[]][]).forEach(
+    ([mode, binding]) => {
+      binding.forEach((command) => {
+        command.id = createCommandId(command);
+        command.mode = mode;
+      });
+    },
+  );
+  return base;
 }
 
 export function mergeKeybindings(
@@ -293,8 +305,6 @@ export function overwriteAndAddExistingKeyBindingsV2(
       const keyOkay = binding.key === additionalBinding.key;
       const hasCommand = !!additionalBinding.command;
       const commandOkay = binding.command === additionalBinding.command;
-      const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
-      // const skipGlobal = isGlobal && (keyOkay || commandOkay);
       // if (binding.key === "<Control>p") {
       //if (binding.key === "<Escape>") {
       //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,244] binding.command: ", binding.command);
@@ -302,7 +312,6 @@ export function overwriteAndAddExistingKeyBindingsV2(
       //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] isGlobal: ", isGlobal);
       //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,243] skipGlobal: ", skipGlobal);
       //}
-      // const okay = (keyOkay || (hasCommand && commandOkay)) && !skipGlobal;
       const okay = keyOkay || (hasCommand && commandOkay);
       if (okay) {
         maybeIndeces.push(index);
@@ -323,7 +332,6 @@ export function overwriteAndAddExistingKeyBindingsV2(
 
     const index = maybeIndeces[0];
     const binding = finalBaseBindings[index];
-    if (additionalBinding.context?.includes(VIM_ID_MAP.global)) return;
     finalBaseBindings[index] = {
       ...binding,
       ...additionalBinding,
@@ -335,8 +343,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
         if (binding.desc === "Cancel all") console.log("here 0");
         const keyOkay = binding.key === additionalBinding.key;
         const commandOkay = binding.command === additionalBinding.command;
-        const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
-        const okay = keyOkay && commandOkay && !isGlobal;
+        const okay = keyOkay && commandOkay;
         return okay;
       });
       const onlyOne = sameKeyAndCommand.length === 1;
@@ -365,8 +372,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
         }
         const hasKey = !!additionalBinding.key;
         const commandOkay = binding.command === additionalBinding.command;
-        const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
-        const okay = !hasKey && commandOkay && !isGlobal;
+        const okay = !hasKey && commandOkay;
         return okay;
       });
       // onlySameCommandsAndNoKeys; /*?*/
@@ -392,8 +398,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
         // [binding.key, binding.command]; /*?*/
         const sameKey = binding.key === additionalBinding.key;
         const commandOkay = binding.command === additionalBinding.command;
-        const isGlobal = binding.context?.includes(VIM_ID_MAP.global);
-        const okay = !sameKey && commandOkay && !isGlobal;
+        const okay = !sameKey && commandOkay;
         return okay;
       });
       // sameCommandButDifferentKey; /*?*/

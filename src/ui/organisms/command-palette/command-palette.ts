@@ -16,6 +16,7 @@ import {
 } from "../../../common/services/CommandsService";
 import { Store } from "../../../common/modules/store";
 import { RecentlyUsedService } from "../../../common/services/RecentlyUsedService";
+import { hashStringArray } from "../../../common/modules/strings";
 
 export class CommandPalette {
   @bindable() isOpen: boolean;
@@ -23,13 +24,14 @@ export class CommandPalette {
     if (!this.isOpen) {
       // so the key handler triggers the command palette, and not the previous context
       window.requestAnimationFrame(() => {
-        this.vimInputHandler.popIdIf(VIM_ID_MAP.global);
+        this.vimInputHandler.popIdIf(VIM_ID_MAP.commandPalette);
       });
     } else {
       this.init();
     }
   }
 
+  public value = "";
   public message = "command-palette.html";
   public autocompleteSource: AutocompleteSource<VimCommand>[];
 
@@ -45,7 +47,9 @@ export class CommandPalette {
 
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     const vimCore = this.vimInputHandler.vimCore;
-    this.commandsService.executeCommand(vimCore, suggestion.data);
+    const context = suggestion.data.context[0];
+    const command = this.commandsService.getCommand(context, suggestion.data);
+    this.commandsService.executeCommand(vimCore, command);
     this.recentlyUsedService.addCommand(suggestion.data);
     this.close();
   };
@@ -53,12 +57,18 @@ export class CommandPalette {
   private init(): void {
     const converted = this.convertToAutocompleteSource();
     const lastUsedCommands = this.recentlyUsedService.getCommands();
-    const lastUsedConverted = lastUsedCommands.map((command) =>
-      this.convertCommandToSuggestions(command.item, "", "(Recently Used)"),
-    );
-
+    const lastUsedConverted = lastUsedCommands
+      .filter((lastUsed) => {
+        return converted.some((c) => c.data.id === lastUsed.item.id);
+      })
+      .map((command) => {
+        return this.convertCommandToSuggestions(
+          command.item,
+          "",
+          "(Recently Used)",
+        );
+      });
     const concat = lastUsedConverted.concat(converted);
-    /*prettier-ignore*/ console.log("[command-palette.ts,61] concat: ", concat);
     this.autocompleteSource = concat;
   }
 
@@ -98,6 +108,7 @@ export class CommandPalette {
 
   private close(): void {
     this.isOpen = false;
+    this.value = "";
     this.store.closeCommandPalette();
   }
 }

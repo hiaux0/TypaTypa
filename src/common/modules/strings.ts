@@ -161,3 +161,21 @@ export function splitByEndingAndSeparator(input: string): string[] {
 }
 //const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");
 ///*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);
+
+export function hashStringArray(...strArray: string[]): string {
+  let hash = 0;
+  if (strArray.length === 0) return;
+  hash.toString();
+
+  for (let i = 0; i < strArray.length; i++) {
+    const str = strArray[i];
+    if (!str) continue;
+    for (let j = 0; j < str.length; j++) {
+      const char = str.charCodeAt(j);
+      hash = (hash << 5) - hash + char;
+      hash |= 0;
+    }
+  }
+
+  return Math.abs(hash).toString(16);
+}
