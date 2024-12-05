@@ -507,7 +507,7 @@ export class KeyMappingService {
   private lastCommand: VimCommand;
   private lastKey: string;
   /** If a command did not trigger, save key */
-  private queuedKeys: string[] = [];
+  public queuedKeys: string[] = [];
   public id = "not-set";
 
   public static register(container: IContainer) {
@@ -710,11 +710,12 @@ export class KeyMappingService {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("merged", merged);
       targetKeyBinding = merged[mode] ?? [];
     }
-    /*                                                                                             prettier-ignore*/ if(l.shouldLog([3])) console.log("targetKeyBinding", targetKeyBinding);
+    /*                                                                                             prettier-ignore*/ if(l.shouldLog([3, 5])) console.log("targetKeyBinding", targetKeyBinding);
 
     //
     input = this.ensureVimModifier(input);
     /* prettier-ignore */ l.culogger.debug(['Finding potential command for: ', input], {}, (...r) => console.log(...r));
+    /* prettier-ignore */ l.culogger.debug(['queuedKeys', this.queuedKeys], {}, (...r) => console.log(...r));
     let keySequence = "";
     if (this.queuedKeys.length) {
       keySequence = this.queuedKeys.join("").concat(input);
@@ -789,7 +790,7 @@ export class KeyMappingService {
         this.emptyQueuedKeys();
       }
     } else {
-      /*                                                                                             prettier-ignore*/ if(l.shouldLog([])) console.log("5");
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([ , 5])) console.log("this.queuedKeys", this.queuedKeys);
       this.queuedKeys.push(input);
       this.potentialCommands = finalPotentialCommands;
     }

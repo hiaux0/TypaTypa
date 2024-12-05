@@ -179,11 +179,11 @@ I want to have live-editor
   - bg: sometimes lose the reading position, when scrolling to many rows
   - idea: blink a short second, where the old cell was scrolled to (the top)
 - [ ] feat: grid: multi-row cells
-- [ ] bug: fix undo redo
 
 # Done
 ## Grid
 
+- [x] bug: fix undo redo
 - [x] vimeditor
 - [x] feat: ui styling
 - [x] feat: grid: overflow cells, but leave a cell margin left

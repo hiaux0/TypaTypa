@@ -4,6 +4,7 @@ import { InputMap, InstancesMap, RegisterOptions } from "../../types";
 import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
 import {
   IKeyMappingService,
+  KeyMappingService,
   overwriteKeybindingsV2,
 } from "./vimCore/commands/KeyMappingService";
 import { VIM_COMMAND, VimCommand } from "./vim-commands-repository";
@@ -58,7 +59,7 @@ export class VimInputHandlerV2 {
 
   public static readonly inject = [IKeyMappingService, ICommandsService];
   constructor(
-    private keyMappingService: IKeyMappingService,
+    private keyMappingService: KeyMappingService,
     private commandsService: CommandsService,
   ) {}
 
@@ -216,10 +217,11 @@ export class VimInputHandlerV2 {
         mode,
         options,
       );
+      const hasQueuedKeys = this.keyMappingService.queuedKeys.length;
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("command", command);
       let finalCommand = command;
       let finalPressedKey = pressedKeyWithoutModifier;
-      if (!command) {
+      if (!command && !hasQueuedKeys) {
         const globalBindings = this.inputMap[VIM_ID_MAP.global];
         options.keyBindings = globalBindings;
         const globalCommand = this.keyMappingService.prepareCommandV2(
@@ -237,7 +239,7 @@ export class VimInputHandlerV2 {
         finalCommand = this.keyMappingService.getLastCommand();
         finalPressedKey = this.keyMappingService.getLastKey();
       }
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("finalCommand", finalCommand);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3, 5])) console.log("finalCommand", finalCommand);
 
       let preventDefault = false;
       let vimState: IVimState;
@@ -373,35 +375,6 @@ export class VimInputHandlerV2 {
     });
   }
 
-  //private handleEnter(key: string): boolean {
-  //  const vimState = this.vimCore.getVimState();
-  //  const correctOptions = this.instancesMap[this.activeId].options;
-  //  const $lines = correctOptions.container.querySelectorAll(".vim-line");
-  //  if (isEnter(key)) {
-  //    const selection = window.getSelection();
-  //    const range = selection.getRangeAt(0);
-  //    const cursor = range.startOffset;
-  //    const $currentLine = Array.from($lines)[
-  //      vimState.cursor.line
-  //    ] as HTMLElement;
-  //    const text = $currentLine.innerText;
-  //
-  //    const beforeText = text.slice(0, cursor);
-  //    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,346] beforeText: ", beforeText);
-  //    const afterText = text.slice(cursor);
-  //    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,348] afterText: ", afterText);
-  //
-  //    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,350] currentLine: ", $currentLine);
-  //
-  //    // $currentLine.innerText = beforeText;
-  //    // vimState.lines[vimState.cursor.line] = { text: beforeText };
-  //    vimState.lines.push({ text: afterText });
-  //    // this.vimInit.vimCore.setVimState(vimState);
-  //    this.updateVimState(vimState);
-  //    return;
-  //  }
-  //}
-
   private updateVimState(vimState: IVimState) {
     this.vimUi.update(vimState);
   }
@@ -415,7 +388,7 @@ export class VimInputHandlerV2 {
       );
       const joined = mapped;
       const log = JSON.stringify(joined, null, 2);
-      /*prettier-ignore*/ l.shouldLog(5) && console.log("[VimInputHandlerV2.ts,103] log: ",mode,  log);
+      // /*prettier-ignore*/ l.shouldLog(5) && console.log("[VimInputHandlerV2.ts,103] log: ",mode,  log);
     });
   }
 }

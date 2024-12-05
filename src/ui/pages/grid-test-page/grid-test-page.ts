@@ -1858,7 +1858,6 @@ export class GridTestPage {
           this.mode = payload.vimState.mode;
         },
         commandListener: (result) => {
-          /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] result: ", result);
           window.setTimeout(() => {
             if (!this.contentMap) return;
             if (
