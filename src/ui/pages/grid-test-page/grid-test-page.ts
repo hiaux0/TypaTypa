@@ -1125,6 +1125,17 @@ export class GridTestPage {
       },
       preventUndoRedo: true,
     },
+    {
+      desc: "Copy link",
+      context: ["Grid"],
+      execute: () => {
+        console.log("copy link");
+        // this.putCellIntoEdit();
+        // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+        return true;
+      },
+      preventUndoRedo: true,
+    },
   ];
   private mappingByVisualMode: VimCommand[] = [
     {
@@ -1715,12 +1726,14 @@ export class GridTestPage {
   };
 
   private initSheets(sheetsData: GridDatabaseType): void {
-    this.sheetTabs = this.sheetsData.sheets.map((sheet) => ({
+    let updatedSheetData = runGridMigrations(sheetsData);
+    updatedSheetData = checkCellOverflow(updatedSheetData);
+    this.sheetsData = updatedSheetData;
+    this.sheetTabs = updatedSheetData.sheets.map((sheet) => ({
       id: sheet.id,
       name: sheet.title,
     }));
-    let updatedSheetData = runGridMigrations(sheetsData);
-    updatedSheetData = checkCellOverflow(updatedSheetData);
+
     const sheetId = updatedSheetData.selectedSheetId;
     this.activeSheetId = sheetId;
     this.updateContentMap(updatedSheetData, sheetId);
@@ -1734,8 +1747,8 @@ export class GridTestPage {
       (sheet) => sheet.id === sheetId,
     );
     let activeSheet = sheetsData.sheets[activeIndex];
-    activeSheet = addMarkdownStyling(activeSheet);
     if (!activeSheet) return;
+    // activeSheet = addMarkdownStyling(activeSheet);
     this.activeSheet = activeSheet;
     this.rowSize = Math.max(this.rowSize, this.activeSheet.content.length);
     this.colSize = Math.max(
@@ -1822,7 +1835,8 @@ export class GridTestPage {
     const activeIndex = this.sheetTabs.findIndex(
       (sheet) => sheet.id === sheetId,
     );
-    return this.sheetsData.sheets[activeIndex];
+    const finalIndex = Math.max(0, activeIndex);
+    return this.sheetsData.sheets[finalIndex];
   }
 
   private isCursorInsidePanel(panel: GridPanel): boolean {

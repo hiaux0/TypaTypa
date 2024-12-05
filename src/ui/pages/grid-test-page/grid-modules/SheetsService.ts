@@ -11,6 +11,7 @@ export class SheetsService {
   }
 
   public getGridCoordsFromSheet(): GridSelectionRange {
+    if (!this.sheet) return;
     const result = [
       [0, 0],
       [this.sheet.content?.[0]?.length - 1, this.sheet.content.length - 1],

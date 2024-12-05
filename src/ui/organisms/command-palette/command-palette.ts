@@ -38,7 +38,6 @@ export class CommandPalette {
   ) {}
 
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
-    /*prettier-ignore*/ console.log("[command-palette.ts,29] suggestion: ", suggestion);
     const vimCore = this.vimInputHandler.vimCore;
     this.commandsService.executeCommand(vimCore, suggestion.data);
     this.close();
@@ -60,7 +59,6 @@ export class CommandPalette {
     const first = commandsRepository[VIM_ID_MAP.global];
     const second = commandsRepository[VIM_ID_MAP.gridNavigation];
     const merged = mergeKeybindings(first, second);
-    /*prettier-ignore*/ console.log("[command-palette.ts,63] merged: ", merged);
 
     const converted: AutocompleteSource<VimCommand>[] = [];
     Object.entries(merged).forEach((entry) => {

@@ -18,7 +18,7 @@ const debugLog = false;
  */
 export class AutocompleteInput {
   @bindable() value = "";
-  @bindable() source: AutocompleteSource[];
+  @bindable() source: AutocompleteSource<any>[];
   @bindable() alwaysVisible = false;
   @bindable() placeholder = `${translations.search}...`;
   @bindable() autofocus: boolean;
@@ -36,10 +36,10 @@ export class AutocompleteInput {
    * Provide your own input
    */
   @bindable() target: HTMLElement;
-  @bindable() onAccept: (suggestion: UiSuggestion) => void;
+  @bindable() onAccept: (suggestion: UiSuggestion<any>) => void;
   @bindable() onPartialAccept: (suggestion: string) => void;
 
-  public suggestions: UiSuggestion[] = [];
+  public suggestions: UiSuggestion<any>[] = [];
   public translations = translations;
   public autocompleteContainerRef: HTMLElement | null = null;
   public suggesionListRef: HTMLElement | null = null;
@@ -73,9 +73,6 @@ export class AutocompleteInput {
   }
 
   private handleBindables(): void {
-    if (this.alwaysVisible) {
-      this.convertSourceToSuggestions();
-    }
     if (this.autofocus != null) {
       this.searchInputRef?.focus();
     }
@@ -88,7 +85,7 @@ export class AutocompleteInput {
     }));
   }
 
-  public selectSuggestion(suggestion: UiSuggestion): void {
+  public selectSuggestion(suggestion: UiSuggestion<any>): void {
     const suggestionName = suggestion.text;
     this.value = suggestionName;
     // console.log("B.3 suggestionName: ", suggestionName);
@@ -117,13 +114,11 @@ export class AutocompleteInput {
         .includes(searchValue.toLowerCase());
       if (!included) return;
 
-      suggestion.text;
       this.collectSuggestion(suggestion);
     });
-    // // /*prettier-ignore*/ console.log("[autocomplete-input.ts,71] this.suggestions: ", this.suggestions);
   }
 
-  private collectSuggestion(suggestion: AutocompleteSource): void {
+  private collectSuggestion(suggestion: AutocompleteSource<any>): void {
     if (this.value.length === 0) return;
 
     const searchValue = suggestion.text;

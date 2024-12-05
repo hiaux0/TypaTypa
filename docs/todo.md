@@ -179,6 +179,8 @@ I want to have live-editor
   - bg: sometimes lose the reading position, when scrolling to many rows
   - idea: blink a short second, where the old cell was scrolled to (the top)
 - [ ] feat: grid: multi-row cells
+- [ ] feat: status line
+  - mode, commands
 
 # Done
 ## Grid
