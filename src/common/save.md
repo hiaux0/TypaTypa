@@ -1,6 +1,24 @@
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 
+
+-----------------------------------------------------------------------------------------------
+export function convertKeyMappingsToVimCommandMappings(
+  mappings: IKeyMappingMapping,
+): KeyBindingModes {
+  const result: KeyBindingModes = {
+    [VimMode.ALL]: [],
+  };
+  Object.entries(mappings ?? {}).forEach(([key, execute]) => {
+    const converted: VimCommand = {
+      key,
+      execute,
+    };
+    result[VimMode.ALL].push(converted);
+  });
+  return result;
+}
+
 -----------------------------------------------------------------------------------------------
 // 2. use css variables from 1. to define light and dark theme
 @function darkMode2($color) {

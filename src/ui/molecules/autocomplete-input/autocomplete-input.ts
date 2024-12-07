@@ -159,14 +159,6 @@ export class AutocompleteInput {
       {
         [VimMode.NORMAL]: [
           {
-            key: "<Escape>",
-            execute: () => {
-              this.value = "";
-              this.clearSuggestions();
-              return true;
-            },
-          },
-          {
             key: "<Tab>",
             execute: () => {
               if (

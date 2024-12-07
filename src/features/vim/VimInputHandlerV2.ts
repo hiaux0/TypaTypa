@@ -71,14 +71,16 @@ export class VimInputHandlerV2 {
   ): void {
     const { reInit: reload } = registerOptions;
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("additionalKeyBindings", additionalKeyBindings);
-    const id = options.vimState?.id ?? options.vimId;
+    const id = options.vimId ?? options.vimState?.id ?? "";
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("id", id);
     const already = this.inputMap[id];
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("already", already);
     if (already && !reload) return;
 
     if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
+    if (!additionalKeyBindings) return;
     additionalKeyBindings = enhanceWithIdsAndMode(additionalKeyBindings);
+    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,83] additionalKeyBindings: ", additionalKeyBindings);
     this.inputMap[id] = additionalKeyBindings;
     this.instancesMap[id] = { options };
     this.initVimCore(options);
@@ -209,23 +211,26 @@ export class VimInputHandlerV2 {
       const pressedKeyWithoutModifier = ShortcutService.getPressedKey(event);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKeyWithoutModifier);
 
-      const currentBindings = this.inputMap[this.activeId];
+      // const currentBindings = this.inputMap[this.activeId];
+      const currentBindings = this.commandsService.commandsRepository[this.activeId]
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.activeId", this.activeId);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("[VimInputHandlerV2.ts,223] mergedWithGlobal: ", currentBindings);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("[VimInputHandlerV2.ts,223] currentBindings: ", currentBindings);
       const options = this.vimCore.options;
-      options.keyBindings = currentBindings;
+      if (options?.keyBindings) options.keyBindings = currentBindings;
       const command = this.keyMappingService.prepareCommandV2(
         finalKeyWithModifier,
         mode,
         options,
       );
+      // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,219] command: ", command);
       const hasQueuedKeys = this.keyMappingService.queuedKeys.length;
+      // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,225] hasQueuedKeys: ", hasQueuedKeys);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("command", command);
       let finalCommand = command;
       let finalPressedKey = pressedKeyWithoutModifier;
       if (!command && !hasQueuedKeys) {
         const globalBindings = this.inputMap[VIM_ID_MAP.global];
-        options.keyBindings = globalBindings;
+        if (options?.keyBindings) options.keyBindings = globalBindings;
         const globalCommand = this.keyMappingService.prepareCommandV2(
           finalKeyWithModifier,
           mode,
@@ -234,7 +239,7 @@ export class VimInputHandlerV2 {
         finalCommand = globalCommand;
       }
 
-      const commandName = VIM_COMMAND[finalCommand?.command];
+      const commandName = VIM_COMMAND[finalCommand?.command ?? "nothing"];
       const commandSequence = finalCommand?.sequence;
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("commandName", commandName);
       if (commandName === VIM_COMMAND.repeatLastCommand) {
@@ -244,7 +249,7 @@ export class VimInputHandlerV2 {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3, 5])) console.log("finalCommand", finalCommand);
 
       let preventDefault = false;
-      let vimState: IVimState;
+      let vimState: IVimState | undefined;
       const allowHook = mode !== VimMode.INSERT && !isEnter(finalPressedKey);
       if (finalCommand?.execute) {
         vimState = this.vimCore.getVimState();
@@ -260,7 +265,7 @@ export class VimInputHandlerV2 {
         if (options?.hooks?.commandListener && allowHook)
           options.hooks.commandListener({
             vimState: this.vimCore.getVimState(),
-            targetCommand: VIM_COMMAND[finalCommand.command],
+            targetCommand: VIM_COMMAND[finalCommand.command ?? "nothing"],
             targetCommandFull: finalCommand,
             keys: finalKeyWithModifier,
           });
@@ -272,7 +277,7 @@ export class VimInputHandlerV2 {
           if (options?.hooks?.commandListener && allowHook)
             options.hooks.commandListener({
               vimState,
-              targetCommand: VIM_COMMAND[finalCommand.command],
+              targetCommand: VIM_COMMAND[finalCommand?.command ?? "nothing"],
               targetCommandFull: finalCommand,
               keys: finalKeyWithModifier,
             });
@@ -334,7 +339,7 @@ export class VimInputHandlerV2 {
           //}
 
           // console.log("3");
-          if (options.hooks.onInsertInput) {
+          if (options?.hooks?.onInsertInput) {
             const response = options.hooks.onInsertInput(finalPressedKey);
             // return;
             // mostly for custom insert mode, do this early return. In normal vim editor, insert should just be inside input/textarea thing
@@ -372,6 +377,7 @@ export class VimInputHandlerV2 {
         !VimHelper.isModeChangingCommand(commandName);
       if (saveLast) {
         this.keyMappingService.setLastKey(finalKeyWithModifier);
+        if (!command) return;
         this.keyMappingService.setLastCommand(command);
       }
     });

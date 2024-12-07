@@ -167,7 +167,7 @@ export function filterListByCharSequence(inputList: string[], value: string) {
  * --> true
  */
 export function inputContainsSequence(
-  input: string,
+  input: string | undefined,
   sequence: string,
 ): boolean {
   const regex = new RegExp(`^${escapeRegex(sequence)}`);

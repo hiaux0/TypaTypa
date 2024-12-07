@@ -173,7 +173,7 @@ export function iterateOverGridBackwards(
   let stopAll = false;
   for (let rowIndex = startRow; rowIndex >= 0; rowIndex--) {
     if (stopAll) break;
-    if (rowIndex < end[1]) {
+    if (rowIndex < end[1] && options.colSize) {
       startCol = options.colSize;
     }
     for (let columnIndex = startCol; columnIndex >= 0; columnIndex--) {
@@ -188,9 +188,10 @@ export function iterateOverGridBackwards(
 export function measureTextWidth(
   text: string,
   font = getComputedStyle(document.body).font,
-) {
+): number {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
+  if (!context) return 0;
   context.font = font;
   const metrics = context.measureText(text);
   return metrics.width;
@@ -297,7 +298,7 @@ export function convertRangeToVimState(
   range: GridSelectionRange,
   startRange?: GridSelectionCoord,
 ): IVimState {
-  if (!range) return VimStateClass.createEmpty();
+  if (!range) return VimStateClass.createEmpty().serialize();
   // Convert lines
   const lines: VimLine[] = [];
   let currentLine = range[0][1];
@@ -328,4 +329,5 @@ export function convertRangeToVimState(
   };
   return result;
 }
+// @ts-ignore
 window.measureTextWidth = measureTextWidth;

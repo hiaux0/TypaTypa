@@ -15,6 +15,7 @@ export class RecentlyUsedService {
     const saved = this.store.getServiceItem(
       "RecentlyUsedService",
     ) as RecentlyUsedDataMap<VimCommand>[];
+    if (!Array.isArray(saved)) return
     saved.forEach((c) => {
       c.item.id = createCommandId(c.item);
     });

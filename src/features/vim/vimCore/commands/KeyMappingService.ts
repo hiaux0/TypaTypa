@@ -91,17 +91,70 @@ export function mergeKeybindings(
   return merged;
 
   function merge(
-    base: VimCommand[], // assume existing always has key and command defined
-    ...additionals: VimCommand[][]
+    base: VimCommand[] | undefined, // assume existing always has key and command defined
+    ...additionals: (VimCommand[] | undefined)[]
   ): VimCommand[] {
     const mergedAdditionals = additionals.reduce((acc, curr) => {
       if (!curr) return acc;
-      return acc.concat(curr);
+      return acc?.concat(curr);
     }, []);
     const finalBaseBindings = [...(base ?? [])];
-    const merged = finalBaseBindings.concat(mergedAdditionals);
+    const merged = finalBaseBindings.concat(mergedAdditionals ?? []);
     return merged;
   }
+}
+
+export function addKeysToKeybindingsAllModes(
+  base: KeyBindingModes | undefined,
+  other: KeyBindingModes,
+): KeyBindingModes {
+  base; /*?*/
+  other; /*?*/
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("base", base);
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("other", other);
+  if (!base) return other;
+  if (!other) return base;
+
+  const merged = {
+    ...(base ?? {}),
+    [VimMode.NORMAL]: [
+      ...addKeysToBindings(
+        base[VimMode.NORMAL],
+        base[VimMode.ALL],
+        other[VimMode.NORMAL],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.INSERT]: [
+      ...addKeysToBindings(
+        base[VimMode.INSERT],
+        base[VimMode.ALL],
+        other[VimMode.INSERT],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.VISUAL]: [
+      ...addKeysToBindings(
+        base[VimMode.VISUAL],
+        base[VimMode.ALL],
+        other[VimMode.VISUAL],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.CUSTOM]: [
+      ...addKeysToBindings(
+        base[VimMode.CUSTOM],
+        base[VimMode.ALL],
+        other[VimMode.CUSTOM],
+        other[VimMode.ALL],
+      ),
+    ],
+    [VimMode.ALL]: [
+      ...addKeysToBindings(base[VimMode.ALL], other[VimMode.ALL]),
+    ],
+  };
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("merged", merged);
+  return merged;
 }
 
 export function overwriteKeybindingsV2(
@@ -265,20 +318,20 @@ export function overwriteExistingKeyBindings(
 }
 
 export function overwriteAndAddExistingKeyBindingsV2(
-  base: VimCommand[], // assume existing always has key and command defined
-  ...additionals: VimCommand[][]
+  base: VimCommand[] | undefined, // assume existing always has key and command defined
+  ...additionals: (VimCommand[] | undefined)[]
 ): VimCommand[] {
   const mergedAdditionals = additionals.reduce((acc, curr) => {
     if (!curr) return acc;
-    return acc.concat(curr);
+    return acc?.concat(curr);
   }, []);
   const finalBaseBindings = [...(base ?? [])];
   /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("Start -------------------------");
   /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("finalBaseBindings", finalBaseBindings.length, finalBaseBindings);
-  /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("mergedAdditionals", mergedAdditionals.length, mergedAdditionals);
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("mergedAdditionals", mergedAdditionals?.length, mergedAdditionals);
 
   if (finalBaseBindings.length === 0) {
-    mergedAdditionals.forEach((additionalBinding) => {
+    mergedAdditionals?.forEach((additionalBinding) => {
       const hasSimilar = finalBaseBindings.find((b) =>
         hasSimilarBinding(b, additionalBinding),
       );
@@ -305,13 +358,6 @@ export function overwriteAndAddExistingKeyBindingsV2(
       const keyOkay = binding.key === additionalBinding.key;
       const hasCommand = !!additionalBinding.command;
       const commandOkay = binding.command === additionalBinding.command;
-      // if (binding.key === "<Control>p") {
-      //if (binding.key === "<Escape>") {
-      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,244] binding.command: ", binding.command);
-      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,245] binding: ", binding);
-      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,241] isGlobal: ", isGlobal);
-      //  /*prettier-ignore*/ console.log("[KeyMappingService.ts,243] skipGlobal: ", skipGlobal);
-      //}
       const okay = keyOkay || (hasCommand && commandOkay);
       if (okay) {
         maybeIndeces.push(index);
@@ -347,7 +393,6 @@ export function overwriteAndAddExistingKeyBindingsV2(
         return okay;
       });
       const onlyOne = sameKeyAndCommand.length === 1;
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([4])) console.log("onlyOne", onlyOne);
       /*prettier-ignore*/ Commentary.log("2. SAME key AND a command, then OVERWRITE base", onlyOne);
       // sameKeyAndCommand; /*?*/
       if (onlyOne) {
@@ -361,6 +406,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
       } else if (sameKeyAndCommand.length > 1) {
         throw new Error("[ERROR][KeyMappingService]: not possible");
       }
+      return false;
     }
 
     function getOnlySameCommandsAndNoKeys(): boolean {
@@ -389,6 +435,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
         });
         return true;
       }
+      return false;
     }
 
     function getSameCommandButDifferentKey(): boolean {
@@ -416,7 +463,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
           ...binding,
           ...additionalBinding,
         };
-        return;
+        return false;
       }
       // hasMultipleSameButDifferent; /*?*/
       /*prettier-ignore*/ Commentary.log("4.2 DIFFERENT key, BUT SAME command MULTIPLE hits, then push", hasMultipleSameButDifferent);
@@ -424,6 +471,7 @@ export function overwriteAndAddExistingKeyBindingsV2(
         finalBaseBindings.push(additionalBinding);
         return true;
       }
+      return false;
     }
   });
 
@@ -432,6 +480,76 @@ export function overwriteAndAddExistingKeyBindingsV2(
   // /*prettier-ignore*/ console.log("[KeyMappingService.ts,224] logMe: ", logMe);
   return finalBaseBindings;
 }
+
+/**
+ * Given (custom) bindings, take information from additionals and add to the given (custom) bindings
+ */
+export function addKeysToBindings(
+  current: VimCommand[] | undefined,
+  ...additionals: (VimCommand[] | undefined)[]
+): VimCommand[] {
+  const mergedAdditionals = additionals.reduce((acc, curr) => {
+    if (!curr) return acc;
+    return acc?.concat(curr);
+  }, []);
+  const final: VimCommand[] = [];
+  const finalCurrentBindings = [...(current ?? [])];
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([1])) console.log("Start -------------------------");
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([1])) console.log("finalCurrentBindings", final.length, final);
+  /*                                                                                           prettier-ignore*/ if(l.shouldLog([1])) console.log("mergedAdditionals", mergedAdditionals?.length, mergedAdditionals);
+
+  // 1. If no current bindings, then just add all additionals
+  //                                                                                           2. If current bindings, then if the additional binding has a
+  finalCurrentBindings?.forEach((binding, index) => {
+    binding; /*?*/
+    let found = 0;
+    mergedAdditionals?.forEach((additionalBinding) => {
+      found; /*?*/
+      additionalBinding; /*?*/
+      const sameKeys = binding.key === additionalBinding.key;
+      sameKeys; /*?*/
+      //                                                                                             | current       | additional    | result                  |
+      //                                                                                             | key - command | key - command | result                  |
+      const sameCommand = binding.command === additionalBinding.command;
+      sameCommand; /*?*/
+      const hasKey = binding.key;
+      const noKey_sameCommand = !hasKey && sameCommand;
+      noKey_sameCommand; /*?*/
+      //                                                                                          a. |     -    x    |  x  -         | add key from additional |
+      //                                                                                          a. |     -    x    |  x  -    x    | add key from additional |
+      if (noKey_sameCommand) {
+        const updated = {
+          ...binding,
+          key: additionalBinding.key,
+        };
+        if (found > 0) {
+          finalCurrentBindings.splice(index + found + 1, 0, updated);
+        } else {
+          finalCurrentBindings[index] = updated;
+          found++;
+        }
+      } else if (sameKeys) {
+        const updated = {
+          ...additionalBinding,
+          ...binding,
+        };
+        finalCurrentBindings[index] = updated;
+      } else {
+        // final.push(binding);
+      }
+    });
+    found = 0;
+  });
+
+  return finalCurrentBindings;
+}
+
+//                                                                                             g. key, but no command, then add the key to all current bindings
+//                                                                                             b. command, then add the command to the current binding
+//                                                                                             c. key and command, then overwrite the current binding
+//                                                                                             d. key and command, but the key is different, then add the additional binding
+//                                                                                             e. key and command, but the command is different, then add the additional binding
+//                                                                                             f. key and command, but both are different, then add the additional binding
 
 /**
  * @example
@@ -522,77 +640,15 @@ export class KeyMappingService {
     const v = container.get(IKeyMappingService);
   }
 
-  public init(
-    mappings?: IKeyMappingMapping,
-    additionalKeyBindings?: KeyBindingModes,
-  ) {
-    const converted = convertKeyMappingsToVimCommandMappings(mappings);
-    if (!additionalKeyBindings) {
-      additionalKeyBindings = converted;
-    } else {
-      if (!additionalKeyBindings[VimMode.ALL]) {
-        additionalKeyBindings[VimMode.ALL] = [];
-      }
-      additionalKeyBindings[VimMode.ALL] = additionalKeyBindings[
-        VimMode.ALL
-      ].concat(converted[VimMode.ALL]);
-    }
-    this.mergeDefaultKeybindingsWithAdditional(additionalKeyBindings);
-  }
-
   public initWithListener(mappings?: IKeyMappingMapping) {
     document.addEventListener("keydown", (event) => {
-      // console.clear();
       const finalKey = ShortcutService.getKeyWithModifer(event);
-      if (mappings[finalKey]) {
+      if (mappings?.[finalKey]) {
         const dontPrevent = mappings[finalKey]();
         if (dontPrevent === false) return;
         event.preventDefault();
       }
     });
-  }
-
-  private mergeDefaultKeybindingsWithAdditional(
-    additionalKeyBindings?: KeyBindingModes,
-  ): KeyBindingModes {
-    if (!additionalKeyBindings) return;
-
-    const merged = {
-      ...this.keyBindings,
-      [VimMode.NORMAL]: [
-        ...overwriteExistingKeyBindings(
-          this.keyBindings[VimMode.NORMAL],
-          this.keyBindings[VimMode.ALL],
-          additionalKeyBindings[VimMode.NORMAL],
-          additionalKeyBindings[VimMode.ALL],
-        ),
-      ],
-      [VimMode.INSERT]: [
-        ...overwriteExistingKeyBindings(
-          this.keyBindings[VimMode.INSERT],
-          this.keyBindings[VimMode.ALL],
-          additionalKeyBindings[VimMode.INSERT],
-          additionalKeyBindings[VimMode.ALL],
-        ),
-      ],
-      [VimMode.VISUAL]: [
-        ...overwriteExistingKeyBindings(
-          this.keyBindings[VimMode.VISUAL],
-          this.keyBindings[VimMode.ALL],
-          additionalKeyBindings[VimMode.VISUAL],
-          additionalKeyBindings[VimMode.ALL],
-        ),
-      ],
-      [VimMode.CUSTOM]: [
-        ...overwriteExistingKeyBindings(
-          this.keyBindings[VimMode.CUSTOM],
-          this.keyBindings[VimMode.ALL],
-          additionalKeyBindings[VimMode.CUSTOM],
-          additionalKeyBindings[VimMode.ALL],
-        ),
-      ],
-    };
-    return merged;
   }
 
   /**
@@ -668,7 +724,7 @@ export class KeyMappingService {
   private processCommandAwaitingNextInput(
     input: string,
     mode: VimMode,
-  ): FindPotentialCommandReturn {
+  ): FindPotentialCommandReturn | undefined {
     if (mode === VimMode.INSERT) return;
     const commandAwaitingNextInput = getCommandAwaitingNextInput(
       input,
@@ -702,18 +758,22 @@ export class KeyMappingService {
     if (awaiting) return awaiting;
 
     //
-    let targetKeyBinding: VimCommand[];
+    let targetKeyBinding: VimCommand[] | undefined;
     if (this.potentialCommands?.length) {
       targetKeyBinding = this.potentialCommands;
     } else {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.keyBindings", this.keyBindings);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("options.keyBindings", options.keyBindings);
-      const merged = overwriteKeybindingsV2(
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("options.keyBindings", options?.keyBindings);
+      const merged = addKeysToKeybindingsAllModes(
+        options?.keyBindings,
         this.keyBindings,
-        options.keyBindings,
       );
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("merged", merged);
-      targetKeyBinding = merged[mode] ?? [];
+      targetKeyBinding = merged[mode]?.length
+        ? merged[mode]
+        : merged[VimMode.ALL]?.length
+          ? merged[VimMode.ALL]
+          : [];
     }
     /*                                                                                             prettier-ignore*/ if(l.shouldLog([3, 5])) console.log("targetKeyBinding", targetKeyBinding);
 
@@ -766,7 +826,7 @@ export class KeyMappingService {
     ) {
       /*                                                                                             prettier-ignore*/ if(l.shouldLog([])) console.log("2");
       const isChain =
-        options?.allowChaining && this.lastCommand?.key.endsWith(keySequence);
+        options?.allowChaining && this.lastCommand?.key?.endsWith(keySequence);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] this.lastCommand: ", this.lastCommand);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,510] isChain: ", isChain);
       ///*prettier-ignore*/ console.log("[KeyMappingService.ts,511] keySequence: ", keySequence);
@@ -782,7 +842,7 @@ export class KeyMappingService {
             return result;
           },
         );
-        this.lastCommand?.key.startsWith(keySequence);
+        this.lastCommand?.key?.startsWith(keySequence);
         targetCommand = commandForExtendedChain[0];
       } else if (isChain) {
         /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("3");
@@ -873,22 +933,6 @@ function logPotentialCommands(
   } else {
     /* prettier-ignore */ l.culogger.debug([ 'No command for key: %s in Mode: %s ((vim.ts-getCommandName))', key, mode ], { isError: false }, (...r) => console.log(...r));
   }
-}
-
-export function convertKeyMappingsToVimCommandMappings(
-  mappings: IKeyMappingMapping,
-): KeyBindingModes {
-  const result: KeyBindingModes = {
-    [VimMode.ALL]: [],
-  };
-  Object.entries(mappings ?? {}).forEach(([key, execute]) => {
-    const converted: VimCommand = {
-      key,
-      execute,
-    };
-    result[VimMode.ALL].push(converted);
-  });
-  return result;
 }
 
 /**

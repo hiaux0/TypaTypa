@@ -89,7 +89,7 @@ export interface Cell {
   col?: number;
   row?: number;
   colsToNextText?: number;
-  styles: CellStyles;
+  styles?: CellStyles;
 }
 export type ContentMap = Cell[][];
 export type ColHeaderMap = Record<

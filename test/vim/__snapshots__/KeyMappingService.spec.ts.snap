@@ -12,14 +12,17 @@ exports[`KeyMappingService > Key, but no command 1`] = `
 exports[`KeyMappingService > overwriteAndAddExistingKeyBindingsV2 > add command to multiple existing 1`] = `
 [
   {
-    "command": "cursorUp",
-    "desc": "test",
-    "key": "k",
+    "command": "cursorDown",
+    "key": "<ArrowDown>",
   },
   {
-    "command": "cursorUp",
-    "desc": "test",
-    "key": "<ArrowUp>",
+    "command": "cursorDown",
+    "context": [
+      "Grid",
+    ],
+    "desc": "cursorDown",
+    "key": "u",
+    "preventUndoRedo": true,
   },
 ]
 `;

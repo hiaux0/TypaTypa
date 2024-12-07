@@ -1,6 +1,7 @@
 import { bindable, resolve } from "aurelia";
 import { watch } from "@aurelia/runtime-html";
 import {
+  Cursor,
   IVimState,
   KeyBindingModes,
   VimHooks,
@@ -90,8 +91,8 @@ export class VimEditor {
           // /*prettier-ignore*/ console.log("[vim-editor.ts,82] logtext: ", logtext);
           this.setVimState(vimState);
 
-          const text = vimState.lines.map((l) => l.text).join(" ");
-          this.value = text;
+          const text = vimState?.lines?.map((l) => l.text).join(" ");
+          if (text) this.value = text;
 
           if (!this.vimEditorHooks?.vimStateUpdated) return;
           this.vimEditorHooks.vimStateUpdated(vimState);
@@ -123,17 +124,21 @@ export class VimEditor {
   }
 
   private handleEnter(key: string, vimState: IVimState): boolean {
-    if (!isEnter(key)) return;
+    if (!isEnter(key)) return false;
 
     const $lines = this.inputContainerRef.querySelectorAll(".vim-line");
     const selection = window.getSelection();
-    const range = selection.getRangeAt(0);
-    const cursor = range.startOffset;
+    const range = selection?.getRangeAt(0);
+    const cursor = range?.startOffset;
+    if (!vimState.lines) return false;
+    if (!vimState.cursor) return false;
     const currentLine = vimState.cursor.line;
+    if (!currentLine) return false;
     const $currentLine = Array.from($lines)[currentLine] as HTMLElement;
     const text = $currentLine.innerText;
     const beforeText = text.slice(0, cursor);
     const afterText = text.slice(cursor);
+
     vimState.lines[vimState.cursor.line] = { text: beforeText };
     vimState.lines.splice(currentLine + 1, 0, { text: afterText });
     this.vimInit.vimCore.setVimState(vimState);
@@ -144,7 +149,8 @@ export class VimEditor {
         this.inputContainerRef.querySelectorAll(".vim-line");
       const $nextLine = Array.from($updatedLines)[nextLine] as HTMLElement;
       /*prettier-ignore*/ console.log("[vim-editor.ts,142] nextLine: ", $nextLine);
-      const cursor = { ...vimState.cursor };
+      if (!vimState.cursor) return;
+      const cursor: Cursor = { ...vimState.cursor };
       cursor.line = nextLine;
       cursor.col = 0;
       const { textNode, newCursor } = getTextNodeToFocus($nextLine, cursor);
@@ -161,13 +167,7 @@ export class VimEditor {
   }
 
   private setVimState(vimState: IVimState | undefined): void {
-    // /*prettier-ignore*/ console.trace("[vim-editor.ts,82] vimState.lines.length: ", vimState.lines.length);
-    // /*prettier-ignore*/ console.log("[vim-editor.ts,82] vimState.lines.length: ", vimState.lines.length);
     if (!vimState) return;
     this.vimState = vimState;
-    this.vimState.lines;
-    // /*prettier-ignore*/ console.log("[vim-editor.ts,85] this.vimState.lines: ", this.vimState.lines);
-    this.vimState.lines.length;
-    // /*prettier-ignore*/ console.log("[vim-editor.ts,86] this.vimState.lines.length: ", this.vimState.lines.length);
   }
 }

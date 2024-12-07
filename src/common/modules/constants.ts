@@ -214,6 +214,7 @@ export const EV_GRID_CELL = (columnIndex: number, rowIndex: number) =>
 export const VIM_ID_MAP = {
   global: "global",
   gridCell: "gridCell",
+  gridCellVimEditor: "gridCell-vim-editor",
   gridNavigation: "gridNavigation",
   commandPalette: "commandPalette",
 };

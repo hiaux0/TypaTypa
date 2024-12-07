@@ -26,7 +26,7 @@ export const ICommandsService = DI.createInterface<ICommandsService>(
   (x) => x.singleton(CommandsService),
 );
 
-export function createCommandId(command: VimCommand): string {
+export function createCommandId(command: VimCommand): string | undefined {
   const id = hashStringArray(
     command.desc,
     command.key,
@@ -38,14 +38,18 @@ export function createCommandId(command: VimCommand): string {
 }
 
 export class CommandsService {
-  public commandsRepository = {};
+  public commandsRepository: Record<string, any> = {};
   public createId = createCommandId;
 
   constructor(
     private keyMappingService: KeyMappingService = resolve(IKeyMappingService),
   ) {}
 
-  public registerCommands(context: string, commands: KeyBindingModes): void {
+  public registerCommands(
+    context: string | undefined,
+    commands: KeyBindingModes,
+  ): void {
+    if (!context) return;
     const merged = overwriteKeybindingsV2(
       commands,
       this.keyMappingService.keyBindings,
@@ -54,8 +58,12 @@ export class CommandsService {
     this.commandsRepository[context] = merged;
   }
 
-  public getCommand(context: string, command: VimCommand): VimCommand {
+  public getCommand(
+    context: string,
+    command: VimCommand,
+  ): VimCommand | undefined {
     const mode = command.mode;
+    if (!mode) return;
     const commandInRepo = this.commandsRepository[context][mode].find(
       (c: VimCommand) => c.id === command.id,
     );

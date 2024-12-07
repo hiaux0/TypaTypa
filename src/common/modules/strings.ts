@@ -85,7 +85,7 @@ export function tokenize(text: string, option?: { lower?: boolean }): string[] {
   );
   if (!rawTokens) return [];
   let tokens = rawTokens as string[];
-  if (option.lower) {
+  if (option?.lower) {
     tokens = rawTokens.map((token) => token.toLowerCase());
   }
   return tokens;
@@ -111,7 +111,7 @@ export function getLongestCommonSubstring(
   let i = 0;
   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
   if (i === 0) {
-    const filtered = strings.filter((s) => s.startsWith(input));
+    const filtered = strings.filter((s) => s.startsWith(input ?? ""));
     return filtered[0] ?? "";
   }
   const result = a1.substring(0, i) ?? "";
@@ -162,7 +162,9 @@ export function splitByEndingAndSeparator(input: string): string[] {
 //const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");
 ///*prettier-ignore*/ console.log("[strings.ts,134] result: ", result);
 
-export function hashStringArray(...strArray: string[]): string {
+export function hashStringArray(
+  ...strArray: (string | undefined)[]
+): string | undefined {
   let hash = 0;
   if (strArray.length === 0) return;
   hash.toString();

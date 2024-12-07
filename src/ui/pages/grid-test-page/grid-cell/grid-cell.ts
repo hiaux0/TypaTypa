@@ -171,7 +171,9 @@ export class GridCell {
     };
     if (featureFlags.vim.mode.putCursorAtFirstNonWhiteSpace) {
       const firstNonWhitespaceIndex = Math.max(0, text.search(/\S/));
-      vimState.cursor.col = firstNonWhitespaceIndex;
+      if (vimState.cursor) {
+        vimState.cursor.col = firstNonWhitespaceIndex;
+      }
     }
 
     this.vimState = vimState;
@@ -239,7 +241,7 @@ export class GridCell {
   ) {
     // logger.culogger.debug(["hi"], { log: true }, (...r) => console.log(...r));
     const getWidth = (): string => {
-      if (!cell) return;
+      if (!cell) return "";
       if (this.clipText) {
         // return columnWidth - PADDING_LEFT + "px";
         return columnWidth - 1 + "px";
@@ -331,14 +333,18 @@ export class GridCell {
       const asPx = `${finalWidth}px`;
       return asPx;
 
-      function adjustWithClipTextOffset(width: number, offset: number): number {
+      function adjustWithClipTextOffset(
+        this: GridCell,
+        width: number,
+        offset: number,
+      ): number {
         if (!this.isOverflown) return width;
         let result = width;
         const nextCellCol = this.column + colsToNextText;
         const start = nextCellCol - offset;
         for (let i = start; i < nextCellCol; i++) {
           const adjusted =
-            this.sheet.colHeaderMap[i]?.colWidth ?? this.CELL_WIDTH;
+            this.sheet.colHeaderMap?.[i]?.colWidth ?? this.CELL_WIDTH;
           result -= adjusted;
         }
         result = Math.max(result, adjustedInitialCellWidth);
@@ -376,12 +382,12 @@ export class GridCell {
     });
   };
 
-  private getInput(): HTMLInputElement {
+  private getInput(): HTMLInputElement | null {
     return this.cellContentRef.querySelector("input");
   }
 
   private updateAutocomplete(inputValue = ""): void {
-    const source = [];
+    const source: string[] = [];
     this.store.activeSheet.content.forEach((row, rowIndex) => {
       if (!row) return;
       row.forEach((cell, cellIndex) => {
@@ -402,7 +408,7 @@ export class GridCell {
     return VIM_ID_MAP.gridCell;
   }
 
-  private debug_onlyLogCell(c, r): boolean {
+  private debug_onlyLogCell(c: number, r: number): boolean {
     return this.column === c && this.row === r;
   }
 }

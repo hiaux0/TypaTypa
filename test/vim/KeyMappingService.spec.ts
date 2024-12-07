@@ -1,14 +1,16 @@
 import { describe, expect, test } from "vitest";
 import { Logger } from "../../src/common/logging/logging";
 import {
+  addKeysToBindings,
   KeyMappingService,
-  completeBinding,
   overwriteAndAddExistingKeyBindingsV2,
+  overwriteKeybindingsV2,
 } from "../../src/features/vim/vimCore/commands/KeyMappingService";
 import { KeyBindingModes } from "../../src/features/vim/vim-types";
 import {
   VIM_COMMAND,
   VimCommand,
+  VimCommandNames,
 } from "../../src/features/vim/vim-commands-repository";
 
 const logger = new Logger("VimInit.spec.ts", { terminalColor: "FgMagenta" });
@@ -38,10 +40,50 @@ describe("KeyMappingService", () => {
       } as KeyBindingModes;
 
       const keyMappingService = new KeyMappingService();
-      const result = keyMappingService.overwriteKeybindingsV2(current, additional);
+      const result = overwriteKeybindingsV2(current, additional);
       result; /*?*/
       /*prettier-ignore*/ console.log("[KeyMappingService.spec.ts,996] result: ", result['NORMAL']);
       expect(result).toBe(true);
+    });
+  });
+
+  describe("addKeysToBindings", () => {
+    /*prettier-ignore*/
+    const testCases: [base: VimCommand[], additional: VimCommand[], expected: VimCommand[]][] = [
+      [
+         [{key:"<Enter>"}],
+         [{key:"<Space>cl"}],
+         [{key:"<Enter>"}],
+      ],
+      [
+        [{               command: "newLine"}],
+        [{key:"<Enter>", command: "newLine"},{key:"u", command: "newLine"}],
+        [{key:"<Enter>", command: "newLine"},{key:"u", command: "newLine"}],
+      ],
+      [
+        [{               command: "newLine"}],
+        [{key:"<Enter>", command: "newLine"},{key:"u", command: "newLine"},{key:"hey", command: "newLine"}],
+        [{key:"<Enter>", command: "newLine"},{key:"u", command: "newLine"},{key:"hey", command: "newLine"}],
+      ],
+      [
+        [{ "command": "cursorUp", }, { "command": "cursorDown", } ],
+        [
+          { "key": "x", "command": "delete" },
+          { "key": "<Control>c", "command": "copy" },
+          { "key": "<Control>x", "command": "cut" },
+        ],
+        [{ "command": "cursorUp", }, { "command": "cursorDown", } ],
+      ],
+    ]
+
+    testCases.forEach(([base, additional, expected]) => {
+      base; /*?*/
+      additional; /*?*/
+      test.only("dont add base to additional (should just overwrite)", () => {
+        const result = addKeysToBindings(base, additional);
+        result; /*?*/
+        expect(result).toMatchObject(expected);
+      });
     });
   });
 
@@ -69,8 +111,6 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           key: "<ArrowUp>",
@@ -78,13 +118,9 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
         otherNormal,
-        otherAll,
       );
       expect(result).toMatchSnapshot();
     });
@@ -97,21 +133,15 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           command: "cursorUp",
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
         otherNormal,
-        otherAll,
       );
       expect(result).toMatchSnapshot();
     });
@@ -123,8 +153,6 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           key: "<ArrowUp>",
@@ -132,13 +160,10 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
+
         otherNormal,
-        otherAll,
       );
       expect(result).toMatchSnapshot();
     });
@@ -155,8 +180,6 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           command: "cursorDown",
@@ -167,14 +190,12 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
+
         otherNormal,
-        otherAll,
       );
+      result; /*?*/
       expect(result).toMatchSnapshot();
     });
 
@@ -190,8 +211,6 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           command: "cursorRight",
@@ -200,13 +219,10 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
+
         otherNormal,
-        otherAll,
       );
 
       expect(result).toMatchSnapshot();
@@ -224,8 +240,6 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           command: "cursorRight",
@@ -234,13 +248,10 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
+
         otherNormal,
-        otherAll,
       );
 
       expect(result).toMatchSnapshot();
@@ -262,8 +273,6 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           key: "<leader>l", // [1.3] different key, but same command, so push
@@ -276,13 +285,10 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
+
         otherNormal,
-        otherAll,
       );
 
       expect(result).toMatchSnapshot();
@@ -294,8 +300,6 @@ describe("KeyMappingService", () => {
         { key: "<Space>tc", sequence: "^elrx" },
       ];
 
-      const baseAll = [];
-
       const otherNormal: VimCommand[] = [
         {
           key: "<Control>s",
@@ -305,13 +309,10 @@ describe("KeyMappingService", () => {
         },
       ];
 
-      const otherAll = [];
-
       const result = overwriteAndAddExistingKeyBindingsV2(
         baseNormal,
-        baseAll,
+
         otherNormal,
-        otherAll,
       );
 
       // result; /*?*/
@@ -320,7 +321,7 @@ describe("KeyMappingService", () => {
   });
 
   describe("completeBinding", () => {
-    test.only("should add key to binding", () => {
+    test("should add key to binding", () => {
       const binding = [
         {
           command: "cursorDown",
@@ -354,8 +355,6 @@ describe("KeyMappingService", () => {
       },
     ];
 
-    const baseAll = [];
-
     const otherNormal: VimCommand[] = [
       {
         key: "<Enter>",
@@ -364,13 +363,10 @@ describe("KeyMappingService", () => {
       },
     ];
 
-    const otherAll = [];
-
     const result = overwriteAndAddExistingKeyBindingsV2(
       baseNormal,
-      baseAll,
+
       otherNormal,
-      otherAll,
     );
 
     result; /*?*/
