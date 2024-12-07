@@ -1142,8 +1142,15 @@ export class GridTestPage {
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         console.log("copy link");
-        // this.putCellIntoEdit();
-        // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+        const cell = this.getCurrentCell();
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1146] cell: ", cell);
+        const httpsRegex = /https?:\/\/[^\s]+/g;
+        const cellText = cell.text;
+        let match = cellText.match(httpsRegex)?.[0];
+        if (match?.endsWith(")")) match = match.slice(0, -1); // ")" from markdown links with text syntax [](http://...)
+        if (match?.endsWith(").")) match = match.slice(0, -2); // ")" from markdown links with text syntax [](http://...)
+        if (!match) return;
+        setClipboardContent(match);
         return true;
       },
       preventUndoRedo: true,
