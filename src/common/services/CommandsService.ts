@@ -14,6 +14,9 @@ import { VimCore } from "../../features/vim/vimCore/VimCore";
 import {
   IKeyMappingService,
   KeyMappingService,
+  addKeysToBindings,
+  addKeysToKeybindingsAllModes,
+  enhanceWithIdsAndMode,
   overwriteKeybindingsV2,
 } from "../../features/vim/vimCore/commands/KeyMappingService";
 import { hashStringArray } from "../modules/strings";
@@ -50,12 +53,12 @@ export class CommandsService {
     commands: KeyBindingModes,
   ): void {
     if (!context) return;
-    const merged = overwriteKeybindingsV2(
+    const merged = addKeysToKeybindingsAllModes(
       commands,
       this.keyMappingService.keyBindings,
     );
-
-    this.commandsRepository[context] = merged;
+    const enhanced = enhanceWithIdsAndMode(merged);
+    this.commandsRepository[context] = enhanced;
   }
 
   public getCommand(

@@ -56,7 +56,7 @@ export class MyApp {
           context: [this.contextId],
           execute: () => {
             this.store.toggleCommandPaletteOpen();
-            this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.commandPalette);
+            this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.autoCompleteInput);
             return true;
           },
           preventUndoRedo: true,

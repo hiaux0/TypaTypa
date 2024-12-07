@@ -38,7 +38,7 @@ export const IVimInputHandlerV2 = DI.createInterface<IVimInputHandlerV2>(
 export class VimInputHandlerV2 {
   public inputMap: InputMap = {};
   public vimCore: VimCore;
-  private idHistory: Id[] = [];
+  public idHistory: Id[] = [];
   private instancesMap: InstancesMap = {};
   private vimUi: VimUi;
 
@@ -80,7 +80,6 @@ export class VimInputHandlerV2 {
     if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
     if (!additionalKeyBindings) return;
     additionalKeyBindings = enhanceWithIdsAndMode(additionalKeyBindings);
-    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,83] additionalKeyBindings: ", additionalKeyBindings);
     this.inputMap[id] = additionalKeyBindings;
     this.instancesMap[id] = { options };
     this.initVimCore(options);
@@ -88,9 +87,9 @@ export class VimInputHandlerV2 {
   }
 
   public setActiveId(id: Id): void {
-    /*prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,52] id: ", id);
+    /*prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,52] id: ", id);
     this.pushIdToHistory(id);
-    /*prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,55] this.idHistory: ", this.idHistory);
+    /*prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,55] this.idHistory: ", this.idHistory);
   }
 
   public popId(): void {
@@ -211,8 +210,9 @@ export class VimInputHandlerV2 {
       const pressedKeyWithoutModifier = ShortcutService.getPressedKey(event);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKeyWithoutModifier);
 
-      // const currentBindings = this.inputMap[this.activeId];
-      const currentBindings = this.commandsService.commandsRepository[this.activeId]
+      const currentBindings =
+        this.commandsService.commandsRepository[this.activeId];
+      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,217] this.commandsService.commandsRepository: ", this.commandsService.commandsRepository);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.activeId", this.activeId);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("[VimInputHandlerV2.ts,223] currentBindings: ", currentBindings);
       const options = this.vimCore.options;
@@ -225,11 +225,12 @@ export class VimInputHandlerV2 {
       // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,219] command: ", command);
       const hasQueuedKeys = this.keyMappingService.queuedKeys.length;
       // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,225] hasQueuedKeys: ", hasQueuedKeys);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("command", command);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("command", command);
       let finalCommand = command;
       let finalPressedKey = pressedKeyWithoutModifier;
       if (!command && !hasQueuedKeys) {
-        const globalBindings = this.inputMap[VIM_ID_MAP.global];
+        const globalBindings =
+          this.commandsService.commandsRepository[VIM_ID_MAP.global];
         if (options?.keyBindings) options.keyBindings = globalBindings;
         const globalCommand = this.keyMappingService.prepareCommandV2(
           finalKeyWithModifier,

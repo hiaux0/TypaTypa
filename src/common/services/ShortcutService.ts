@@ -1,5 +1,5 @@
 import { getIsInputActive } from "../modules/htmlElements";
-import { Modifier } from "../../features/vim/key-bindings";
+import { MODIFIER_SYNONYMS, Modifier } from "../../features/vim/key-bindings";
 import {
   ModifiersType,
   ALL_MODIFIERS,
@@ -41,13 +41,8 @@ export class ShortcutService {
     return input;
   }
 
-  public static getSynonymModifier(
-    keyBindings: KeyBindingModes,
-    input: string,
-  ): string {
-    if (!keyBindings.synonyms) return "";
-
-    const synonymInput = keyBindings.synonyms[input.toLowerCase()];
+  public static getSynonymModifier(input: string): string {
+    const synonymInput = MODIFIER_SYNONYMS[input.toLowerCase()];
 
     if (synonymInput) {
       return synonymInput;

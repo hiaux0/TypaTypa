@@ -16,14 +16,8 @@ export class VimInit {
 
   constructor(private vimInputHandlerV2: VimInputHandlerV2) {}
 
-  public init(
-    options?: VimOptions,
-    mappings?: IKeyMappingMapping,
-    additionalKeyBindings?: KeyBindingModes,
-  ) {
-    // /*prettier-ignore*/ console.trace("[VimInit.ts,26] init: ");
+  public init(options?: VimOptions) {
     /*prettier-ignore*/ logger.culogger.debug(["[VimInit.ts,16] init: "], {log: false});
-    // this.vimInputHandlerV2?.init(options, mappings, additionalKeyBindings);
 
     if (!options) return;
     this.options = options;

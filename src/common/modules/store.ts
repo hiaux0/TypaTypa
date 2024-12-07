@@ -28,7 +28,6 @@ export class Store {
   // Grid
   public activeSheet: Sheet;
 
-
   constructor(private ea: EventAggregator = resolve(EventAggregator)) {
     this.setVariables();
   }
@@ -56,7 +55,6 @@ export class Store {
 
   public toggleCommandPaletteOpen = (): void => {
     this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
-    /*prettier-ignore*/ console.log("[store.ts,46] this.isCommandPaletteOpen: ", this.isCommandPaletteOpen);
     this.updateLocalStorage();
   };
 

@@ -28,7 +28,6 @@ export interface KeyBindingModes {
   [VimMode.CUSTOM]?: VimCommand[];
   all?: [];
   [VimMode.ALL]?: VimCommand[];
-  synonyms?: SynonymKey;
 }
 
 export enum VimExecutingMode {

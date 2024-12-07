@@ -24,7 +24,7 @@ export class CommandPalette {
     if (!this.isOpen) {
       // so the key handler triggers the command palette, and not the previous context
       window.requestAnimationFrame(() => {
-        this.vimInputHandler.popIdIf(VIM_ID_MAP.commandPalette);
+        this.vimInputHandler.popIdIf(VIM_ID_MAP.autoCompleteInput);
       });
     } else {
       this.init();
@@ -44,6 +44,10 @@ export class CommandPalette {
       RecentlyUsedService,
     ),
   ) {}
+
+  attached() {
+    /*prettier-ignore*/ console.log("[command-palette.ts,49] attached: ", );
+  }
 
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     const vimCore = this.vimInputHandler.vimCore;
@@ -114,6 +118,6 @@ export class CommandPalette {
     this.isOpen = false;
     this.value = "";
     this.store.closeCommandPalette();
-    this.vimInputHandler.popIdIf(VIM_ID_MAP.commandPalette);
+    this.vimInputHandler.popIdIf(VIM_ID_MAP.autoCompleteInput);
   }
 }

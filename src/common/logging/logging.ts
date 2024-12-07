@@ -32,6 +32,7 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   // onlyLevels: [1], // testing
   onlyLevels: [3], // commands trace
   // onlyLevels: [4], // mergeKeybindingsV2 and overwriteAndAddExistingKeyBindingsV2
+  // onlyLevels: [5], // context ids
   // onlyLevels: [, 5], // trace potential commands
   logDepth: 1,
   allowedCallerNames: [],

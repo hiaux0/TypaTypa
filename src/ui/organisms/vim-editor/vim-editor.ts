@@ -13,11 +13,12 @@ import { debugFlags } from "../../../common/modules/debug/debugFlags";
 import { IKeyMappingMapping } from "../../../types";
 import { VIM_COMMAND } from "../../../features/vim/vim-commands-repository";
 import { IVimInputHandlerV2 } from "../../../features/vim/VimInputHandlerV2";
-import { isEnter } from "../../../features/vim/key-bindings";
+import { isEnter, keyBindings } from "../../../features/vim/key-bindings";
 import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
 import { SelectionService } from "../../../common/services/SelectionService";
 import { Logger } from "../../../common/logging/logging";
 import { ICommandsService } from "../../../common/services/CommandsService";
+import { overwriteKeybindingsV2 } from "../../../features/vim/vimCore/commands/KeyMappingService";
 
 const l = new Logger("VimEditor");
 
@@ -27,7 +28,6 @@ export class VimEditor {
   @bindable public showLineNumbers = true;
   @bindable public debug = false;
   @bindable public value = "";
-  @bindable public mappingByKey: IKeyMappingMapping;
   @bindable public mappingByMode: KeyBindingModes;
 
   private debugFlags = debugFlags.vimEditor;
@@ -108,13 +108,12 @@ export class VimEditor {
         },
       },
     };
-    // /*prettier-ignore*/ console.log("[vim-editor.ts,82] this.mappingByModes: ", this.mappingByMode);
-    this.vimInputHandlerV2.registerAndInit(options, this.mappingByMode, {
+    const merged = overwriteKeybindingsV2(keyBindings, this.mappingByMode);
+    this.vimInputHandlerV2.registerAndInit(options, merged, {
       reInit: true,
     });
-    this.vimInit.init(options, this.mappingByKey, this.mappingByMode);
-    this.commandsService.registerCommands(options.vimId, this.mappingByMode);
-    /*prettier-ignore*/ console.log("[vim-editor.ts,118] this.commandsService.commandsRepository: ", this.commandsService.commandsRepository);
+    this.vimInit.init(options);
+    this.commandsService.registerCommands(options.vimId, merged);
 
     this.initVimEditorHooks();
   }

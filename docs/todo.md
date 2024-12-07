@@ -182,6 +182,8 @@ I want to have live-editor
 - [ ] feat: status line
   - mode, commands
 - [ ] feat: command palette: recent
+- [ ] feat: command: "Delete new lines in column"
+  - in the command palette have fields to change options
 
 # Done
 ## Grid

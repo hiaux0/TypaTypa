@@ -216,7 +216,7 @@ export const VIM_ID_MAP = {
   gridCell: "gridCell",
   gridCellVimEditor: "gridCell-vim-editor",
   gridNavigation: "gridNavigation",
-  commandPalette: "commandPalette",
+  autoCompleteInput: "autoCompleteInput",
 };
 
 //export const VIM_CONTEXT = {

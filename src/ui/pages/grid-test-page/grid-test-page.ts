@@ -340,6 +340,9 @@ export class GridTestPage {
       context: ["Grid"],
       execute: () => {
         this.cursorUp(1);
+        if (featureFlags.grid.cursor.keepCursorAtCenter) {
+          this.scrollToMiddle();
+        }
       },
       preventUndoRedo: true,
     },
@@ -349,6 +352,9 @@ export class GridTestPage {
       context: ["Grid"],
       execute: () => {
         this.cursorDown(1);
+        if (featureFlags.grid.cursor.keepCursorAtCenter) {
+          this.scrollToMiddle();
+        }
         return true;
       },
       preventUndoRedo: true,
@@ -1006,18 +1012,7 @@ export class GridTestPage {
       desc: "Scroll to middle",
       context: ["Grid"],
       execute: () => {
-        const col = this.dragStartColumnIndex;
-        const row = this.dragStartRowIndex;
-        const rect = this.getXYOfSelection(col, row);
-        if (!rect) return;
-        const { top, height } = rect;
-        const norm = this.getNormalizedContainerDimension();
-        if (!norm) return;
-        const { height: normContainerHeight } = norm;
-        const center = normContainerHeight / 2;
-
-        const scrollDiff = center - top - height * 1.5;
-        this.spreadsheetContainerRef.scrollTop -= scrollDiff;
+        this.scrollToMiddle();
       },
       preventUndoRedo: true,
     },
@@ -1143,6 +1138,17 @@ export class GridTestPage {
     },
     {
       desc: "Copy link",
+      context: ["Grid"],
+      execute: () => {
+        console.log("copy link");
+        // this.putCellIntoEdit();
+        // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+        return true;
+      },
+      preventUndoRedo: true,
+    },
+    {
+      desc: "Delete new lines in column",
       context: ["Grid"],
       execute: () => {
         console.log("copy link");
@@ -2962,5 +2968,20 @@ export class GridTestPage {
     } else {
       this.scrollEditor("down", scrollAmount);
     }
+  }
+
+  private scrollToMiddle() {
+    const col = this.dragStartColumnIndex;
+    const row = this.dragStartRowIndex;
+    const rect = this.getXYOfSelection(col, row);
+    if (!rect) return;
+    const { top, height } = rect;
+    const norm = this.getNormalizedContainerDimension();
+    if (!norm) return;
+    const { height: normContainerHeight } = norm;
+    const center = normContainerHeight / 2;
+
+    const scrollDiff = center - top - height * 1.5;
+    this.spreadsheetContainerRef.scrollTop -= scrollDiff;
   }
 }

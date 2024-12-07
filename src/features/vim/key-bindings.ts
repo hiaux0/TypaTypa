@@ -175,10 +175,11 @@ export const keyBindings: KeyBindingModes = {
       preventUndoRedo: true,
     },
   ],
-  synonyms: {
-    "<esc>": "<Escape>",
-    escape: "<Escape>",
-  },
+};
+
+export const MODIFIER_SYNONYMS: Record<string, string> = {
+  "<esc>": "<Escape>",
+  escape: "<Escape>",
 };
 
 export function isAlt(newInput: string) {

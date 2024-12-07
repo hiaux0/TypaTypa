@@ -698,27 +698,11 @@ export class KeyMappingService {
       const standard = command.key === key;
       if (standard) return true;
 
-      const syn = this.getSynonymModifier(this.keyBindings, key);
+      const syn = ShortcutService.getSynonymModifier(key);
       const viaSyn = command.key === syn;
       return viaSyn;
     });
     return commandName;
-  }
-
-  public getSynonymModifier(
-    keyBindings: KeyBindingModes,
-    input: string,
-  ): string {
-    if (!keyBindings.synonyms) return "";
-
-    const synonymInput = keyBindings.synonyms[input.toLowerCase()];
-
-    if (synonymInput) {
-      /* prettier-ignore */ l.culogger.debug( ["Found synonym: %s for %s", synonymInput, input], {}, (...r) => console.log(...r),);
-      return synonymInput;
-    } else {
-      return input;
-    }
   }
 
   private processCommandAwaitingNextInput(
@@ -764,10 +748,12 @@ export class KeyMappingService {
     } else {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.keyBindings", this.keyBindings);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("options.keyBindings", options?.keyBindings);
-      const merged = addKeysToKeybindingsAllModes(
-        options?.keyBindings,
-        this.keyBindings,
-      );
+      //const merged = addKeysToKeybindingsAllModes(
+      //  options?.keyBindings,
+      //  this.keyBindings,
+      //);
+      const merged = options?.keyBindings ?? this.keyBindings;
+
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("merged", merged);
       targetKeyBinding = merged[mode]?.length
         ? merged[mode]
@@ -784,11 +770,8 @@ export class KeyMappingService {
     let keySequence = "";
     if (this.queuedKeys.length) {
       keySequence = this.queuedKeys.join("").concat(input);
-    } else if (
-      this.getSynonymModifier(this.keyBindings, input) ||
-      modifiers.length
-    ) {
-      const synonymInput = this.getSynonymModifier(this.keyBindings, input);
+    } else if (ShortcutService.getSynonymModifier(input) || modifiers.length) {
+      const synonymInput = ShortcutService.getSynonymModifier(input);
 
       if (modifiers.length) {
         keySequence += modifiers.join("");
@@ -805,7 +788,7 @@ export class KeyMappingService {
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("targetKeyBinding", targetKeyBinding);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("keySequence", keySequence);
     // /*prettier-ignore*/ console.log(">>> [KeyMappingService.ts,398] this.id: ", this.id);
-    const finalPotentialCommands = targetKeyBinding.filter((keyBinding) => {
+    const finalPotentialCommands = targetKeyBinding?.filter((keyBinding) => {
       // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
       //   return true;
       // }
@@ -817,11 +800,11 @@ export class KeyMappingService {
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("finalPotentialCommands", finalPotentialCommands);
     // /*prettier-ignore*/ console.log("[KeyMappingService.ts,502] keySequence: ", keySequence);
     let targetCommand;
-    if (finalPotentialCommands.length === 0) {
+    if (finalPotentialCommands?.length === 0) {
       /*                                                                                             prettier-ignore*/ if(l.shouldLog([])) console.log("1");
       this.emptyQueuedKeys();
     } else if (
-      finalPotentialCommands.length === 1 &&
+      finalPotentialCommands?.length === 1 &&
       keySequence === finalPotentialCommands[0].key
     ) {
       /*                                                                                             prettier-ignore*/ if(l.shouldLog([])) console.log("2");
@@ -833,7 +816,7 @@ export class KeyMappingService {
       const isExtendedChain = options?.allowExtendedChaining;
       if (isExtendedChain) {
         /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("2.1");
-        const commandForExtendedChain = targetKeyBinding.filter(
+        const commandForExtendedChain = targetKeyBinding?.filter(
           (keyBinding) => {
             // if (ignoreCaseForModifiers(keyBinding.key, keySequence)) {
             //   return true;
@@ -843,7 +826,7 @@ export class KeyMappingService {
           },
         );
         this.lastCommand?.key?.startsWith(keySequence);
-        targetCommand = commandForExtendedChain[0];
+        targetCommand = commandForExtendedChain?.[0];
       } else if (isChain) {
         /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("3");
         targetCommand = this.lastCommand;
@@ -857,10 +840,12 @@ export class KeyMappingService {
     } else {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([ , 5])) console.log("this.queuedKeys", this.queuedKeys);
       this.queuedKeys.push(input);
-      this.potentialCommands = finalPotentialCommands;
+      if (finalPotentialCommands) {
+        this.potentialCommands = finalPotentialCommands;
+      }
     }
 
-    /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands, input, mode);
+    /*prettier-ignore*/ logPotentialCommands(finalPotentialCommands ?? [], input, mode);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([11])) console.log("finalPotentialCommands,", finalPotentialCommands,);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("targetCommand", targetCommand);
     return {
