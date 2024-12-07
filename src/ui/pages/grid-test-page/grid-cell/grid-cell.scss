@@ -101,7 +101,7 @@
 
     .read-only {
       overflow: hidden;
-      height: $columnHeight;
+      /* height: $columnHeight; */ // Why was this needed? Was used in commit 8387afc0e7d7f70808b88890ce9c267ba33206ad "feat(grid): putCursorAtFirstNonWhiteSpace"
       &.overflown {
         position: absolute;
         /* top: 0; */
@@ -115,7 +115,7 @@
         line-height: calc(#{$columnHeight} - 0px);
         color: unset;
         /* white-space: normal; */ // ON->OFF: when cells seleced, had weird behavior
-        white-space: normal; // OFF->ON: not wrapping when cell selected for longer lines
+        white-space: pre-wrap; // OFF->ON: not wrapping when cell selected for longer lines
         width: 95vw;
         /* background: $backgroundColor1; */
         background: $gridCellHoverBackground;
