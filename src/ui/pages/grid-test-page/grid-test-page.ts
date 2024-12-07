@@ -1921,8 +1921,8 @@ export class GridTestPage {
       },
     };
     // console.log("1.");
-    this.vimInputHandlerV2.registerAndInit(vimOptions, this.mappingByMode); // 1. init vimCore
-    this.vimInit.init(vimOptions, {}, this.mappingByMode); // 2. need vimCore
+    this.vimInputHandlerV2.registerAndInit(vimOptions); // 1. init vimCore
+    this.vimInit.init(vimOptions); // 2. need vimCore
     this.commandsService.registerCommands(vimOptions.vimId, this.mappingByMode);
   }
 

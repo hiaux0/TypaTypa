@@ -109,9 +109,7 @@ export class VimEditor {
       },
     };
     const merged = overwriteKeybindingsV2(keyBindings, this.mappingByMode);
-    this.vimInputHandlerV2.registerAndInit(options, merged, {
-      reInit: true,
-    });
+    this.vimInputHandlerV2.registerAndInit(options);
     this.vimInit.init(options);
     this.commandsService.registerCommands(options.vimId, merged);
 

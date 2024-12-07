@@ -241,12 +241,9 @@ export class AutocompleteInput {
         },
       ],
     };
-    this.vimInputHandlerV2.registerAndInit(
-      {
-        vimId: VIM_ID_MAP.autoCompleteInput,
-      },
-      bindings,
-    );
+    this.vimInputHandlerV2.registerAndInit({
+      vimId: VIM_ID_MAP.autoCompleteInput,
+    });
     this.commandsService.registerCommands(
       VIM_ID_MAP.autoCompleteInput,
       bindings,

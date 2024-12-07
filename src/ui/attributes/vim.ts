@@ -14,24 +14,24 @@ export class VimCustomAttribute {
   ) {}
 
   attached() {
-    console.log(this.element);
-
-    const vimState = VimStateClass.createEmpty();
-    vimState.id = "bruh";
-    vimState.lines = [{ text: "hi, world what are" }];
-    const options: VimOptions = {
-      vimState,
-      vimId: vimState.id,
-      container: this.element,
-      childSelector: "vim-line",
-      hooks: {
-        vimStateUpdated: (vimState: IVimState) => {
-          this.vimState = vimState;
-        },
-      },
-    };
-    this.vimInit.init(options);
-    this.vimInputHandler.registerAndInit(options);
-    this.vimState = vimState;
+    //console.log(this.element);
+    //
+    //const vimState = VimStateClass.createEmpty();
+    //vimState.id = "bruh";
+    //vimState.lines = [{ text: "hi, world what are" }];
+    //const options: VimOptions = {
+    //  vimState,
+    //  vimId: vimState.id,
+    //  container: this.element,
+    //  childSelector: "vim-line",
+    //  hooks: {
+    //    vimStateUpdated: (vimState: IVimState) => {
+    //      this.vimState = vimState;
+    //    },
+    //  },
+    //};
+    //this.vimInit.init(options);
+    //this.vimInputHandler.registerAndInit(options);
+    //this.vimState = vimState;
   }
 }

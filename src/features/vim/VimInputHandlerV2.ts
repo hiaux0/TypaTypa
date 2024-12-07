@@ -36,7 +36,6 @@ export const IVimInputHandlerV2 = DI.createInterface<IVimInputHandlerV2>(
  * Delegate mapping to command in the correct context
  */
 export class VimInputHandlerV2 {
-  public inputMap: InputMap = {};
   public vimCore: VimCore;
   public idHistory: Id[] = [];
   private instancesMap: InstancesMap = {};
@@ -64,26 +63,12 @@ export class VimInputHandlerV2 {
     private commandsService: CommandsService,
   ) {}
 
-  public registerAndInit(
-    options: VimOptions,
-    additionalKeyBindings?: KeyBindingModes,
-    registerOptions: RegisterOptions = {},
-  ): void {
-    const { reInit: reload } = registerOptions;
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("additionalKeyBindings", additionalKeyBindings);
+  public registerAndInit(options: VimOptions): void {
     const id = options.vimId ?? options.vimState?.id ?? "";
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("id", id);
-    const already = this.inputMap[id];
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("already", already);
-    if (already && !reload) return;
-
     if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
-    if (!additionalKeyBindings) return;
-    additionalKeyBindings = enhanceWithIdsAndMode(additionalKeyBindings);
-    this.inputMap[id] = additionalKeyBindings;
     this.instancesMap[id] = { options };
     this.initVimCore(options);
-    this.debugLogMappings(additionalKeyBindings);
   }
 
   public setActiveId(id: Id): void {
