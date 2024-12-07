@@ -51,6 +51,7 @@ import { UndoRedo } from "../../../common/modules/undoRedo";
 import { runGridMigrations } from "../../../common/modules/migrations/gridMigrations";
 import {
   GridIteratorOptions,
+  GridIteratorOptionsWithDefaults,
   calculateDiff,
   checkCellOverflow,
   convertRangeToVimState,
@@ -782,6 +783,7 @@ export class GridTestPage {
         const cell = this.getCurrentCell();
         const cellText = measureTextWidth(cell.text);
         const xy = this.getXYOfSelection();
+        if (!xy) return;
         const width = xy.left + cellText + PADDING;
         const nextColNew = this.getNextColFromWidth(width);
         this.setAndUpdateSingleCellSelection(nextColNew);
@@ -988,9 +990,11 @@ export class GridTestPage {
         const col = this.dragStartColumnIndex;
         const row = this.dragStartRowIndex;
         const rect = this.getXYOfSelection(col, row);
+        if (!rect) return;
         const { top, height } = rect;
-        const { height: normContainerHeight } =
-          this.getNormalizedContainerDimension();
+        const norm = this.getNormalizedContainerDimension();
+        if (!norm) return;
+        const { height: normContainerHeight } = norm;
         const topPart = normContainerHeight / 5;
 
         const scrollDiff = topPart - top - height * 1.5;
@@ -1005,9 +1009,11 @@ export class GridTestPage {
         const col = this.dragStartColumnIndex;
         const row = this.dragStartRowIndex;
         const rect = this.getXYOfSelection(col, row);
+        if (!rect) return;
         const { top, height } = rect;
-        const { height: normContainerHeight } =
-          this.getNormalizedContainerDimension();
+        const norm = this.getNormalizedContainerDimension();
+        if (!norm) return;
+        const { height: normContainerHeight } = norm;
         const center = normContainerHeight / 2;
 
         const scrollDiff = center - top - height * 1.5;
@@ -1032,9 +1038,11 @@ export class GridTestPage {
         const col = this.dragStartColumnIndex;
         const row = this.dragStartRowIndex;
         const rect = this.getXYOfSelection(col, row);
+        if (!rect) return;
         const { top, height } = rect;
-        const { height: normContainerHeight } =
-          this.getNormalizedContainerDimension();
+        const norm = this.getNormalizedContainerDimension();
+        if (!norm) return;
+        const { height: normContainerHeight } = norm;
         const topPart = normContainerHeight * 0.95;
 
         const scrollDiff = topPart - top - height * 1.5;
@@ -1871,6 +1879,7 @@ export class GridTestPage {
 
   private initGridNavigation(): void {
     // const vimState = convertGridToVimState(
+    if (!this.activeSheet.selectedRange) return;
     const vimState = convertRangeToVimState(
       this.contentMap,
       this.activeSheet.selectedRange,
@@ -1885,6 +1894,7 @@ export class GridTestPage {
       allowExtendedChaining: false,
       hooks: {
         modeChanged: (payload) => {
+          if (!payload?.vimState?.mode) return;
           this.mode = payload.vimState.mode;
         },
         commandListener: (result) => {
@@ -1896,7 +1906,7 @@ export class GridTestPage {
             ) {
               return;
             }
-            if (!result.targetCommandFull.preventUndoRedo) {
+            if (!result.targetCommandFull?.preventUndoRedo) {
               this.gridUndoRedo.setState(structuredClone(this.contentMap));
               return;
             }
@@ -1969,7 +1979,7 @@ export class GridTestPage {
   }
 
   private setCurrentCellContent(
-    content: string,
+    content: string | undefined,
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
     option?: { skipUpdate: boolean },
@@ -2124,7 +2134,8 @@ export class GridTestPage {
     return false;
   }
 
-  private setActivePanel(panel: GridPanel): void {
+  private setActivePanel(panel: GridPanel | undefined): void {
+    if (!panel) return;
     this.setCursorAtPanel(panel);
     this.activePanel = panel;
   }
@@ -2242,7 +2253,7 @@ export class GridTestPage {
 
   private iterateOverAllCells(
     callback: (columnIndex: number, rowIndex: number) => void,
-    options: GridIteratorOptions = defaultGridIteratorOptions,
+    options: GridIteratorOptionsWithDefaults = defaultGridIteratorOptions,
   ) {
     iterateOverGrid(
       [options.startCol, options.startRow],
@@ -2261,7 +2272,7 @@ export class GridTestPage {
       rowIndex: number,
       options: { content: string; set: Function },
     ) => void,
-    options: GridIteratorOptions = defaultGridIteratorOptions,
+    options: GridIteratorOptionsWithDefaults = defaultGridIteratorOptions,
   ) {
     iterateOverGrid(
       [options.startCol, options.startRow],
@@ -2480,7 +2491,7 @@ export class GridTestPage {
     /*prettier-ignore*/ debugLog && console.log("0000000. updateCellOverflow", col, row);
     const cell = this.getCurrentCell(col, row);
     let previousCellInRow: Cell | undefined;
-    let previousCellInRowCol: number;
+    let previousCellInRowCol: number = NaN;
     let nextColInRow: number | undefined;
     // 1. If cell has content, then update the overflow of PREVIOUS and NEXT cell
     if (cell?.text) {
@@ -2525,7 +2536,7 @@ export class GridTestPage {
         /*prettier-ignore*/ debugLog && console.log("1.3.1.2 [grid-test-page.ts,1609] toNext: ", toNext);
         previousCellInRow.colsToNextText = toNext;
       }
-      if (nextColInRow !== null) {
+      if (nextColInRow != null) {
         const toNext = nextColInRow - col;
         /*prettier-ignore*/ debugLog && console.log("1.3.2.1 [grid-test-page.ts,1492] cell: ", cell?.col, cell?.row, '"', cell?.text);
         /*prettier-ignore*/ debugLog && console.log("1.3.2.2 [grid-test-page.ts,1615] toNext: ", toNext);
@@ -2558,7 +2569,7 @@ export class GridTestPage {
         { startCol: col + 1, startRow: row },
       );
 
-      if (previousCellInRow && nextColInRow !== null) {
+      if (previousCellInRow && nextColInRow != null) {
         previousCellInRow.colsToNextText = nextColInRow - previousCellInRowCol;
       }
     }
@@ -2568,7 +2579,7 @@ export class GridTestPage {
     command: VIM_COMMAND,
     mode = VimMode.NORMAL,
   ): VimCommand | undefined {
-    const target = this.mappingByMode[mode].find((c) => c.command === command);
+    const target = this.mappingByMode[mode]?.find((c) => c.command === command);
     return target;
   }
 
@@ -2597,6 +2608,7 @@ export class GridTestPage {
     const rowHeaderElement = document.querySelector<HTMLElement>(
       ".column-header-corner",
     );
+    if (!rowHeaderElement) return NaN;
     const rowHeaderWidth = getComputedValueFromPixelString(
       rowHeaderElement,
       "width",
@@ -2619,20 +2631,24 @@ export class GridTestPage {
     const colHeaderElement = document.querySelector(
       `[data-col-index='${col}']`,
     );
+    if (!colHeaderElement) return;
     const width = getComputedValueFromPixelString(colHeaderElement, "width");
     this.spreadsheetContainerRef.scrollLeft -= width;
   }
 
-  private getSpreadSsheetContainer(): HTMLElement {
+  private getSpreadSsheetContainer(): HTMLElement | null {
     return document.querySelector(".spreadsheet-container");
   }
 
   private getNormalizedContainerDimension() {
     const $container = this.getSpreadSsheetContainer();
+    if (!$container) return;
     const containerRect = $container.getBoundingClientRect();
-    const { width, height } = document
+    const rect = document
       .querySelector<HTMLElement>(".column-header-corner")
-      .getBoundingClientRect();
+      ?.getBoundingClientRect();
+    if (!rect) return;
+    const { width, height } = rect;
     const normContainerWidth = containerRect.width - width;
     const normContainerHeight = containerRect.height - height;
     const result = {
@@ -2646,25 +2662,30 @@ export class GridTestPage {
     col: number = this.dragStartColumnIndex,
     row: number = this.dragStartRowIndex,
     direction: Direction = "right",
-  ): CellRect {
+  ): CellRect | undefined {
     const $container = this.getSpreadSsheetContainer();
+    if (!$container) return;
     const containerRect = $container.getBoundingClientRect();
     const $colHeader = document.querySelector(`[data-col-index='${col}']`);
+    if (!$colHeader) return;
     const colHeaderRect = $colHeader.getBoundingClientRect();
-    const { width, height } = document
+    const rect = document
       .querySelector<HTMLElement>(".column-header-corner")
-      .getBoundingClientRect();
+      ?.getBoundingClientRect();
+    if (!rect) return;
+    const { width, height } = rect;
     let normalizedLeft = colHeaderRect.left - containerRect.left - width;
     if (direction === "right") {
       normalizedLeft += $container.scrollLeft;
     }
     const $rowHeader = document.querySelector(`[data-row-index='${row}']`);
+    if (!$rowHeader) return;
     const rowHeaderRect = $rowHeader.getBoundingClientRect();
     let normalizedTop = rowHeaderRect.top - containerRect.top - height;
     if (direction === "down") {
       normalizedTop += $container.scrollTop;
     }
-    const rect: CellRect = {
+    const cellRect: CellRect = {
       top: normalizedTop,
       y: normalizedTop,
       bottom: normalizedTop + rowHeaderRect.height,
@@ -2674,7 +2695,7 @@ export class GridTestPage {
       width: colHeaderRect.width,
       height: rowHeaderRect.height,
     };
-    return rect;
+    return cellRect;
   }
 
   private scrollSelectdeIntoView(
@@ -2690,7 +2711,7 @@ export class GridTestPage {
       this.iterateOverRowFromCurrent(
         (c) => {
           width +=
-            this.activeSheet.colHeaderMap[c]?.colWidth ?? this.CELL_WIDTH;
+            this.activeSheet.colHeaderMap?.[c]?.colWidth ?? this.CELL_WIDTH;
         },
         { endCol: col + delta },
       );
@@ -2710,9 +2731,9 @@ export class GridTestPage {
   private getNextColFromWidth(width: number): number {
     let nextCol = 0;
     let widthTracker = width;
-    this.iterateOverRowFromCurrent((c, row) => {
+    this.iterateOverRowFromCurrent((c) => {
       widthTracker -=
-        this.activeSheet.colHeaderMap[c]?.colWidth ?? this.CELL_WIDTH;
+        this.activeSheet.colHeaderMap?.[c]?.colWidth ?? this.CELL_WIDTH;
       const stop = widthTracker < 0;
       if (stop) {
         nextCol = c + 1;
@@ -2748,14 +2769,17 @@ export class GridTestPage {
 
   private scrollUpToCell(col: number, row: number) {
     const result = this.getXYOfSelection(col, row, "up");
+    if (!result) return;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2126] result: ", result);
     const { top } = result;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2125] top: ", top);
     const $container = this.getSpreadSsheetContainer();
+    if (!$container) return;
     const topBorder = $container.scrollTop;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] topBorder: ", topBorder);
-    const bottomBorder =
-      topBorder + this.getNormalizedContainerDimension().height;
+    const norm = this.getNormalizedContainerDimension();
+    if (!norm) return;
+    const bottomBorder = topBorder + norm.height;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2113] bottomBorder: ", bottomBorder);
     const isInViewport = topBorder < top && top < bottomBorder;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] isInViewport: ", isInViewport);
@@ -2770,11 +2794,15 @@ export class GridTestPage {
   private scrollDownToCell(col: number, row: number): void {
     const result = this.getXYOfSelection(col, row, "up");
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2136] result: ", result);
+    if (!result) return;
     const { bottom } = result;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2138] bottom: ", bottom);
     const $container = this.getSpreadSsheetContainer();
-    const { height: containerHeight } = this.getNormalizedContainerDimension();
+    const norm = this.getNormalizedContainerDimension();
+    if (!norm) return;
+    const { height: containerHeight } = norm;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2141] containerHeight: ", containerHeight);
+    if (!$container) return;
     const bottomOfContainer = $container.scrollTop + containerHeight;
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,2143] bottomOfContainer: ", bottomOfContainer);
     const shouldScroll = bottom > bottomOfContainer;
@@ -2788,13 +2816,17 @@ export class GridTestPage {
   }
 
   private scrollLeftToSelection(col: number, row: number) {
-    const { left } = this.getXYOfSelection(col, row, "right");
+    const xy = this.getXYOfSelection(col, row, "right");
+    if (!xy) return;
+    const { left } = xy;
     // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2108] left: ", left);
     const $container = this.getSpreadSsheetContainer();
+    if (!$container) return;
     const leftBorder = $container.scrollLeft;
     // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] leftBorder: ", leftBorder);
-    const rightBorder =
-      leftBorder + this.getNormalizedContainerDimension().width;
+    const norm = this.getNormalizedContainerDimension();
+    if (!norm) return;
+    const rightBorder = leftBorder + norm.width;
     // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2113] rightBorder: ", rightBorder);
     const isInViewport = leftBorder < left && left < rightBorder;
     // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2111] isInViewport: ", isInViewport);
@@ -2808,10 +2840,14 @@ export class GridTestPage {
 
   private scrollRightToSelection(col: number, row: number): void {
     const result = this.getXYOfSelection(col, row, "right");
+    if (!result) return;
     // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2078] result: ", result);
     const { left } = result;
     const $container = this.getSpreadSsheetContainer();
-    const { width: containerWidth } = this.getNormalizedContainerDimension();
+    if (!$container) return;
+    const norm = this.getNormalizedContainerDimension();
+    if (!norm) return;
+    const { width: containerWidth } = norm;
     const rightOfContainer = $container.scrollLeft + containerWidth;
     const shouldScroll = left > rightOfContainer;
     // // /*prettier-ignore*/ console.log("[grid-test-page.ts,2081] left: ", left);

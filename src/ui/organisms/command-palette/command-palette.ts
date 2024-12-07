@@ -47,8 +47,11 @@ export class CommandPalette {
 
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     const vimCore = this.vimInputHandler.vimCore;
-    const context = suggestion.data.context[0];
+    const context = suggestion.data?.context?.[0];
+    if (!context) return;
+    if (!suggestion.data) return;
     const command = this.commandsService.getCommand(context, suggestion.data);
+    if (!command) return;
     this.commandsService.executeCommand(vimCore, command);
     this.recentlyUsedService.addCommand(suggestion.data);
     this.close();
@@ -59,7 +62,7 @@ export class CommandPalette {
     const lastUsedCommands = this.recentlyUsedService.getCommands();
     const lastUsedConverted = lastUsedCommands
       .filter((lastUsed) => {
-        return converted.some((c) => c.data.id === lastUsed.item.id);
+        return converted.some((c) => c.data?.id === lastUsed.item.id);
       })
       .map((command) => {
         return this.convertCommandToSuggestions(
@@ -77,7 +80,7 @@ export class CommandPalette {
     const first = commandsRepository[VIM_ID_MAP.global];
     const second = commandsRepository[VIM_ID_MAP.gridNavigation];
     const merged = mergeKeybindings(first, second);
-    if (!merged) return;
+    if (!merged) return [];
 
     const converted: AutocompleteSource<VimCommand>[] = [];
     Object.entries(merged).forEach((entry) => {
@@ -96,8 +99,9 @@ export class CommandPalette {
     key: string,
     top?: string,
   ): AutocompleteSource<VimCommand> {
+    const text = (command.desc || command.sequence || command.command) ?? "";
     return {
-      text: command.desc || command.sequence || command.command,
+      text,
       top,
       right: command.key,
       bottomLeft: command.context?.join(", "),
@@ -110,5 +114,6 @@ export class CommandPalette {
     this.isOpen = false;
     this.value = "";
     this.store.closeCommandPalette();
+    this.vimInputHandler.popIdIf(VIM_ID_MAP.commandPalette);
   }
 }

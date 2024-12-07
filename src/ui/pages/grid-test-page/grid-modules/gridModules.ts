@@ -11,6 +11,7 @@ import {
   GridDatabaseType,
   GridSelectionCoord,
   GridSelectionRange,
+  RequiredPick,
   Sheet,
 } from "../../../../types";
 import { VimStateClass } from "../../../../features/vim/vim-state";
@@ -23,11 +24,16 @@ export interface GridIteratorOptions {
   colSize?: number;
   rowSize?: number;
 }
+export type GridIteratorOptionsWithDefaults = RequiredPick<
+  GridIteratorOptions,
+  "startCol" | "startRow"
+>;
 
-export const defaultGridIteratorOptions: GridIteratorOptions = {
+export const defaultGridIteratorOptions: GridIteratorOptionsWithDefaults = {
   startCol: 0,
   startRow: 0,
 };
+// make a type of GridIteratorOptions, where `startCol` and `startRow` are required with typescript extend or some typing inheritance like Required<>
 
 export function calculateDiff(
   before: GridSelectionRange,

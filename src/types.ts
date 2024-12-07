@@ -8,6 +8,9 @@ declare global {
   }
 }
 
+export type RequiredPick<T, Keys extends keyof T> = Required<Pick<T, Keys>> &
+  Omit<T, Keys>;
+
 export interface AutocompleteSource<T extends Record<string, any>> {
   text: string;
   top?: string;
