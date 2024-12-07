@@ -115,6 +115,7 @@
         line-height: calc(#{$columnHeight} - 0px);
         color: unset;
         /* white-space: normal; */ // ON->OFF: when cells seleced, had weird behavior
+        white-space: normal; // OFF->ON: not wrapping when cell selected for longer lines
         width: 95vw;
         /* background: $backgroundColor1; */
         background: $gridCellHoverBackground;
