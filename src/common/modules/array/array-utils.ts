@@ -1,4 +1,4 @@
-import { ArrayType } from "../../../domain";
+import { ArrayType } from "../../../domain/types/types";
 
 export type ThreeSplitType<T extends unknown[]> = [
   ArrayType<T>,
@@ -79,6 +79,18 @@ export class ArrayUtils {
 
     // @ts-ignore
     return result;
+  }
+
+  public static isTwoDimArray<T extends any[][]>(array: T): boolean {
+    const is = Array.isArray(array[0]);
+    return is;
+  }
+
+  public static ensureTwoDimArray<T>(array: T[] | T[][]): T[][] {
+    // @ts-ignore
+    if (this.isTwoDimArray(array)) return array;
+    // @ts-ignore
+    return array.map((entry) => [entry]);
   }
 }
 

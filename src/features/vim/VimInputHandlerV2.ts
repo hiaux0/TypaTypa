@@ -212,7 +212,6 @@ export class VimInputHandlerV2 {
 
       const currentBindings =
         this.commandsService.commandsRepository[this.activeId];
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,217] this.commandsService.commandsRepository: ", this.commandsService.commandsRepository);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("this.activeId", this.activeId);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("[VimInputHandlerV2.ts,223] currentBindings: ", currentBindings);
       const options = this.vimCore.options;
@@ -319,39 +318,16 @@ export class VimInputHandlerV2 {
       }
 
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[] Handling modes");
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,308] mode: ", mode);
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,309] this.vimCore: ", this.vimCore);
       const state = this.vimCore?.getVimState();
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,309] state: ", state);
       VimHelper.switchModes(mode, {
         insert: () => {
-          console.log("1");
           if (commandName) {
-            ///*prettier-ignore*/ console.log("[VimInputHandler.ts,200] commandName: ", commandName);
             if (preventDefault) {
               event.preventDefault();
             }
           }
-
-          const isCursorMovementCommand = cursorAllModes.find(
-            (command) => command.command === finalCommand?.command,
-          );
-          // console.log("2");
-          //if (
-          //  finalCommand &&
-          //  finalCommand?.command !== VIM_COMMAND["space"] &&
-          //  !isCursorMovementCommand
-          //) {
-          //  return;
-          //}
-
-          // console.log("3");
           if (options?.hooks?.onInsertInput) {
             const response = options.hooks.onInsertInput(finalPressedKey);
-            // return;
-            // mostly for custom insert mode, do this early return. In normal vim editor, insert should just be inside input/textarea thing
-            // console.log("4");
-            // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,300] response: ", response);
             if (response === true) {
               event.preventDefault();
             }
@@ -362,8 +338,6 @@ export class VimInputHandlerV2 {
             event.preventDefault();
           }
           if (commandName) {
-            // /*prettier-ignore*/ console.log("[VimInputHandler.ts,223] commandName: ", commandName);
-            // /*prettier-ignore*/ console.log("[VimInputHandler.ts,225] preventDefault: ", preventDefault);
             if (!preventDefault) return;
             event.preventDefault();
           }

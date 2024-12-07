@@ -81,6 +81,7 @@ import {
   addMarkdownStyling,
   addMarkdownStylingToCell,
 } from "./grid-modules/SheetsService";
+import { ArrayUtils } from "../../../common/modules/array/array-utils";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -1151,9 +1152,11 @@ export class GridTestPage {
       desc: "Delete new lines in column",
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
-        console.log("delete new lines in column");
-        // this.putCellIntoEdit();
-        // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
+        const colData = this.getCurrentColumnData();
+        const withoutEmpty = colData.filter((a) => a);
+        this.clearColumn();
+        this.setColumn(withoutEmpty);
+
         return true;
       },
       preventUndoRedo: true,
@@ -2983,5 +2986,58 @@ export class GridTestPage {
 
     const scrollDiff = center - top - height * 1.5;
     this.spreadsheetContainerRef.scrollTop -= scrollDiff;
+  }
+
+  private clearColumn(col = this.dragEndColumnIndex): void {
+    const startCol = col;
+    const startRow = 0;
+    const endCol = startCol;
+    const endRow = this.contentMap?.length - 1;
+    iterateOverRangeBackwards(
+      [startCol, startRow],
+      [endCol, endRow],
+      (col, row) => {
+        this.setCurrentCellContent(undefined, col, row, {
+          skipUpdate: true,
+        });
+      },
+    );
+    this.updateContentMapChangedForView();
+  }
+
+  private setColumn(
+    data: string[] | string[][],
+    col = this.dragStartColumnIndex,
+  ): void {
+    const twoDimData = ArrayUtils.ensureTwoDimArray<string>(data);
+    const startCol = col;
+    const startRow = 0;
+    const endCol = startCol + twoDimData[0]?.length - 1;
+    const endRow = twoDimData.length - 1;
+    iterateOverRangeBackwards(
+      [startCol, startRow],
+      [endCol, endRow],
+      (col, row) => {
+        const rowIndex = row - startRow;
+        const colIdnex = col - startCol;
+        const content = twoDimData[rowIndex][colIdnex];
+        if (content) {
+          this.setCurrentCellContent(content, col, row, {
+            skipUpdate: true,
+          });
+        }
+      },
+    );
+    this.updateContentMapChangedForView();
+  }
+
+  private getCurrentColumnData(): string[] {
+    const colData: string[] = [];
+    this.iterateOverCol((col, row) => {
+      const cell = this.getCurrentCell(col, row);
+      const text = cell.text;
+      colData.push(text);
+    });
+    return colData;
   }
 }

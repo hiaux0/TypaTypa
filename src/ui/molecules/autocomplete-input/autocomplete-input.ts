@@ -70,7 +70,6 @@ export class AutocompleteInput {
 
   attached() {
     this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.autoCompleteInput);
-    /*prettier-ignore*/ console.log("[autocomplete-input.ts,68] attached: ", );
     this.attachCount++;
     if (!this.container && this.target) {
       /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: Need also to provide a container if you provide a target");
@@ -85,7 +84,6 @@ export class AutocompleteInput {
 
   detaching() {
     this.vimInputHandlerV2.popIdIf(VIM_ID_MAP.autoCompleteInput);
-    /*prettier-ignore*/ console.log("[autocomplete-input.ts,83] this.vimInputHandlerV2.idHistory: ", this.vimInputHandlerV2.idHistory);
   }
 
   private handleRequired(): void {
@@ -110,7 +108,6 @@ export class AutocompleteInput {
   public selectSuggestion(suggestion: UiSuggestion<any>): void {
     const suggestionName = suggestion.text;
     this.value = suggestionName;
-    /*prettier-ignore*/ console.log("Start -------------------------------------------------------------------");
     this.onAccept?.(suggestion);
     this.clearSuggestions();
   }
@@ -204,9 +201,7 @@ export class AutocompleteInput {
               /*prettier-ignore*/ console.error("[WARNING:<autocomplete-input>]: You need to provide a function to the onAccept attribute. Consider the `this` context. You may want to provide an arrow function");
               return;
             }
-            console.log("Enter");
             const suggestion = this.suggestions[this.activeCursorIndex];
-            /*prettier-ignore*/ console.log("[autocomplete-input.ts,221] suggestion: ", suggestion);
             if (!suggestion) return;
             this.selectSuggestion(suggestion);
             return true;

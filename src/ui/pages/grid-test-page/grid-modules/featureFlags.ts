@@ -7,7 +7,7 @@ import { CELL_HEIGHT } from "../../../../common/modules/constants";
  * 2: High
  */
 export const featureFlags = {
-  autosave: true,
+  autosave: false,
   llm: {
     printPrompts: true,
   },
