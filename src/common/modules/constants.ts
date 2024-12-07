@@ -214,10 +214,10 @@ export const EV_GRID_CELL = (columnIndex: number, rowIndex: number) =>
 export const VIM_ID_MAP = {
   global: "global",
   gridCell: "gridCell",
-  gridCellVimEditor: "gridCell-vim-editor",
+  gridCellVimEditor: "gridCellVimEditor",
   gridNavigation: "gridNavigation",
   autoCompleteInput: "autoCompleteInput",
-};
+} as const;
 
 //export const VIM_CONTEXT = {
 //  ...pickKeysFromObject(VIM_ID_MAP, ["gridCell"]),

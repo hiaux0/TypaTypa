@@ -45,15 +45,13 @@ export class CommandPalette {
     ),
   ) {}
 
-  attached() {
-    /*prettier-ignore*/ console.log("[command-palette.ts,49] attached: ", );
-  }
-
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     const vimCore = this.vimInputHandler.vimCore;
     const context = suggestion.data?.context?.[0];
+    /*prettier-ignore*/ console.log("[command-palette.ts,55] suggestion: ", suggestion);
     if (!context) return;
     if (!suggestion.data) return;
+    /*prettier-ignore*/ console.log("[command-palette.ts,58] context: ", context);
     const command = this.commandsService.getCommand(context, suggestion.data);
     if (!command) return;
     this.commandsService.executeCommand(vimCore, command);

@@ -1,5 +1,7 @@
+import { VIM_ID_MAP } from "./common/modules/constants";
 import { Id } from "./domain/types/types";
 import { KeyBindingModes, VimOptions } from "./features/vim/vim-types";
+import { VimCore } from "./features/vim/vimCore/VimCore";
 
 declare global {
   interface Window {
@@ -143,11 +145,11 @@ export interface IKeyMappingMapping {
    */
   [key: EventKeyName]: () => boolean | void;
 }
-
+export type VimIdMapKeys = keyof typeof VIM_ID_MAP;
 export type InputMap = Record<Id, KeyBindingModes>;
 export type InstancesMap = Record<
   Id,
-  { options: VimOptions; bindings?: KeyBindingModes }
+  { options: VimOptions; bindings?: KeyBindingModes; vimCore: VimCore }
 >;
 export interface KeyToCommandMap {
   mappings: IKeyMappingMapping;

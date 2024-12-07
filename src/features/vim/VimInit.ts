@@ -21,7 +21,8 @@ export class VimInit {
 
     if (!options) return;
     this.options = options;
-    this.vimCore = this.vimInputHandlerV2.vimCore;
+    if (!options.vimId) return;
+    this.vimCore = this.vimInputHandlerV2.getVimCore(options.vimId as any);
   }
 
   public executeCommandSequence(sequence: string): void {

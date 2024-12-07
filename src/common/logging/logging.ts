@@ -4,7 +4,7 @@ import { CuLogger as Culogger, LogOptions } from "./localCulog";
 export interface ShouldLogConfig {
   log?: boolean;
   maxLevel?: number; // 0 - don't log
-  onlyLevels?: number[]; // only log specified levels
+  onlyLevels?: (undefined | number)[]; // only log specified levels
   logDepth?: number; // 1: 1-9, 2: 10-99, 3: 100-999
   allowedCallerNames?: string[];
   allowedCallerNameParts?: string[];
@@ -30,9 +30,11 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   log: true,
   maxLevel: 1,
   // onlyLevels: [1], // testing
-  onlyLevels: [3], // commands trace
+  // onlyLevels: [3], // commands trace
   // onlyLevels: [4], // mergeKeybindingsV2 and overwriteAndAddExistingKeyBindingsV2
   // onlyLevels: [5], // context ids
+  // onlyLevels: [,,2], // minimal command trace
+  // onlyLevels: [,, 6], // All mode tracing
   // onlyLevels: [, 5], // trace potential commands
   logDepth: 1,
   allowedCallerNames: [],
@@ -126,9 +128,12 @@ export class Logger {
     // Scope
     let scopeHasPart = "okay";
     if (allowedCallerNameParts) {
-      scopeHasPart = allowedCallerNameParts?.find((namePart) =>
+      const allowed = allowedCallerNameParts.find((namePart) =>
         this.scope.includes(namePart),
       );
+      if (allowed) {
+        scopeHasPart = allowed;
+      }
     }
 
     // Level
@@ -153,13 +158,13 @@ export class Logger {
       let okay = false;
       if (level < 10 && logDepth === 1) {
         const mainLevel = level;
-        if (onlyLevels?.length > 0) {
+        if (onlyLevels && onlyLevels.length > 0) {
           okay = onlyLevels[index] === mainLevel;
         }
       } else if (level >= 10 && level < 100 && logDepth === 2) {
         const secondaryLevel = level % 10;
         // secondaryLevel; /*?*/
-        if (onlyLevels?.length > 0) {
+        if (onlyLevels && onlyLevels.length > 0) {
           okay = onlyLevels[index] === secondaryLevel;
           // okay; /*?*/
         }

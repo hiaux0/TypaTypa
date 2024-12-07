@@ -1,6 +1,11 @@
 import { DI, IContainer, Registration } from "aurelia";
 import { Id } from "../../domain/types/types";
-import { InputMap, InstancesMap, RegisterOptions } from "../../types";
+import {
+  InputMap,
+  InstancesMap,
+  RegisterOptions,
+  VimIdMapKeys,
+} from "../../types";
 import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
 import {
   IKeyMappingService,
@@ -36,14 +41,17 @@ export const IVimInputHandlerV2 = DI.createInterface<IVimInputHandlerV2>(
  * Delegate mapping to command in the correct context
  */
 export class VimInputHandlerV2 {
-  public vimCore: VimCore;
-  public idHistory: Id[] = [];
+  public idHistory: VimIdMapKeys[] = [];
   private instancesMap: InstancesMap = {};
   private vimUi: VimUi;
 
-  public get activeId(): Id {
+  public get activeId(): VimIdMapKeys {
     const active = this.idHistory[this.idHistory.length - 1];
     return active;
+  }
+
+  public get vimCore(): VimCore {
+    return this.getVimCore(this.activeId);
   }
 
   public static register(container: IContainer) {
@@ -63,18 +71,25 @@ export class VimInputHandlerV2 {
     private commandsService: CommandsService,
   ) {}
 
-  public registerAndInit(options: VimOptions): void {
-    const id = options.vimId ?? options.vimState?.id ?? "";
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("id", id);
-    if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
-    this.instancesMap[id] = { options };
-    this.initVimCore(options);
+  public getVimCore(id: VimIdMapKeys): VimCore {
+    return this.instancesMap[id].vimCore;
+  }
+  public setVimCore(id: VimIdMapKeys, vimCore: VimCore) {
+    this.instancesMap[id].vimCore = vimCore;
   }
 
-  public setActiveId(id: Id): void {
-    /*prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,52] id: ", id);
+  public registerAndInit(options: VimOptions): void {
+    const id = (options.vimId ?? options.vimState?.id ?? "") as VimIdMapKeys;
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("id", id);
+    if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
+    const vimCore = this.initVimCore(options);
+    this.instancesMap[id] = { options, vimCore };
+  }
+
+  public setActiveId(id: VimIdMapKeys): void {
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,52] id: ", id);
     this.pushIdToHistory(id);
-    /*prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,55] this.idHistory: ", this.idHistory);
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,55] this.idHistory: ", this.idHistory);
   }
 
   public popId(): void {
@@ -106,14 +121,14 @@ export class VimInputHandlerV2 {
     // this.initKeyboard();
   }
 
-  private pushIdToHistory(id: string) {
+  private pushIdToHistory(id: VimIdMapKeys) {
     const latestId = this.idHistory[this.idHistory.length - 1];
     const already = latestId === id;
     if (already) return;
     this.idHistory.push(id);
   }
 
-  private initVimCore(options: VimOptions) {
+  private initVimCore(options: VimOptions): VimCore {
     const keyBindings = this.keyMappingService.keyBindings;
     const vimCore = VimCore.create({
       keyBindings,
@@ -173,17 +188,17 @@ export class VimInputHandlerV2 {
       },
     });
     vimCore.init();
-
     this.vimUi = new VimUi(vimCore.getVimState(), options);
-    this.vimCore = vimCore;
-    if (options?.hooks?.afterInit) options.hooks.afterInit(this.vimCore);
+    if (options?.hooks?.afterInit) options.hooks.afterInit(vimCore);
+
+    return vimCore;
   }
 
   private initEventHandlers() {
     document.addEventListener("keydown", async (event) => {
       debugFlags.clearConsole && console.clear();
 
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("----------------------------: ", this.activeId, event);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("----------------------------: ", this.activeId, event);
       const mode = this.vimCore?.getVimState().mode;
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("mode", mode);
       if (!mode) return;
@@ -191,9 +206,9 @@ export class VimInputHandlerV2 {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("id", id);
 
       const finalKeyWithModifier = ShortcutService.getKeyWithModifer(event);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,110] finalKeyWithModifier: ", finalKeyWithModifier);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[VimInputHandlerV2.ts,110] finalKeyWithModifier: ", finalKeyWithModifier);
       const pressedKeyWithoutModifier = ShortcutService.getPressedKey(event);
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKeyWithoutModifier);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[VimInputHandlerV2.ts,112] pressedKey: ", pressedKeyWithoutModifier);
 
       const currentBindings =
         this.commandsService.commandsRepository[this.activeId];
@@ -232,8 +247,9 @@ export class VimInputHandlerV2 {
         finalCommand = this.keyMappingService.getLastCommand();
         finalPressedKey = this.keyMappingService.getLastKey();
       }
-      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3, 5])) console.log("finalCommand", finalCommand);
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([3,5,2])) console.log("finalCommand", finalCommand);
 
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[] Start of command execution");
       let preventDefault = false;
       let vimState: IVimState | undefined;
       const allowHook = mode !== VimMode.INSERT && !isEnter(finalPressedKey);
@@ -274,7 +290,6 @@ export class VimInputHandlerV2 {
           finalPressedKey,
         );
         // if (!vimState) return; // issue: space in insert got too early returned
-
         /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("(vimState)", (vimState));
         if (vimState) {
           this.updateVimState(vimState);
@@ -290,6 +305,7 @@ export class VimInputHandlerV2 {
         }
       }
 
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[] After command execution");
       if (finalCommand?.afterExecute) {
         const vimState = this.vimCore.getVimState();
         const response = await finalCommand?.afterExecute(
@@ -302,9 +318,14 @@ export class VimInputHandlerV2 {
         }
       }
 
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[] Handling modes");
+      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,308] mode: ", mode);
+      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,309] this.vimCore: ", this.vimCore);
+      const state = this.vimCore?.getVimState();
+      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,309] state: ", state);
       VimHelper.switchModes(mode, {
         insert: () => {
-          // console.log("1");
+          console.log("1");
           if (commandName) {
             ///*prettier-ignore*/ console.log("[VimInputHandler.ts,200] commandName: ", commandName);
             if (preventDefault) {
@@ -358,6 +379,7 @@ export class VimInputHandlerV2 {
         },
       });
 
+      /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,2])) console.log("[] Repeating");
       const saveLast =
         commandName !== VIM_COMMAND.repeatLastCommand &&
         !VimHelper.isModeChangingCommand(commandName);

@@ -14,6 +14,7 @@ import {
   CommandsService,
   ICommandsService,
 } from "../../../common/services/CommandsService";
+import { VimStateClass } from "../../../features/vim/vim-state";
 
 const debugLog = false;
 
@@ -109,6 +110,7 @@ export class AutocompleteInput {
   public selectSuggestion(suggestion: UiSuggestion<any>): void {
     const suggestionName = suggestion.text;
     this.value = suggestionName;
+    /*prettier-ignore*/ console.log("Start -------------------------------------------------------------------");
     this.onAccept?.(suggestion);
     this.clearSuggestions();
   }
@@ -156,18 +158,8 @@ export class AutocompleteInput {
 
   private initKeyboardEvents(): void {
     if (this.attachCount > 1) return;
-    // const host = this.container ?? this.autocompleteContainerRef;
-    //host?.addEventListener("keydown", (event) => {
-    //  if (this.container && !this.target) {
-    //    /*prettier-ignore*/ console.error("[ERROR:<autocomplete-input>]: Need also to provide a target if you provide a container");
-    //  }
-    //
-    //  const finalInput = this.target ?? this.searchInputRef;
-    //  const isActive = document.activeElement === finalInput;
-    //  if (!isActive) return;
-    //});
     const bindings = {
-      [VimMode.NORMAL]: [
+      [VimMode.ALL]: [
         {
           key: "<Tab>",
           execute: () => {
@@ -241,7 +233,11 @@ export class AutocompleteInput {
         },
       ],
     };
+
+    const vimState = VimStateClass.createEmpty().serialize();
+    vimState.mode = VimMode.INSERT;
     this.vimInputHandlerV2.registerAndInit({
+      vimState,
       vimId: VIM_ID_MAP.autoCompleteInput,
     });
     this.commandsService.registerCommands(

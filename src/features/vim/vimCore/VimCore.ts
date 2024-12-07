@@ -1,7 +1,6 @@
 import {
   VimOptions,
   IVimState,
-  VimMode,
   VimExecutingMode,
   QueueInputReturn,
 } from "../vim-types";
@@ -22,8 +21,8 @@ export class VimCore {
   constructor(public options?: VimOptions) {
     Object.assign(this, options);
     this.options = options;
-    if (!this.options.vimState) {
-      this.vimState = VimStateClass.createEmpty();
+    if (!this.options?.vimState) {
+      this.vimState = VimStateClass.createEmpty().serialize();
     }
     this.manager = VimCommandManager.create(this.options);
     this.manager.setInternalVimState(this.vimState);
@@ -76,7 +75,8 @@ export class VimCore {
     splitSequence.forEach((key) => {
       /*prettier-ignore*/ console.log("[VimCore.ts,72] this.keyMappingService.id: ", this.keyMappingService.id);
       const command = this.keyMappingService.prepareCommandV2(key, mode) ?? {};
-      const commandName = VIM_COMMAND[command?.command];
+      if (!command.command) return;
+      const commandName = VIM_COMMAND[command.command];
       if (!commandName) return;
 
       const result = this.executeCommand(commandName, key);
@@ -93,6 +93,7 @@ export class VimCore {
       input,
       this.getVimState().mode,
     );
+    if (!prepared?.command) return;
 
     const result: QueueInputReturn = {
       vimState: this.getVimState(),

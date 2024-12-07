@@ -19,6 +19,7 @@ import { SelectionService } from "../../../common/services/SelectionService";
 import { Logger } from "../../../common/logging/logging";
 import { ICommandsService } from "../../../common/services/CommandsService";
 import { overwriteKeybindingsV2 } from "../../../features/vim/vimCore/commands/KeyMappingService";
+import { VIM_ID_MAP } from "../../../common/modules/constants";
 
 const l = new Logger("VimEditor");
 
@@ -62,7 +63,7 @@ export class VimEditor {
 
     const options: VimOptions = {
       vimState: this.vimState,
-      vimId: this.vimState.id + "-vim-editor",
+      vimId: VIM_ID_MAP.gridCellVimEditor,
       container: this.inputContainerRef,
       childSelector: "vim-line",
       hooks: {
