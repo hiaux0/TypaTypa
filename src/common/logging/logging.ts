@@ -33,9 +33,11 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   // onlyLevels: [3], // commands trace
   // onlyLevels: [4], // mergeKeybindingsV2 and overwriteAndAddExistingKeyBindingsV2
   // onlyLevels: [5], // context ids
+  // onlyLevels: [,5], // trace potential commands
+  // onlyLevels: [,5], // trace potential commands
+  onlyLevels: [,,1], // vim ui
   // onlyLevels: [,,2], // minimal command trace
-  // onlyLevels: [,, 6], // All mode tracing
-  // onlyLevels: [, 5], // trace potential commands
+  // onlyLevels: [,,6], // All mode tracing
   logDepth: 1,
   allowedCallerNames: [],
   // allowedCallerNameParts: ["Vim"],

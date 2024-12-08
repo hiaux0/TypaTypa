@@ -217,6 +217,7 @@ export const VIM_ID_MAP = {
   gridCellVimEditor: "gridCellVimEditor",
   gridNavigation: "gridNavigation",
   autoCompleteInput: "autoCompleteInput",
+  khongAPage: "khongAPage",
 } as const;
 
 //export const VIM_CONTEXT = {
@@ -234,6 +235,7 @@ export function pickKeysFromObject<T, Keys extends keyof T>(
   return picked;
 }
 
+export const FONT_SIZE = 16;
 export const CELL_HEIGHT = 32;
 setCssVariable("--cell-height", `${CELL_HEIGHT}px`);
 export const CELL_WIDTH = 64;
@@ -242,3 +244,5 @@ export const INITIAL_ROW_COUNT = 5;
 export const PADDING = 6;
 export const PADDING_LEFT = 6;
 export const BORDER_WIDTH = 1;
+export const HEIGHT_OF_LINE = 1.5 * FONT_SIZE;
+setCssVariable("--height-of-line", `${HEIGHT_OF_LINE}px`);

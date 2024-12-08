@@ -1,7 +1,27 @@
-<div>${message}</div>
+<template as-custom-element="bold">
+  <bindable name="text"></bindable>
+  <div>
+    <span style="font-weight: 800">${text}</span>
+  </div>
+</template>
 
-<input ref="inputRef" type="" name="" value="">
+<import from="./test-component/test-component.html"></import>
 
-<div innerhtml.bind="pastedHtml">
-    
+<style>
+  .playground-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+</style>
+
+<div class="playground-container">
+  <button click.trigger="addElement"></button>
+
+  <!-- <div ref="itemsRef" class="items"> -->
+  <div ref="itemsRef" class="item-list">
+    <!-- <bold text.bind="item" repeat.for="item of itemsHa"></bold> -->
+  </div>
 </div>

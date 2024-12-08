@@ -66,7 +66,7 @@ import { Store } from "../../../common/modules/store";
 import { Logger } from "../../../common/logging/logging";
 import { getComputedValueFromPixelString } from "../../../common/modules/css/css-variables";
 import { popVimInstanceId } from "../../../features/vim/mulitple-vim-instances-handle";
-import { featureFlags } from "./grid-modules/featureFlags";
+import { FF, featureFlags } from "./grid-modules/featureFlags";
 import { splitByEndingAndSeparator } from "../../../common/modules/strings";
 import { VisualMode } from "../../../features/vim/modes/VisualMode";
 import {
@@ -524,7 +524,7 @@ export class GridTestPage {
 
         const splitByNewLine = text.split("\n");
         let split = splitByNewLine;
-        if (featureFlags.paste.splitByPeriodAndComma) {
+        if (FF.canPasteAutoSplitFlag()) {
           split = splitByEndingAndSeparator(text);
         }
 
@@ -788,6 +788,7 @@ export class GridTestPage {
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         const cell = this.getCurrentCell();
+        if (!cell) return;
         const cellText = measureTextWidth(cell.text);
         const xy = this.getXYOfSelection();
         if (!xy) return;
@@ -978,6 +979,7 @@ export class GridTestPage {
           autopasteIntoRow.enabled && autopasteIntoRow.method.includes("yank");
         if (autopaste) {
           const text = this.getCurrentCell()?.text;
+          if (!text) return;
           const col = featureFlags.copy.autopasteIntoRow.col;
           const isCellEmpty = this.isCellEmpty(col);
           if (isCellEmpty) {
@@ -1143,6 +1145,7 @@ export class GridTestPage {
       execute: () => {
         console.log("copy link");
         const cell = this.getCurrentCell();
+        if (!cell) return;
         /*prettier-ignore*/ console.log("[grid-test-page.ts,1146] cell: ", cell);
         const httpsRegex = /https?:\/\/[^\s]+/g;
         const cellText = cell.text;
@@ -1160,7 +1163,9 @@ export class GridTestPage {
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         const colData = this.getCurrentColumnData();
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1163] colData: ", colData);
         const withoutEmpty = colData.filter((a) => a);
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] withoutEmpty: ", withoutEmpty);
         this.clearColumn();
         this.setColumn(withoutEmpty);
 
@@ -1973,7 +1978,7 @@ export class GridTestPage {
   private getCurrentCell(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
-  ): Cell {
+  ): Cell | undefined {
     const cell = this.contentMap[row]?.[col];
     return cell;
   }
@@ -2092,6 +2097,7 @@ export class GridTestPage {
     this.iterateOverCol(
       (col, row) => {
         const currentText = this.getCurrentCell(col, row)?.text;
+        if (!currentText) return;
         this.setCurrentCellContent(beforeValue, col, row, {
           skipUpdate: true,
         });
@@ -3042,6 +3048,7 @@ export class GridTestPage {
     const colData: string[] = [];
     this.iterateOverCol((col, row) => {
       const cell = this.getCurrentCell(col, row);
+      if (!cell) return;
       const text = cell.text;
       colData.push(text);
     });

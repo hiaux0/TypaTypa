@@ -13,14 +13,15 @@ export function getCssVar(
   return Number(cssVar);
 }
 
-export function setCssVariable(varName: string, value: string): void {
+export function setCssVariable(varName: string, value: string | number): void {
+  const valueAsString = typeof value === "number" ? `${value}px` : value;
   if (varName.startsWith("--")) {
-    document.documentElement.style.setProperty(varName, value);
+    document.documentElement.style.setProperty(varName, valueAsString);
     return;
   }
 
   const finalVarName = `--${kebabCase(varName)}`;
-  document.documentElement.style.setProperty(finalVarName, value);
+  document.documentElement.style.setProperty(finalVarName, valueAsString);
 }
 
 /**

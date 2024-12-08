@@ -1,32 +1,31 @@
-<style>
-  .layout-container {
-    display: flex;
-    justify-content: end;
-    margin-top: 32px;
-    margin-right: 24px;
-  }
-
-  .bruh-container {
-    width: 200px;
-    height: 300px;
-  }
-  .bruh-line {
-    display: block;
-    color: orange;
-    min-height: 1rem;
-  }
-
-  .vim-container {
-    width: unset;
-  }
-
-  .debugContainer {
-    width: 30%;
-  }
-</style>
+<style></style>
 
 <div class="layout-container vim-container">
-  <vim-editor if.bind="vimState" vim-state.bind="vimState"></vim-editor>
+  <!-- <vim-editor if.bind="vimState" vim-state.bind="vimState"></vim-editor> -->
+
+  <button click.trigger="focusTextarea">Focus</button>
+  <div class="textarea-test-container" ref="textareaTextContainerRef">
+    <!-- 1. Display -->
+    <div class="text-display">
+      <!-- 1.1 Lines -->
+      <template repeat.for="line of vimState.lines">
+        <pre class="vim-line">${line.text}</pre>
+      </template>
+
+      <!-- 1.2 Cursor -->
+      <div ref="cursorRef" if.bind="!showTextarea" class="cursor"></div>
+    </div>
+
+    <!-- 2. Edit -->
+    <textarea
+      class="text-input"
+      show.bind="showTextarea"
+      ref="textareaRef"
+      spellcheck="false"
+      value.bind="textValue"
+      contenteditable="true"
+    ></textarea>
+  </div>
 
   <!--<section class="vim-container">-->
   <!--  <div class="bruh-container vim-lines" ref="containerRef" vim>-->

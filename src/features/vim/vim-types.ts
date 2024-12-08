@@ -129,6 +129,7 @@ export interface VimOptions {
   vimId?: Id;
   keyBindings?: KeyBindingModes;
   container?: HTMLElement;
+  inputElement?: HTMLElement;
   childSelector?: string;
   leader?: string;
   vimPlugins?: VimPlugin[];
@@ -173,6 +174,7 @@ export interface VimEditorOptions {
   startCursor?: Cursor;
   startLines?: VimLine[];
   container?: HTMLElement;
+  inputElement?: HTMLTextAreaElement;
   caret?: HTMLElement;
   childSelector?: string;
   removeTrailingWhitespace?: boolean;

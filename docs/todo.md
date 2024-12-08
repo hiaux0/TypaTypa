@@ -21,6 +21,9 @@
 - input
   - need to handle new line case
 
+- textarea
+  - no weird dom interaction?
+
 # Acceptance criteria
 - Use contenteditable
     Reasons
@@ -184,6 +187,8 @@ I want to have live-editor
 - [ ] feat: command palette: recent
 - [ ] feat: command: "Delete new lines in column"
   - in the command palette have fields to change options
+- [ ] feat: cell: restrict cell width to maxWidth
+  - so wide cells not too hard to read
 
 # Done
 ## Grid

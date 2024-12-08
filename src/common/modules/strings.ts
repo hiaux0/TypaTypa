@@ -1,3 +1,8 @@
+import {
+  FF,
+  featureFlags,
+} from "../../ui/pages/grid-test-page/grid-modules/featureFlags";
+
 const UNTIL_CHARS = [" ", "\n", "\t"];
 /**
  * getWordAtIndex("012 4567", 1) => "012"
@@ -139,24 +144,28 @@ export function splitByEndingAndSeparator(input: string): string[] {
   }
 
   const byNewLine = input.split("\n");
-  const splitByEndingSign = byNewLine.flatMap((sentence) => {
-    // split by period, question mark, exclamation mark
-    // but keep the ending sign
-    // also keep numbering, like "1.", or "1.1"
-    return sentence.split(/(?<=\D[.!?])/);
-    // return sentence.split(/(?<=[.!?])\s+(?<!(?!\D|$))/);
-    // return sentence.split(/(?<=[.!?])\s+(?=\D|$)/);
-    // return sentence.split(/(?<=[.!?])/);
-    // return sentence.split(/(?<!\d[.])(?=[.!?])/)
-    // return sentence.split(/(?<=[^.?!])(?<!\d[.!?])(?=[.!?])/);
-    // return sentence.split(/(?<=[.!?])\s+(?=\D)/);
-    // return sentence.split(/(?<=[.!?])\s+(?=\D)/);
-    // return sentence.split(/(?<=[.!?])\s+(?=(?!\d))/);
-  });
-  const splitBySeparator = splitByEndingSign.flatMap((sentence) => {
-    return sentence.split(/(?<=[,;:])/);
-  });
-  const trimmed = splitBySeparator.flatMap((sentence) => sentence.trim());
+  let split = byNewLine;
+  if (FF.getPasteAutoSplitByEnding()) {
+    const splitByEndingSign = byNewLine.flatMap((sentence) => {
+      // split by period, question mark, exclamation mark
+      // but keep the ending sign
+      // also keep numbering, like "1.", or "1.1"
+      const endings = featureFlags.paste.autosplit.endingChars;
+      const regex = new RegExp(`(?<=\\D[${endings}])`);
+      return sentence.split(regex);
+    });
+    split = splitByEndingSign;
+  }
+  if (FF.getPasteAutoSplitBySeparator()) {
+    const splitBySeparator = split.flatMap((sentence) => {
+      const sep = featureFlags.paste.autosplit.separatorChars;
+      const regex = new RegExp(`(?<=\\D[${sep}])`);
+      return sentence.split(regex);
+    });
+    split = splitBySeparator;
+  }
+  const trimmed = split.flatMap((sentence) => sentence.trim());
+  debugger;
   return trimmed;
 }
 //const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");

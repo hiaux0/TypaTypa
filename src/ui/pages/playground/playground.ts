@@ -1,25 +1,42 @@
+import Aurelia, { IAurelia, resolve } from "aurelia";
 import "./playground.scss";
 
 export class Playground {
   public message = "playground.html";
-  public inputRef;
-  public pastedHtml = "";
+  public inputRef: HTMLElement;
+  public itemsRef: HTMLElement;
+  public items: string[] = ["hi"];
+
+  constructor(private au = resolve(IAurelia)) {}
 
   attached() {
-    this.inputRef.addEventListener("paste", (e) => {
-      e.preventDefault();
+    document.addEventListener("keydown", (e) => {
+      const key = e.key;
+      if (key === "a") {
+        this.addElement();
+      }
+    });
+    this.itemsRef.innerHTML =
+      '<test-component text.bind="item" repeat.for="item of items"></test-component>';
 
-      // Get the raw pasted HTML
-      var html = (e.originalEvent || e).clipboardData.getData("text/html");
-
-      // Log it to the console
-      console.log(html);
-      this.pastedHtml = html;
+    this.au.enhance({
+      component: { items: this.items, item: "ha" },
+      host: this.itemsRef,
     });
   }
 
-  generatedClipboardRawRead() {
-    const rawRead = navigator.clipboard.read();
-    console.log("rawRead", rawRead);
+  public addElement() {
+    // const itemList = document.getElementById("item-list");
+    // this.itemsRef = "<bold text.bind='item'></bold>"
+    // const $boldItem = document.createElement("bold");
+    // $boldItem.innerHTML = '<bold text.bind="item"></bold>';
+
+    const random = Math.random().toString(36).substring(7);
+    /*prettier-ignore*/ console.log("[playground.ts,29] random: ", random);
+    this.items.push(random);
+    //this.au.enhance({
+    //  component: { itemsHa: this.items },
+    //  host: this.itemsRef,
+    //});
   }
 }

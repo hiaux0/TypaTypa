@@ -60,7 +60,7 @@ export class VimInputHandlerV2 {
     );
 
     const v = container.get(IVimInputHandlerV2);
-    v.initEventHandlers();
+    // v.initEventHandlers();
     // @ts-ignore
     window.v = v;
   }
@@ -167,6 +167,7 @@ export class VimInputHandlerV2 {
 
               /** Lines */
               const lines = this.vimUi.getTextFromHtml();
+              /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,170] lines: ", lines);
               newVimState.lines = lines;
 
               // this.vimUi.removeHtmlGeneratedNewLines(options);
@@ -221,9 +222,7 @@ export class VimInputHandlerV2 {
         mode,
         options,
       );
-      // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,219] command: ", command);
       const hasQueuedKeys = this.keyMappingService.queuedKeys.length;
-      // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,225] hasQueuedKeys: ", hasQueuedKeys);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("command", command);
       let finalCommand = command;
       let finalPressedKey = pressedKeyWithoutModifier;

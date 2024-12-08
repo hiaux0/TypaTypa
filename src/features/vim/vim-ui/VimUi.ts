@@ -30,6 +30,7 @@ export class VimUi {
   public mode: VimMode;
 
   private readonly container: HTMLElement | undefined;
+  private readonly inputElement: HTMLTextAreaElement | undefined;
   private caret: HTMLElement | undefined;
   private readonly childSelector: string | undefined;
   private readonly caretWidth: number;
@@ -50,7 +51,9 @@ export class VimUi {
     public options?: VimEditorOptions,
   ) {
     if (options) {
+      /*prettier-ignore*/ console.log("[VimUi.ts,52] options: ", options);
       this.container = options.container;
+      this.inputElement = options.inputElement;
       this.caret = options.caret;
       this.childSelector = options.childSelector;
       this.querySelectorService = new QuerySelectorService(
@@ -62,7 +65,7 @@ export class VimUi {
     }
 
     this.caretWidth = getCssVar("--caret-size-width");
-    this.caretHeight = getCssVar("--caret-size-height");
+    this.caretHeight = getCssVar("--height-of-line");
 
     if (!this.caret) {
       this.createCaret();
@@ -90,6 +93,11 @@ export class VimUi {
     this.setCursorMovement(vimState.cursor);
   }
 
+  public updateV2(vimState: IVimState): void {
+    if (!vimState) return;
+    this.setCursorMovement(vimState.cursor);
+  }
+
   private setCursorMovement(newCursor?: Cursor) {
     // /*prettier-ignore*/ console.log("[VimUi.ts,93] setCursorMovement: ", );
     if (!this.caret) return;
@@ -108,8 +116,10 @@ export class VimUi {
     }
 
     this.commenKeyFunctionality();
-    const lineOffsetLeft = this.getLineRectOffsetLeft();
-    if (lineOffsetLeft == null) return;
+    const $currentLineElement = this.getCurrentLineElement(0); // assume, that first child is enough for all the rest
+    if (!$currentLineElement) return;
+    const lineOffsetLeft = $currentLineElement.offsetLeft ?? 0;
+    const lineOffsetTop = $currentLineElement.offsetTop ?? 0;
 
     let vertDirection: Direction = "none";
     if (this.currentLineNumber > newCursorLine) {
@@ -150,7 +160,7 @@ export class VimUi {
 
     const newTop = newCursorLine * this.caretHeight;
     // /*prettier-ignore*/ console.log("[VimUi.ts,148] newTop: ", newTop);
-    this.caret.style.top = `${newTop}px`;
+    this.caret.style.top = `${lineOffsetTop + newTop}px`;
     const newLeft = newCursorCol * this.caretWidth;
     // /*prettier-ignore*/ console.log("[VimUi.ts,151] newLeft: ", newLeft);
     this.caret.style.left = `${lineOffsetLeft + newLeft}px`;
@@ -236,10 +246,17 @@ export class VimUi {
     if (currentChild != null) {
       childOffsetLeft = currentChild.offsetLeft;
     }
-
-    // logger.debug(['Child offset: %d', childOffsetLeft]);
-
     return childOffsetLeft;
+  }
+
+  private getCurrentLineElement(
+    index: number = this.currentLineNumber,
+  ): HTMLElement | undefined {
+    if (!this.childSelector) return;
+    const children = this.querySelectorService.getInputContainerChildren();
+    if (!children) return;
+    const currentChild = children[index];
+    return currentChild;
   }
 
   private commenKeyFunctionality() {
@@ -265,11 +282,35 @@ export class VimUi {
      */
     window.setTimeout(() => {
       this.focusContainer();
-      this.setCursorInInsert(cursor);
+      window.setTimeout(() => {
+        this.setCursorInInsert(cursor);
+      }, 660);
+    }, 660);
+  }
+
+  public enterInsertModeV2(cursor: Cursor | undefined) {
+    /**
+     * Need else, contenteditable element gets not focused correctly.
+     * Relates to Aurelia binding to `contenteditable` in the view
+     */
+    window.setTimeout(() => {
+      this.focusContainer();
+      this.setCursorInInsertV2(cursor);
     }, 66);
   }
 
+  private setCursorInInsertV2(cursor?: Cursor) {
+    if (this.inputElement) {
+      const col = cursor?.col ?? 0;
+      this.inputElement.setSelectionRange(col, col);
+      return;
+    }
+    this.setCursorInInsert(cursor);
+  }
+
   private setCursorInInsert(cursor?: Cursor) {
+    console.log("3. setCursorInInsert");
+    // debugger;
     if (!cursor) return;
 
     const children = this.querySelectorService.getInputContainerChildren();
@@ -287,12 +328,17 @@ export class VimUi {
     // const textNode = document.createTextNode($childToFocus.textContent);
     try {
       const range = SelectionService.createRange(textNode, newCursor);
-      // /*prettier-ignore*/ console.log("[VimUi.ts,284] range: ", range);
+      /*prettier-ignore*/ console.log("[VimUi.ts,284] range: ", range);
       SelectionService.setSingleRange(range);
     } catch {}
   }
 
   private focusContainer() {
+    /*prettier-ignore*/ console.log("[VimUi.ts,314] this.inputElement: ", this.inputElement);
+    if (this.inputElement) {
+      this.inputElement.focus();
+      return;
+    }
     this.container?.focus();
     /*                                                                                           prettier-ignore*/ if(l.shouldLog(36)) console.log("this.vimState", this.vimState);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog(36)) console.log("this.container", this.container);
@@ -391,7 +437,7 @@ export class VimUi {
         const linesToJoin: VimLine[] = []; // issue with empty text nodes in html conversio
         textNodes.forEach((textNode) => {
           textNode.normalize;
-          if (!textNode.nodeValue.trim()) return;
+          if (!textNode.nodeValue?.trim()) return;
           /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,354] isTextOnlyMultiLinePaste: ", isTextOnlyMultiLinePaste);
           const text = textNode.nodeValue;
           /*prettier-ignore*/ if(l.shouldLog([, 1])) console.log("[VimUi.ts,369] text: ", text);

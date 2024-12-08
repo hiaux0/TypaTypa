@@ -1,6 +1,74 @@
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------------------------
+const titleQuestions = [
+  "What do you want to denied of today?",
+  "No is no, yes is no",
+];
+
+enum LifeAreas {
+  "Relationships",
+  "Career",
+  "Health",
+  "Wealth",
+  "Personal Growth",
+  "Family",
+  "Social Life",
+  "Hobbies",
+  "Spirituality",
+}
+
+const possibleQuestions = [
+  "Should I",
+  "Can I",
+  "Will I",
+  "Is it a good idea to",
+  "Is it possible to",
+  "Is it a good time to",
+  "Is it a good time for me to",
+  "Are there any reasons for me to",
+  "Are there any reasons not to",
+];
+
+const possibleNos = [
+  "No.",
+  "No!",
+  "Nooooo",
+  "Absolutely no.",
+  "Ye.., No.",
+  "Nope",
+  "Nope.",
+  "Nope!",
+  "Hmm, no.",
+  "Let me think... No.",
+  "Let's count the leaves on the tree. 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. No.",
+  "Ok, let's see. No.",
+  "Well considering the circumstances, no.",
+];
+
+-----------------------------------------------------------------------------------------------
+
+    this.inputRef.addEventListener("paste", (e) => {
+      e.preventDefault();
+
+      // Get the raw pasted HTML
+      var html = (e.originalEvent || e).clipboardData.getData("text/html");
+
+      // Log it to the console
+      console.log(html);
+      this.pastedHtml = html;
+    });
+-----------------------------------------------------------------------------------------------
+
+    // return sentence.split(/(?<=[.!?])\s+(?<!(?!\D|$))/);
+    // return sentence.split(/(?<=[.!?])\s+(?=\D|$)/);
+    // return sentence.split(/(?<=[.!?])/);
+    // return sentence.split(/(?<!\d[.])(?=[.!?])/)
+    // return sentence.split(/(?<=[^.?!])(?<!\d[.!?])(?=[.!?])/);
+    // return sentence.split(/(?<=[.!?])\s+(?=\D)/);
+    // return sentence.split(/(?<=[.!?])\s+(?=\D)/);
+    // return sentence.split(/(?<=[.!?])\s+(?=(?!\d))/);
 
 -----------------------------------------------------------------------------------------------
 export function convertKeyMappingsToVimCommandMappings(

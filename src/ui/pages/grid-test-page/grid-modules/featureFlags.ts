@@ -7,7 +7,7 @@ import { CELL_HEIGHT } from "../../../../common/modules/constants";
  * 2: High
  */
 export const featureFlags = {
-  autosave: false,
+  autosave: true,
   llm: {
     printPrompts: true,
   },
@@ -34,6 +34,14 @@ export const featureFlags = {
     },
   },
   paste: {
+    autosplit: {
+      flag: true,
+      endingChars: ".!?",
+      byEnding: ".!?",
+      separatorChars: ",;:",
+      bySeparator: "",
+    },
+    splitByPeriod: true,
     splitByPeriodAndComma: false,
   },
   mode: {
@@ -46,7 +54,6 @@ export const featureFlags = {
     },
   },
 };
-
 
 // featureFlags
 // featureFlags.copy.autopasteIntoRow
@@ -63,6 +70,20 @@ export class FF {
     return featureFlags[key];
   }
 
+  //                                                                                            Paste autosplit
+  static canPasteAutoSplitFlag(): boolean {
+    return featureFlags.paste.autosplit.flag;
+  }
+  static getPasteAutoSplitByEnding(): boolean {
+    if (!this.canPasteAutoSplitFlag()) return false;
+    return featureFlags.paste.autosplit.byEnding.length > 0;
+  }
+  static getPasteAutoSplitBySeparator(): boolean {
+    if (!this.canPasteAutoSplitFlag()) return false;
+    return featureFlags.paste.autosplit.bySeparator.length > 0;
+  }
+
+  //                                                                                            Grid Cells
   static getClipTextFlag(): boolean {
     return featureFlags.grid.cells.flag;
   }
