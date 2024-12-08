@@ -70,4 +70,20 @@ export class VimHelper {
     word = StringUtil.matchWords(word)[0];
     return word;
   }
+
+  public static debugLog(newVimState: IVimState): void {
+    const onlyText = newVimState.lines?.map((l) => l.text);
+    /*prettier-ignore*/ console.log("[VimHelper.ts,76] onlyText: ", onlyText);
+  }
+
+  public static cursorToOffsetByVimState(vimState: IVimState) {
+    if (!vimState.cursor) return;
+    if (!vimState.lines) return;
+    let offset = 0;
+    for (let i = 0; i < vimState.cursor.line; i++) {
+      offset += vimState.lines[i].text.length + 1;
+    }
+    offset += vimState.cursor.col;
+    return offset;
+  }
 }

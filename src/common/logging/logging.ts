@@ -35,7 +35,7 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   // onlyLevels: [5], // context ids
   // onlyLevels: [,5], // trace potential commands
   // onlyLevels: [,5], // trace potential commands
-  onlyLevels: [,,1], // vim ui
+  // onlyLevels: [,,1], // vim ui
   // onlyLevels: [,,2], // minimal command trace
   // onlyLevels: [,,6], // All mode tracing
   logDepth: 1,

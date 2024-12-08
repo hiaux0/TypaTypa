@@ -288,7 +288,7 @@ export class VimUi {
     }, 660);
   }
 
-  public enterInsertModeV2(cursor: Cursor | undefined) {
+  public enterInsertModeV2(cursor: Cursor | number | undefined) {
     /**
      * Need else, contenteditable element gets not focused correctly.
      * Relates to Aurelia binding to `contenteditable` in the view
@@ -299,7 +299,13 @@ export class VimUi {
     }, 66);
   }
 
-  private setCursorInInsertV2(cursor?: Cursor) {
+  private setCursorInInsertV2(cursorOrOffset?: Cursor | number) {
+    if (typeof cursorOrOffset === "number") {
+      this.inputElement?.setSelectionRange(cursorOrOffset, cursorOrOffset);
+      return;
+    }
+
+    const cursor = cursorOrOffset as Cursor;
     if (this.inputElement) {
       const col = cursor?.col ?? 0;
       this.inputElement.setSelectionRange(col, col);
@@ -309,8 +315,6 @@ export class VimUi {
   }
 
   private setCursorInInsert(cursor?: Cursor) {
-    console.log("3. setCursorInInsert");
-    // debugger;
     if (!cursor) return;
 
     const children = this.querySelectorService.getInputContainerChildren();
@@ -334,7 +338,6 @@ export class VimUi {
   }
 
   private focusContainer() {
-    /*prettier-ignore*/ console.log("[VimUi.ts,314] this.inputElement: ", this.inputElement);
     if (this.inputElement) {
       this.inputElement.focus();
       return;

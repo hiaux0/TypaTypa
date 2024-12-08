@@ -1,19 +1,16 @@
 <style></style>
 
 <div class="layout-container vim-container">
-  <!-- <vim-editor if.bind="vimState" vim-state.bind="vimState"></vim-editor> -->
-
-  <button click.trigger="focusTextarea">Focus</button>
   <div class="textarea-test-container" ref="textareaTextContainerRef">
     <!-- 1. Display -->
-    <div class="text-display">
+    <div class="text-display" if.bind="!showTextarea">
       <!-- 1.1 Lines -->
       <template repeat.for="line of vimState.lines">
         <pre class="vim-line">${line.text}</pre>
       </template>
 
       <!-- 1.2 Cursor -->
-      <div ref="cursorRef" if.bind="!showTextarea" class="cursor"></div>
+      <div ref="cursorRef" class="cursor"></div>
     </div>
 
     <!-- 2. Edit -->

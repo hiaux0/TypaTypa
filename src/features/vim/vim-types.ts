@@ -129,7 +129,7 @@ export interface VimOptions {
   vimId?: Id;
   keyBindings?: KeyBindingModes;
   container?: HTMLElement;
-  inputElement?: HTMLElement;
+  inputElement?: HTMLTextAreaElement;
   childSelector?: string;
   leader?: string;
   vimPlugins?: VimPlugin[];

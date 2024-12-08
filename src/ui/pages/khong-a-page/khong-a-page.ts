@@ -1,5 +1,6 @@
 import { VimStateClass } from "../../../features/vim/vim-state";
 import {
+  Cursor,
   IVimState,
   VimMode,
   VimOptions,
@@ -70,7 +71,6 @@ export class KhongAPage {
       childSelector: "vim-line",
       hooks: {
         modeChanged: (...args) => {
-          console.log("1. Mode changed");
           const { vimState } = args[0];
           /*prettier-ignore*/ console.log("[khong-a-page.ts,74] vimState: ", vimState);
           const newVimState = vimState;
@@ -87,12 +87,11 @@ export class KhongAPage {
           }
           VimHelper.switchModes(newVimState.mode, {
             insert: () => {
-              console.log("2. Insert mode");
-              this.convertTextareaTextToVimState();
-              this.vimUi.enterInsertModeV2(newVimState.cursor);
+              this.convertVimStateToTextareaText();
+              const offset = VimHelper.cursorToOffsetByVimState(newVimState);
+              this.vimUi.enterInsertModeV2(offset);
             },
             normal: () => {
-              this.convertVimStateToTextareaText();
               if (!options?.container) return;
               /** Cursor */
               const cursor = SelectionService.getCursorFromSelection(
@@ -124,6 +123,13 @@ export class KhongAPage {
           this.vimState = newVimState;
           this.vimCore.setVimState(newVimState);
           this.vimUi.update(newVimState);
+          this.convertTextareaTextToVimState();
+        },
+        vimStateUpdated: (vimState) => {
+          console.trace("");
+          VimHelper.debugLog(vimState)
+          /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("vimStateUpdated:");
+          this.vimState = vimState;
         },
       },
     };
@@ -319,8 +325,6 @@ export class KhongAPage {
 
   private updateVimState(vimState: IVimState) {
     this.vimUi.updateV2(vimState);
-    // this.vimState = vimState;
-    /*prettier-ignore*/ console.log("[khong-a-page.ts,252] this.vimState: ", this.vimState);
   }
 
   private convertTextareaTextToVimState(): void {

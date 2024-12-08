@@ -203,6 +203,7 @@ export class VimCommandManager {
   }
 
   private createNewLine(vimState: IVimState) {
+    /*prettier-ignore*/ console.log("[VimCommandManager.ts,206] createNewLine: ", );
     const vimStateClass = new VimStateClass(vimState);
     const activeLine = vimStateClass.getActiveLine();
     if (!activeLine) return this.internalVimState;
@@ -221,6 +222,7 @@ export class VimCommandManager {
     vimState.cursor.line = Math.max(updaterCursorLine, 0);
 
     vimState.lines = tempLines;
+    /*prettier-ignore*/ console.log("[VimCommandManager.ts,225] tempLines: ", tempLines);
     vimState.mode = VimMode.INSERT;
     return vimState;
   }
