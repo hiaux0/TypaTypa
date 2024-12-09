@@ -51,7 +51,6 @@
 
 - LETS ACCEPT RERENDERING for now
 
-
 # Todo
 
 - [ ] autocomplete: add 110/110, on type 65/110 in input
@@ -109,7 +108,9 @@ I want to have live-editor
     - [ ]  think about difference between grid based and editor based
       - grid: per cell, cell can have editor inside
       - editor: contained inside grid
-
+- [ ] bug: e: not putting cursor at 4
+    vimState.lines = [{ text: "0123" }, { text: "4 6789" }];
+    vimState.cursor = { line: 0, col: 3 };
 
 
 ## Grid
@@ -189,6 +190,7 @@ I want to have live-editor
   - in the command palette have fields to change options
 - [ ] feat: cell: restrict cell width to maxWidth
   - so wide cells not too hard to read
+
 
 # Done
 ## Grid

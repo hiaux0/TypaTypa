@@ -37,7 +37,7 @@ export class VimCommandManager {
     inputForCommand: string,
   ) {
     this.setInternalVimState(vimState);
-    const mode = this.getMode(vimState.mode);
+    const modeClass = this.getModeClass(vimState.mode);
     // @ts-ignore
     const previousMode = vimState.mode;
 
@@ -48,10 +48,16 @@ export class VimCommandManager {
       return result;
     }
 
+    /*prettier-ignore*/ console.log("-------------------------------------------------------------------");
+    /*prettier-ignore*/ console.log("[VimCommandManager.ts,52] modeClass: ", modeClass);
+    /*prettier-ignore*/ console.log("[VimCommandManager.ts,53] commandName: ", commandName);
+
     /** Mode Commands */
-    if (!mode) return;
-    if (mode.commandExists(commandName)) {
-      const result = mode.executeCommand(
+    if (!modeClass) return;
+    const exists = modeClass.commandExists(commandName);
+    /*prettier-ignore*/ console.log("[VimCommandManager.ts,57] exists: ", exists);
+    if (exists) {
+      const result = modeClass.executeCommand(
         vimState,
         commandName,
         inputForCommand,
@@ -77,7 +83,7 @@ export class VimCommandManager {
     this.internalVimState = structuredClone(vimState);
   }
 
-  public getMode<Mode extends VimMode>(
+  public getModeClass<Mode extends VimMode>(
     mode: Mode | undefined,
   ): Mode extends VimMode.NORMAL
     ? NormalMode
@@ -111,8 +117,8 @@ export class VimCommandManager {
         break;
       }
       case VimMode.CUSTOM: {
+        this.internalVimState.mode = VimMode.NORMAL;
         finalMode = new NormalMode(this.internalVimState);
-        finalMode.mode = VimMode.CUSTOM;
         break;
       }
       default: {
@@ -128,11 +134,10 @@ export class VimCommandManager {
   public executeModeChange(commandName: VIM_COMMAND): IVimState | undefined {
     l.culogger.debug(["Mode change command", commandName]);
 
-    // @ts-ignore
+    /* @ts-ignore */
     if (!this[commandName]) return;
     // @ts-ignore
     const result = this[commandName](this.internalVimState);
-    this.internalVimState.lines.length;
     ///*prettier-ignore*/ console.log("[VimCommandManager.ts,136] this.internalVimState.lines.length: ", this.internalVimState.lines.length);
     ///*prettier-ignore*/ console.log("[VimCommandManager.ts,138] result.lines.length: ", result.lines.length);
 
@@ -143,7 +148,8 @@ export class VimCommandManager {
       targetCommandFull: undefined,
       keys: "",
     };
-    this.options.hooks.modeChanged(modeChangedResult);
+    const updatedVimState = this.options.hooks.modeChanged(modeChangedResult);
+    if (updatedVimState) return updatedVimState;
 
     return result;
   }
@@ -203,7 +209,6 @@ export class VimCommandManager {
   }
 
   private createNewLine(vimState: IVimState) {
-    /*prettier-ignore*/ console.log("[VimCommandManager.ts,206] createNewLine: ", );
     const vimStateClass = new VimStateClass(vimState);
     const activeLine = vimStateClass.getActiveLine();
     if (!activeLine) return this.internalVimState;
@@ -222,7 +227,6 @@ export class VimCommandManager {
     vimState.cursor.line = Math.max(updaterCursorLine, 0);
 
     vimState.lines = tempLines;
-    /*prettier-ignore*/ console.log("[VimCommandManager.ts,225] tempLines: ", tempLines);
     vimState.mode = VimMode.INSERT;
     return vimState;
   }
@@ -265,8 +269,12 @@ export class VimCommandManager {
 
   private enterInsertAfterMode(vimState: IVimState) {
     const vimMode = vimState.mode;
-    const mode = this.getMode(vimMode);
-    const result = mode?.executeCommand(vimState, VIM_COMMAND.cursorRight, "");
+    const modeClass = this.getModeClass(vimMode);
+    const result = modeClass?.executeCommand(
+      vimState,
+      VIM_COMMAND.cursorRight,
+      "",
+    );
 
     if (!result) return vimState;
 

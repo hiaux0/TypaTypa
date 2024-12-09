@@ -129,7 +129,7 @@ export const keyBindings: KeyBindingModes = {
   [VimMode.INSERT]: [
     //{ key: "<Backspace>", command: "backspace" },
     //{ key: "<Delete>", command: "delete" },
-    //{ key: "<Enter>", command: "newLine" },
+    { key: "<Enter>", command: "newLine" },
     //{ key: "<Shift>", command: "shift" },
     { key: Modifier["<Space>"], command: "space" },
     //{ key: "<Control>", command: "nothing" },

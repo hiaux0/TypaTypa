@@ -159,10 +159,8 @@ export class VimUi {
     this.currentCaretCol = newCursorCol;
 
     const newTop = newCursorLine * this.caretHeight;
-    // /*prettier-ignore*/ console.log("[VimUi.ts,148] newTop: ", newTop);
     this.caret.style.top = `${lineOffsetTop + newTop}px`;
     const newLeft = newCursorCol * this.caretWidth;
-    // /*prettier-ignore*/ console.log("[VimUi.ts,151] newLeft: ", newLeft);
     this.caret.style.left = `${lineOffsetLeft + newLeft}px`;
 
     if (debugFlags.vimUi.enableScrollEditor) {

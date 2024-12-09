@@ -86,4 +86,26 @@ export class VimHelper {
     offset += vimState.cursor.col;
     return offset;
   }
+
+  public static convertOffsetToVimStateCursor(
+    offset: number,
+    vimState: IVimState,
+  ) {
+    if (offset < 0) return;
+    if (!vimState.lines) return;
+    let line = 0;
+    let col = 0;
+    let currentOffset = 0;
+    while (currentOffset < offset) {
+      /*prettier-ignore*/ console.log("[VimHelper.ts,98] vimState.lines: ", vimState.lines);
+      const lineText = vimState.lines[line].text;
+      if (currentOffset + lineText.length + 1 > offset) {
+        col = offset - currentOffset;
+        break;
+      }
+      currentOffset += lineText.length + 1;
+      line++;
+    }
+    return { line, col };
+  }
 }

@@ -56,11 +56,13 @@ export class KhongAPage {
     const vimState = VimStateClass.createEmpty().serialize();
     vimState.id = "khong-a";
     vimState.lines = [
-      { text: "01234 6789" },
-      { text: "abcdefghijklmnopqrstuvwxyz" },
-      { text: "abcd fghifkl" },
+      // { text: "" },
+       { text: "01234 6789" },
+       { text: "abcdefg hijklmnopqr stuvwxyz" },
+       { text: "abcd fghifkl" },
     ];
-    vimState.cursor = { line: 0, col: 3 };
+    vimState.cursor = { line: 0, col: 0 };
+    // vimState.cursor = { line: 1, col: 3 };
     this.vimState = vimState;
     this.convertVimStateToTextareaText();
     const options: VimOptions = {
@@ -72,19 +74,16 @@ export class KhongAPage {
       hooks: {
         modeChanged: (...args) => {
           const { vimState } = args[0];
-          /*prettier-ignore*/ console.log("[khong-a-page.ts,74] vimState: ", vimState);
           const newVimState = vimState;
           if (!newVimState) return;
           if (!newVimState.mode) return;
           // For now: early return when same mode
-          if (
-            !VimHelper.hasModeChanged(
-              this.vimCore.getVimState().mode,
-              vimState.mode,
-            )
-          ) {
-            return;
-          }
+          const isSameMode = !VimHelper.hasModeChanged(
+            this.vimCore.getVimState().mode,
+            vimState.mode,
+          );
+          if (isSameMode) return;
+
           VimHelper.switchModes(newVimState.mode, {
             insert: () => {
               this.convertVimStateToTextareaText();
@@ -92,44 +91,41 @@ export class KhongAPage {
               this.vimUi.enterInsertModeV2(offset);
             },
             normal: () => {
-              if (!options?.container) return;
-              /** Cursor */
-              const cursor = SelectionService.getCursorFromSelection(
-                options.container,
+              /**                                                                                                     Lines */
+              const lines = this.textValue.split("\n");
+              lines.forEach((text, index) => {
+                if (!newVimState.lines?.[index]) return;
+                newVimState.lines[index].text = text;
+              });
+              /**                                                                                                     Cursor */
+              const offset = SelectionService.getOffsetFromTextarea(
+                this.textareaRef,
               );
-              if (!cursor) return;
-              if (cursor.line !== -1) {
-                newVimState.cursor = cursor;
-              }
+              const cursorFromOffset = VimHelper.convertOffsetToVimStateCursor(
+                offset,
+                newVimState,
+              );
+              const col = cursorFromOffset?.col;
+              if (newVimState.cursor && col) newVimState.cursor.col = col;
 
-              /** Lines */
-              const lines = this.vimUi.getTextFromHtml();
-              /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,170] lines: ", lines);
-              newVimState.lines = lines;
-
-              // this.vimUi.removeHtmlGeneratedNewLines(options);
-
-              options.container.blur();
+              options.container?.blur();
             },
           });
 
           if (options?.hooks?.modeChanged) {
-            // /*prettier-ignore*/ console.log(">>[VimInputHandler.ts,96] args[0].vimState.lines.length: ", args[0].vimState.lines.length);
             const updatedArgs = args;
             updatedArgs[0].vimState = newVimState;
             // options.hooks.modeChanged(...updatedArgs);
           }
 
-          this.vimState = newVimState;
-          this.vimCore.setVimState(newVimState);
-          this.vimUi.update(newVimState);
-          this.convertTextareaTextToVimState();
+          return newVimState;
         },
         vimStateUpdated: (vimState) => {
-          console.trace("");
-          VimHelper.debugLog(vimState)
           /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.log("vimStateUpdated:");
+          // VimHelper.debugLog(vimState);
           this.vimState = vimState;
+          this.vimUi.update(vimState);
+          this.convertVimStateToTextareaText();
         },
       },
     };
@@ -149,15 +145,21 @@ export class KhongAPage {
   }
 
   private initEvents(options: VimOptions) {
+    //document.addEventListener("pointerup", async (event) => {
+    //  const sel1 = window.getSelection()?.toString();
+    //  /*prettier-ignore*/ console.log("[khong-a-page.ts,154] sel1: ", sel1);
+    //  const sel2 = SelectionService.getCursorFromSelection(this.textareaRef);
+    //  /*prettier-ignore*/ console.log("[khong-a-page.ts,156] sel2: ", sel2);
+    //});
     document.addEventListener("keydown", async (event) => {
       console.clear();
-      // /*prettier-ignore*/ console.log("[khong-a-page.ts,37] this.textValue: ", this.textValue);
-
       // 1. Event -> Keys + Modifiers
       const keyData = this.getKeyData(event);
+      /*prettier-ignore*/ console.log("[khong-a-page.ts,168] keyData: ", keyData);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,1])) console.log("keyData", keyData);
       // 2. Keys + Modifiers -> Command
       const command = this.getCommand(keyData, options);
+      /*prettier-ignore*/ console.log("[khong-a-page.ts,172] command: ", command);
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,1])) console.log("command", command);
       // 3. Command -> Action
       await this.executeCommand(command, keyData, options);
@@ -166,28 +168,6 @@ export class KhongAPage {
       // 5. State Change -> UI Update
       // 6. UI Update -> Render
       // 7. Render -> DOM Update
-
-      const key = event.key;
-      // /*prettier-ignore*/ console.log("[khong-a-page.ts,37] key: ", key);
-      //switch (key) {
-      //  case "Escape":
-      //    if (this.mode === VimMode.INSERT) {
-      //      this.textareaRef?.blur();
-      //      this.mode = VimMode.NORMAL;
-      //      this.convertTextareaTextToVimState();
-      //    }
-      //    break;
-      //  case "i":
-      //    if (this.mode === VimMode.NORMAL) {
-      //      event.preventDefault();
-      //      this.convertVimStateToTextareaText();
-      //      // this.mode = VimMode.INSERT;
-      //      // this.textareaRef.focus();
-      //    }
-      //    break;
-      //  default:
-      //    break;
-      //}
     });
   }
 
@@ -329,6 +309,7 @@ export class KhongAPage {
 
   private convertTextareaTextToVimState(): void {
     const lines = this.textValue.split("\n");
+    /*prettier-ignore*/ console.log("[khong-a-page.ts,334] lines: ", lines);
     this.vimState.lines = lines.map((text) => ({ text }));
   }
 

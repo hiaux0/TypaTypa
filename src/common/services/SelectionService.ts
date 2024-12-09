@@ -51,6 +51,11 @@ export class SelectionService {
     // document.getSelection().addRange(range);
   }
 
+  static getOffsetFromTextarea(element: HTMLTextAreaElement): number {
+    const selection = element.selectionStart;
+    return selection;
+  }
+
   static getCursorFromSelection(element: HTMLElement): Cursor | undefined {
     const selection = document.getSelection();
     if (!selection) return;

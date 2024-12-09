@@ -212,7 +212,7 @@ export class GridTestPage {
             autopasteIntoRow.enabled &&
             autopasteIntoRow.method.includes("yank");
           if (autopaste) {
-            const modeHandler = vimCore?.manager.getMode(mode) as VisualMode;
+            const modeHandler = vimCore?.manager.getModeClass(mode) as VisualMode;
             const text = modeHandler.getSelectedText();
             const col = featureFlags.copy.autopasteIntoRow.col;
             const isCellEmpty = this.isCellEmpty(col);
