@@ -27,6 +27,8 @@ import { VimCustomAttribute } from "./ui/attributes/vim";
 import { LoadComponentValueConverter } from "./ui/value-converters/load-component-value-converter";
 import { PopoverTwo } from "./ui/molecules/popover-two/popover-two";
 import { CommandPalette } from "./ui/organisms/command-palette/command-palette";
+import { NoteLine } from "./ui/organisms/vim-editor/note-line/note-line";
+import { VimEditorVtwo } from "./ui/organisms/vim-editor-vtwo/vim-editor-vtwo";
 
 console.clear();
 window.activeVimInstancesIdMap = [];
@@ -50,10 +52,12 @@ const organisms = [
   CommandPalette,
   CustomTable,
   Dictionary,
+  NoteLine,
   OrMenu,
   TabDrawer,
   Topics,
   VimEditor,
+  VimEditorVtwo
 ];
 const valueConverters = [
   LoadComponentValueConverter,

@@ -118,8 +118,8 @@ export class VimUi {
     this.commenKeyFunctionality();
     const $currentLineElement = this.getCurrentLineElement(0); // assume, that first child is enough for all the rest
     if (!$currentLineElement) return;
-    const lineOffsetLeft = $currentLineElement.offsetLeft ?? 0;
-    const lineOffsetTop = $currentLineElement.offsetTop ?? 0;
+    const lineOffsetLeft = $currentLineElement.offsetLeft || 6;
+    const lineOffsetTop = $currentLineElement.offsetTop || 6;
 
     let vertDirection: Direction = "none";
     if (this.currentLineNumber > newCursorLine) {

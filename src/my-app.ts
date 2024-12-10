@@ -81,7 +81,7 @@ export class MyApp {
         },
       ],
     };
-    // this.vimInputHandlerV2.registerAndInit({ vimId: this.contextId });
-    // this.commandsService.registerCommands(this.contextId, bindings);
+    this.vimInputHandlerV2.registerAndInit({ vimId: this.contextId });
+    this.commandsService.registerCommands(this.contextId, bindings);
   }
 }

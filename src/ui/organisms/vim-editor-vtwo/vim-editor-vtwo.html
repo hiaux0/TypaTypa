@@ -1,0 +1,65 @@
+<div class="layout-container vim-container mode-${vimState.mode}">
+  <div class="textarea-test-container" ref="textareaTextContainerRef">
+    <!-- 1. Display -->
+    <div class="text-display" if.bind="!showTextarea">
+      <!-- 1.1 Lines -->
+      <template repeat.for="line of vimState.lines">
+        <note-line
+          show.bind="!vimState.foldMap[$index]"
+          editor-line-class="vim-line"
+          line.bind="line"
+          line-index.bind="$index"
+          line-highlight-end.bind="vimState.visualEndCursor"
+          line-highlight-start.bind="vimState.visualStartCursor"
+          fold-map.bind="vimState.foldMap"
+        ></note-line>
+      </template>
+
+      <!-- 1.2 Cursor -->
+      <div ref="cursorRef" class="cursor"></div>
+    </div>
+
+    <!-- 2. Edit -->
+    <textarea
+      class="text-input"
+      show.bind="showTextarea"
+      ref="textareaRef"
+      spellcheck="false"
+      value.bind="textValue"
+      contenteditable="true"
+    ></textarea>
+  </div>
+
+  <div class="debugContainer" if.bind="debugFlags.vimEditor.showDebugSection">
+    <div style="text-decoration: underline">Debug mode (${vimState.mode})</div>
+    <div>
+      <strong>Id</strong>
+      ${vimState.id}
+    </div>
+    <div>
+      <strong># of lines: </strong>
+      ${vimState.lines.length}
+    </div>
+    <div>
+      <strong>Text:</strong>
+      ${vimState.lines[vimState.cursor.line].text}
+    </div>
+    <div>
+      <strong>Cursor</strong>
+      L: ${vimState.cursor.line} - C: ${vimState.cursor.col}
+    </div>
+    <div class="divider"></div>
+    <div>
+      <strong>Visual Cursor</strong>
+    </div>
+    <div if.bind="vimState.visualStartCursor">
+      <strong>Start</strong>
+      L: ${vimState.visualStartCursor.line} - C:
+      ${vimState.visualStartCursor.col}
+    </div>
+    <div if.bind="vimState.visualEndCursor">
+      <strong>End</strong>
+      L: ${vimState.visualEndCursor.line} - C: ${vimState.visualEndCursor.col}
+    </div>
+  </div>
+</div>

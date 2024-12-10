@@ -217,6 +217,7 @@ export const VIM_ID_MAP = {
   gridCellVimEditor: "gridCellVimEditor",
   gridNavigation: "gridNavigation",
   autoCompleteInput: "autoCompleteInput",
+  vimEditorVtwo: "vimEditorVtwo",
   khongAPage: "khongAPage",
 } as const;
 

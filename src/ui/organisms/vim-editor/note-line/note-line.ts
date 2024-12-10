@@ -38,7 +38,7 @@ export class NoteLine {
 
   constructor(private readonly element: HTMLElement) {}
 
-  lineHightlight(): { width?: string; left?: string } {
+  get lineHightlight(): { width?: string; left?: string } {
     if (!this.lineHighlightStart) return {};
     if (!this.lineHighlightEnd) return {};
     if (!this.line) return {};
@@ -113,7 +113,9 @@ export class NoteLine {
     this.cachedStartCol = startCol;
     this.cachedWidth = width;
     this.cachedLeft = left;
-    return { width, left };
+    const rect = { width, left };
+    /*prettier-ignore*/ console.log("[note-line.ts,117] rect: ", rect);
+    return rect;
   }
 
   isDefaultLine() {

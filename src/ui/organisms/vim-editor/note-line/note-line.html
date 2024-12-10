@@ -1,15 +1,15 @@
-<div
+<pre
   ref="lineRef"
   class="editorText ${editorLineClass}"
   data-test="${editorLineClass}"
->${debugFlags.showLineNumbers ? `${String(lineIndex).padEnd(2)}  ` : ''}${line.text.trimEnd()}</div>
+>${debugFlags.showLineNumbers ? `${String(lineIndex).padEnd(2)}  ` : ''}${line.text.trimEnd()}</pre>
   <!-- <span class="editorDecoration">${!foldMap[lineIndex] && foldMap[lineIndex + 1] ? '...' : ''}</span> -->
 
 <div
-  if.bind="lineHightlight().left && lineHightlight().width"
+  if.bind="lineHightlight.left && lineHightlight.width"
   class="editorLine__highlight"
   css="
-        width: ${lineHightlight().width};
-        left: ${lineHightlight().left};
+        width: ${lineHightlight.width};
+        left: ${lineHightlight.left};
       "
 ></div>

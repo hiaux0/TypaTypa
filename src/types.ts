@@ -88,6 +88,12 @@ export interface CellStyles {
   color?: string;
 }
 
+export interface IKeyData {
+  key: string;
+  modifiers: string[];
+  composite: string;
+}
+
 // export type ContentMap = Record<string, string>;
 export interface Cell {
   text: string;

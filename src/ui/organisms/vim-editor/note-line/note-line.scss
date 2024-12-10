@@ -1,7 +1,7 @@
-@import '../vim-editor.scss';
+@import "../vim-editor.scss";
 
-.container {
-
+.container,
+.vim-container {
   &.mode-VISUAL,
   &.mode-VISUALLINE {
     note-line {
@@ -20,6 +20,6 @@
 
 note-line {
   position: relative;
-  height: $editorLineHeight;
+  /* height: $editorLineHeight; */
   display: block;
 }
