@@ -51,7 +51,6 @@ export class VimUi {
     public options?: VimEditorOptions,
   ) {
     if (options) {
-      /*prettier-ignore*/ console.log("[VimUi.ts,52] options: ", options);
       this.container = options.container;
       this.inputElement = options.inputElement;
       this.caret = options.caret;

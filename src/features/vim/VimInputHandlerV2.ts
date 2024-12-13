@@ -449,13 +449,10 @@ export class VimInputHandlerV2 {
     options: VimOptions,
   ): VimCommand | undefined {
     const context = options.vimId;
-    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,452] context: ", context);
     if (!context) throw new Error("No context provided");
     const currentBindings = this.commandsService.commandsRepository[context];
-    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,455] currentBindings: ", currentBindings);
     options.keyBindings = currentBindings;
     const mode = this.vimCore.getVimState().mode;
-    /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,458] mode: ", mode);
     let finalCommand = this.keyMappingService.prepareCommandV2(
       keyData.composite,
       mode,

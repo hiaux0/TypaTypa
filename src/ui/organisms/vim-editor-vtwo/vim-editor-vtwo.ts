@@ -100,18 +100,15 @@ export class VimEditorVtwo {
           this.vimEditorHooks.vimStateUpdated(vimState);
         },
         modeChanged: (...args) => {
-          /*prettier-ignore*/ console.log("-------------------------------------------------------------------");
           const { vimState } = args[0];
           const newVimState = vimState;
           if (!newVimState) return;
           if (!newVimState.mode) return;
           // For now: early return when same mode
-          /*prettier-ignore*/ console.log("[vim-editor-vtwo.ts,110] this.vimCore: ", this.vimCore);
-          const isSameMode = !VimHelper.hasModeChanged(
-            this.vimCore.getVimState().mode,
-            newVimState.mode,
-          );
-          /*prettier-ignore*/ console.log("[vim-editor-vtwo.ts,110] isSameMode: ", isSameMode);
+          //const isSameMode = !VimHelper.hasModeChanged(
+          //  this.vimCore.getVimState().mode,
+          //  newVimState.mode,
+          //);
           // if (isSameMode) return;
 
           VimHelper.switchModes(newVimState.mode, {
@@ -121,8 +118,6 @@ export class VimEditorVtwo {
               this.vimUi.enterInsertModeV2(offset);
             },
             normal: () => {
-              /*prettier-ignore*/ console.log("----------------------------");
-              /*prettier-ignore*/ console.log("[vim-editor-vtwo.ts,126] this.textValue: ", this.textValue);
               /**                                                                                                     Lines */
               const lines = this.textValue.split("\n");
               lines.forEach((text, index) => {
