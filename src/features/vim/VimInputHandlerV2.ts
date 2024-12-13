@@ -171,9 +171,9 @@ export class VimInputHandlerV2 {
               }
 
               /** Lines */
-              const lines = this.vimUi.getTextFromHtml();
-              /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,170] lines: ", lines);
-              newVimState.lines = lines;
+              //const lines = this.vimUi.getTextFromHtml();
+              ///*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,170] lines: ", lines);
+              //newVimState.lines = lines;
 
               // this.vimUi.removeHtmlGeneratedNewLines(options);
 
