@@ -77,6 +77,8 @@ export class VimInputHandlerV2 {
     return this.instancesMap[id];
   }
   public getVimCore(id: VimIdMapKeys): VimCore {
+    ///*prettier-ignore*/ console.log("3.1 [VimInputHandlerV2.ts,80] id: ", id);
+    ///*prettier-ignore*/ console.log("3.2 [VimInputHandlerV2.ts,82] this.instancesMap: ", this.instancesMap);
     return this.instancesMap[id].vimCore;
   }
   public setVimCore(id: VimIdMapKeys, vimCore: VimCore) {
@@ -85,6 +87,8 @@ export class VimInputHandlerV2 {
 
   public registerAndInit(options: VimOptions): void {
     const id = (options.vimId ?? options.vimState?.id ?? "") as VimIdMapKeys;
+    ///*prettier-ignore*/ console.log("0.1 ----------------------------");
+    ///*prettier-ignore*/ console.log("0.2 [VimInputHandlerV2.ts,88] id: ", id);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("id", id);
     if (id !== VIM_ID_MAP.global) this.pushIdToHistory(id);
     const vimCore = this.initVimCore(options);
@@ -130,7 +134,9 @@ export class VimInputHandlerV2 {
     const latestId = this.idHistory[this.idHistory.length - 1];
     const already = latestId === id;
     if (already) return;
+    // /*prettier-ignore*/ console.log("2.1 [VimInputHandlerV2.ts,136] id: ", id);
     this.idHistory.push(id);
+    // /*prettier-ignore*/ console.log("2.2 [VimInputHandlerV2.ts,137] this.idHistory: ", this.idHistory);
   }
 
   private initVimCore(options: VimOptions): VimCore {
@@ -372,7 +378,8 @@ export class VimInputHandlerV2 {
   private initEventHandlersV2() {
     document.addEventListener("keydown", async (event) => {
       debugFlags.clearConsole && console.clear();
-      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,375] this.idHistory: ", this.idHistory);
+      // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,375] this.idHistory: ", this.idHistory);
+      // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,379] this.activeId: ", this.activeId);
       const activeInstance = this.getInstanceMap(this.activeId);
 
       // 1. Event -> Keys + Modifiers
@@ -512,7 +519,7 @@ export class VimInputHandlerV2 {
         preventDefault = response;
       }
 
-      if (options?.hooks?.commandListener && allowHook)
+      if (false && options?.hooks?.commandListener && allowHook)
         options.hooks.commandListener({
           vimState: this.vimCore.getVimState(),
           targetCommand: VIM_COMMAND[command.command ?? "nothing"],

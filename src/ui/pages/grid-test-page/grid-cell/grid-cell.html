@@ -9,14 +9,14 @@
     <!-- Can:t remember why input and read-only were wrapped -->
     <!-- <template if.bind="cell.text"> </template> -->
     <div if.bind="isEdit" class="input-container editing">
-      <vim-editor
+      <vim-editor-vtwo
         if.bind="vimState"
         vim-state.bind="vimState"
         vim-editor-hooks.bind="vimEditorHooks"
         show-line-numbers.bind="false"
         value.two-way="textareaValue"
         mapping-by-mode.bind="finalMappingByMode"
-      ></vim-editor>
+      ></vim-editor-vtwo>
     </div>
 
     <!--<input-->

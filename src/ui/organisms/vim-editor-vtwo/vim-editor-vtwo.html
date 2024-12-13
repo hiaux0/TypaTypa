@@ -1,4 +1,4 @@
-<div class="layout-container vim-container mode-${vimState.mode}">
+<div class="vim-container mode-${vimState.mode}">
   <div class="textarea-test-container" ref="textareaTextContainerRef">
     <!-- 1. Display -->
     <div class="text-display" if.bind="!showTextarea">
@@ -25,7 +25,7 @@
       show.bind="showTextarea"
       ref="textareaRef"
       spellcheck="false"
-      value.bind="textValue"
+      value.bind="value"
       contenteditable="true"
     ></textarea>
   </div>

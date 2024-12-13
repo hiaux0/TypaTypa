@@ -1,41 +1,20 @@
 $padding: 6px;
 $heightOfLine: 1.5rem;
 
-.layout-container {
-  display: flex;
-  justify-content: end;
-  margin-top: 32px;
-  margin-right: 24px;
-  border: 1px solid #000;
-}
-.bruh-container {
-  width: 200px;
-  height: 300px;
-}
-.bruh-line {
-  display: block;
-  color: orange;
-  min-height: 1rem;
-}
 .vim-container {
-  width: unset;
-}
-.debugContainer {
-  width: 30%;
+  /* width: unset; */
+  height: 100%;
 }
 
 .textarea-test-container {
   position: relative;
-  width: 400px;
-  height: 300px;
-  border: 1px solid #000;
-  margin-left: 24px;
+  width: 100%;
+  height: 100%;
+  /* border: 1px solid #000; */
 
   .text-display {
-    padding: $padding;
     line-height: 1.5;
     word-wrap: break-word;
-    overflow: scroll;
 
     pre {
       height: $heightOfLine;
@@ -56,18 +35,21 @@ $heightOfLine: 1.5rem;
   .text-input {
     position: absolute;
     top: 0;
-    width: 100%;
+    /* width: 100%; */
     height: 100%;
     margin: 0;
-    padding: $padding;
+    padding: unset;
     line-height: 1.5;
     color: blue;
     background-color: transparent;
     /* white-space: pre-wrap; */
     white-space: pre; // when overflow: scroll is on
-    overflow: scroll;
     resize: none;
     outline: none;
     border: none;
   }
+}
+
+.debugContainer {
+  width: 30%;
 }

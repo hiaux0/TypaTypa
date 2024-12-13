@@ -212,7 +212,9 @@ export class GridTestPage {
             autopasteIntoRow.enabled &&
             autopasteIntoRow.method.includes("yank");
           if (autopaste) {
-            const modeHandler = vimCore?.manager.getModeClass(mode) as VisualMode;
+            const modeHandler = vimCore?.manager.getModeClass(
+              mode,
+            ) as VisualMode;
             const text = modeHandler.getSelectedText();
             const col = featureFlags.copy.autopasteIntoRow.col;
             const isCellEmpty = this.isCellEmpty(col);
@@ -2613,6 +2615,7 @@ export class GridTestPage {
   }
 
   private putCellIntoEdit(): void {
+    /*prettier-ignore*/ console.log("1. [grid-test-page.ts,2618] putCellIntoEdit: ");
     const cell = this.getCurrentCell();
     if (!cell) {
       this.setCurrentCellContent("");
@@ -2622,7 +2625,7 @@ export class GridTestPage {
       this.dragStartColumnIndex,
       this.dragStartRowIndex,
     );
-    this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridCellVimEditor);
+    this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.vimEditorVtwo);
   }
 
   private getScrollLeftOfCurrentSelection(): number {

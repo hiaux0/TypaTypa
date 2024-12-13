@@ -47,7 +47,7 @@ export class VimEditorVtwo {
   public textareaTextContainerRef: HTMLElement;
   public textareaRef: HTMLTextAreaElement;
   public cursorRef: HTMLElement;
-  public textValue = "Hello world\n\nokayyy";
+  // public value = "Hello world\n\nokayyy";
   public debugFlags = debugFlags;
 
   private vimUi: VimUi;
@@ -67,6 +67,7 @@ export class VimEditorVtwo {
   ) {}
 
   attached(): void {
+    // console.log("00000000000000000000000000000000000");
     this.convertVimStateToTextareaText();
     const options: VimOptions = {
       vimId: VIM_ID_MAP.vimEditorVtwo,
@@ -119,7 +120,7 @@ export class VimEditorVtwo {
             },
             normal: () => {
               /**                                                                                                     Lines */
-              const lines = this.textValue.split("\n");
+              const lines = this.value.split("\n");
               lines.forEach((text, index) => {
                 if (!newVimState.lines?.[index]) return;
                 newVimState.lines[index].text = text;
@@ -149,6 +150,7 @@ export class VimEditorVtwo {
         },
       },
     };
+    // console.log("1111111111111111111111111");
     const vimCore = new VimCore(options);
     this.vimCore = vimCore;
     this.vimUi = new VimUi(vimCore.getVimState(), {
@@ -174,7 +176,7 @@ export class VimEditorVtwo {
   }
 
   private convertVimStateToTextareaText(): void {
-    this.textValue =
+    this.value =
       this.vimState.lines?.map((line) => line.text).join("\n") ?? "";
   }
 

@@ -19,6 +19,7 @@ import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const l = new Logger("VimUi");
 type Direction = "up" | "down" | "left" | "right" | "none";
+const cursorAdjust = 0;
 
 /**
  * - Update cursor in normal mode
@@ -74,6 +75,7 @@ export class VimUi {
   }
 
   private createCaret() {
+    return;
     const $existingCaret = document.getElementById("caret");
     const grandParent = this.container?.parentElement;
     if ($existingCaret) {
@@ -117,8 +119,8 @@ export class VimUi {
     this.commenKeyFunctionality();
     const $currentLineElement = this.getCurrentLineElement(0); // assume, that first child is enough for all the rest
     if (!$currentLineElement) return;
-    const lineOffsetLeft = $currentLineElement.offsetLeft || 6;
-    const lineOffsetTop = $currentLineElement.offsetTop || 6;
+    const lineOffsetLeft = $currentLineElement.offsetLeft || cursorAdjust;
+    const lineOffsetTop = $currentLineElement.offsetTop || cursorAdjust;
 
     let vertDirection: Direction = "none";
     if (this.currentLineNumber > newCursorLine) {

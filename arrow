@@ -74,6 +74,11 @@ src/ui/organisms/command-palette/command-palette.ts
 src/ui/organisms/command-palette/command-palette.html
 src/ui/pages/grid-test-page/grid-modules/featureFlags.ts
 src/common/modules/debug/debugFlags.ts
+src/features/vim/vim-ui/VimUi.ts
+src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.ts
+src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.html
+src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.scss
+
 
 
 %% Grid Vim Editor

@@ -57,7 +57,7 @@ const organisms = [
   TabDrawer,
   Topics,
   VimEditor,
-  VimEditorVtwo
+  VimEditorVtwo,
 ];
 const valueConverters = [
   LoadComponentValueConverter,
