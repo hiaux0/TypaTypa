@@ -83,6 +83,7 @@ export class GridCell {
         desc: "Accept changes and exit edit mode",
         context: [VIM_ID_MAP.gridCell],
         execute: () => {
+          /*prettier-ignore*/ console.log("[grid-cell.ts,87] this.isEdit: ", this.isEdit);
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
             this.onCellUpdate(this.column, this.row, this.cell);
