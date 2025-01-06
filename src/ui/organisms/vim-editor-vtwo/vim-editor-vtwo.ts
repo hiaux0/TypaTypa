@@ -1,4 +1,3 @@
-import { VimStateClass } from "../../../features/vim/vim-state";
 import {
   IVimState,
   KeyBindingModes,
@@ -9,7 +8,6 @@ import {
 import "./vim-editor-vtwo.scss";
 import { Logger } from "../../../common/logging/logging";
 import { debugFlags } from "../../../common/modules/debug/debugFlags";
-import { ShortcutService } from "../../../common/services/ShortcutService";
 import { ICommandsService } from "../../../common/services/CommandsService";
 import { bindable, resolve } from "aurelia";
 import { VIM_ID_MAP } from "../../../common/modules/constants";
@@ -17,17 +15,12 @@ import {
   IKeyMappingService,
   overwriteKeybindingsV2,
 } from "../../../features/vim/vimCore/commands/KeyMappingService";
-import {
-  VIM_COMMAND,
-  VimCommand,
-} from "../../../features/vim/vim-commands-repository";
 import { VimHelper } from "../../../features/vim/VimHelper";
-import { isEnter, keyBindings } from "../../../features/vim/key-bindings";
+import { keyBindings } from "../../../features/vim/key-bindings";
 import { VimCore } from "../../../features/vim/vimCore/VimCore";
 import { VimUi } from "../../../features/vim/vim-ui/VimUi";
 import { SelectionService } from "../../../common/services/SelectionService";
 import { VimInit } from "../../../features/vim/VimInit";
-import { SPACE } from "../../../common/modules/keybindings/app-keys";
 import {
   IVimInputHandlerV2,
   VimInputHandlerV2,
@@ -176,8 +169,7 @@ export class VimEditorVtwo {
   }
 
   private convertVimStateToTextareaText(): void {
-    this.value =
-      this.vimState.lines?.map((line) => line.text).join("\n") ?? "";
+    this.value = this.vimState.lines?.map((line) => line.text).join("\n") ?? "";
   }
 
   private setVimState(vimState: IVimState | undefined): void {
