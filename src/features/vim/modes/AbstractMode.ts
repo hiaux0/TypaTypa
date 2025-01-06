@@ -456,7 +456,7 @@ export abstract class AbstractMode {
     return this.vimState;
   }
   toCharacterBefore(commandInput: string): VimStateClass {
-    /*prettier-ignore*/ console.log("[AbstractMode.ts,459] toCharacterBefore: ", );
+    // /*prettier-ignore*/ console.log("[AbstractMode.ts,459] toCharacterBefore: ", );
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([3])) console.trace("toCharacterBefore(commandInput:", )
     if (!this.vimState.cursor) return this.vimState;
     const { cursor } = this.vimState;

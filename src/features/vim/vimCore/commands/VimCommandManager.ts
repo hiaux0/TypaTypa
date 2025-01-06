@@ -48,14 +48,9 @@ export class VimCommandManager {
       return result;
     }
 
-    /*prettier-ignore*/ console.log("-------------------------------------------------------------------");
-    /*prettier-ignore*/ console.log("[VimCommandManager.ts,52] modeClass: ", modeClass);
-    /*prettier-ignore*/ console.log("[VimCommandManager.ts,53] commandName: ", commandName);
-
     /** Mode Commands */
     if (!modeClass) return;
     const exists = modeClass.commandExists(commandName);
-    /*prettier-ignore*/ console.log("[VimCommandManager.ts,57] exists: ", exists);
     if (exists) {
       const result = modeClass.executeCommand(
         vimState,

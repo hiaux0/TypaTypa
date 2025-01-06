@@ -2615,7 +2615,7 @@ export class GridTestPage {
   }
 
   private putCellIntoEdit(): void {
-    /*prettier-ignore*/ console.log("1. [grid-test-page.ts,2618] putCellIntoEdit: ");
+    // /*prettier-ignore*/ console.log("1. [grid-test-page.ts,2618] putCellIntoEdit: ");
     const cell = this.getCurrentCell();
     if (!cell) {
       this.setCurrentCellContent("");

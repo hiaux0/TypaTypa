@@ -122,6 +122,7 @@ export class VimEditorVtwo {
               const offset = SelectionService.getOffsetFromTextarea(
                 this.textareaRef,
               );
+                /*prettier-ignore*/ console.log("[vim-editor-vtwo.ts,128] newVimState: ", newVimState);
               const cursorFromOffset = VimHelper.convertOffsetToVimStateCursor(
                 offset,
                 newVimState,
