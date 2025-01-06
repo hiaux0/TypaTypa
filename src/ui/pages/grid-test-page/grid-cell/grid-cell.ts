@@ -2,6 +2,7 @@ import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
 import { Cell, ColHeaderMap, Sheet, SheetSettings } from "../../../../types";
 import {
+  CELL_HEIGHT,
   CELL_WIDTH,
   EV_GRID_CELL,
   VIM_ID_MAP,
@@ -24,6 +25,8 @@ import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/c
 import { FF, featureFlags } from "../grid-modules/featureFlags";
 import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 import { addMarkdownStylingToCell } from "../grid-modules/SheetsService";
+import { VimHelper } from "../../../../features/vim/VimHelper";
+import { ArrayUtils } from "../../../../common/modules/array/array-utils";
 
 const logger = new Logger("GridCell");
 
@@ -77,22 +80,6 @@ export class GridCell {
     },
   };
   public mappingByModeCell: KeyBindingModes = {
-    [VimMode.ALL]: [
-      {
-        key: "<Enter>",
-        desc: "Accept changes and exit edit mode",
-        context: [VIM_ID_MAP.gridCell],
-        execute: () => {
-          /*prettier-ignore*/ console.log("[grid-cell.ts,87] this.isEdit: ", this.isEdit);
-          if (this.isEdit) {
-            this.cell.text = this.textareaValue;
-            this.onCellUpdate(this.column, this.row, this.cell);
-            this.onEnter();
-          }
-          return true;
-        },
-      },
-    ],
     [VimMode.NORMAL]: [
       {
         key: "<Escape>",
@@ -105,6 +92,23 @@ export class GridCell {
           }
         },
       },
+      {
+        key: "<Enter>",
+        desc: "Accept changes and exit edit mode",
+        context: [VIM_ID_MAP.gridCell],
+        execute: (_, __, vimCore) => {
+          /*prettier-ignore*/ console.log("[grid-cell.ts,86] vimCore: ", vimCore);
+          const mode = vimCore?.getVimState().mode;
+          /*prettier-ignore*/ console.log("[grid-cell.ts,88] mode: ", mode);
+          if (mode === VimMode.INSERT) return;
+          if (this.isEdit) {
+            this.cell.text = this.textareaValue;
+            this.onCellUpdate(this.column, this.row, this.cell);
+            this.onEnter();
+          }
+          return true;
+        },
+      },
     ],
   };
 
@@ -113,12 +117,21 @@ export class GridCell {
   //public isOverflown = false
 
   public get getEditWidth(): string {
-    const cellScrollWidth = measureTextWidth(this.textareaValue);
+    const longestLine = ArrayUtils.getLongestElement(
+      this.textareaValue.split("\n"),
+    );
+    const cellScrollWidth = measureTextWidth(longestLine);
     const minCellWidth = Math.min(
       this.columnSettings?.colWidth ?? this.CELL_WIDTH,
     );
     const adjustedTextWidth = cellScrollWidth + PADDING;
     const value = Math.max(adjustedTextWidth, minCellWidth);
+    return `${value}px`;
+  }
+
+  public get getEditHeight(): string {
+    const numNewLines = this.textareaValue.split("\n").length;
+    const value = CELL_HEIGHT * numNewLines;
     return `${value}px`;
   }
 

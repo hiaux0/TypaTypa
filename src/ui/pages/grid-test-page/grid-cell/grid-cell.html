@@ -3,7 +3,7 @@
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''} ${clipText ? 'clip-text' : ''}"
-    css="width: ${isEdit ? getEditWidth : widthPxNew};"
+    css="width: ${isEdit ? getEditWidth : widthPxNew}; height: ${isEdit ? getEditHeight : '32px'};"
     data-compute-width.bind="setWidthPx(cell, columnSettings?.colWidth, wholeRow.length, cell.colsToNextText, isEdit)"
   >
     <!-- Can:t remember why input and read-only were wrapped -->

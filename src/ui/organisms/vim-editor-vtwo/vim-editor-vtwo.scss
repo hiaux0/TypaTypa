@@ -1,3 +1,6 @@
+@import "../../colors";
+@import "../../mixins";
+
 $padding: 6px;
 $heightOfLine: 1.5rem;
 
@@ -36,11 +39,15 @@ $heightOfLine: 1.5rem;
     position: absolute;
     top: 0;
     width: 100%;
+    /* height: auto; */
     height: 100%;
     margin: 0;
     padding: unset;
-    line-height: 1.5;
-    color: blue;
+    /* padding: 3.5px 6px 5px 6px; */
+    /* line-height: 1.5; */
+    line-height: 1.9;
+    /* line-height: 30px; */
+    color: $textColor;
     background-color: transparent;
     /* white-space: pre-wrap; */
     white-space: pre; // when overflow: scroll is on

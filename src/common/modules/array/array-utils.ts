@@ -92,6 +92,17 @@ export class ArrayUtils {
     // @ts-ignore
     return array.map((entry) => [entry]);
   }
+
+  public static getLongestElement<T extends string[]>(array: T): string {
+    if (array.length === 0) return "";
+    let longest = "";
+    for (const item of array) {
+      if (item.length > longest.length) {
+        longest = item;
+      }
+    }
+    return longest;
+  }
 }
 
 // const input = [0, 1, 2, 3, 4, 5, 6];
