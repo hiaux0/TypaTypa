@@ -140,7 +140,7 @@ export class OllamaApi {
       }
     } else {
       const result = await response.json();
-      console.log(result); // Process the result
+      return result;
     }
   }
 }

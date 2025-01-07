@@ -82,6 +82,11 @@ import {
   addMarkdownStylingToCell,
 } from "./grid-modules/SheetsService";
 import { ArrayUtils } from "../../../common/modules/array/array-utils";
+import { OllamaApi, ollamaApi } from "../../../common/api/OllamaApi";
+import {
+  AI_PROMPTS,
+  AI_SYSTEM,
+} from "../../../common/modules/constants/aiConstants";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -223,7 +228,7 @@ export class GridTestPage {
               this.setCurrentCellContent(text, col);
               return false;
             }
-            this.addCellBelowAndMaybeNewRow(text, col);
+            if (text) this.addCellBelowAndMaybeNewRow(text, col);
             return true;
           }
           return false;
@@ -405,6 +410,25 @@ export class GridTestPage {
         this.updateContentMapChangedForView();
 
         return;
+      },
+    },
+    {
+      key: "<Space>ag",
+      desc: "[A]i [G]enerate",
+      context: [VIM_ID_MAP.gridNavigation],
+      execute: async () => {
+        const content = this.getCurrentCell()?.text ?? "";
+        const response = await ollamaApi.generateCompletion(
+          AI_PROMPTS.translate(content),
+          undefined,
+          {
+            system: AI_SYSTEM.translator,
+            stream: false,
+          },
+        );
+        const asht = response.response;
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,430] asht: ", asht);
+        return true;
       },
     },
     {
@@ -2078,7 +2102,7 @@ export class GridTestPage {
     if (this.contentMap[row] == null) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row].splice(col, 0, undefined);
+    this.contentMap[row].splice(col, 0, undefined as unknown as Cell);
   }
 
   private addCellInRowAt(
@@ -2090,7 +2114,7 @@ export class GridTestPage {
     if (this.contentMap[row] == null) {
       this.contentMap[row] = [];
     }
-    this.contentMap[row].splice(col, 0, undefined);
+    this.contentMap[row].splice(col, 0, undefined as unknown as Cell);
     this.setCurrentCellContent(content, col, row, option);
   }
 

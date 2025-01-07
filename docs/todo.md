@@ -190,12 +190,14 @@ I want to have live-editor
   - in the command palette have fields to change options
 - [ ] feat: cell: restrict cell width to maxWidth
   - so wide cells not too hard to read
-- [ ] bug: overflow vertical not showing (only hori)
-
+- [ ] feat: when generated content comes in, make it appear on top of a cell, then be able to move around and press enter
+  - so that the cell gets the content
+  - if content already present, then move existing content (where?)
 
 # Done
 ## Grid
 
+- [x] bug: overflow vertical not showing (only hori)
 - [x] bug: fix undo redo
 - [x] vimeditor
 - [x] feat: ui styling

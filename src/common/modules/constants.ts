@@ -18,6 +18,10 @@ export const COLORS = {
   },
 };
 
+export const LANGUAGES = {
+  vi: "vietnamese",
+}
+
 /**
  * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
  */
