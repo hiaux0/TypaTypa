@@ -12,6 +12,7 @@ import {
   ICommandsService,
 } from "./common/services/CommandsService";
 import { RecentlyUsedService } from "./common/services/RecentlyUsedService";
+import { ollamaApi } from "./common/api/OllamaApi";
 
 @route({
   title: APP_NAME,
@@ -38,6 +39,11 @@ export class MyApp {
     // this.router.load(PropagandaPage);
     // this.router.load(GridTestPage);
     // this.router.load(KhongAPage);
+    //ollamaApi
+    //  .generateCompletion("hello", "llama3.2", { stream: true })
+    //  .then((res) => {
+    //    console.log(res);
+    //  });
 
     this.initKeyBindings();
     initDebugShortcuts();
