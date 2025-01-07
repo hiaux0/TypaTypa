@@ -21,11 +21,20 @@
     //   background: $orange1;
     //   background: unset;
     // }
-    .content.overflown {
-      overflow: unset;
-      z-index: $zIndexEditing;
-      &.clip-text {
+
+    .content {
+      &.overflown {
         overflow: unset;
+        z-index: $zIndexEditing;
+        &.clip-text {
+          overflow: unset;
+        }
+      }
+
+      .read-only {
+        padding: calc(#{$cellPadding} - 1px); //account for border
+        /* padding-top: calc(#{$cellPadding} + 1px); //account for border */
+        padding-top: 0;
       }
     }
   }
@@ -33,7 +42,7 @@
   .content {
     /* position: absolute; */
     height: $columnHeight;
-    padding: 6px;
+    /* padding: 6px; */
     overflow: hidden;
     text-overflow: clip;
     white-space: nowrap;
@@ -62,8 +71,9 @@
       top: 0;
       left: 0;
       border-radius: unset;
-      /* padding: 2px 6px 6px 5px; */
-      padding: 3.5px 6px 5px 6px;
+      padding: calc(#{$cellPadding} - 1px); //account for border
+      padding-top: 0; //account for border
+      line-height: $lineHeightCells;
 
       &.editing {
         background: $backgroundColor1;
@@ -101,18 +111,22 @@
 
     .read-only {
       overflow: hidden;
+      padding: $cellPadding;
+      /* padding-top: calc(#{$cellPadding} + 2px); */
+      padding-top: 1px;
+      line-height: $lineHeightCells;
+
       /* height: $columnHeight; */ // Why was this needed? Was used in commit 8387afc0e7d7f70808b88890ce9c267ba33206ad "feat(grid): putCursorAtFirstNonWhiteSpace"
       &.overflown {
         position: absolute;
-        /* top: 0; */
-        top: -2px;
+        top: 0;
+        /* top: -1px; */
         left: 0;
         /* height: calc(#{$columnHeight} + 1px); */ // TODO: needed? If present, then wrapped lines not above
         /* padding: 3px 6px 6px 6px; */
         /* padding: 0px 6px 0px 6px; */
-        padding: 0px 0px 0px 6px;
-        /* line-height: calc(#{$columnHeight} - 1px); */
-        line-height: calc(#{$columnHeight} - 0px);
+        padding: 0;
+        padding-left: calc(#{$cellPadding} - 1px); //account for border
         color: unset;
         /* white-space: normal; */ // ON->OFF: when cells seleced, had weird behavior
         white-space: pre-wrap; // OFF->ON: not wrapping when cell selected for longer lines

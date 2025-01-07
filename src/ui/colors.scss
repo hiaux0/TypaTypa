@@ -107,6 +107,7 @@ $tabBarHeight: 36px;
 
 $marginS: 0.3rem;
 $padding0: 6px;
+$cellPadding: $padding0;
 $drawerPadding: 20px;
 $fontSizeXXS: 0.5rem;
 $fontSizeXS: 0.6rem;
@@ -139,4 +140,5 @@ $columnHeight: var(--cell-height);
 /* $fontFamily: mono, sans-serif; */
 $fontFamily: monospace, sans-serif;
 
+$lineHeightCells: 1.9;
 

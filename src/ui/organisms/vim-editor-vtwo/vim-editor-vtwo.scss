@@ -16,7 +16,7 @@ $heightOfLine: 1.5rem;
   /* border: 1px solid #000; */
 
   .text-display {
-    line-height: 1.5;
+    line-height: $lineHeightCells;
     word-wrap: break-word;
 
     pre {
@@ -45,7 +45,7 @@ $heightOfLine: 1.5rem;
     padding: unset;
     /* padding: 3.5px 6px 5px 6px; */
     /* line-height: 1.5; */
-    line-height: 1.9;
+    line-height: $lineHeightCells;
     /* line-height: 30px; */
     color: $textColor;
     background-color: transparent;
