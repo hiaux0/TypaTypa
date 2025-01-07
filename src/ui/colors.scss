@@ -1,5 +1,5 @@
-/* $theme: dark; */
-$theme: light;
+$theme: dark;
+/* $theme: light; */
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -140,5 +140,6 @@ $columnHeight: var(--cell-height);
 /* $fontFamily: mono, sans-serif; */
 $fontFamily: monospace, sans-serif;
 
-$lineHeightCells: 1.9;
+$lineHeightCells: 1.5;
+/* $lineHeightCells: 2; */ // this will make every new line look like in a row
 

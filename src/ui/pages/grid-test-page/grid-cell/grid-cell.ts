@@ -126,8 +126,9 @@ export class GridCell {
 
   public get getEditHeight(): string {
     const numNewLines = this.textareaValue.split("\n").length;
-    const value = CELL_HEIGHT * numNewLines;
-    const adjusted = value - 4.8;
+    const value =
+      numNewLines === 1 ? CELL_HEIGHT : (CELL_HEIGHT - 8) * numNewLines;
+    const adjusted = value - 2 * BORDER_WIDTH;
     return `${adjusted}px`;
   }
 
@@ -141,7 +142,10 @@ export class GridCell {
       return "95vw";
     }
     const adjusted = textWidth + PADDING * 2;
-    const final = Math.max(adjusted, this.columnSettings?.colWidth - BORDER_WIDTH * 2 ?? 0);
+    const final = Math.max(
+      adjusted,
+      this.columnSettings?.colWidth - BORDER_WIDTH * 2 ?? 0,
+    );
     return `${final}px`;
   }
 
