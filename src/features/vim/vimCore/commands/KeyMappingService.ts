@@ -670,7 +670,10 @@ export class KeyMappingService {
     options: VimOptions = {},
   ): VimCommand | undefined {
     let targetCommand = this.findPotentialCommandV2(key, [], mode, options);
-    if (!targetCommand) {
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,3])) console.log("targetCommand", targetCommand);
+    const shouldFindInAll =
+      !targetCommand && this.potentialCommands.length === 0;
+    if (shouldFindInAll) {
       targetCommand = this.findPotentialCommandV2(
         key,
         [],

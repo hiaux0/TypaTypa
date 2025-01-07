@@ -1,18 +1,9 @@
 import { DI, IContainer, Registration } from "aurelia";
-import { Id } from "../../domain/types/types";
-import {
-  IKeyData,
-  InputMap,
-  InstancesMap,
-  RegisterOptions,
-  VimIdMapKeys,
-} from "../../types";
+import { IKeyData, InstancesMap, VimIdMapKeys } from "../../types";
 import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
 import {
   IKeyMappingService,
   KeyMappingService,
-  enhanceWithIdsAndMode,
-  overwriteKeybindingsV2,
 } from "./vimCore/commands/KeyMappingService";
 import { VIM_COMMAND, VimCommand } from "./vim-commands-repository";
 import { ShortcutService } from "../../common/services/ShortcutService";
@@ -20,7 +11,6 @@ import { VimCore } from "./vimCore/VimCore";
 import { VimUi } from "./vim-ui/VimUi";
 import { VimHelper } from "./VimHelper";
 import { SelectionService } from "../../common/services/SelectionService";
-import { cursorAllModes, isEnter } from "./key-bindings";
 import { SPACE } from "../../common/modules/keybindings/app-keys";
 import { Logger } from "../../common/logging/logging";
 import { debugFlags } from "../../common/modules/debug/debugFlags";
@@ -29,6 +19,7 @@ import {
   CommandsService,
   ICommandsService,
 } from "../../common/services/CommandsService";
+import { isEnter } from "./key-bindings";
 
 const l = new Logger("VimInputHandlerV2");
 
@@ -344,13 +335,14 @@ export class VimInputHandlerV2 {
         preventDefault = response;
       }
 
-      if (false && options?.hooks?.commandListener && allowHook)
-        options.hooks.commandListener({
+      if (false && options?.hooks?.commandListener && allowHook) {
+        options.hooks?.commandListener?.({
           vimState: this.vimCore.getVimState(),
-          targetCommand: VIM_COMMAND[command.command ?? "nothing"],
+          targetCommand: VIM_COMMAND[command?.command ?? "nothing"],
           targetCommandFull: command,
           keys: finalKeyWithModifier,
         });
+      }
     } else if (commandSequence) {
       vimState = this.vimCore.executeCommandSequence(commandSequence);
       if (vimState) {
