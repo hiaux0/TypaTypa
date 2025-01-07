@@ -112,10 +112,6 @@ export class GridCell {
     ],
   };
 
-  //public getEditWidth = "64px";
-  //public overflownWidthWhenSelected = "95vw";
-  //public isOverflown = false
-
   public get getEditWidth(): string {
     const longestLine = ArrayUtils.getLongestElement(
       this.textareaValue.split("\n"),
@@ -124,8 +120,8 @@ export class GridCell {
     const minCellWidth = Math.min(
       this.columnSettings?.colWidth ?? this.CELL_WIDTH,
     );
-    const adjustedTextWidth = cellScrollWidth + PADDING;
-    const value = Math.max(adjustedTextWidth, minCellWidth);
+    const adjustedTextWidth = cellScrollWidth + PADDING_LEFT * 2;
+    const value = Math.max(adjustedTextWidth, minCellWidth) - 2 * BORDER_WIDTH;
     return `${value}px`;
   }
 
@@ -137,22 +133,19 @@ export class GridCell {
 
   public get overflownWidthWhenSelected(): string {
     const vw = document.body.clientWidth;
-    const textWidth = measureTextWidth(this.cell.text);
+    const longestLine = ArrayUtils.getLongestElement(
+      this.cell.text.split("\n"),
+    );
+    const textWidth = measureTextWidth(longestLine);
     if (textWidth > vw - ADJUST_RIGHT_OVERFLOW) {
       return "95vw";
     }
     const adjusted = textWidth + PADDING * 2;
-    // const adjusted = 60;
-    const minMax = Math.min(getValueFromPixelString(this.widthPxNew), adjusted);
-    ///*prettier-ignore*/ console.log("[grid-cell.ts,119] this.widthPxNew: ", this.widthPxNew);
-    ///*prettier-ignore*/ console.log("[grid-cell.ts,120] adjusted: ", adjusted);
-    ///*prettier-ignore*/ console.log("[grid-cell.ts,118] minMax: ", minMax);
     return `${adjusted}px`;
   }
 
   public get isOverflown(): boolean {
     if (!this.cell) return false;
-    // const width = getValueFromPixelString(this.widthPxNew);
     const width = measureTextWidth(this.cell.text);
     const otherWidth = this.columnSettings?.colWidth ?? this.CELL_WIDTH;
     const is = width > otherWidth;
@@ -258,16 +251,21 @@ export class GridCell {
       if (!cell) return "";
       if (this.clipText) {
         // return columnWidth - PADDING_LEFT + "px";
-        return columnWidth - 1 + "px";
+        return columnWidth - BORDER_WIDTH + "px";
       }
 
       // xx 1. Show all content in edit mode --> Don't need anymore?!
-      const cellScrollWidth = measureTextWidth(cell.text);
+      const longestLine = ArrayUtils.getLongestElement(
+        this.cell.text.split("\n"),
+      );
+      const cellScrollWidth = measureTextWidth(longestLine);
       const minCellWidth = Math.min(columnWidth ?? this.CELL_WIDTH);
       if (this.isEdit) {
-        const adjustedTextWidth = cellScrollWidth + PADDING;
+        console.log("this.isEdit");
+        const adjustedTextWidth = cellScrollWidth + PADDING_LEFT * 2;
+        /*prettier-ignore*/ console.log("[grid-cell.ts,277] adjustedTextWidth: ", adjustedTextWidth);
         const value = Math.max(adjustedTextWidth, minCellWidth);
-        // /*prettier-ignore*/ console.log("[grid-cell.ts,59] value: ", value);
+        /*prettier-ignore*/ console.log("[grid-cell.ts,279] value: ", value);
         return `${value}px`;
       }
 
@@ -284,6 +282,7 @@ export class GridCell {
 
       // 2. Show all content if no cells with text to the right
       if (!cell.colsToNextText) {
+        /*prettier-ignore*/ console.log("----------------------------");
         const finalWidth = Math.max(
           cellScrollWidth + PADDING_LEFT * 2,
           adjustedInitialCellWidth,
@@ -291,8 +290,8 @@ export class GridCell {
         if (this.column === c && this.row === r && allowLog) {
           // /*prettier-ignore*/ console.log("2. [grid-cell.ts,50] cellScrollWidth,: ", cellScrollWidth,);
           // /*prettier-ignore*/ console.log("[grid-cell.ts,52] adjustedInitialCellWidth,: ", adjustedInitialCellWidth,);
-          /*prettier-ignore*/ console.log("[grid-cell.ts,49] finalWidth: ", finalWidth);
         }
+        /*prettier-ignore*/ console.log("[grid-cell.ts,305] finalWidth: ", finalWidth);
         return `${finalWidth}px`;
       }
 
@@ -345,6 +344,7 @@ export class GridCell {
       }
 
       const asPx = `${finalWidth}px`;
+      /*prettier-ignore*/ console.log("[grid-cell.ts,357] asPx: ", asPx);
       return asPx;
 
       function adjustWithClipTextOffset(
