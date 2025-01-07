@@ -668,7 +668,7 @@ export class KeyMappingService {
     key: string,
     mode: VimMode,
     options: VimOptions = {},
-  ): VimCommand | undefined {
+  ): FindPotentialCommandReturn | undefined {
     let targetCommand = this.findPotentialCommandV2(key, [], mode, options);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,3])) console.log("targetCommand", targetCommand);
     const shouldFindInAll =
@@ -681,13 +681,13 @@ export class KeyMappingService {
         options,
       );
     }
-    if (!targetCommand) return;
+    if (!targetCommand)
+      return { targetCommand, potentialCommands: this.potentialCommands };
     /** Sequence mapping */
     if (targetCommand.execute) {
       targetCommand.command = VIM_COMMAND.customExecute;
-      return targetCommand;
     }
-    return targetCommand;
+    return { targetCommand, potentialCommands: this.potentialCommands };
   }
 
   public getCommandFromKey(mode: VimMode, key: string): VimCommand | undefined {
@@ -824,7 +824,7 @@ export class KeyMappingService {
         this.potentialCommands = finalPotentialCommands;
       }
     }
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([,, 6])) console.log("finalPotentialCommands,", finalPotentialCommands,);
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([,, 3])) console.log("finalPotentialCommands,", finalPotentialCommands,);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([,, 6])) console.log("targetCommand", targetCommand);
     return targetCommand;
   }

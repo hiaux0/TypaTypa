@@ -44,7 +44,7 @@ export enum VimExecutingMode {
 export interface FindPotentialCommandReturn {
   targetCommand: VimCommand | undefined;
   potentialCommands: VimCommand[];
-  keySequence: string;
+  keySequence?: string;
 }
 
 export type IndentationLevel = number;

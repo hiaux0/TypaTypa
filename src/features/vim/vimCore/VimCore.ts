@@ -74,8 +74,9 @@ export class VimCore {
     const resultList: IVimState[] = [];
     splitSequence.forEach((key) => {
       /*prettier-ignore*/ console.log("[VimCore.ts,72] this.keyMappingService.id: ", this.keyMappingService.id);
-      const command = this.keyMappingService.prepareCommandV2(key, mode) ?? {};
-      if (!command.command) return;
+      const { targetCommand: command } =
+        this.keyMappingService.prepareCommandV2(key, mode) ?? {};
+      if (!command?.command) return;
       const commandName = VIM_COMMAND[command.command];
       if (!commandName) return;
 
@@ -89,10 +90,9 @@ export class VimCore {
   }
 
   private queueInput(input: string): QueueInputReturn | undefined {
-    const prepared = this.keyMappingService.prepareCommandV2(
-      input,
-      this.getVimState().mode,
-    );
+    const { targetCommand: prepared } =
+      this.keyMappingService.prepareCommandV2(input, this.getVimState().mode) ??
+      {};
     if (!prepared?.command) return;
 
     const result: QueueInputReturn = {

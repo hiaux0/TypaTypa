@@ -165,7 +165,6 @@ export function splitByEndingAndSeparator(input: string): string[] {
     split = splitBySeparator;
   }
   const trimmed = split.flatMap((sentence) => sentence.trim());
-  debugger;
   return trimmed;
 }
 //const result = splitByEndingAndSeparator("Hello world. 1. This is great. Next time.");

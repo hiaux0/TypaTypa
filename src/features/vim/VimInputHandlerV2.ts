@@ -1,6 +1,12 @@
 import { DI, IContainer, Registration } from "aurelia";
 import { IKeyData, InstancesMap, VimIdMapKeys } from "../../types";
-import { IVimState, KeyBindingModes, VimMode, VimOptions } from "./vim-types";
+import {
+  FindPotentialCommandReturn,
+  IVimState,
+  KeyBindingModes,
+  VimMode,
+  VimOptions,
+} from "./vim-types";
 import {
   IKeyMappingService,
   KeyMappingService,
@@ -208,7 +214,11 @@ export class VimInputHandlerV2 {
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,3])) console.log("keyData", keyData);
       // 2. Keys + Modifiers -> Command
       const options = activeInstance.options;
-      const command = this.getCommand(keyData, options);
+      const { targetCommand: command, potentialCommands } =
+        this.getCommand(keyData, options) ?? {};
+      if (potentialCommands?.length) {
+        event.preventDefault();
+      }
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,3])) console.log("command", command);
       // 3. Command -> Action
       const { vimState, preventDefault } = await this.executeCommandForListener(
@@ -270,31 +280,34 @@ export class VimInputHandlerV2 {
   private getCommand(
     keyData: IKeyData,
     options: VimOptions,
-  ): VimCommand | undefined {
+  ): FindPotentialCommandReturn | undefined {
     const vimId = options.vimId;
     if (!vimId) throw new Error("No context provided");
     const currentBindings = this.commandsService.commandsRepository[vimId];
     options.keyBindings = currentBindings;
     const mode = this.vimCore.getVimState().mode;
-    let finalCommand = this.keyMappingService.prepareCommandV2(
+    const result = this.keyMappingService.prepareCommandV2(
       keyData.composite,
       mode,
       options,
     );
+    let { targetCommand: finalCommand, potentialCommands } = result ?? {};
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([3,,3])) console.log("command", finalCommand);
-    // debugger;
     let finalPressedKey = keyData.key;
     const hasQueuedKeys = this.keyMappingService.queuedKeys.length;
     if (!finalCommand && !hasQueuedKeys) {
       const globalBindings =
         this.commandsService.commandsRepository[VIM_ID_MAP.global];
       if (options?.keyBindings) options.keyBindings = globalBindings;
-      const globalCommand = this.keyMappingService.prepareCommandV2(
+      const preparedCommands = this.keyMappingService.prepareCommandV2(
         keyData.composite,
         mode,
         options,
       );
-      finalCommand = globalCommand;
+      if (preparedCommands) {
+        finalCommand = preparedCommands.targetCommand;
+        potentialCommands = preparedCommands.potentialCommands;
+      }
     }
     const commandName = VIM_COMMAND[finalCommand?.command ?? "nothing"];
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("commandName", commandName);
@@ -309,11 +322,13 @@ export class VimInputHandlerV2 {
       !VimHelper.isModeChangingCommand(commandName);
     if (saveLast) {
       this.keyMappingService.setLastKey(keyData.composite);
-      if (!finalCommand) return;
-      this.keyMappingService.setLastCommand(finalCommand);
+      if (finalCommand) this.keyMappingService.setLastCommand(finalCommand);
     }
 
-    return finalCommand;
+    return {
+      targetCommand: finalCommand,
+      potentialCommands: potentialCommands ?? [],
+    };
   }
 
   private async executeCommandForListener(
