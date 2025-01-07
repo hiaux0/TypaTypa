@@ -97,12 +97,11 @@ export class GridCell {
         desc: "Accept changes and exit edit mode",
         context: [VIM_ID_MAP.gridCell],
         execute: (_, __, vimCore) => {
-          /*prettier-ignore*/ console.log("[grid-cell.ts,86] vimCore: ", vimCore);
           const mode = vimCore?.getVimState().mode;
-          /*prettier-ignore*/ console.log("[grid-cell.ts,88] mode: ", mode);
           if (mode === VimMode.INSERT) return;
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
+            /*prettier-ignore*/ console.log("[grid-cell.ts,106] this.cell.text: ", this.cell.text);
             this.onCellUpdate(this.column, this.row, this.cell);
             this.onEnter();
           }
@@ -128,7 +127,8 @@ export class GridCell {
   public get getEditHeight(): string {
     const numNewLines = this.textareaValue.split("\n").length;
     const value = CELL_HEIGHT * numNewLines;
-    return `${value}px`;
+    const adjusted = value - 4.8;
+    return `${adjusted}px`;
   }
 
   public get overflownWidthWhenSelected(): string {
@@ -165,6 +165,7 @@ export class GridCell {
     this.updateAutocomplete(this.textareaValue);
     const id = this.getVimId();
     const text = this.cell.text;
+    const lines = text.split("\n").map((text) => ({ text }));
     const vimState: IVimState = {
       mode: VimMode.NORMAL,
       cursor: {
@@ -174,7 +175,7 @@ export class GridCell {
         line: 0,
       },
       id,
-      lines: [{ text }],
+      lines,
     };
     if (featureFlags.vim.mode.putCursorAtFirstNonWhiteSpace) {
       const firstNonWhitespaceIndex = Math.max(0, text.search(/\S/));
@@ -261,11 +262,8 @@ export class GridCell {
       const cellScrollWidth = measureTextWidth(longestLine);
       const minCellWidth = Math.min(columnWidth ?? this.CELL_WIDTH);
       if (this.isEdit) {
-        console.log("this.isEdit");
         const adjustedTextWidth = cellScrollWidth + PADDING_LEFT * 2;
-        /*prettier-ignore*/ console.log("[grid-cell.ts,277] adjustedTextWidth: ", adjustedTextWidth);
         const value = Math.max(adjustedTextWidth, minCellWidth);
-        /*prettier-ignore*/ console.log("[grid-cell.ts,279] value: ", value);
         return `${value}px`;
       }
 
@@ -282,7 +280,6 @@ export class GridCell {
 
       // 2. Show all content if no cells with text to the right
       if (!cell.colsToNextText) {
-        /*prettier-ignore*/ console.log("----------------------------");
         const finalWidth = Math.max(
           cellScrollWidth + PADDING_LEFT * 2,
           adjustedInitialCellWidth,
@@ -291,7 +288,6 @@ export class GridCell {
           // /*prettier-ignore*/ console.log("2. [grid-cell.ts,50] cellScrollWidth,: ", cellScrollWidth,);
           // /*prettier-ignore*/ console.log("[grid-cell.ts,52] adjustedInitialCellWidth,: ", adjustedInitialCellWidth,);
         }
-        /*prettier-ignore*/ console.log("[grid-cell.ts,305] finalWidth: ", finalWidth);
         return `${finalWidth}px`;
       }
 
@@ -344,7 +340,6 @@ export class GridCell {
       }
 
       const asPx = `${finalWidth}px`;
-      /*prettier-ignore*/ console.log("[grid-cell.ts,357] asPx: ", asPx);
       return asPx;
 
       function adjustWithClipTextOffset(

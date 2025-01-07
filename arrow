@@ -79,6 +79,31 @@ src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.ts
 src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.html
 src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.scss
 
+%% 5
+docs/todo.md
+arrow
+src/common/logging/logging.ts
+src/ui/pages/grid-test-page/grid-test-page.ts
+src/ui/pages/grid-test-page/grid-test-page.html
+src/ui/pages/grid-test-page/grid-test-page.scss
+src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.ts
+src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.html
+src/ui/organisms/vim-editor-vtwo/vim-editor-vtwo.scss
+src/ui/pages/grid-test-page/grid-cell/grid-cell.ts
+src/ui/pages/grid-test-page/grid-cell/grid-cell.html
+src/ui/pages/grid-test-page/grid-cell/grid-cell.scss
+src/features/vim/key-bindings.ts
+src/types.ts
+src/features/vim/vimCore/VimCore.ts
+src/features/vim/vim-ui/VimUi.ts
+src/features/vim/vimCore/commands/KeyMappingService.ts
+src/features/vim/VimInputHandlerV2.ts
+src/ui/pages/grid-test-page/grid-modules/featureFlags.ts
+src/common/modules/debug/debugFlags.ts
+src/ui/colors.scss
+src/ui/mixins.scss
+
+
 
 
 %% Grid Vim Editor

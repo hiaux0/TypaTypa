@@ -190,6 +190,7 @@ I want to have live-editor
   - in the command palette have fields to change options
 - [ ] feat: cell: restrict cell width to maxWidth
   - so wide cells not too hard to read
+- [ ] bug: overflow vertical not showing (only hori)
 
 
 # Done

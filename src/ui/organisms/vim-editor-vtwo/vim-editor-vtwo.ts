@@ -60,7 +60,6 @@ export class VimEditorVtwo {
   ) {}
 
   attached(): void {
-    // console.log("00000000000000000000000000000000000");
     this.convertVimStateToTextareaText();
     const options: VimOptions = {
       vimId: VIM_ID_MAP.vimEditorVtwo,
