@@ -141,15 +141,17 @@ export class GridCell {
       return "95vw";
     }
     const adjusted = textWidth + PADDING * 2;
-    return `${adjusted}px`;
+    const final = Math.max(adjusted, this.columnSettings?.colWidth - BORDER_WIDTH * 2 ?? 0);
+    return `${final}px`;
   }
 
   public get isOverflown(): boolean {
     if (!this.cell) return false;
     const width = measureTextWidth(this.cell.text);
+    const isMultiRow = this.cell.text.split("\n").length > 1;
     const otherWidth = this.columnSettings?.colWidth ?? this.CELL_WIDTH;
-    const is = width > otherWidth;
-    if (this.column === c && this.row === r && allowLog) {
+    const is = width > otherWidth || isMultiRow;
+    if (this.debug_logIfIsCell()) {
       /*prettier-ignore*/ console.log("[grid-cell.ts,123] width: ", width);
       /*prettier-ignore*/ console.log("[grid-cell.ts,125] otherWidth: ", otherWidth);
       /*prettier-ignore*/ console.log("[grid-cell.ts,127] is: ", is);
@@ -419,5 +421,11 @@ export class GridCell {
 
   private debug_onlyLogCell(c: number, r: number): boolean {
     return this.column === c && this.row === r;
+  }
+
+  private debug_logIfIsCell(): boolean {
+    const isCell = this.column === c && this.row === r;
+    const is = isCell && allowLog;
+    return is;
   }
 }
