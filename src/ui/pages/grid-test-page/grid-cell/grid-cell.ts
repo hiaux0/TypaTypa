@@ -144,7 +144,7 @@ export class GridCell {
     const adjusted = textWidth + PADDING * 2;
     const final = Math.max(
       adjusted,
-      this.columnSettings?.colWidth - BORDER_WIDTH * 2 ?? 0,
+      (this.columnSettings?.colWidth ?? 0) - BORDER_WIDTH * 2,
     );
     return `${final}px`;
   }
