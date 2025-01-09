@@ -2,60 +2,45 @@
 @import "../../../colors.scss";
 
 .cell {
-  @include cell();
+  height: var(--cell-height);
   padding: unset;
   position: relative;
-  /* height: calc(#{$columnHeight} - 1px); */
 
   &:hover {
     background: $gridCellHoverBackground;
-    /* width: 100vw; // to show all the cell content */
   }
   &.selected-cell {
-    /* background: $backgroundColor; */
-    /* border: 1px solid $gridCellSelectedBackground; */
-    border: 1px solid $red;
     z-index: $zIndexHover2;
-
-    // .content.overflown {
-    //   background: $orange1;
-    //   background: unset;
-    // }
 
     .content {
       &.overflown {
         overflow: unset;
         z-index: $zIndexEditing;
+
         &.clip-text {
           overflow: unset;
         }
       }
 
       .read-only {
-        padding: calc(#{$cellPadding} - 1px); //account for border
-        /* padding-top: calc(#{$cellPadding} + 1px); //account for border */
-        padding-top: 0;
       }
     }
   }
 
   .content {
-    /* position: absolute; */
-    height: $columnHeight;
-    /* padding: 6px; */
     overflow: hidden;
     text-overflow: clip;
     white-space: nowrap;
 
     &.overflown {
       position: relative;
-      border-bottom: 1px solid $borderColor1; // based on cell()
       background: $backgroundColor;
       z-index: 100;
+
       &:hover {
         height: 32px;
         border: unset;
-        border-bottom: 1px solid $borderColor1; // based on cell()
+        /* border-bottom: 1px solid $borderColor1; // based on cell() */
         background: $gridCellHoverBackground;
         z-index: $zIndexHover2 + 1;
       }
@@ -65,33 +50,31 @@
     }
 
     .input-container {
-      width: inherit;
+      // width: inherit;
       height: inherit;
-      position: absolute;
-      top: 0;
-      left: 0;
-      border-radius: unset;
-      padding: calc(#{$cellPadding} - 1px); //account for border
-      padding-top: 0; //account for border
-      line-height: $lineHeightCells;
-
-      &.editing {
-        background: $backgroundColor1;
-        z-index: $zIndexEditing;
-      }
-
-      // make vim editor lines also word-wrap
-      // PROBLEM: with word-wrap logic
-      // .editorText {
-      //   position: absolute;
-      //   top: 0;
-      //   left: 0;
-      //   line-height: calc(#{$columnHeight} - 1px);
-      //   color: unset;
-      //   white-space: normal;
-      //   width: 90vw;
+      // position: absolute;
+      // top: 0;
+      // left: 0;
+      // border-radius: unset;
+      // line-height: $lineHeightCells;
+      //
+      // &.editing {
       //   background: $backgroundColor1;
+      //   z-index: $zIndexEditing;
       // }
+      //
+      // // make vim editor lines also word-wrap
+      // // PROBLEM: with word-wrap logic
+      // // .editorText {
+      // //   position: absolute;
+      // //   top: 0;
+      // //   left: 0;
+      // //   line-height: calc(#{$columnHeight} - 1px);
+      // //   color: unset;
+      // //   white-space: normal;
+      // //   width: 90vw;
+      // //   background: $backgroundColor1;
+      // // }
     }
 
     input {
@@ -111,27 +94,18 @@
 
     .read-only {
       overflow: hidden;
-      padding: $cellPadding;
-      /* padding-top: calc(#{$cellPadding} + 2px); */
-      padding-top: 1px;
-      line-height: $lineHeightCells;
+      // Why was this needed? Was used in commit 8387afc0e7d7f70808b88890ce9c267ba33206ad "feat(grid): putCursorAtFirstNonWhiteSpace"
+      height: var(--cell-height);
+      padding: calc(var(--cell-height) / 4);
 
-      /* height: $columnHeight; */ // Why was this needed? Was used in commit 8387afc0e7d7f70808b88890ce9c267ba33206ad "feat(grid): putCursorAtFirstNonWhiteSpace"
       &.overflown {
         position: absolute;
         top: 0;
-        /* top: -1px; */
         left: 0;
-        /* height: calc(#{$columnHeight} + 1px); */ // TODO: needed? If present, then wrapped lines not above
-        /* padding: 3px 6px 6px 6px; */
-        /* padding: 0px 6px 0px 6px; */
-        padding: 0;
-        padding-left: calc(#{$cellPadding} - 1px); //account for border
         color: unset;
         /* white-space: normal; */ // ON->OFF: when cells seleced, had weird behavior
         white-space: pre-wrap; // OFF->ON: not wrapping when cell selected for longer lines
         width: 95vw;
-        /* background: $backgroundColor1; */
         background: $gridCellHoverBackground;
       }
     }
@@ -141,12 +115,11 @@
 
   .selection {
     position: absolute;
-    width: calc(100% + 1px); // +1px: there is a white gap due to border-right
-    height: 100%;
-    top: 0;
-    /* border: 2px solid green; */
-    /* background: $black; */
-    opacity: 0.5;
+    width: calc(100% + 2px); // +2px: there is a white gap due to border-right
+    height: calc(100% + 2px); // +1px: there is a white gap due to border-right
+    top: -1px;
+    left: -1px;
+    border: 1px solid $red;
     z-index: $zIndexBaseBelow;
   }
 }

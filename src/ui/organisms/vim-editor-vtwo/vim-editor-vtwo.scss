@@ -16,11 +16,9 @@ $heightOfLine: 1.5rem;
   /* border: 1px solid #000; */
 
   .text-display {
-    line-height: $lineHeightCells;
     word-wrap: break-word;
 
     pre {
-      height: $heightOfLine;
       align-content: center;
     }
 
@@ -39,15 +37,10 @@ $heightOfLine: 1.5rem;
     position: absolute;
     top: 0;
     width: 100%;
-    /* height: auto; */
-    /* height: 100%; */
-    height: 117%;
-    margin: 0;
+    height: 100%;
+    /* margin: 0; */
+    margin: -1.6px 0px 0px 0px;
     padding: unset;
-    /* padding: 3.5px 6px 5px 6px; */
-    /* line-height: 1.5; */
-    line-height: $lineHeightCells;
-    /* line-height: 30px; */
     color: $textColor;
     background-color: transparent;
     /* white-space: pre-wrap; */

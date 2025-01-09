@@ -3,7 +3,7 @@
   <section
     ref="cellContentRef"
     class="content ${isEdit ? 'editing' : ''} ${isOverflown ? 'overflown' : ''} ${clipText ? 'clip-text' : ''}"
-    css="width: ${isEdit ? getEditWidth : widthPxNew}; height: ${isEdit ? getEditHeight : '32px'};"
+    css="width: ${isEdit ? getEditWidth : widthPxNew}; height: ${isEdit ? getEditHeight : 'var(--cell-height)'};"
     data-compute-width.bind="setWidthPx(cell, columnSettings?.colWidth, wholeRow.length, cell.colsToNextText, isEdit)"
   >
     <!-- Can:t remember why input and read-only were wrapped -->
@@ -32,14 +32,18 @@
       <pre
         if.bind="isOverflown && selected"
         class="read-only overflown"
-        css="width: ${overflownWidthWhenSelected}; color: ${cell.styles?.color}"
+        css="width: ${overflownWidthWhenSelected}px; color: ${cell.styles?.color}"
       >${cell.text}</pre>
       <pre else class="read-only" css="color: ${cell.styles?.color}">${cell.text}</pre>
     </template>
   </section>
 
   <!-- Selection -->
-  <div if.bind="selected" class="selection"></div>
+  <div
+    if.bind="selected"
+    class="selection"
+    css="width: ${isOverflown ? overflownWidthWhenSelected + 2 : CELL_WIDTH+1}px;"
+  ></div>
 
   <!-- Autocomplete -->
 </div>

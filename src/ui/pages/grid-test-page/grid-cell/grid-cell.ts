@@ -2,9 +2,11 @@ import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
 import { Cell, ColHeaderMap, Sheet, SheetSettings } from "../../../../types";
 import {
+  BORDER_WIDTH,
   CELL_HEIGHT,
   CELL_WIDTH,
   EV_GRID_CELL,
+  PADDING,
   VIM_ID_MAP,
 } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
@@ -30,9 +32,8 @@ import { ArrayUtils } from "../../../../common/modules/array/array-utils";
 
 const logger = new Logger("GridCell");
 
-const PADDING = 6;
-const PADDING_LEFT = 7;
-const BORDER_WIDTH = 1;
+const GC_PADDING = PADDING + 1;
+const PADDING_LEFT = PADDING - 1;
 const ADJUST_RIGHT_OVERFLOW = 40; // needed to have the highlight on cell content wrap, when it is going over the screen
 
 const allowLog = false;
@@ -64,7 +65,7 @@ export class GridCell {
   public cellContentRef: HTMLElement;
   public contentInputRef: HTMLElement;
   public contentWidth = NaN;
-  public PADDING = PADDING;
+  public PADDING = GC_PADDING;
   public CELL_WIDTH = CELL_WIDTH;
   public widthPxNew = "";
   public autocompleteValue = "";
@@ -128,11 +129,12 @@ export class GridCell {
     const numNewLines = this.textareaValue.split("\n").length;
     const value =
       numNewLines === 1 ? CELL_HEIGHT : (CELL_HEIGHT - 8) * numNewLines;
-    const adjusted = value - 2 * BORDER_WIDTH;
+    const adjusted = value;
     return `${adjusted}px`;
   }
 
-  public get overflownWidthWhenSelected(): string {
+  public get overflownWidthWhenSelected(): string | number {
+    if (!this.cell) return CELL_WIDTH;
     const vw = document.body.clientWidth;
     const longestLine = ArrayUtils.getLongestElement(
       this.cell.text.split("\n"),
@@ -141,12 +143,9 @@ export class GridCell {
     if (textWidth > vw - ADJUST_RIGHT_OVERFLOW) {
       return "95vw";
     }
-    const adjusted = textWidth + PADDING * 2;
-    const final = Math.max(
-      adjusted,
-      (this.columnSettings?.colWidth ?? 0) - BORDER_WIDTH * 2,
-    );
-    return `${final}px`;
+    const adjusted = textWidth + GC_PADDING * 2;
+    const final = Math.max(adjusted, this.columnSettings?.colWidth ?? 0);
+    return final;
   }
 
   public get isOverflown(): boolean {
@@ -273,7 +272,7 @@ export class GridCell {
         return `${value}px`;
       }
 
-      const adjustedInitialCellWidth = minCellWidth - PADDING - BORDER_WIDTH;
+      const adjustedInitialCellWidth = minCellWidth - GC_PADDING - BORDER_WIDTH;
       if (!cell.text) {
         if (this.column === c && this.row === r && allowLog) {
           /*prettier-ignore*/ console.log("1. [grid-cell.ts,45] adjustedInitialCellWidth: ", adjustedInitialCellWidth);
@@ -301,7 +300,7 @@ export class GridCell {
       // 3.1 Prepare data
       const colsToNextText = cell.colsToNextText;
       const borderWidthAdjust = colsToNextText * BORDER_WIDTH;
-      const colHeaderWidth = minCellWidth - PADDING - borderWidthAdjust;
+      const colHeaderWidth = minCellWidth - GC_PADDING - borderWidthAdjust;
       const otherColsToConsiderForWidth = this.wholeRow?.slice(
         this.column + 1,
         this.column + colsToNextText,

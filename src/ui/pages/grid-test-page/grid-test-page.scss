@@ -1,6 +1,8 @@
 @import "../../mixins.scss";
 @import "../../colors.scss";
 
+$border: 1px solid $borderColor1;
+
 .grid-test-container {
   margin: 8px;
 
@@ -39,6 +41,7 @@
 
     .cell-header {
       @include cell();
+      border: none;
       position: sticky;
       top: 0;
       color: $gridHeaderCellColor;
@@ -54,12 +57,15 @@
       display: flex;
       width: 100vw;
       height: fit-content; // for sticky
+      border-bottom: $border;
+      border-top: $border;
 
       .column-container {
         .column-header {
           display: flex;
           justify-content: space-between;
           width: inherit;
+          border-right: $border;
 
           .resize-handler {
             cursor: col-resize;
@@ -69,6 +75,8 @@
     }
     .column-container {
       display: inline-block;
+      /* border-right: $border; */
+      border-left: $border;
       /* display: table-cell; */
       /* display: flex; */
       /* position: relative; */
@@ -79,6 +87,8 @@
       position: sticky;
       height: fit-content;
       left: 0;
+      border-bottom: $border;
+      border-top: $border;
       background: $secondaryLight0;
       z-index: $zIndexEditing2;
 
@@ -90,10 +100,15 @@
       }
 
       .cell-header {
-        /* height: 33px; */
+        height: calc(var(--cell-height) + 1px);
+        border-top: $border;
       }
     }
     .row-container {
+      /* @include cell(); */
+      border-top: $border;
+      padding: unset;
+      height: calc(var(--cell-height) + 1px);
     }
   }
 

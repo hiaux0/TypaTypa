@@ -18,9 +18,10 @@
 
 @mixin cell() {
   padding: 6px;
-  border-right: 1px solid $borderColor1;
-  border-bottom: 1px solid $borderColor1;
-  height: $columnHeight;
+  border: 1px solid $borderColor1;
+  border-bottom: none;
+  border-right: none;
+  height: var(--cell-height);
 }
 
 @mixin highlightWord() {

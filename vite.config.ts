@@ -21,6 +21,9 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  css: {
+    devSourcemap: true,
+  },
   esbuild: {
     target: "es2022",
   },
@@ -31,8 +34,8 @@ export default defineConfig({
   //    },
   //  },
   //},
-   optimizeDeps: {
-    include: ['rangy']
+  optimizeDeps: {
+    include: ["rangy"],
   },
   plugins: [
     aurelia({
