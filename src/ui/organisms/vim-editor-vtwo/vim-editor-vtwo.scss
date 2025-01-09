@@ -1,7 +1,6 @@
 @import "../../colors";
 @import "../../mixins";
 
-$padding: 6px;
 $heightOfLine: 1.5rem;
 
 .vim-container {
@@ -14,6 +13,9 @@ $heightOfLine: 1.5rem;
   width: 100%;
   height: 100%;
   /* border: 1px solid #000; */
+  padding: var(--padding);
+  padding-top: calc(var(--padding) / 2);
+  background: $backgroundColor1;
 
   .text-display {
     word-wrap: break-word;
@@ -24,8 +26,8 @@ $heightOfLine: 1.5rem;
 
     .cursor {
       position: absolute;
-      top: $padding;
-      left: $padding;
+      top: var(--padding);
+      left: var(--padding);
       width: 10px;
       height: $heightOfLine;
       background-color: orange;
@@ -35,15 +37,13 @@ $heightOfLine: 1.5rem;
 
   .text-input {
     position: absolute;
-    top: 0;
+    top: var(--textarea-top);
     width: 100%;
     height: 100%;
-    /* margin: 0; */
-    margin: -1.6px 0px 0px 0px;
     padding: unset;
+    line-height: var(--line-height);
     color: $textColor;
     background-color: transparent;
-    /* white-space: pre-wrap; */
     white-space: pre; // when overflow: scroll is on
     resize: none;
     outline: none;

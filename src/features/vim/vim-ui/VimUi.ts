@@ -15,6 +15,7 @@ import {
 } from "../vim-types";
 import "./vim-ui.scss";
 import { getTextNodeToFocus } from "../../../common/modules/htmlElements";
+import { PADDING } from "../../../common/modules/constants";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const l = new Logger("VimUi");
@@ -75,18 +76,18 @@ export class VimUi {
   }
 
   private createCaret() {
-    return;
-    const $existingCaret = document.getElementById("caret");
-    const grandParent = this.container?.parentElement;
-    if ($existingCaret) {
-      grandParent?.appendChild($existingCaret);
-      this.caret = $existingCaret;
-      return;
-    }
-    const $caret = document.createElement("div");
-    $caret.id = "caret";
-    grandParent?.appendChild($caret);
-    this.caret = $caret;
+    //return;
+    //const $existingCaret = document.getElementById("caret");
+    //const grandParent = this.container?.parentElement;
+    //if ($existingCaret) {
+    //  grandParent?.appendChild($existingCaret);
+    //  this.caret = $existingCaret;
+    //  return;
+    //}
+    //const $caret = document.createElement("div");
+    //$caret.id = "caret";
+    //grandParent?.appendChild($caret);
+    //this.caret = $caret;
   }
 
   public update(vimState: IVimState): void {
@@ -119,8 +120,8 @@ export class VimUi {
     this.commenKeyFunctionality();
     const $currentLineElement = this.getCurrentLineElement(0); // assume, that first child is enough for all the rest
     if (!$currentLineElement) return;
-    const lineOffsetLeft = $currentLineElement.offsetLeft || cursorAdjust;
-    const lineOffsetTop = $currentLineElement.offsetTop || cursorAdjust;
+    const lineOffsetLeft = $currentLineElement.offsetLeft || PADDING;
+    const lineOffsetTop = $currentLineElement.offsetTop || (PADDING / 2);
 
     let vertDirection: Direction = "none";
     if (this.currentLineNumber > newCursorLine) {

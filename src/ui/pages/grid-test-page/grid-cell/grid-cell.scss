@@ -31,6 +31,7 @@
     overflow: hidden;
     text-overflow: clip;
     white-space: nowrap;
+    line-height: var(--line-height);
 
     &.overflown {
       position: relative;
@@ -97,16 +98,18 @@
       // Why was this needed? Was used in commit 8387afc0e7d7f70808b88890ce9c267ba33206ad "feat(grid): putCursorAtFirstNonWhiteSpace"
       height: var(--cell-height);
       padding: calc(var(--cell-height) / 4);
+      padding-top: calc(var(--padding) / 2);
 
       &.overflown {
         position: absolute;
         top: 0;
         left: 0;
+        width: 95vw;
+        padding-top: calc(var(--padding) / 2);
         color: unset;
+        background: $gridCellHoverBackground;
         /* white-space: normal; */ // ON->OFF: when cells seleced, had weird behavior
         white-space: pre-wrap; // OFF->ON: not wrapping when cell selected for longer lines
-        width: 95vw;
-        background: $gridCellHoverBackground;
       }
     }
   }
