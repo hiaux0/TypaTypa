@@ -249,5 +249,6 @@ export const INITIAL_ROW_COUNT = 5;
 export const PADDING = 6;
 export const PADDING_LEFT = 6;
 export const BORDER_WIDTH = 1;
+setCssVariable("--border-width", `${BORDER_WIDTH}px`);
 export const HEIGHT_OF_LINE = 1.5 * FONT_SIZE;
 setCssVariable("--height-of-line", `${HEIGHT_OF_LINE}px`);
