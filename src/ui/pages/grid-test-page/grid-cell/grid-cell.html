@@ -32,7 +32,7 @@
       <pre
         if.bind="isOverflown && selected"
         class="read-only overflown"
-        css="width: ${overflownWidthWhenSelected}px; color: ${cell.styles?.color}"
+        css="width: ${overflownWidthWhenSelected}px; color: ${cell.styles?.color}; height: ${isOverflown ? getOverflownHeight : CELL_HEIGHT + 1}px;"
       >${cell.text}</pre>
       <pre else class="read-only" css="color: ${cell.styles?.color}">${cell.text}</pre>
     </template>
@@ -42,7 +42,7 @@
   <div
     if.bind="selected"
     class="selection"
-    css="width: ${isOverflown ? overflownWidthWhenSelected + 2 : CELL_WIDTH+1}px;"
+    css="width: ${isOverflown ? overflownWidthWhenSelected + 2 : CELL_WIDTH+1}px; height: ${getOverflownHeight+2}px;"
   ></div>
 
   <!-- Autocomplete -->

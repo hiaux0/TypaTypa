@@ -67,6 +67,7 @@ export class GridCell {
   public contentWidth = NaN;
   public PADDING = GC_PADDING;
   public CELL_WIDTH = CELL_WIDTH;
+  public CELL_HEIGHT = CELL_HEIGHT;
   public widthPxNew = "";
   public autocompleteValue = "";
   public autoCompleteSource: string[] = [];
@@ -131,6 +132,15 @@ export class GridCell {
       numNewLines === 1 ? CELL_HEIGHT : (CELL_HEIGHT - 8) * numNewLines;
     const adjusted = value;
     return `${adjusted}px`;
+  }
+
+  public get getOverflownHeight(): number {
+    if (!this.cell) return CELL_HEIGHT;
+    const numNewLines = this.cell.text.split("\n").length;
+    const value =
+      numNewLines === 1 ? CELL_HEIGHT : CELL_HEIGHT * numNewLines - PADDING;
+    const adjusted = value;
+    return adjusted;
   }
 
   public get overflownWidthWhenSelected(): string | number {
