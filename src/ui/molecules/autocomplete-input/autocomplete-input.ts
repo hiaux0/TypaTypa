@@ -15,6 +15,7 @@ import {
   ICommandsService,
 } from "../../../common/services/CommandsService";
 import { VimStateClass } from "../../../features/vim/vim-state";
+import { fuzzySearch } from "../../../common/modules/string/string";
 
 const debugLog = false;
 
@@ -128,11 +129,8 @@ export class AutocompleteInput {
     /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,63] searchValue: ", searchValue);
     /// /*prettier-ignore*/ console.log("[autocomplete-input.ts,65] this.source: ", this.source);
     this.source.forEach((suggestion) => {
-      const included = suggestion.text
-        ?.toLowerCase()
-        .includes(searchValue.toLowerCase());
-      if (!included) return;
-
+      const fuzzy = fuzzySearch([suggestion.text], searchValue);
+      if (!fuzzy.length) return;
       this.collectSuggestion(suggestion);
     });
   }

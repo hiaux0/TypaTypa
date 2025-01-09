@@ -103,7 +103,6 @@ export class GridCell {
           if (mode === VimMode.INSERT) return;
           if (this.isEdit) {
             this.cell.text = this.textareaValue;
-            /*prettier-ignore*/ console.log("[grid-cell.ts,106] this.cell.text: ", this.cell.text);
             this.onCellUpdate(this.column, this.row, this.cell);
             this.onEnter();
           }

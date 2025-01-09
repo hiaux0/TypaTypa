@@ -123,7 +123,7 @@ function padWithRegexWildCard(input: string) {
  * value 'fo'
  * --> ['foo', 'flo']
  */
-function fuzzySearch(inputList: string[], value: string) {
+export function fuzzySearch(inputList: string[], value: string): string[] {
   const wildCardValue = padWithRegexWildCard(value);
   const fileredList = inputList.filter((input) => {
     const ignoreCase = input.toLowerCase();
