@@ -216,9 +216,12 @@ export class VimInputHandlerV2 {
       const options = activeInstance.options;
       const { targetCommand: command, potentialCommands } =
         this.getCommand(keyData, options) ?? {};
-      //if (potentialCommands?.length) {
-      //  event.preventDefault();
-      //}
+
+      const isInsert = activeInstance.vimCore.getVimState().mode === VimMode.INSERT;
+      let beforePreventDefault = potentialCommands?.length && !isInsert;
+      if (beforePreventDefault) {
+        event.preventDefault();
+      }
       /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,3])) console.log("command", command);
       // 3. Command -> Action
       const { vimState, preventDefault } = await this.executeCommandForListener(
