@@ -10,33 +10,76 @@ export class Playground {
   constructor(private au = resolve(IAurelia)) {}
 
   attached() {
-    document.addEventListener("keydown", (e) => {
-      const key = e.key;
-      if (key === "a") {
-        this.addElement();
-      }
+    const audioPlayer = document.getElementById("audioPlayer");
+    const progressBar = document.getElementById("progressBar");
+    const progress = document.querySelector(".progress");
+    const currentTimeDisplay = document.getElementById("currentTime");
+    const durationDisplay = document.getElementById("duration");
+    const playbackSpeedSlider = document.getElementById("playbackSpeed");
+    const speedDisplay = document.getElementById("speedDisplay");
+    const repeatToggle = document.getElementById("repeatToggle");
+
+    // Format time in mm:ss
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60);
+      return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+    }
+
+    // Update progress bar
+    audioPlayer.addEventListener("timeupdate", () => {
+      const progressPercentage =
+        (audioPlayer.currentTime / audioPlayer.duration) * 100;
+      progress.style.width = `${progressPercentage}%`;
+      currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
     });
-    this.itemsRef.innerHTML =
-      '<test-component text.bind="item" repeat.for="item of items"></test-component>';
 
-    this.au.enhance({
-      component: { items: this.items, item: "ha" },
-      host: this.itemsRef,
+    // Update duration when metadata is loaded
+    audioPlayer.addEventListener("loadedmetadata", () => {
+      durationDisplay.textContent = formatTime(audioPlayer.duration);
     });
-  }
 
-  public addElement() {
-    // const itemList = document.getElementById("item-list");
-    // this.itemsRef = "<bold text.bind='item'></bold>"
-    // const $boldItem = document.createElement("bold");
-    // $boldItem.innerHTML = '<bold text.bind="item"></bold>';
+    // Seek functionality
+    progressBar.addEventListener("click", (e) => {
+      const rect = progressBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const progressPercentage = clickX / rect.width;
+      audioPlayer.currentTime = progressPercentage * audioPlayer.duration;
+    });
 
-    const random = Math.random().toString(36).substring(7);
-    /*prettier-ignore*/ console.log("[playground.ts,29] random: ", random);
-    this.items.push(random);
-    //this.au.enhance({
-    //  component: { itemsHa: this.items },
-    //  host: this.itemsRef,
-    //});
+    // Playback speed control
+    playbackSpeedSlider.addEventListener("input", () => {
+      const speed = playbackSpeedSlider.value;
+      audioPlayer.playbackRate = speed;
+      speedDisplay.textContent = `${speed}x`;
+    });
+
+    // Repeat toggle
+    let isRepeating = false;
+    repeatToggle.addEventListener("click", () => {
+      isRepeating = !isRepeating;
+      audioPlayer.loop = isRepeating;
+      repeatToggle.textContent = isRepeating ? "Repeat On" : "Repeat Off";
+    });
+
+    document
+      .getElementById("fileInput")
+      .addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file && file.type === "audio/mpeg") {
+          const audioPlayer = document.getElementById("audioPlayer");
+          const objectURL = URL.createObjectURL(file);
+
+          audioPlayer.src = objectURL;
+          audioPlayer.addEventListener("loadedmetadata", () => {
+            const duration = audioPlayer.duration;
+            alert(`Audio length: ${formatTime(duration)}`);
+          });
+
+          audioPlayer.play();
+        } else {
+          alert("Please upload a valid MP3 file.");
+        }
+      });
   }
 }

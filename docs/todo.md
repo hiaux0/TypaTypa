@@ -24,6 +24,16 @@
 - textarea
   - no weird dom interaction?
 
+# Ideas
+- [ ] step by step (manual) model fine tuning
+  1. each row represents a step in how I would fine-tune a prompt
+  2. Example: "Extract tags from a link"
+    1. Provide link in a cell
+    2. right to it, the ai generates tags
+    3. next row, adjust the prompt
+    4. repeat 1.-3.
+  - diff view
+
 # Acceptance criteria
 - Use contenteditable
     Reasons
