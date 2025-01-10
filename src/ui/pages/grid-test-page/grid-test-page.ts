@@ -42,6 +42,7 @@ import {
   PADDING,
   VIM_ID_MAP,
   COLORS,
+  BORDER_WIDTH,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -134,6 +135,7 @@ export class GridTestPage {
   public colSize = INITIAL_COLUMN_COUNT;
   public rowSize = INITIAL_ROW_COUNT;
   public CELL_HEIGHT = CELL_HEIGHT;
+  public BORDER_WIDTH = BORDER_WIDTH;
   public CELL_WIDTH = CELL_WIDTH;
   public EV_CELL_SELECTED = EV_CELL_SELECTED;
   public CELL_COORDS = CELL_COORDS;
@@ -1809,8 +1811,7 @@ export class GridTestPage {
   public makeSticky(row: number): void {
     const map = this.getRowHeaderMap(row);
     if (!map) return;
-    map.isSticky = true;
-    /*prettier-ignore*/ console.log("[grid-test-page.ts,1813] map: ", map);
+    map.isSticky = !map.isSticky;
   }
 
   public undo = (): void => {

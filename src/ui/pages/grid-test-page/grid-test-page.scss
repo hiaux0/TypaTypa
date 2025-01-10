@@ -1,13 +1,15 @@
 @import "../../mixins.scss";
 @import "../../colors.scss";
 
-$border: 1px solid $borderColor1;
-
 @mixin stickyCell() {
   &.sticky-row-coll {
     position: sticky;
     background: $backgroundColor;
     z-index: $zIndexSticky;
+    padding-bottom: calc(
+      var(--cell-height) - var(--padding) - var(--border-width)
+    );
+    border-bottom: $border;
   }
 }
 
@@ -49,6 +51,7 @@ $border: 1px solid $borderColor1;
 
     .cell-header {
       @include cell();
+      height: calc(var(--cell-height) + 1);
       border: none;
       position: sticky;
       top: 0;
@@ -66,7 +69,6 @@ $border: 1px solid $borderColor1;
       width: 100vw;
       height: fit-content; // for sticky
       border-bottom: $border;
-      border-top: $border;
 
       .column-container {
         .column-header {
@@ -74,6 +76,9 @@ $border: 1px solid $borderColor1;
           justify-content: space-between;
           width: inherit;
           border-right: $border;
+          border-top: $border;
+          border-bottom: $border;
+          height: calc(var(--cell-height) + var(--border-width));
 
           .column-header-text {
             cursor: pointer;
@@ -100,28 +105,49 @@ $border: 1px solid $borderColor1;
       height: fit-content;
       left: 0;
       border-bottom: $border;
-      border-top: $border;
       background: $secondaryLight0;
       z-index: $zIndexEditing2;
 
-      .cell.column-header-corner {
-        position: sticky;
-        top: 0;
-        background: $secondaryLight0;
-        z-index: $zIndexEditing21;
+      .column-header-container {
+        border-right: $border;
+      }
+
+      .cell {
+        &.column-header-corner {
+          position: sticky;
+          top: 0;
+          left: 0;
+          height: calc(var(--cell-height) + var(--border-width));
+          border-top: $border;
+          border-right: $border;
+          border-bottom: $border;
+          background: $secondaryLight0;
+          z-index: $zIndexEditing21;
+        }
       }
 
       .cell-header {
-        height: calc(var(--cell-height) + 1px);
+        height: calc(var(--cell-height) + var(--border-width));
         border-top: $border;
         @include stickyCell();
+
+        &:first-of-type {
+          border-top: none;
+        }
       }
     }
     .row-container {
+      &:first-child {
+        border-top: none;
+
+        .selection {
+          top: 0;
+        }
+      }
       /* @include cell(); */
       border-top: $border;
       padding: unset;
-      height: calc(var(--cell-height) + 1px);
+      height: calc(var(--cell-height) + var(--border-width));
 
       @include stickyCell();
     }

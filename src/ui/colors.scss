@@ -110,11 +110,13 @@ $gridCellSelectedBackground: $secondaryLight1;
 // Other variables
 $borderRadius0: 0.1rem;
 $borderRadius: 0.2rem;
+$border: 1px solid $borderColor1;
 
 $tabBarHeight: 36px;
 
 $marginS: 0.3rem;
 $padding0: 8px;
+$padding: 8px;
 $cellPadding: $padding0;
 $drawerPadding: 20px;
 $fontSizeXXS: 0.5rem;

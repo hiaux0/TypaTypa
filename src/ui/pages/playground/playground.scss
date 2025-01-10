@@ -1,61 +1,8 @@
-.playground {
-  audio::-webkit-media-controls-panel {
-    background-color: #333;
-  }
-  audio::-webkit-media-controls-play-button,
-  audio::-webkit-media-controls-pause-button,
-  audio::-webkit-media-controls-mute-button,
-  audio::-webkit-media-controls-volume-slider,
-  audio::-webkit-media-controls-current-time-display,
-  audio::-webkit-media-controls-time-remaining-display,
-  audio::-webkit-media-controls-timeline {
-    color: #fff;
-    background-color: #444;
-  }
-
-  // ...existing code...
-  audio::-moz-volume-container,
-  audio::-moz-volume-slider {
-    background-color: #333;
-  }
-  audio::-moz-volume-thumb {
-    background-color: #444;
-  }
-  // ...existing code...
-
-  audio {
-    width: 80%;
-    margin-bottom: 20px;
-  }
-  .controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
-  }
-  .progress-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 80%;
-    margin: 10px auto;
-  }
-  .progress-bar {
-    flex: 1;
-    height: 5px;
-    background-color: #ccc;
-    position: relative;
-    cursor: pointer;
-  }
-  .progress {
-    height: 100%;
-    background-color: #4caf50;
-    width: 0%;
-  }
-  input[type="range"] {
-    width: 100px;
-  }
-  button {
-    padding: 5px 10px;
-  }
+p {
+  font-weight: bold;
 }
+
+li:first-child {
+  border: 2px solid orange;
+}
+

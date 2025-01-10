@@ -10,6 +10,7 @@ export class Playground {
   constructor(private au = resolve(IAurelia)) {}
 
   attached() {
+    return;
     const audioPlayer = document.getElementById("audioPlayer");
     const progressBar = document.getElementById("progressBar");
     const progress = document.querySelector(".progress");

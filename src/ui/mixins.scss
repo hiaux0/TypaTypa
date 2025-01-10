@@ -17,7 +17,7 @@
 }
 
 @mixin cell() {
-  padding: 6px;
+  padding: $padding;
   border: 1px solid $borderColor1;
   border-bottom: none;
   border-right: none;

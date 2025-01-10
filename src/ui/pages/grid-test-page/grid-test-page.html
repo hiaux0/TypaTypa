@@ -49,14 +49,16 @@
     <!-- 1/3 Column Header -->
     <section class="column-container row-header">
       <div class="cell column-header-corner"></div>
-      <div
-        class="cell-header ${activeSheet?.rowHeaderMap[rowIndex].isSticky ? 'sticky-row-coll' : ''}"
-        repeat.for="rowIndex of rowSize"
-        dblclick.trigger="makeSticky(rowIndex)"
-        data-row-index.bind="rowIndex"
-        css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `color: red; top: ${(rowIndex+1) * CELL_HEIGHT}px` : ''}"
-      >
-        ${rowIndex}
+      <div class="column-header-container">
+        <div
+          class="cell-header ${activeSheet?.rowHeaderMap[rowIndex].isSticky ? 'sticky-row-coll' : ''}"
+          repeat.for="rowIndex of rowSize"
+          dblclick.trigger="makeSticky(rowIndex)"
+          data-row-index.bind="rowIndex"
+          css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}"
+        >
+          ${rowIndex}
+        </div>
       </div>
     </section>
 
@@ -90,31 +92,33 @@
           </div>
         </div>
 
-        <div
-          class="row-container ${activeSheet?.rowHeaderMap[rowIndex].isSticky ? 'sticky-row-coll' : ''}"
-          repeat.for="rowIndex of rowSize"
-          css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `color: red; top: ${(rowIndex+1) * CELL_HEIGHT}px` : ''}"
-        >
-          <!-- Cell -->
-          <grid-cell
-            cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
-            row.bind="rowIndex"
-            whole-row.bind="this.contentMap[rowIndex]"
-            column.bind="columnIndex"
-            selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
-            sheet.bind="activeSheet"
-            sheet-settings.bind="activeSheet.settings"
-            column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
-            row-settings.bind="activeSheet?.rowHeaderMap[rowIndex]"
-            is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
-            on-cell-update.bind="onCellUpdate"
-            on-escape.bind="onEscape"
-            on-enter.bind="onEnter"
-            mapping-by-mode.bind="mappingByModeForCell"
-            pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
-            pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
-            pointerup.trigger="onMouseUpGridCell()"
-          ></grid-cell>
+        <div class="row-container-container">
+          <div
+            class="row-container ${activeSheet?.rowHeaderMap[rowIndex].isSticky ? 'sticky-row-coll' : ''}"
+            repeat.for="rowIndex of rowSize"
+            css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}"
+          >
+            <!-- Cell -->
+            <grid-cell
+              cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
+              row.bind="rowIndex"
+              whole-row.bind="this.contentMap[rowIndex]"
+              column.bind="columnIndex"
+              selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+              sheet.bind="activeSheet"
+              sheet-settings.bind="activeSheet.settings"
+              column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
+              row-settings.bind="activeSheet?.rowHeaderMap[rowIndex]"
+              is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
+              on-cell-update.bind="onCellUpdate"
+              on-escape.bind="onEscape"
+              on-enter.bind="onEnter"
+              mapping-by-mode.bind="mappingByModeForCell"
+              pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
+              pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"
+              pointerup.trigger="onMouseUpGridCell()"
+            ></grid-cell>
+          </div>
         </div>
       </section>
 
