@@ -426,8 +426,8 @@ export class GridTestPage {
             stream: false,
           },
         );
-        const asht = response.response;
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,430] asht: ", asht);
+        const translation = response.response;
+        this.setCurrentCellContent(translation, this.nextCol);
         return true;
       },
     },
