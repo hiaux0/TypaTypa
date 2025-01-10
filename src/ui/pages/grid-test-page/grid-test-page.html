@@ -52,6 +52,7 @@
       <div
         class="cell-header"
         repeat.for="rowIndex of rowSize"
+        dblclick.trigger="makeSticky(rowIndex)"
         data-row-index.bind="rowIndex"
       >
         ${rowIndex}
@@ -67,14 +68,22 @@
       >
         <div
           class="cell-header column-header"
-          click.trigger="selectColumn(columnIndex)"
+          click.trigger="selectColumn(columnIndex, $event)"
           data-col-index.bind="columnIndex"
         >
           <!-- ${numberToAlphabet(columnIndex)} -->
-          <div>${(columnIndex)}</div>
+          <div
+            class="column-header-text"
+            dblclick.trigger="autoAdjustWidth(columnIndex)"
+            data-prevent-click="true"
+            title="Double click to auto adjust width"
+          >
+            ${(columnIndex)}
+          </div>
           <div
             class="resize-handler"
             resize="resize-container.bind: spreadsheetContainerRef; on-resize.bind: onResizeColumns(columnIndex); on-resize-end.bind: updateResizeColumns;"
+            data-prevent-click="true"
           >
             &nbsp
           </div>

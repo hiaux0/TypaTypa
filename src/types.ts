@@ -103,18 +103,15 @@ export interface Cell {
   styles?: CellStyles;
 }
 export type ContentMap = Cell[][];
-export type ColHeaderMap = Record<
-  string,
-  {
-    colWidth: number;
-  }
->;
-export type RowHeaderMap = Record<
-  string,
-  {
-    height: number;
-  }
->;
+export type ColHeaderMapData = {
+  colWidth: number;
+};
+export type ColHeaderMap = Record<string, ColHeaderMapData>;
+export type RowHeaderMapData = {
+  height: number;
+  isSticky?: boolean;
+};
+export type RowHeaderMap = Record<string, RowHeaderMapData>;
 export interface SheetSettings {
   autosave?: boolean;
 }

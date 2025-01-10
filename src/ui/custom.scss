@@ -11,13 +11,13 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'FiraMonoNerdFont', sans-serif;
 }
 
 body {
   color: $textColor;
   background: $secondaryLight0;
   font-size: $fontSize;
+  font-family: $fontFamily;
 }
 
 button,

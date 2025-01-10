@@ -67,6 +67,10 @@ $border: 1px solid $borderColor1;
           width: inherit;
           border-right: $border;
 
+          .column-header-text {
+            cursor: pointer;
+          }
+
           .resize-handler {
             cursor: col-resize;
           }

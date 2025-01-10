@@ -1,16 +1,20 @@
 import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
-import { Cell, ColHeaderMap, Sheet, SheetSettings } from "../../../../types";
+import {
+  Cell,
+  ColHeaderMap,
+  RowHeaderMap,
+  Sheet,
+  SheetSettings,
+} from "../../../../types";
 import {
   BORDER_WIDTH,
   CELL_HEIGHT,
   CELL_WIDTH,
-  EV_GRID_CELL,
   PADDING,
   VIM_ID_MAP,
 } from "../../../../common/modules/constants";
 import { isEnter, isEscape } from "../../../../features/vim/key-bindings";
-import { getValueFromPixelString } from "../../../../common/modules/strings";
 import { measureTextWidth } from "../grid-modules/gridModules";
 import { Store } from "../../../../common/modules/store";
 import { Logger, shouldLog } from "../../../../common/logging/logging";
@@ -26,8 +30,6 @@ import { debugFlags } from "../../../../common/modules/debug/debugFlags";
 import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/commands/KeyMappingService";
 import { FF, featureFlags } from "../grid-modules/featureFlags";
 import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
-import { addMarkdownStylingToCell } from "../grid-modules/SheetsService";
-import { VimHelper } from "../../../../features/vim/VimHelper";
 import { ArrayUtils } from "../../../../common/modules/array/array-utils";
 
 const logger = new Logger("GridCell");
@@ -38,7 +40,7 @@ const ADJUST_RIGHT_OVERFLOW = 40; // needed to have the highlight on cell conten
 
 const allowLog = false;
 const c = 0;
-const r = 19;
+const r = 0;
 
 const debug = false;
 const debugLog = false;
@@ -52,6 +54,7 @@ export class GridCell {
   @bindable public sheet: Sheet;
   @bindable public sheetSettings: SheetSettings;
   @bindable public columnSettings: ColHeaderMap[string];
+  @bindable public rowSettings: RowHeaderMap[string];
   @bindable public isEdit: boolean;
   @bindable public onCellUpdate: (col: number, row: number, cell: Cell) => void;
   @bindable public onEscape: () => void;
@@ -225,9 +228,8 @@ export class GridCell {
     }
     this.setWidthPx();
 
-    if (this.column === c && this.row === r) {
-      ///*prettier-ignore*/ console.log("[grid-cell.ts,126] this.isOverflown: ", this.isOverflown);
-      ///*prettier-ignore*/ console.log("[grid-cell.ts,127] this.cell.text: ", this.cell?.text);
+    if (this.debug_logIfIsCell()) {
+      // /*prettier-ignore*/ console.log("[grid-cell.ts,233] this.rowSettings: ", this.rowSettings);
     }
 
     this.finalMappingByMode[VimMode.ALL] = overwriteExistingKeyBindings(
@@ -437,7 +439,7 @@ export class GridCell {
 
   private debug_logIfIsCell(): boolean {
     const isCell = this.column === c && this.row === r;
-    const is = isCell && allowLog;
+    const is = isCell && debugLog;
     return is;
   }
 }

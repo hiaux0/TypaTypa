@@ -11,6 +11,9 @@ import {
   GridSelectionRange,
   Sheet,
   defaultGridSelectionRange,
+  ColHeaderMap,
+  ColHeaderMapData,
+  RowHeaderMapData,
 } from "../../../types";
 import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
@@ -127,6 +130,7 @@ interface GridPanel {
 export class GridTestPage {
   public gridTestContainerRef: HTMLElement;
   public spreadsheetContainerRef: HTMLElement;
+  public resizeHandlerRef: HTMLElement;
   public colSize = INITIAL_COLUMN_COUNT;
   public rowSize = INITIAL_ROW_COUNT;
   public CELL_HEIGHT = CELL_HEIGHT;
@@ -1758,12 +1762,55 @@ export class GridTestPage {
 
   public updateResizeColumns = (): void => {};
 
-  public selectColumn(col: number): void {
+  public selectColumn(col: number, event: Event): void {
+    const prevent = (event.target as HTMLElement)?.dataset.preventClick;
+    if (prevent) return;
     this.vimInit.executeCommand(VIM_COMMAND.enterVisualMode, "");
     this.setSelectionFromRange([
       [col, 0],
       [col, this.rowSize - 1],
     ]);
+  }
+
+  private getColHeaderMap(col: number): ColHeaderMapData {
+    const sheet = this.activeSheet;
+    if (!sheet?.colHeaderMap?.[col]) {
+      sheet.colHeaderMap = {
+        ...sheet.colHeaderMap,
+        [col]: { colWidth: this.CELL_WIDTH },
+      };
+    }
+
+    return sheet.colHeaderMap[col];
+  }
+
+  private getRowHeaderMap(row: number): RowHeaderMapData {
+    const sheet = this.activeSheet;
+    if (!sheet?.rowHeaderMap?.[row]) {
+      sheet.rowHeaderMap = {
+        ...sheet.rowHeaderMap,
+        [row]: { height: this.CELL_HEIGHT },
+      };
+    }
+
+    return sheet.rowHeaderMap[row];
+  }
+
+  public autoAdjustWidth(col: number): void {
+    const colData = this.getCurrentColumnData(col);
+    const longest = ArrayUtils.getLongestElement(colData);
+    const longestWidth = measureTextWidth(longest);
+
+    const map = this.getColHeaderMap(col);
+    const adjusted = longestWidth + PADDING * 2;
+    map.colWidth = adjusted;
+  }
+
+  public makeSticky(row: number): void {
+    const map = this.getRowHeaderMap(row);
+    if (!map) return;
+    map.isSticky = true;
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,1813] map: ", map);
   }
 
   public undo = (): void => {
@@ -3072,14 +3119,17 @@ export class GridTestPage {
     this.updateContentMapChangedForView();
   }
 
-  private getCurrentColumnData(): string[] {
+  private getCurrentColumnData(givenCol: number): string[] {
     const colData: string[] = [];
-    this.iterateOverCol((col, row) => {
-      const cell = this.getCurrentCell(col, row);
-      if (!cell) return;
-      const text = cell.text;
-      colData.push(text);
-    });
+    this.iterateOverCol(
+      (col, row) => {
+        const cell = this.getCurrentCell(col, row);
+        if (!cell) return;
+        const text = cell.text;
+        colData.push(text);
+      },
+      { startCol: givenCol },
+    );
     return colData;
   }
 }

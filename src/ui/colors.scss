@@ -63,8 +63,16 @@ $primaryDark1: if($theme == dark, $dark-primaryDark1, $light-primaryDark1);
 $primaryDark2: if($theme == dark, $dark-primaryDark2, $light-primaryDark2);
 /*prettier-ignore*/
 $secondaryLight0: if($theme == dark, $dark-secondaryLight0, $light-secondaryLight0);
-$secondaryLight1: if($theme == dark, $dark-secondaryLight1, $light-secondaryLight1);
-$secondaryLight2: if($theme == dark, $dark-secondaryLight1, $light-secondaryLight2);
+$secondaryLight1: if(
+  $theme == dark,
+  $dark-secondaryLight1,
+  $light-secondaryLight1
+);
+$secondaryLight2: if(
+  $theme == dark,
+  $dark-secondaryLight1,
+  $light-secondaryLight2
+);
 /*prettier-ignore*/
 $secondaryLight: if($theme == dark, $dark-secondaryLight, $light-secondaryLight);
 $secondary: if($theme == dark, $dark-secondary, $light-secondary);
@@ -138,8 +146,8 @@ $columnWidth: 64px;
 $columnHeight: var(--cell-height);
 
 /* $fontFamily: mono, sans-serif; */
-$fontFamily: monospace, sans-serif;
+/* $fontFamily: monospace, sans-serif; */
+$fontFamily: "FiraMonoNerdFont", sans-serif;
 
 $lineHeightCells: 1.5;
 /* $lineHeightCells: 2; */ // this will make every new line look like in a row
-
