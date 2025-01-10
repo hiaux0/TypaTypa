@@ -3,6 +3,14 @@
 
 $border: 1px solid $borderColor1;
 
+@mixin stickyCell() {
+  &.sticky-row-coll {
+    position: sticky;
+    background: $backgroundColor;
+    z-index: $zIndexSticky;
+  }
+}
+
 .grid-test-container {
   margin: 8px;
 
@@ -45,7 +53,7 @@ $border: 1px solid $borderColor1;
       position: sticky;
       top: 0;
       color: $gridHeaderCellColor;
-      background: $secondaryLight0;
+      background: $backgroundColor;
       z-index: $zIndexEditing2;
 
       &:hover {
@@ -106,6 +114,7 @@ $border: 1px solid $borderColor1;
       .cell-header {
         height: calc(var(--cell-height) + 1px);
         border-top: $border;
+        @include stickyCell();
       }
     }
     .row-container {
@@ -113,6 +122,8 @@ $border: 1px solid $borderColor1;
       border-top: $border;
       padding: unset;
       height: calc(var(--cell-height) + 1px);
+
+      @include stickyCell();
     }
   }
 

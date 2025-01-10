@@ -140,7 +140,8 @@ $zIndexEditing: 1000;
 $zIndexEditing2: 2000;
 $zIndexEditing21: 2100;
 $zIndexEditing3: 3000;
-$zIndexAboveAll: 10000;
+$zIndexSticky: 10000;
+$zIndexAboveAll: 100000;
 
 $columnWidth: 64px;
 $columnHeight: var(--cell-height);
