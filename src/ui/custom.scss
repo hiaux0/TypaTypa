@@ -7,13 +7,14 @@
  */
 
 @import "./colors.scss";
+@import "./fonts/fonts.scss";
 
 * {
   box-sizing: border-box;
+  font-family: 'FiraMonoNerdFont', sans-serif;
 }
 
 body {
-  font-family: $fontFamily;
   color: $textColor;
   background: $secondaryLight0;
   font-size: $fontSize;
@@ -51,7 +52,6 @@ input[type="submit"] {
 
 input,
 textarea {
-  font-family: $fontFamily;
   font-size: $fontSize;
   border: 1px solid $borderColor;
   border-radius: $borderRadius;
@@ -95,4 +95,3 @@ textarea {
 :root {
   --row-header-width: 31.3333328px;
 }
-
