@@ -1,3 +1,100 @@
+type Models =
+  | "llama3.1"
+  | "llama3.2"
+  | "llama3.2-llava"
+  | "llama3.2-llava-2"
+  | "llama3.2-llava-3";
+
+const baseUrl = "http://localhost:11434";
+
+export class OllamaApi {
+  constructor(private model: Models = "llama3.1") {}
+
+  public async generateCompletion(
+    prompt: string,
+    model: Models = this.model,
+    options?: {
+      suffix?: string;
+      images?: string[];
+      format?: string;
+      options?: string;
+      system?: string;
+      template?: string;
+      stream?: boolean;
+      raw?: boolean;
+      keep_alive?: string;
+      context?: string;
+    },
+  ) {
+    const {
+      suffix,
+      images,
+      format,
+      system,
+      template,
+      stream,
+      raw,
+      keep_alive,
+      context,
+    } = options ?? {};
+    const url = `${baseUrl}/api/generate`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        prompt,
+        suffix,
+        images,
+        format,
+        options: options?.options,
+        system,
+        template,
+        stream,
+        raw,
+        keep_alive,
+        context,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (
+      stream &&
+      response.headers.get("Content-Type") === "application/x-ndjson"
+    ) {
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let ndjson = "";
+
+      while (true) {
+        const { done, value } = (await reader?.read()) ?? {};
+        if (done) break;
+        ndjson += decoder.decode(value, { stream: true });
+
+        const lines = ndjson.split("\n");
+        ndjson = lines.pop()!; // Keep the last partial line
+
+        for (const line of lines) {
+          if (line.trim()) {
+            const json = JSON.parse(line);
+            console.log(json); // Process each JSON object
+          }
+        }
+      }
+    } else {
+      const result = await response.json();
+      return result;
+    }
+  }
+}
+
+export const ollamaApi = new OllamaApi("llama3.2");
+
 /**
 Generate a completion
 
@@ -52,97 +149,3 @@ A stream of JSON objects is returned:
   "done": false
 }
  */
-
-type Models =
-  | "llama3.2"
-  | "llama3.2-llava"
-  | "llama3.2-llava-2"
-  | "llama3.2-llava-3";
-
-const baseUrl = "http://localhost:11434";
-
-export class OllamaApi {
-  public async generateCompletion(
-    prompt: string,
-    model: Models = "llama3.2",
-    options?: {
-      suffix?: string;
-      images?: string[];
-      format?: string;
-      options?: string;
-      system?: string;
-      template?: string;
-      stream?: boolean;
-      raw?: boolean;
-      keep_alive?: string;
-      context?: string;
-    }
-  ) {
-    const {
-      suffix,
-      images,
-      format,
-      system,
-      template,
-      stream,
-      raw,
-      keep_alive,
-      context
-    } = options ?? {};
-    const url = `${baseUrl}/api/generate`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model,
-        prompt,
-        suffix,
-        images,
-        format,
-        options: options?.options,
-        system,
-        template,
-        stream,
-        raw,
-        keep_alive,
-        context
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    if (
-      stream &&
-      response.headers.get("Content-Type") === "application/x-ndjson"
-    ) {
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let ndjson = "";
-
-      while (true) {
-        const { done, value } = (await reader?.read()) ?? {};
-        if (done) break;
-        ndjson += decoder.decode(value, { stream: true });
-
-        const lines = ndjson.split("\n");
-        ndjson = lines.pop()!; // Keep the last partial line
-
-        for (const line of lines) {
-          if (line.trim()) {
-            const json = JSON.parse(line);
-            console.log(json); // Process each JSON object
-          }
-        }
-      }
-    } else {
-      const result = await response.json();
-      return result;
-    }
-  }
-}
-
-export const ollamaApi = new OllamaApi();
