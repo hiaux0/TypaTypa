@@ -171,7 +171,7 @@ I want to have live-editor
       - set the cell first, so we can query `.selected-cell` elements for their x,y?
         - this makes it more dependent on html (cf. measureText)
 - [ ] feat: quickly toggle settings
-- [ ] fix: grid: paste: newlines at start should be reduced (when copying code blocks)
+- [ ] fix: grid: paste: newlines or white space at start should be reduced (when copying code blocks)
 - [ ] E
   - [x] until cell with no content
   - [ ] if no overflow, then until next empty cell 
@@ -192,10 +192,8 @@ I want to have live-editor
 - [ ] feat: grid: flash previous selected cell, when moving multiple cells at once
   - bg: sometimes lose the reading position, when scrolling to many rows
   - idea: blink a short second, where the old cell was scrolled to (the top)
-- [ ] feat: grid: multi-row cells
 - [ ] feat: status line
   - mode, commands
-- [ ] feat: command palette: recent
 - [ ] feat: command: "Delete new lines in column"
   - in the command palette have fields to change options
 - [ ] feat: cell: restrict cell width to maxWidth
@@ -203,10 +201,14 @@ I want to have live-editor
 - [ ] feat: when generated content comes in, make it appear on top of a cell, then be able to move around and press enter
   - so that the cell gets the content
   - if content already present, then move existing content (where?)
-
+- [ ] fix: cannot escape from visual mode
+- [ ] fix undo redo (again)
+- [ ] add rows button
 # Done
 ## Grid
 
+- [x] feat: grid: multi-row cells
+- [x] feat: command palette: recent
 - [x] bug: overflow vertical not showing (only hori)
 - [x] bug: fix undo redo
 - [x] vimeditor

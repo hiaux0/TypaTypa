@@ -276,6 +276,7 @@ export class GridTestPage {
   private sheetsData: GridDatabaseType;
   private isStartDragGridCell = false;
   private panelCRUD: CRUDService<GridPanel>;
+  // ccc N
   private mappingByNormalMode: VimCommand[] = [
     {
       command: VIM_COMMAND.cursorRight,
@@ -418,6 +419,7 @@ export class GridTestPage {
         return;
       },
     },
+    // aaa
     {
       key: "<Space>ag",
       desc: "[A]i [G]enerate",
@@ -693,6 +695,7 @@ export class GridTestPage {
       preventUndoRedo: true,
     },
     {
+      // bbb
       key: "b",
       desc: "back",
       context: [VIM_ID_MAP.gridNavigation],
@@ -739,6 +742,7 @@ export class GridTestPage {
       preventUndoRedo: true,
     },
     {
+      // ccc
       key: "cc",
       desc: "Clear cell and go into Insert",
       context: [VIM_ID_MAP.gridNavigation],
@@ -761,6 +765,7 @@ export class GridTestPage {
       },
     },
     {
+      // ddd
       key: "dd",
       desc: "Delete current row",
       context: [VIM_ID_MAP.gridNavigation],
@@ -771,6 +776,7 @@ export class GridTestPage {
       },
     },
     {
+      // eee
       key: "e",
       desc: "Word end",
       context: [VIM_ID_MAP.gridNavigation],
@@ -897,6 +903,7 @@ export class GridTestPage {
       },
     },
     {
+      // jjj
       key: "<Shift>J",
       desc: "Join current cell with cell below",
       context: [VIM_ID_MAP.gridNavigation],
@@ -925,6 +932,7 @@ export class GridTestPage {
       },
     },
     {
+      // ggg
       key: "gg",
       desc: "Go to top",
       context: [VIM_ID_MAP.gridNavigation],
@@ -943,6 +951,14 @@ export class GridTestPage {
         const height = this.rowSize * CELL_HEIGHT;
         this.spreadsheetContainerRef.scrollTop = height;
         this.spreadsheetContainerRef.scrollLeft = 0;
+      },
+    },
+    {
+      key: "<Space>gar",
+      desc: "[G]rid [A]dd] [R]ow",
+      context: [VIM_ID_MAP.gridNavigation],
+      execute: () => {
+        this.addRowAtBottom()
       },
     },
     {
@@ -1196,9 +1212,7 @@ export class GridTestPage {
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         const colData = this.getCurrentColumnData();
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,1163] colData: ", colData);
         const withoutEmpty = colData.filter((a) => a);
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,1165] withoutEmpty: ", withoutEmpty);
         this.clearColumn();
         this.setColumn(withoutEmpty);
 
@@ -2123,6 +2137,13 @@ export class GridTestPage {
 
   private addRowAt(rowIndex: number): void {
     this.contentMap.splice(rowIndex, 0, []);
+  }
+
+  private addRowAtBottom(): void {
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,2144] this.contentMap: ", this.contentMap);
+    const last = this.contentMap.length;
+    /*prettier-ignore*/ console.log("[grid-test-page.ts,2144] last: ", last);
+    this.contentMap.splice(last, 0, []);
   }
 
   private removeRowAt(
@@ -3120,7 +3141,9 @@ export class GridTestPage {
     this.updateContentMapChangedForView();
   }
 
-  private getCurrentColumnData(givenCol: number): string[] {
+  private getCurrentColumnData(
+    givenCol: number = this.dragStartColumnIndex,
+  ): string[] {
     const colData: string[] = [];
     this.iterateOverCol(
       (col, row) => {
