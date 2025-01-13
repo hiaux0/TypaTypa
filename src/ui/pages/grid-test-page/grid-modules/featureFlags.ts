@@ -8,6 +8,7 @@ import { CELL_HEIGHT } from "../../../../common/modules/constants";
  */
 export const featureFlags = {
   autosave: true,
+  autoPlayAudio: false,
   llm: {
     printPrompts: true,
   },

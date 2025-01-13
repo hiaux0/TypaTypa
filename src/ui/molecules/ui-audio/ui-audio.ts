@@ -4,6 +4,7 @@ import { bindable, containerless, resolve } from "aurelia";
 import { CellEventMessagingService } from "../../../common/services/CellEventMessagingService";
 import { DatabaseService } from "../../../common/services/DatabaseService";
 import IndexedDBService from "../../../common/services/IndexdDBService";
+import { featureFlags } from "../../pages/grid-test-page/grid-modules/featureFlags";
 
 // played, seekable
 
@@ -30,13 +31,11 @@ export class UiAudio {
     });
 
     const { file: loadedFile } = (await this.indexedDBService.loadFile()) ?? {};
-    /*prettier-ignore*/ console.log("[ui-audio.ts,33] loadedFile: ", loadedFile);
     if (loadedFile) {
-      const blob = new Blob([loadedFile], { type: "audio/wav" }); // Adjust the MIME type as needed
       const url = URL.createObjectURL(loadedFile);
       this.audioSrc = url;
       this.audioPlayerRef.load();
-      this.audioPlayerRef.play();
+      if (featureFlags.autoPlayAudio) this.audioPlayerRef.play();
     }
 
     // Seek functionality
