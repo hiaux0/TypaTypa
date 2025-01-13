@@ -779,9 +779,9 @@ export class GridTestPage {
         if (!cell) return;
         cell.kind = CellKind.HTML;
         cell.kindConfig = {
-          elementType: CellKindConfigElementType.BUTTON,
+          // elementType: CellKindConfigElementType.BUTTON,
+          elementType: CellKindConfigElementType.AUDIO,
         };
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,776] cell.kind: ", cell.kind);
       },
     },
     {

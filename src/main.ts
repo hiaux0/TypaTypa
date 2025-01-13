@@ -31,13 +31,14 @@ import { NoteLine } from "./ui/organisms/vim-editor/note-line/note-line";
 import { VimEditorVtwo } from "./ui/organisms/vim-editor-vtwo/vim-editor-vtwo";
 import { debugFlags } from "./common/modules/debug/debugFlags";
 import { UiButton } from "./ui/atoms/ui-button/ui-button";
+import { UiAudio } from "./ui/molecules/ui-audio/ui-audio";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 //
 
-const all = [UiButton];
+const all = [UiAudio, UiButton];
 
 const attributes = [
   AutosizeCustomAttribute,

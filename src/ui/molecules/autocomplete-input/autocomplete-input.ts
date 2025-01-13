@@ -100,6 +100,7 @@ export class AutocompleteInput {
   }
 
   private convertSourceToSuggestions() {
+    if (!this.source) return
     this.suggestions = this.source.map((s) => ({
       ...s,
       highlighted: s.text,
