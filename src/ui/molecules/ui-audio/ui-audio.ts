@@ -1,16 +1,24 @@
 import "./ui-audio.scss";
 import { CELL_WIDTH } from "../../../common/modules/constants";
-import { bindable, containerless } from "aurelia";
+import { bindable, containerless, resolve } from "aurelia";
+import { CellEventMessagingService } from "../../../common/services/CellEventMessagingService";
+
+// played, seekable
+
 
 @containerless()
 export class UiAudio {
-  @bindable
+  @bindable onTimeChange: (time: number, progress: number) => void;
+  @bindable onStateChange: (isPlaying: boolean, event: Event) => void;
+
   public cellWidth = CELL_WIDTH;
   public fileInputRef: HTMLInputElement;
   public itemsRef: HTMLElement;
   public audioPlayerRef: HTMLAudioElement;
   public isRepeating = false;
   public audioSpeed = 1;
+
+  public cellEventMessagingService = resolve(CellEventMessagingService);
 
   attached() {
     this.audioPlayerRef.addEventListener("loadedmetadata", () => {
@@ -25,7 +33,21 @@ export class UiAudio {
     //  this.audioPlayerRef.currentTime = progressPercentage * this.audioPlayerRef.duration;
     //});
 
-    // Playback speed control
+    this.audioPlayerRef.addEventListener("playing", (event) => {
+      this.onStateChange(true, event);
+    });
+
+    this.audioPlayerRef.addEventListener("pause", (event) => {
+      this.onStateChange(false, event);
+    });
+
+    this.audioPlayerRef.addEventListener("timeupdate", () => {
+      const progressPercentage =
+        (this.audioPlayerRef.currentTime / this.audioPlayerRef.duration) * 100;
+      if (typeof this.onTimeChange === "function") {
+        this.onTimeChange(this.audioPlayerRef.currentTime, progressPercentage);
+      }
+    });
 
     this.fileInputRef.addEventListener("change", (event) => {
       const target = event.target as HTMLInputElement;

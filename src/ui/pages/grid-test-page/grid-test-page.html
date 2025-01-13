@@ -104,6 +104,7 @@
               if.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]?.kind === 'HTML'"
               cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
               selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+              on-change.bind="onHtmlCellChange"
             ></grid-cell-html>
 
             <!-- Text Cell -->

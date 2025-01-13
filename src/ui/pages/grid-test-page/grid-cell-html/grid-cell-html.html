@@ -7,6 +7,8 @@
     >
     <ui-audio
       if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.AUDIO"
+      on-time-change.bind="onTimeChange"
+      on-state-change.bind="onStateChange"
     ></ui-audio>
   </div>
 
