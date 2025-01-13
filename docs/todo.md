@@ -148,6 +148,58 @@ I want to have live-editor
 - [ ] feat:
 - [ ] refac:
 
+- [ ] todo shadcn componetns
+  - [ ] Accordion
+  - [ ] Alert
+  - [ ] Alert Dialog
+  - [ ] Aspect Ratio
+  - [ ] Avatar
+  - [ ] Badge
+  - [ ] Breadcrumb
+  - [x] Button
+  - [ ] Calendar
+  - [ ] Card
+  - [ ] Carousel
+  - [ ] Chart
+  - [ ] Checkbox
+  - [ ] Collapsible
+  - [ ] Combobox
+  - [ ] Command
+  - [ ] Context Menu
+  - [ ] Data Table
+  - [ ] Date Picker
+  - [ ] Dialog
+  - [ ] Drawer
+  - [ ] Dropdown Menu
+  - [ ] Form
+  - [ ] Hover Card
+  - [ ] Input
+  - [ ] Input OTP
+  - [ ] Label
+  - [ ] Menubar
+  - [ ] Navigation Menu
+  - [ ] Pagination
+  - [ ] Popover
+  - [ ] Progress
+  - [ ] Radio Group
+  - [ ] Resizable
+  - [ ] Scroll Area
+  - [ ] Select
+  - [ ] Separator
+  - [ ] Sheet
+  - [ ] Sidebar
+  - [ ] Skeleton
+  - [ ] Slider
+  - [ ] Sonner
+  - [ ] Switch
+  - [ ] Table
+  - [ ] Tabs
+  - [ ] Textarea
+  - [ ] Toast
+  - [ ] Toggle
+  - [ ] Toggle Group
+  - [ ] Tooltip
+
 - [ ] feat: quick way to add unknown words hedonic
 - [ ] feat: reader mode, bottom to top
   - bg: jump to the bottom to get summary and gist

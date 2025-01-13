@@ -30,10 +30,14 @@ import { CommandPalette } from "./ui/organisms/command-palette/command-palette";
 import { NoteLine } from "./ui/organisms/vim-editor/note-line/note-line";
 import { VimEditorVtwo } from "./ui/organisms/vim-editor-vtwo/vim-editor-vtwo";
 import { debugFlags } from "./common/modules/debug/debugFlags";
+import { UiButton } from "./ui/atoms/ui-button/ui-button";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
+//
+
+const all = [UiButton];
 
 const attributes = [
   AutosizeCustomAttribute,
@@ -85,6 +89,7 @@ const appContainer = Aurelia.register(
   }),
 )
   .register([
+    ...all,
     ...atoms,
     ...attributes,
     ...molecules,
