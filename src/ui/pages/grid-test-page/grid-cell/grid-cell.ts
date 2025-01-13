@@ -2,6 +2,7 @@ import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
 import {
   Cell,
+  CellKind,
   ColHeaderMap,
   RowHeaderMap,
   Sheet,
@@ -404,6 +405,7 @@ export class GridCell {
     this.setWidthPx({
       text: suggestion,
       colsToNextText: this.cell.colsToNextText,
+      kind: CellKind.TEXT
     });
   };
 

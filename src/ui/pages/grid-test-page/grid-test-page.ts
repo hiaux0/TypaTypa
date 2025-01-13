@@ -14,6 +14,8 @@ import {
   ColHeaderMap,
   ColHeaderMapData,
   RowHeaderMapData,
+  CellKind,
+  CellKindConfigElementType,
 } from "../../../types";
 import { generateId } from "../../../common/modules/random";
 import { VimInit } from "../../../features/vim/VimInit";
@@ -765,6 +767,20 @@ export class GridTestPage {
       },
     },
     {
+      key: "<Space>cah",
+      desc: "[C]ell [A]dd [H]TML",
+      context: [VIM_ID_MAP.gridNavigation],
+      execute: () => {
+        const cell = this.getOrCreateCell();
+        if (!cell) return;
+        cell.kind = CellKind.HTML;
+        cell.kindConfig = {
+          elementType: CellKindConfigElementType.BUTTON,
+        };
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,776] cell.kind: ", cell.kind);
+      },
+    },
+    {
       // ddd
       key: "dd",
       desc: "Delete current row",
@@ -958,7 +974,7 @@ export class GridTestPage {
       desc: "[G]rid [A]dd] [R]ow",
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
-        this.addRowAtBottom()
+        this.addRowAtBottom();
       },
     },
     {
@@ -2072,6 +2088,36 @@ export class GridTestPage {
     return cell;
   }
 
+  private getOrCreateCell(
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+  ): Cell | undefined {
+    const cell = this.contentMap[row]?.[col];
+    if (!cell) {
+      const created = this.createCell();
+      return created;
+    }
+    return cell;
+  }
+
+  private createCell(
+    col = this.dragStartColumnIndex,
+    row = this.dragStartRowIndex,
+  ): Cell {
+    if (this.contentMap[row] == null) {
+      this.contentMap[row] = [];
+    }
+    const cell: Cell = {
+      text: "hi",
+      kind: CellKind.HTML,
+    };
+    this.contentMap[row][col] = cell;
+    this.onCellContentChangedInternal(col, row);
+
+    this.updateContentMapChangedForView();
+    return cell;
+  }
+
   private setCurrentCell(
     cell: Cell,
     col = this.dragStartColumnIndex,
@@ -2711,6 +2757,7 @@ export class GridTestPage {
   private putCellIntoEdit(): void {
     // /*prettier-ignore*/ console.log("1. [grid-test-page.ts,2618] putCellIntoEdit: ");
     const cell = this.getCurrentCell();
+    if (cell?.kind === CellKind.HTML) return;
     if (!cell) {
       this.setCurrentCellContent("");
     }

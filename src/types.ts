@@ -95,8 +95,24 @@ export interface IKeyData {
 }
 
 // export type ContentMap = Record<string, string>;
+export enum CellKind {
+  "TEXT" = "TEXT",
+  "HTML" = "HTML",
+}
+
+export enum CellKindConfigElementType {
+  "BUTTON" = "BUTTON",
+  "AUDIO" = "AUDIO",
+}
+
+export interface CellKindConfig {
+  elementType?: CellKindConfigElementType;
+}
+
 export interface Cell {
   text: string;
+  kind: CellKind;
+  kindConfig?: CellKindConfig;
   col?: number;
   row?: number;
   colsToNextText?: number;

@@ -204,6 +204,7 @@ I want to have live-editor
 - [ ] fix: cannot escape from visual mode
 - [ ] fix undo redo (again)
 - [ ] add rows button
+- [ ] html cell button
 # Done
 ## Grid
 

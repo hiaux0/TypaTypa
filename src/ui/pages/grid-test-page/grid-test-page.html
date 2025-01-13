@@ -1,6 +1,7 @@
 <!-- A B C D 1 2 3 4 -->
 
 <import from="./grid-cell/grid-cell"></import>
+<import from="./grid-cell-html/grid-cell-html"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
   <section
@@ -98,8 +99,16 @@
             repeat.for="rowIndex of rowSize"
             css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}"
           >
-            <!-- Cell -->
+            <!-- HTML Cell -->
+            <grid-cell-html
+              if.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]?.kind === 'HTML'"
+              cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
+              selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
+            ></grid-cell-html>
+
+            <!-- Text Cell -->
             <grid-cell
+              else
               cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
               row.bind="rowIndex"
               whole-row.bind="this.contentMap[rowIndex]"

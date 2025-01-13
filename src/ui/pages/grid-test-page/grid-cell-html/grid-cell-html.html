@@ -1,0 +1,15 @@
+<div class="cell ${selected ? 'selected-cell' : ''}">
+  <!-- Content -->
+  <div
+    if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.BUTTON"
+  >
+    <div>${cell.text}</div>
+  </div>
+
+  <!-- Selection -->
+  <div
+    if.bind="selected"
+    class="selection"
+    css="width: ${isOverflown ? overflownWidthWhenSelected + 2 : widthPxNew}px; height: ${getOverflownHeight};"
+  ></div>
+</div>
