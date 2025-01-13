@@ -1,85 +1,61 @@
-import Aurelia, { IAurelia, resolve } from "aurelia";
 import "./ui-audio.scss";
+import { CELL_WIDTH } from "../../../common/modules/constants";
+import { bindable, containerless } from "aurelia";
 
+@containerless()
 export class UiAudio {
-  public message = "ui-audio.html";
-  public inputRef: HTMLElement;
+  @bindable
+  public cellWidth = CELL_WIDTH;
+  public fileInputRef: HTMLInputElement;
   public itemsRef: HTMLElement;
-  public items: string[] = ["hi"];
-
-  constructor(private au = resolve(IAurelia)) {}
+  public audioPlayerRef: HTMLAudioElement;
+  public isRepeating = false;
+  public audioSpeed = 1;
 
   attached() {
-    const audioPlayer = document.getElementById("audioPlayer");
-    const progressBar = document.getElementById("progressBar");
-    const progress = document.querySelector(".progress");
-    const currentTimeDisplay = document.getElementById("currentTime");
-    const durationDisplay = document.getElementById("duration");
-    const playbackSpeedSlider = document.getElementById("playbackSpeed");
-    const speedDisplay = document.getElementById("speedDisplay");
-    const repeatToggle = document.getElementById("repeatToggle");
-
-    // Format time in mm:ss
-    function formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = Math.floor(seconds % 60);
-      return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-    }
-
-    // Update progress bar
-    audioPlayer.addEventListener("timeupdate", () => {
-      const progressPercentage =
-        (audioPlayer.currentTime / audioPlayer.duration) * 100;
-      progress.style.width = `${progressPercentage}%`;
-      currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
-    });
-
-    // Update duration when metadata is loaded
-    audioPlayer.addEventListener("loadedmetadata", () => {
-      durationDisplay.textContent = formatTime(audioPlayer.duration);
+    this.audioPlayerRef.addEventListener("loadedmetadata", () => {
+      // durationDisplay.textContent = formatTime(this.audioPlayerRef.duration);
     });
 
     // Seek functionality
-    progressBar.addEventListener("click", (e) => {
-      const rect = progressBar.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const progressPercentage = clickX / rect.width;
-      audioPlayer.currentTime = progressPercentage * audioPlayer.duration;
-    });
+    //progressBar.addEventListener("click", (e) => {
+    //  const rect = progressBar.getBoundingClientRect();
+    //  const clickX = e.clientX - rect.left;
+    //  const progressPercentage = clickX / rect.width;
+    //  this.audioPlayerRef.currentTime = progressPercentage * this.audioPlayerRef.duration;
+    //});
 
     // Playback speed control
-    playbackSpeedSlider.addEventListener("input", () => {
-      const speed = playbackSpeedSlider.value;
-      audioPlayer.playbackRate = speed;
-      speedDisplay.textContent = `${speed}x`;
+
+    this.fileInputRef.addEventListener("change", (event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target) return;
+      const file = target.files?.[0];
+      if (file && file.type === "audio/mpeg") {
+        const objectURL = URL.createObjectURL(file);
+        this.audioPlayerRef.src = objectURL;
+        this.audioPlayerRef.addEventListener("loadedmetadata", () => {
+          const duration = this.audioPlayerRef.duration;
+        });
+
+        this.audioPlayerRef.play();
+      }
     });
-
-    // Repeat toggle
-    let isRepeating = false;
-    repeatToggle.addEventListener("click", () => {
-      isRepeating = !isRepeating;
-      audioPlayer.loop = isRepeating;
-      repeatToggle.textContent = isRepeating ? "Repeat On" : "Repeat Off";
-    });
-
-    document
-      .getElementById("fileInput")
-      .addEventListener("change", function (event) {
-        const file = event.target.files[0];
-        if (file && file.type === "audio/mpeg") {
-          const audioPlayer = document.getElementById("audioPlayer");
-          const objectURL = URL.createObjectURL(file);
-
-          audioPlayer.src = objectURL;
-          audioPlayer.addEventListener("loadedmetadata", () => {
-            const duration = audioPlayer.duration;
-            alert(`Audio length: ${formatTime(duration)}`);
-          });
-
-          audioPlayer.play();
-        } else {
-          alert("Please upload a valid MP3 file.");
-        }
-      });
   }
+
+  public changeSpeed() {
+    this.audioPlayerRef.playbackRate = this.audioSpeed;
+  }
+
+  public toggleRepeat() {
+    this.isRepeating = !this.isRepeating;
+    this.audioPlayerRef.loop = this.isRepeating;
+  }
+}
+
+// Format time in mm:ss
+function formatTime(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }

@@ -1,31 +1,53 @@
-<main class="ui-audio">
-  <input type="file" id="fileInput" accept="audio/mp3" />
-  <button id="getTimestampButton">Get Current Timestamp</button>
-  <p id="timestampDisplay"></p>
-
-  <h1>Audio Player</h1>
-  <audio id="audioPlayer" controls>
+<main class="ui-audio w-[192px] h-full">
+  <audio
+    id="audioPlayer"
+    ref="audioPlayerRef"
+    controls
+    class="w-full"
+  >
     <source src="your-audio-file.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
-  <div class="progress-container">
-    <span id="currentTime">00:00</span>
-    <div class="progress-bar" id="progressBar">
-      <div class="progress"></div>
+
+  <div class="controls flex justify-center items-center h-6 mt-1">
+    <button class="h-6" click.trigger="toggleRepeat()">
+      <template if.bind="isRepeating">
+        <ui-icon icon="repeat" color="secondary"></ui-icon>
+      </template>
+      <template else>
+        <ui-icon icon="repeat" color="default"></ui-icon>
+      </template>
+    </button>
+
+    <div class="w-4/6">
+      <label for="playbackSpeed" class="text-xs">Speed:</label>
+      <input
+        class="w-full"
+        type="range"
+        min="0.5"
+        max="2"
+        step="0.1"
+        value.bind="audioSpeed"
+        change.trigger="changeSpeed($event)"
+      />
+      <span id="speedDisplay">${audioSpeed}</span>
     </div>
-    <span id="duration">00:00</span>
-  </div>
-  <div class="controls">
-    <button id="repeatToggle">Repeat Off</button>
-    <label for="playbackSpeed">Speed:</label>
+
+    <!-- Upload -->
     <input
-      id="playbackSpeed"
-      type="range"
-      min="0.5"
-      max="2"
-      step="0.1"
-      value="1"
+      ref="fileInputRef"
+      type="file"
+      id="fileInput"
+      accept="audio/mp3"
+      class="hidden"
     />
-    <span id="speedDisplay">1x</span>
+    <button id="fileInputButton" click.trigger="fileInputRef.click()">
+      <ui-icon icon="upload"></ui-icon>
+    </button>
   </div>
 </main>
+
+<!-- <button id="getTimestampButton">Get Current Timestamp</button> -->
+<!-- <p id="timestampDisplay"></p> -->
+
+<!-- <h1>Audio Player</h1> -->

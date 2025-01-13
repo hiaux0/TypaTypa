@@ -1,10 +1,13 @@
 <div class="cell ${selected ? 'selected-cell' : ''}">
   <!-- Content -->
-  <div
-    if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.BUTTON"
-    class="w-full h-full"
-  >
-    <ui-button>${cell.text}</ui-button>
+  <div class="w-full h-full">
+    <ui-button
+      if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.BUTTON"
+      >${cell.text}</ui-button
+    >
+    <ui-audio
+      if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.AUDIO"
+    ></ui-audio>
   </div>
 
   <!-- Selection -->

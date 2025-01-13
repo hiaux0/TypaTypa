@@ -32,13 +32,14 @@ import { VimEditorVtwo } from "./ui/organisms/vim-editor-vtwo/vim-editor-vtwo";
 import { debugFlags } from "./common/modules/debug/debugFlags";
 import { UiButton } from "./ui/atoms/ui-button/ui-button";
 import { UiAudio } from "./ui/molecules/ui-audio/ui-audio";
+import { UiIcon } from "./ui/atoms/ui-icon/ui-icon";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 //
 
-const all = [UiAudio, UiButton];
+const all = [UiAudio, UiButton, UiIcon];
 
 const attributes = [
   AutosizeCustomAttribute,

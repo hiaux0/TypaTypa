@@ -107,6 +107,8 @@ src/ui/mixins.scss
 src/ui/pages/grid-test-page/grid-cell-html/grid-cell-html.ts
 src/ui/pages/grid-test-page/grid-cell-html/grid-cell-html.html
 src/ui/pages/grid-test-page/grid-cell-html/grid-cell-html.scss
+src/ui/molecules/ui-audio/ui-audio.ts
+src/ui/molecules/ui-audio/ui-audio.html
 
 
 
