@@ -107,6 +107,7 @@ export enum CellKindConfigElementType {
 
 export interface CellKindConfig {
   elementType?: CellKindConfigElementType;
+  action?: () => void;
 }
 
 export interface Cell {

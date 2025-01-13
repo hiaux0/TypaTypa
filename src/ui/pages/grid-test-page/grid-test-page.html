@@ -121,7 +121,7 @@
               is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
               on-cell-update.bind="onCellUpdate"
               on-escape.bind="onEscape"
-              on-enter.bind="onEnter"
+              on-enter.bind="onEnterPressedInCell"
               mapping-by-mode.bind="mappingByModeForCell"
               pointerdown.trigger="startMouseDragGridCell(columnIndex,rowIndex)"
               pointerover.trigger="onMouseOverGridCell(columnIndex, rowIndex)"

@@ -93,6 +93,10 @@ import {
   AI_PROMPTS,
   AI_SYSTEM,
 } from "../../../common/modules/constants/aiConstants";
+import {
+  CellKindConfigService,
+  cellKindConfigButton,
+} from "./grid-modules/cellElementTypes";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -971,7 +975,7 @@ export class GridTestPage {
     },
     {
       key: "<Space>gar",
-      desc: "[G]rid [A]dd] [R]ow",
+      desc: "[G]rid [A]dd [R]ow",
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         this.addRowAtBottom();
@@ -1198,8 +1202,15 @@ export class GridTestPage {
       desc: "Enter Normal mode",
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
+        const cell = this.getCurrentCell();
+        if (!cell) return;
+
+        if (CellKindConfigService.isHTML(cell)) {
+          CellKindConfigService.action(cell);
+          return;
+        }
+
         this.putCellIntoEdit();
-        // this.vimInit.executeCommand(VIM_COMMAND.enterInsertMode, "");
         return true;
       },
       preventUndoRedo: true,
@@ -1756,7 +1767,7 @@ export class GridTestPage {
     popVimInstanceId();
   };
 
-  public onEnter = (): void => {
+  public onEnterPressedInCell = (): void => {
     // console.log("6");
     const active = getIsInputActive();
     // /*prettier-ignore*/ console.log("[grid-test-page.ts,1338] active: ", active);

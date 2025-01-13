@@ -2,8 +2,9 @@
   <!-- Content -->
   <div
     if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.BUTTON"
+    class="w-full h-full"
   >
-    <div>${cell.text}</div>
+    <ui-button>${cell.text}</ui-button>
   </div>
 
   <!-- Selection -->
