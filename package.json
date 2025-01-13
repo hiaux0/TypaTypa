@@ -14,7 +14,8 @@
     "aurelia": "^2.0.0-beta.22",
     "aurelia-slickgrid": "^8.10.0",
     "class-variance-authority": "^0.7.1",
-    "rangy": "^1.3.1"
+    "rangy": "^1.3.1",
+    "rxdb": "^16.1.0"
   },
   "devDependencies": {
     "@aurelia/testing": "^2.0.0-beta.22",
