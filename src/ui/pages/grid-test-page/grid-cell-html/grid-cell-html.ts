@@ -11,6 +11,7 @@ export class GridCellHtml {
   public CellKindConfigElementType = CellKindConfigElementType;
 
   public onStateChange(isPlaying: boolean, event: Event) {
+    /*prettier-ignore*/ console.log("[grid-cell-html.ts,14] event: ", event);
     console.log("isPlaying", isPlaying);
   }
 }
