@@ -42,16 +42,10 @@ export class IndexedDBService {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(this.storeName, "readwrite");
       const store = transaction.objectStore(this.storeName);
-      /*prettier-ignore*/ console.log("[IndexdDBService.ts,46] file: ", file);
       const request = store.add({ file });
-      /*prettier-ignore*/ console.log("[IndexdDBService.ts,46] request: ", request);
 
       request.onsuccess = () => {
-        /*prettier-ignore*/ console.log("[IndexdDBService.ts,51] request: ", request);
         const fileId = request.result as number;
-        // await this.databaseService.save(file);
-        console.log(`File saved with ID: ${fileId}`);
-        // Store the fileId for later use
         localStorage.setItem("audioFileId", fileId.toString());
         resolve(request.result as number);
       };
@@ -68,7 +62,6 @@ export class IndexedDBService {
       const file = await this.getFile(Number(fileId));
       if (file) {
         const objectURL = window.URL.createObjectURL(file);
-        /*prettier-ignore*/ console.log("[IndexdDBService.ts,65] objectURL: ", objectURL);
         return {objectURL, file};
       }
     }
@@ -83,7 +76,6 @@ export class IndexedDBService {
 
       request.onsuccess = () => {
         const file = request.result?.file
-        /*prettier-ignore*/ console.log("[IndexdDBService.ts,86] file: ", file);
         resolve(file);
       };
 

@@ -138,7 +138,7 @@ export class GridCell {
   }
 
   public get getOverflownHeight(): number {
-    if (!this.cell) return CELL_HEIGHT;
+    if (!this.cell?.text) return CELL_HEIGHT;
     const numNewLines = this.cell.text.split("\n").length;
     const value =
       numNewLines === 1 ? CELL_HEIGHT : CELL_HEIGHT * numNewLines - PADDING;
@@ -162,7 +162,7 @@ export class GridCell {
   }
 
   public get isOverflown(): boolean {
-    if (!this.cell) return false;
+    if (!this.cell?.text) return false;
     const width = measureTextWidth(this.cell.text);
     const isMultiRow = this.cell.text.split("\n").length > 1;
     const otherWidth = this.columnSettings?.colWidth ?? this.CELL_WIDTH;
@@ -184,8 +184,10 @@ export class GridCell {
     const id = this.getVimId();
     const text = this.cell.text;
     const lines = text.split("\n").map((text) => ({ text }));
+    // const startingMode = text ? VimMode.NORMAL : VimMode.INSERT; // TODO, properly init cursor
+    const startingMode = text ? VimMode.NORMAL : VimMode.NORMAL;
     const vimState: IVimState = {
-      mode: VimMode.NORMAL,
+      mode: startingMode,
       cursor: {
         col: debugFlags.grid.startCellAtCol0WhenEnterNormalMode
           ? 0
@@ -267,6 +269,7 @@ export class GridCell {
     // logger.culogger.debug(["hi"], { log: true }, (...r) => console.log(...r));
     const getWidth = (): string => {
       if (!cell) return "";
+      if (!cell?.text) return "";
       if (this.clipText) {
         // return columnWidth - PADDING_LEFT + "px";
         return columnWidth - BORDER_WIDTH + "px";

@@ -1,5 +1,5 @@
 import "./ui-audio.scss";
-import { CELL_WIDTH } from "../../../common/modules/constants";
+import { CELL_HEIGHT, CELL_WIDTH } from "../../../common/modules/constants";
 import { bindable, containerless, resolve } from "aurelia";
 import { CellEventMessagingService } from "../../../common/services/CellEventMessagingService";
 import { DatabaseService } from "../../../common/services/DatabaseService";
@@ -14,6 +14,7 @@ export class UiAudio {
   @bindable onStateChange: (isPlaying: boolean, event: Event) => void;
 
   public cellWidth = CELL_WIDTH;
+  public cellHeight = CELL_HEIGHT;
   public fileInputRef: HTMLInputElement;
   public itemsRef: HTMLElement;
   public audioPlayerRef: HTMLAudioElement;
@@ -35,6 +36,7 @@ export class UiAudio {
       const url = URL.createObjectURL(loadedFile);
       this.audioSrc = url;
       this.audioPlayerRef.load();
+      this.audioPlayerRef.muted = true;
       if (featureFlags.autoPlayAudio) this.audioPlayerRef.play();
     }
 

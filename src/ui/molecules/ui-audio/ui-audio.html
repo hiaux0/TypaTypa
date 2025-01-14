@@ -1,9 +1,9 @@
-<main class="ui-audio w-[192px] h-full">
+<main class="ui-audio w-[${cellWidth+cellWidth+cellWidth}px] h-[${cellHeight+2}px]">
   <audio
     id="audioPlayer"
     ref="audioPlayerRef"
     controls
-    class="w-full"
+    class="w-full h-full"
   >
     <source src.bind="audioSrc" type="audio/mpeg" />
     Your browser does not support the audio element.

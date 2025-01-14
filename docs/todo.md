@@ -257,6 +257,8 @@ I want to have live-editor
 - [ ] fix undo redo (again)
 - [ ] add rows button
 - [ ] html cell button
+- [ ] // const startingMode = text ? VimMode.NORMAL : VimMode.INSERT; // TODO, properly init cursor
+
 # Done
 ## Grid
 

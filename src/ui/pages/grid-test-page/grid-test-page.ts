@@ -181,7 +181,8 @@ export class GridTestPage {
           const beforeText = cellText.slice(0, col).trim();
           const afterText = cellText.slice(col).trim();
           // set current cell
-          this.setCurrentCellContent(beforeText);
+          const update = this.setCurrentCellContent(beforeText);
+          update?.();
           vimState.lines[vimState.cursor.line].text = beforeText;
           vimCore?.setVimState(vimState);
           // add new cell, and set
@@ -237,7 +238,8 @@ export class GridTestPage {
             const col = featureFlags.copy.autopasteIntoRow.col;
             const isCellEmpty = this.isCellEmpty(col);
             if (isCellEmpty) {
-              this.setCurrentCellContent(text, col);
+              const update = this.setCurrentCellContent(text, col);
+              update?.();
               return false;
             }
             if (text) this.addCellBelowAndMaybeNewRow(text, col);
@@ -260,11 +262,13 @@ export class GridTestPage {
     const nextRow = this.dragStartRowIndex + 1;
     const rowEmpty = this.isRowEmpty(this.dragStartRowIndex);
     if (rowEmpty) {
-      this.setCurrentCellContent(content, col, nextRow);
+      const update = this.setCurrentCellContent(content, col, nextRow);
+      update?.();
       return;
     }
     this.addRowBelow();
-    this.setCurrentCellContent(content, col, nextRow);
+    const update = this.setCurrentCellContent(content, col, nextRow);
+    update?.();
   }
   private isCellEmpty(
     col: number = this.dragStartColumnIndex,
@@ -441,7 +445,8 @@ export class GridTestPage {
           },
         );
         const translation = response.response;
-        this.setCurrentCellContent(translation, this.nextCol);
+        const update = this.setCurrentCellContent(translation, this.nextCol);
+        update?.();
         return true;
       },
     },
@@ -939,7 +944,8 @@ export class GridTestPage {
         if (!thisText) {
           concat = belowText;
         }
-        this.setCurrentCellContent(concat);
+        const update = this.setCurrentCellContent(concat);
+        update?.();
         this.removeCellAt(
           this.dragStartColumnIndex,
           this.dragStartRowIndex + 1,
@@ -1052,7 +1058,8 @@ export class GridTestPage {
           const col = featureFlags.copy.autopasteIntoRow.col;
           const isCellEmpty = this.isCellEmpty(col);
           if (isCellEmpty) {
-            this.setCurrentCellContent(text, col);
+            const update = this.setCurrentCellContent(text, col);
+            update?.();
             return;
           }
           this.addCellBelowAndMaybeNewRow(text, col);
@@ -1882,6 +1889,24 @@ export class GridTestPage {
     this.initSheets(asObj);
   };
 
+  public onHtmlCellChange = (
+    cell: Cell,
+    kind: CellKindConfigElementType,
+    payload: any,
+  ): void => {
+    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 1, { skipUpdate: true },);
+    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 1, { skipUpdate: true },);
+    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 2, { skipUpdate: true },);
+    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 2, { skipUpdate: true },);
+    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 3, { skipUpdate: true },);
+    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 3, cell.row + 3, { skipUpdate: true },);
+    /*prettier-ignore*/const update = this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 2,);
+    update?.();
+    //this.updateContentMapChangedForView();
+  };
+
+  // pri. private.
+
   private initSheets(sheetsData: GridDatabaseType): void {
     let updatedSheetData = runGridMigrations(sheetsData);
     updatedSheetData = checkCellOverflow(updatedSheetData);
@@ -1971,7 +1996,8 @@ export class GridTestPage {
         const isCellEmpty = this.isCellEmpty(col);
         /*prettier-ignore*/ console.log("[grid-test-page.ts,1554] isCellEmpty: ", isCellEmpty);
         if (isCellEmpty) {
-          this.setCurrentCellContent(text, col);
+          const update = this.setCurrentCellContent(text, col);
+          update?.();
           return;
         }
         this.addCellBelowAndMaybeNewRow(text, col);
@@ -2151,6 +2177,7 @@ export class GridTestPage {
     row = this.dragStartRowIndex,
     option?: { skipUpdate: boolean },
   ) {
+    let updateCalled = false;
     if (this.contentMap[row] == null) {
       this.contentMap[row] = [];
     }
@@ -2158,7 +2185,17 @@ export class GridTestPage {
     this.onCellContentChangedInternal(col, row);
 
     if (option?.skipUpdate) return;
-    this.updateContentMapChangedForView();
+    //this.updateContentMapChangedForView();
+
+    window.setTimeout(() => {
+      if (updateCalled) return;
+      console.error(`Need to call update when setting: ${content} at [${col}, ${row}].\n "setCurrentCellContent" is returning an update function, that should be called `, updateCalled);
+    })
+
+    return () => {
+      updateCalled = true;
+      this.updateContentMapChangedForView();
+    };
   }
 
   private addColAt(colIndex: number): void {
@@ -2241,7 +2278,8 @@ export class GridTestPage {
       this.contentMap[row] = [];
     }
     this.contentMap[row].splice(col, 0, undefined as unknown as Cell);
-    this.setCurrentCellContent(content, col, row, option);
+    const update = this.setCurrentCellContent(content, col, row, option);
+    update?.();
   }
 
   private addCellInColAndShiftDown(): void {
@@ -2288,7 +2326,8 @@ export class GridTestPage {
     row?: number,
     option?: { skipUpdate: boolean },
   ): void {
-    this.setCurrentCellContent(undefined, col, row, option);
+    const update = this.setCurrentCellContent(undefined, col, row, option);
+    update?.();
   }
 
   /**
@@ -2770,7 +2809,8 @@ export class GridTestPage {
     const cell = this.getCurrentCell();
     if (cell?.kind === CellKind.HTML) return;
     if (!cell) {
-      this.setCurrentCellContent("");
+      const update = this.setCurrentCellContent("");
+      update?.();
     }
 
     this.editedCellCoords = this.CELL_COORDS(

@@ -20,7 +20,7 @@ export const COLORS = {
 
 export const LANGUAGES = {
   vi: "vietnamese",
-}
+};
 
 /**
  * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
@@ -248,8 +248,8 @@ export const INITIAL_COLUMN_COUNT = 10;
 export const INITIAL_ROW_COUNT = 5;
 export const PADDING = 8;
 setCssVariable("--padding", `${PADDING}px`);
-setCssVariable("--textarea-top", `${PADDING/2 - 1}px`);
-setCssVariable("--textarea-padding-top", `${PADDING/2 + 1.4}px`);
+setCssVariable("--textarea-top", `${PADDING / 2 - 1}px`);
+setCssVariable("--textarea-padding-top", `${PADDING / 2 + 1.4}px`);
 export const PADDING_LEFT = 8;
 export const BORDER_WIDTH = 1;
 setCssVariable("--border-width", `${BORDER_WIDTH}px`);
@@ -257,3 +257,19 @@ export const HEIGHT_OF_LINE = 1.5 * FONT_SIZE;
 setCssVariable("--height-of-line", `${HEIGHT_OF_LINE}px`);
 export const LINE_HEIGHT = 1.5;
 setCssVariable("--line-height", `${LINE_HEIGHT}`);
+
+export const UI_CONSTANTS = {
+  zIndex: {
+    baseBelow: -10,
+    base: 10,
+    hover: 100,
+    hover2: 200,
+    editing: 1000,
+    editing2: 2000,
+    editing21: 2100,
+    editing3: 3000,
+    sticky: 10000,
+    aboveEditor: 10000,
+    aboveAll: 100000,
+  },
+};

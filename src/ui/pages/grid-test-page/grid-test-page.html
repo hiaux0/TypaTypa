@@ -102,6 +102,8 @@
             <!-- HTML Cell -->
             <grid-cell-html
               if.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]?.kind === 'HTML'"
+              row.bind="rowIndex"
+              column.bind="columnIndex"
               cell.bind="contentMapForView[CELL_COORDS(rowIndex, columnIndex)]"
               selected.bind="selectedMap[EV_CELL_SELECTED(columnIndex, rowIndex)]"
               on-change.bind="onHtmlCellChange"
