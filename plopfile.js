@@ -1,6 +1,6 @@
 export default function (
   /** @type {import('plop').NodePlopAPI} */
-  plop
+  plop,
 ) {
   // controller generator
   plop.setGenerator("Ui Component", {
@@ -9,37 +9,38 @@ export default function (
       {
         type: "input",
         name: "name",
-        message: "Ui Component name"
+        message: "Ui Component name",
       },
       {
         type: "list",
         name: "type",
         message: "Ui Component type",
-        choices: ["atoms", "molecules", "organisms", "pages"]
-      }
+        choices: ["atoms", "molecules", "organisms", "pages"],
+      },
     ],
     actions: [
       {
         type: "add",
         path: "src/ui/{{type}}/ui-{{name}}/ui-{{name}}.ts",
-        templateFile: "src/ui/templates/ui-template-hbs/ui-template.ts.hbs"
+        templateFile: "src/ui/templates/ui-template-hbs/ui-template.ts.hbs",
       },
       {
         type: "add",
         path: "src/ui/{{type}}/ui-{{name}}/ui-{{name}}.html",
-        templateFile: "src/ui/templates/ui-template-hbs/ui-template.html.hbs"
+        templateFile: "src/ui/templates/ui-template-hbs/ui-template.html.hbs",
       },
+      // demo
       {
         type: "add",
         path: "src/ui/{{type}}/ui-{{name}}/ui-{{name}}-demo/ui-{{name}}-demo.ts",
-        templateFile: "src/ui/templates/ui-template-hbs/ui-template.ts.hbs"
+        templateFile:
+          "src/ui/templates/ui-template-hbs/ui-template-demo/ui-template-demo.ts.hbs",
       },
-      {
-        type: "add",
-        path: "src/ui/{{type}}/ui-{{name}}/ui-{{name}}-demo/ui-{{name}}-demo.html",
-        templateFile: "src/ui/templates/ui-template-hbs/ui-template.html.hbs"
-      }
-      // demo
-    ]
+      //{
+      //  type: "add",
+      //  path: "src/ui/{{type}}/ui-{{name}}/ui-{{name}}-demo/ui-{{name}}-demo.html",
+      //  templateFile: "src/ui/templates/ui-template-hbs/ui-template-demo/ui-template-demo.html.hbs"
+      //}
+    ],
   });
 }
