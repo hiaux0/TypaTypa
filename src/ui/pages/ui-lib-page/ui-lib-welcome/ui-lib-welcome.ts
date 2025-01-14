@@ -4,7 +4,7 @@ import "./ui-lib-welcome.scss";
 export class UiLibWelcome {
   public viewModelName: string;
   public componentPath: string;
-  templatePath: string;
+  public templatePath: string | undefined;
 
   canLoad(params: Params, next: RouteNode): boolean | NavigationInstruction {
     if (params.viewModelName) {
@@ -12,7 +12,7 @@ export class UiLibWelcome {
       this.viewModelName = viewModelName;
       if (category?.endsWith("-new")) {
         const actualCategory = category.slice(0, -4);
-        this.templatePath = `../${actualCategory}/${viewModelName}/${viewModelName}-demo/${viewModelName}-demo.html`;
+        this.templatePath = undefined;
         this.componentPath = `../${actualCategory}/${viewModelName}/${viewModelName}-demo/${viewModelName}-demo.ts`;
         return true;
       }

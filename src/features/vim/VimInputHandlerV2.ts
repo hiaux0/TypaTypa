@@ -208,6 +208,7 @@ export class VimInputHandlerV2 {
       // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,375] this.idHistory: ", this.idHistory);
       // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,379] this.activeId: ", this.activeId);
       const activeInstance = this.getInstanceMap(this.activeId);
+      if (!activeInstance) return;
 
       // 1. Event -> Keys + Modifiers
       const keyData = this.getKeyData(event);
