@@ -4,19 +4,24 @@
 <import from="./grid-cell-html/grid-cell-html"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <section
-    style="
-      display: flex;
-      margin-bottom: 12px;
-      opacity: 0.2;
-      width: 90vw;
-      justify-content: space-around;
-    "
-  >
-    <div>${vimInputHandlerV2.activeId}</div>
-    <div>${mode}</div>
-    <div click.trigger="openFullscreen">fullscreen</div>
-    <div click.trigger="store.toggleZenMode">zen</div>
+  <section style="margin-bottom: 12px; opacity: 0.2; width: 90vw">
+    <div class="first-row flex">
+      <!-- Id History -->
+      <div
+        repeat.for="idEntry of vimInputHandlerV2.idHistory"
+        class="mr-2 cursor-pointer text-xs"
+        click.trigger="changeActiveId(idEntry)"
+      >
+        ${idEntry}
+      </div>
+    </div>
+
+    <div class="second-row flex justify-around">
+      <div>${vimInputHandlerV2.activeId}</div>
+      <div>${mode}</div>
+      <div click.trigger="openFullscreen">fullscreen</div>
+      <div click.trigger="store.toggleZenMode">zen</div>
+    </div>
   </section>
 
   <!-- Toolbar -->

@@ -1,0 +1,12 @@
+<div class="completions-provider-container">
+  <au-slot></au-slot>
+
+  <!-- <ul if.bind="showCompletionsPopover && completionItems.length > 0" class="p-2 background" css="border: 1px solid hsl(240 5.9% 90%);"> -->
+  <ul
+    ref="listRef"
+    class="p-2 pb-0 background"
+    style="border: 1px solid hsl(240 5.9% 90%); width: ${listWidth}px "
+  >
+    <li repeat.for="item of completionItems" class="mb-2">${item.text}</li>
+  </ul>
+</div>

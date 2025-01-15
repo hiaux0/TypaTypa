@@ -46,6 +46,7 @@ import {
   VIM_ID_MAP,
   COLORS,
   BORDER_WIDTH,
+  COMPLETIONS_MAP,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -99,6 +100,7 @@ import {
   cellKindConfigButton,
 } from "./grid-modules/cellElementTypes";
 import { GRID_FUNCTION_TRIGGER } from "../../../common/modules/keybindings/app-keys";
+import { CompletionsService } from "../../../common/services/CompletionsService";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -1617,10 +1619,12 @@ export class GridTestPage {
     private store: Store = resolve(Store),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
     private commandsService: ICommandsService = resolve(ICommandsService),
+    private completionsService = resolve(CompletionsService),
   ) {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
     this.gridUndoRedo = new UndoRedo<ContentMap>();
+    this.completionsService.register(COMPLETIONS_MAP.gridFunctions, "hi");
   }
 
   attaching() {
@@ -1668,6 +1672,7 @@ export class GridTestPage {
 
     this.gridUndoRedo.init(structuredClone(this.contentMap));
     this.addEventListeners();
+
     if (debugFlags.grid.scroll.scrollIntoView) this.scrollSelectdeIntoView();
     if (debugFlags.grid.scroll.scrollTop)
       this.spreadsheetContainerRef.scrollTop = 0;
@@ -1908,6 +1913,11 @@ export class GridTestPage {
     //this.updateContentMapChangedForView();
   };
 
+  public changeActiveId(id: string) {
+    /*prettier-ignore*/ console.log("[grid-cell.ts,436] id: ", id);
+    this.vimInputHandlerV2.moveIdToLatest(id);
+  }
+
   // pri. private.
 
   private initSheets(sheetsData: GridDatabaseType): void {
@@ -2014,7 +2024,7 @@ export class GridTestPage {
     }
 
     this.spreadsheetContainerRef.addEventListener("click", () => {
-      this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridNavigation);
+      // this.vimInputHandlerV2.setActiveId(VIM_ID_MAP.gridNavigation);
     });
   }
 

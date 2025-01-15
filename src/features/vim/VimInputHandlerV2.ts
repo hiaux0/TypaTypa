@@ -92,6 +92,7 @@ export class VimInputHandlerV2 {
   }
 
   public setActiveId(id: VimIdMapKeys): void {
+    // /*prettier-ignore*/ console.trace("[VimInputHandlerV2.ts,95] setActiveId: ", );
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,52] id: ", id);
     this.pushIdToHistory(id);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,55] this.idHistory: ", this.idHistory);
@@ -114,6 +115,16 @@ export class VimInputHandlerV2 {
     if (reverseIndex != null) return;
     const index = this.idHistory.length - 1 - reverseIndex;
     this.idHistory.slice(index, 0);
+  }
+
+  public moveIdToLatest(id: string): void {
+    const reverseIndex = this.idHistory
+      .reverse()
+      .findIndex((entry) => entry === id);
+    if (reverseIndex == null) return;
+    const index = this.idHistory.length - 1 - reverseIndex;
+    const popped = this.idHistory.splice(index, 1)[0] as VimIdMapKeys;
+    this.idHistory.push(popped);
   }
 
   public executeCommandSequence(sequence: string): void {

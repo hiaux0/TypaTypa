@@ -48,20 +48,6 @@
   ></div>
 
   <!-- Autocomplete -->
-  <ui-popover
-    if.bind="isEdit"
-    is-open.bind="showGridFunctionPopover"
-    host.bind="editingRef"
-  >
-    <template au-slot="content">
-      <autocomplete-input
-        value.two-way="value"
-        source.bind="availableGridFunctions"
-        always-visible="true"
-        autofocus="true"
-      ></autocomplete-input>
-    </template>
-  </ui-popover>
 </div>
 
 <!-- <template if.bind="column === 8 && row === 4"> ${isOverflown} ${selected} </template> -->

@@ -215,6 +215,12 @@ export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
 export const EV_GRID_CELL = (columnIndex: number, rowIndex: number) =>
   `grid-cell-[${columnIndex}:${rowIndex}]`;
 
+export const COMPLETIONS_MAP = {
+  gridFunctions: "gridFunctions",
+  slashCommands: "slashCommands",
+} as const;
+export type CompletionsMapKeys = keyof typeof COMPLETIONS_MAP;
+
 export const VIM_ID_MAP = {
   global: "global",
   gridCell: "gridCell",

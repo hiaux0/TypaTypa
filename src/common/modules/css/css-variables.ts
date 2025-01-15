@@ -24,6 +24,15 @@ export function setCssVariable(varName: string, value: string | number): void {
   document.documentElement.style.setProperty(finalVarName, valueAsString);
 }
 
+export function getValueFromComputed(
+  element: HTMLElement,
+  prop: string,
+): number {
+  const computed = window.getComputedStyle(element)[prop as any];
+  const value = getValueFromPixelString(computed);
+  return value;
+}
+
 /**
  * '480px' --> 480
  */
