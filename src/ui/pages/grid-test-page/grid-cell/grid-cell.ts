@@ -61,6 +61,7 @@ export class GridCell {
   @bindable public onEscape: () => void;
   @bindable public onEnter: () => void;
   @bindable public mappingByMode: KeyBindingModes;
+  @bindable public vimEditorHooks: VimHooks;
 
   @observable() public textareaValue = "";
 
@@ -78,13 +79,7 @@ export class GridCell {
   public measureTextWidth = measureTextWidth;
   public clipText = FF.canClipText();
   public vimState: IVimState;
-  public vimEditorHooks: VimHooks = {
-    afterInit: (vim) => {
-      if (featureFlags.mode.enterCellInInsertMode) {
-        vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
-      }
-    },
-  };
+  public finalVimEditorHooks: VimHooks;
   public mappingByModeCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {
@@ -258,6 +253,18 @@ export class GridCell {
     //  { vimId: VIM_ID_MAP.gridCell },
     //  this.finalMappingByMode,
     //);
+    this.finalVimEditorHooks = {
+      ...this.vimEditorHooks,
+      afterInit: (vim) => {
+        if (featureFlags.mode.enterCellInInsertMode) {
+          vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
+        }
+        this.vimEditorHooks?.afterInit?.(vim);
+      },
+      onInsertInput: (...args) => {
+        this.vimEditorHooks?.onInsertInput?.(...args);
+      },
+    };
   }
 
   public setWidthPx(
@@ -408,7 +415,7 @@ export class GridCell {
     this.setWidthPx({
       text: suggestion,
       colsToNextText: this.cell.colsToNextText,
-      kind: CellKind.TEXT
+      kind: CellKind.TEXT,
     });
   };
 

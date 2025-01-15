@@ -218,7 +218,8 @@ export class VimInputHandlerV2 {
       const { targetCommand: command, potentialCommands } =
         this.getCommand(keyData, options) ?? {};
 
-      const isInsert = activeInstance.vimCore.getVimState().mode === VimMode.INSERT;
+      const isInsert =
+        activeInstance.vimCore.getVimState().mode === VimMode.INSERT;
       let beforePreventDefault = potentialCommands?.length && !isInsert;
       if (beforePreventDefault) {
         event.preventDefault();
@@ -233,8 +234,11 @@ export class VimInputHandlerV2 {
       if (preventDefault) event.preventDefault();
 
       const commandName = VIM_COMMAND[command?.command ?? "nothing"];
-      if (!vimState) return;
-      const mode = vimState.mode;
+      let mode = vimState?.mode;
+      if (!mode) {
+        const currentMode = activeInstance.vimCore.getVimState().mode;
+        mode = currentMode;
+      }
       VimHelper.switchModes(mode, {
         insert: () => {
           if (commandName) {
@@ -243,7 +247,11 @@ export class VimInputHandlerV2 {
             }
           }
           if (options?.hooks?.onInsertInput) {
-            const response = options.hooks.onInsertInput(keyData.composite);
+            const response = options.hooks.onInsertInput(
+              vimState,
+              null,
+              keyData.composite,
+            );
             if (response === true) {
               event.preventDefault();
             }

@@ -22,6 +22,7 @@ import { VimInit } from "../../../features/vim/VimInit";
 import {
   KeyBindingModes,
   QueueInputReturn,
+  VimHooks,
   VimMode,
   VimOptions,
 } from "../../../features/vim/vim-types";
@@ -166,6 +167,7 @@ export class GridTestPage {
   public sheetTabHooks: ITabHooks;
   public gridUndoRedo: UndoRedo<ContentMap>;
   public editedCellCoords = "";
+  public vimEditorHooks: VimHooks;
   public mappingByModeForCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {
@@ -1894,13 +1896,13 @@ export class GridTestPage {
     kind: CellKindConfigElementType,
     payload: any,
   ): void => {
-    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 1, { skipUpdate: true },);
-    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 1, { skipUpdate: true },);
-    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 2, { skipUpdate: true },);
-    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 2, { skipUpdate: true },);
-    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 3, { skipUpdate: true },);
-    /*prettier-ignore*/this.setCurrentCellContent( payload.time?.toString(), cell.col + 3, cell.row + 3, { skipUpdate: true },);
-    /*prettier-ignore*/const update = this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 2,);
+    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 1, { skipUpdate: true },);
+    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 1, { skipUpdate: true },);
+    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 2, { skipUpdate: true },);
+    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 2, { skipUpdate: true },);
+    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 3, { skipUpdate: true },);
+    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 3, cell.row + 3, { skipUpdate: true },);
+    /*prettier-ignore*/ const update = this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 2,);
     update?.();
     //this.updateContentMapChangedForView();
   };
@@ -2049,33 +2051,37 @@ export class GridTestPage {
     );
     window.activeVimInstancesIdMap.push(vimState.id);
 
+    this.vimEditorHooks = {
+      modeChanged: (payload) => {
+        if (!payload?.vimState?.mode) return;
+        this.mode = payload.vimState.mode;
+      },
+      commandListener: (result) => {
+        window.setTimeout(() => {
+          if (!this.contentMap) return;
+          if (
+            result.targetCommand === VIM_COMMAND.redo ||
+            result.targetCommand === VIM_COMMAND.undo
+          ) {
+            return;
+          }
+          if (!result.targetCommandFull?.preventUndoRedo) {
+            this.gridUndoRedo.setState(structuredClone(this.contentMap));
+            return;
+          }
+        }, 0);
+      },
+      onInsertInput: (...args) => {
+        /*prettier-ignore*/ console.log(">>>>>>>>>>>>>>>>>>>> A. [grid-test-page.ts,2075] args: ", args);
+      },
+    };
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
       vimId: vimState.id,
       vimState,
       allowChaining: false,
       allowExtendedChaining: false,
-      hooks: {
-        modeChanged: (payload) => {
-          if (!payload?.vimState?.mode) return;
-          this.mode = payload.vimState.mode;
-        },
-        commandListener: (result) => {
-          window.setTimeout(() => {
-            if (!this.contentMap) return;
-            if (
-              result.targetCommand === VIM_COMMAND.redo ||
-              result.targetCommand === VIM_COMMAND.undo
-            ) {
-              return;
-            }
-            if (!result.targetCommandFull?.preventUndoRedo) {
-              this.gridUndoRedo.setState(structuredClone(this.contentMap));
-              return;
-            }
-          }, 0);
-        },
-      },
+      hooks: this.vimEditorHooks,
     };
     // console.log("1.");
     this.vimInputHandlerV2.registerAndInit(vimOptions); // 1. init vimCore
@@ -2189,8 +2195,8 @@ export class GridTestPage {
 
     window.setTimeout(() => {
       if (updateCalled) return;
-      console.error(`Need to call update when setting: ${content} at [${col}, ${row}].\n "setCurrentCellContent" is returning an update function, that should be called `, updateCalled);
-    })
+      /*prettier-ignore*/ console.error( `Need to call update when setting: ${content} at [${col}, ${row}].\n "setCurrentCellContent" is returning an update function, that should be called `, updateCalled,);
+    });
 
     return () => {
       updateCalled = true;

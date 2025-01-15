@@ -66,11 +66,11 @@ export class UiPopover {
 
   private close = (): void => {
     this.isOpen = false;
-    this.content.classList.toggle("hidden", !this.isOpen);
+    this.content?.classList.toggle("hidden", !this.isOpen);
   };
 
   private toggle = (): void => {
     this.isOpen = !this.isOpen;
-    this.content.classList.toggle("hidden", !this.isOpen);
+    this.content?.classList.toggle("hidden", !this.isOpen);
   };
 }

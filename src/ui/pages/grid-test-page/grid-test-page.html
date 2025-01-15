@@ -122,6 +122,7 @@
               column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
               row-settings.bind="activeSheet?.rowHeaderMap[rowIndex]"
               is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
+              vim-editor-hooks.bind="vimEditorHooks"
               on-cell-update.bind="onCellUpdate"
               on-escape.bind="onEscape"
               on-enter.bind="onEnterPressedInCell"

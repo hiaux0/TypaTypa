@@ -11,7 +11,8 @@ interface SwitchModeOptions {
 }
 
 export class VimHelper {
-  static switchModes(mode: VimMode, switchModeOptions: SwitchModeOptions) {
+  static switchModes(mode: VimMode | undefined, switchModeOptions: SwitchModeOptions) {
+    if (!mode) return;
     const { insert, normal, visual, custom } = switchModeOptions;
 
     switch (mode) {
