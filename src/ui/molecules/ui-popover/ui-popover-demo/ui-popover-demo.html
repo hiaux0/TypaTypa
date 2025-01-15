@@ -1,0 +1,13 @@
+<div class="flex justify-center w-full h-full">
+  <ui-popover>
+    <template au-slot="trigger">br</template>
+    <template au-slot="content">
+      <autocomplete-input
+        value.two-way="value"
+        source.bind="source"
+        always-visible="true"
+        autofocus="true"
+      ></autocomplete-input>
+    </template>
+  </ui-popover>
+</div>

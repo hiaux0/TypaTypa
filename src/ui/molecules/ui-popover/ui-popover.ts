@@ -22,7 +22,7 @@ const template = `
   <div
     ref="content"
     class="
-      \${isOpen ? 'hidden' : ''}
+      \${isOpen ? '' : 'hidden'}
       absolute w-28 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none
     "
     style.bind="contentPosition"

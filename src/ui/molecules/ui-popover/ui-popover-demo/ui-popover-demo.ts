@@ -1,13 +1,13 @@
-import { customElement } from "aurelia";
+import { TypeService } from "../../../../common/services/TypeService";
+import { AutocompleteSource } from "../../../../types";
 
-const template = `
-<div class="flex justify-center w-full h-full">
-  <ui-popover>
-    <template au-slot="trigger">br</template>
-    <template au-slot="content">content</template>
-  </ui-popover>
-</div>
-`
+export class UiPopoverDemo {
+  public message = "ui-popover-demo.html";
+  public source = ["one", "two", "three"].map<AutocompleteSource>((v) => ({
+    text: v,
+  }));
+}
+
 //<ui-popover position="top-left">
 //  <template au-slot="trigger">open</template>
 //  <template au-slot="content">content</template>
@@ -38,11 +38,3 @@ const template = `
 //  <template au-slot="content">content</template>
 //</ui-popover>
 // `;
-
-@customElement({
-  name: "ui-popover-demo",
-  template
-})
-export class UiPopoverDemo {
-  public message = "ui-popover-demo.html";
-}

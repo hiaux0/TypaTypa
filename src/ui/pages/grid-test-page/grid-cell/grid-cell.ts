@@ -33,6 +33,7 @@ import { FF, featureFlags } from "../grid-modules/featureFlags";
 import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 import { ArrayUtils } from "../../../../common/modules/array/array-utils";
 import { GRID_FUNCTION_TRIGGER } from "../../../../common/modules/keybindings/app-keys";
+import { availableGridFunctions } from "../grid-modules/GridFunctionService";
 
 const logger = new Logger("GridCell");
 
@@ -82,6 +83,7 @@ export class GridCell {
   public vimState: IVimState;
   public finalVimEditorHooks: VimHooks;
   public showGridFunctionPopover = true;
+  public availableGridFunctions = availableGridFunctions;
   public mappingByModeCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {
