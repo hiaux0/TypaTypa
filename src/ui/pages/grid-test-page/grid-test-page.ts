@@ -1624,7 +1624,6 @@ export class GridTestPage {
     this.sheetsData = gridDatabase.getItem();
     this.initSheets(this.sheetsData);
     this.gridUndoRedo = new UndoRedo<ContentMap>();
-    this.completionsService.register(COMPLETIONS_MAP.gridFunctions, "hi");
   }
 
   attaching() {

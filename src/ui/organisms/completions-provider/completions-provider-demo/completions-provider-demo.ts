@@ -10,7 +10,9 @@ export class CompletionsProviderDemo {
   constructor() {
     this.completionsService.register(
       COMPLETIONS_MAP.gridFunctions,
-      ["hi", "bye"].map((v) => ({ text: v })),
+      ["hi", "bye", "alto", "apply", "sorg", "hen"]
+        .sort()
+        .map((v) => ({ text: v })),
     );
   }
 }

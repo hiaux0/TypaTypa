@@ -20,13 +20,19 @@
     </div>
 
     <!-- 2. Edit -->
-    <textarea
-      class="text-input"
-      show.bind="showTextarea"
-      ref="textareaRef"
-      spellcheck="false"
-      value.bind="value"
-    ></textarea>
+
+    <completions-provider
+      host.bind="textareaRef"
+      on-completion.bind="onCompletion"
+    >
+      <textarea
+        class="text-input"
+        show.bind="showTextarea"
+        ref="textareaRef"
+        spellcheck="false"
+        value.bind="value"
+      ></textarea>
+    </completions-provider>
   </div>
 
   <div class="debugContainer" if.bind="debugFlags.vimEditor.showDebugSection">

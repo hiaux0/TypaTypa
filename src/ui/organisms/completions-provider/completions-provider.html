@@ -3,10 +3,19 @@
 
   <!-- <ul if.bind="showCompletionsPopover && completionItems.length > 0" class="p-2 background" css="border: 1px solid hsl(240 5.9% 90%);"> -->
   <ul
+    if.bind="showCompletionsPopover && completionItems.length > 0"
+    data-showCompletionsPopover.bind="showCompletionsPopover"
+    data-completionItems.bind="completionItems.length > 0"
     ref="listRef"
-    class="p-2 pb-0 background"
+    class="background"
     style="border: 1px solid hsl(240 5.9% 90%); width: ${listWidth}px "
   >
-    <li repeat.for="item of completionItems" class="mb-2">${item.text}</li>
+    <li
+      repeat.for="item of completionItems"
+      class="p-2 ${activeCursorIndex === $index ? 'bg-gray-700' : ''}"
+      data-scroll-index="${$index}"
+    >
+      ${item.text}
+    </li>
   </ul>
 </div>

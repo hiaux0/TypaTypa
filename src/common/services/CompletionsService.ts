@@ -7,11 +7,16 @@ export interface CompletionItem {
 
 @singleton()
 export class CompletionsService {
-  // @ts-ignore
-  public completionsMap: Record<CompletionsMapKeys, any> = {};
+  public completionsMap: Record<CompletionsMapKeys, CompletionItem[]> = {
+    gridFunctions: ["SUB"].sort().map((v) => ({ text: v })),
+    slashCommands: [],
+  };
 
-  public register(id: CompletionsMapKeys, mappings: any): void {
-    this.completionsMap[id] = mappings;
+  public register(id: CompletionsMapKeys, mappings: CompletionItem[]): void {
+    if (!this.completionsMap[id]) {
+      this.completionsMap[id] = [];
+    }
+    this.completionsMap[id] = this.completionsMap[id].concat(mappings);
   }
 
   public getItems(id: CompletionsMapKeys): CompletionItem[] {
