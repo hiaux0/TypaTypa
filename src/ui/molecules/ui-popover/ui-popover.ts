@@ -71,9 +71,7 @@ export class UiPopover {
     const finalElement = this.host ?? this.uiPopoverRef;
     /*prettier-ignore*/ console.log("[ui-popover.ts,70] this.host: ", this.host);
     this.width = finalElement.offsetWidth;
-    /*prettier-ignore*/ console.log("[ui-popover.ts,73] this.width: ", this.width);
     this.height = finalElement.offsetHeight;
-    /*prettier-ignore*/ console.log("[ui-popover.ts,75] this.height: ", this.height);
 
     this.trigger?.addEventListener("click", () => {
       this.toggle();

@@ -1,6 +1,4 @@
-<div
-  ref="editingRef"
-  class="cell ${selected ? 'selected-cell' : ''}">
+<div ref="editingRef" class="cell ${selected ? 'selected-cell' : ''}">
   <!-- Content -->
   <section
     ref="cellContentRef"
@@ -10,10 +8,7 @@
   >
     <!-- Can:t remember why input and read-only were wrapped -->
     <!-- <template if.bind="cell.text"> </template> -->
-    <div
-      if.bind="isEdit"
-      class="input-container editing relative"
-    >
+    <div if.bind="isEdit" class="input-container editing relative">
       <vim-editor-vtwo
         if.bind="vimState"
         vim-state.bind="vimState"
@@ -38,9 +33,10 @@
         if.bind="isOverflown && selected"
         class="read-only overflown"
         css="width: ${overflownWidthWhenSelected}px; color: ${cell.styles?.color}; height: ${isOverflown ? getOverflownHeight : CELL_HEIGHT + 1}px;"
-      >${cell.text}</pre>
-      <pre else class="read-only" css="color: ${cell.styles?.color}"
-      >${cell.text}</pre>
+      >${cell.text}</pre
+      >
+      <pre else class="read-only" css="color: ${cell.styles?.color}">${cell.text}</pre
+      >
     </template>
   </section>
 
@@ -52,8 +48,19 @@
   ></div>
 
   <!-- Autocomplete -->
-  <ui-popover if.bind="isEdit" is-open.bind="showGridFunctionPopup" host.bind="editingRef">
-    <template au-slot="content">hel</template>
+  <ui-popover
+    if.bind="isEdit"
+    is-open.bind="showGridFunctionPopover"
+    host.bind="editingRef"
+  >
+    <template au-slot="content">
+      <autocomplete-input
+        value.two-way="value"
+        source.bind="availableGridFunctions"
+        always-visible="true"
+        autofocus="true"
+      ></autocomplete-input>
+    </template>
   </ui-popover>
 </div>
 

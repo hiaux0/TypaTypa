@@ -84,7 +84,8 @@ export class AutocompleteInput {
   }
 
   detaching() {
-    this.vimInputHandlerV2.popIdIf(VIM_ID_MAP.autoCompleteInput);
+    /*prettier-ignore*/ console.log("[autocomplete-input.ts,87] detaching: ", );
+    this.vimInputHandlerV2.popIdIfContains(VIM_ID_MAP.autoCompleteInput);
   }
 
   private handleRequired(): void {

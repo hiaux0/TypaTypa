@@ -1,6 +1,7 @@
 import { EventAggregator, bindable, observable, resolve } from "aurelia";
 import "./grid-cell.scss";
 import {
+  AutocompleteSource,
   Cell,
   CellKind,
   ColHeaderMap,
@@ -83,7 +84,8 @@ export class GridCell {
   public vimState: IVimState;
   public finalVimEditorHooks: VimHooks;
   public showGridFunctionPopover = true;
-  public availableGridFunctions = availableGridFunctions;
+  public availableGridFunctions =
+    availableGridFunctions.map<AutocompleteSource>((v) => ({ text: v }));
   public mappingByModeCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {

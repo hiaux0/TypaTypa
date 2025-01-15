@@ -107,6 +107,15 @@ export class VimInputHandlerV2 {
     if (is) this.popId();
   }
 
+  public popIdIfContains(id: string): void {
+    const reverseIndex = this.idHistory
+      .reverse()
+      .findIndex((entry) => entry === id);
+    if (reverseIndex != null) return;
+    const index = this.idHistory.length - 1 - reverseIndex;
+    this.idHistory.slice(index, 0);
+  }
+
   public executeCommandSequence(sequence: string): void {
     this.vimCore.executeCommandSequence(sequence);
   }
