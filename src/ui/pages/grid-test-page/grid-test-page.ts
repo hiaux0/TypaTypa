@@ -98,6 +98,7 @@ import {
   CellKindConfigService,
   cellKindConfigButton,
 } from "./grid-modules/cellElementTypes";
+import { GRID_FUNCTION_TRIGGER } from "../../../common/modules/keybindings/app-keys";
 
 const l = new Logger("GridTestPage");
 const debugLog = false;
@@ -2072,7 +2073,13 @@ export class GridTestPage {
         }, 0);
       },
       onInsertInput: (...args) => {
-        /*prettier-ignore*/ console.log(">>>>>>>>>>>>>>>>>>>> A. [grid-test-page.ts,2075] args: ", args);
+        //const textSoFar = args[1];
+        ///*prettier-ignore*/ console.log("[grid-test-page.ts,2076] textSoFar: ", textSoFar);
+        //const key = args[2];
+        ///*prettier-ignore*/ console.log("[grid-test-page.ts,2078] key: ", key);
+        //if (key === GRID_FUNCTION_TRIGGER) {
+        //  // this.showGridFunctionPopover = true;
+        //}
       },
     };
     const vimOptions: VimOptions = {

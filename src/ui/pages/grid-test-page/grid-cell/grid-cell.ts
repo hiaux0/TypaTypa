@@ -32,6 +32,7 @@ import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/c
 import { FF, featureFlags } from "../grid-modules/featureFlags";
 import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 import { ArrayUtils } from "../../../../common/modules/array/array-utils";
+import { GRID_FUNCTION_TRIGGER } from "../../../../common/modules/keybindings/app-keys";
 
 const logger = new Logger("GridCell");
 
@@ -80,6 +81,7 @@ export class GridCell {
   public clipText = FF.canClipText();
   public vimState: IVimState;
   public finalVimEditorHooks: VimHooks;
+  public showGridFunctionPopover = true;
   public mappingByModeCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {
@@ -262,6 +264,13 @@ export class GridCell {
         this.vimEditorHooks?.afterInit?.(vim);
       },
       onInsertInput: (...args) => {
+        const textSoFar = args[1];
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,2076] textSoFar: ", textSoFar);
+        const key = args[2];
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,2078] key: ", key);
+        if (key === GRID_FUNCTION_TRIGGER) {
+          this.showGridFunctionPopover = true;
+        }
         this.vimEditorHooks?.onInsertInput?.(...args);
       },
     };

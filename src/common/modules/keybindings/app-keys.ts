@@ -58,6 +58,7 @@ export const SHIFT = 'Shift';
 export const SHIFT_KEY_CODE = 16;
 export const SPACE = 'Space';
 export const TAB = 'Tab';
+export const GRID_FUNCTION_TRIGGER = '='
 
 export const MODIFIERS_WORDS = [
   'Command',
