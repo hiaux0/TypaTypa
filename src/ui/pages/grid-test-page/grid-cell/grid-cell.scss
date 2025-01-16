@@ -13,8 +13,8 @@
     z-index: $zIndexHover2;
 
     .content {
+      overflow: unset;
       &.overflown {
-        overflow: unset;
         z-index: $zIndexEditing;
 
         &.clip-text {
