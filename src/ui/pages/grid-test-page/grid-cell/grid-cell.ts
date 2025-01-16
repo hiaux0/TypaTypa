@@ -1,4 +1,10 @@
-import { EventAggregator, bindable, observable, resolve } from "aurelia";
+import {
+  EventAggregator,
+  IDisposable,
+  bindable,
+  observable,
+  resolve,
+} from "aurelia";
 import "./grid-cell.scss";
 import {
   AutocompleteSource,
@@ -11,6 +17,7 @@ import {
 } from "../../../../types";
 import {
   BORDER_WIDTH,
+  CELL_EVENTS_MAP,
   CELL_HEIGHT,
   CELL_WIDTH,
   PADDING,
@@ -35,6 +42,7 @@ import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 import { ArrayUtils } from "../../../../common/modules/array/array-utils";
 import { GRID_FUNCTION_TRIGGER } from "../../../../common/modules/keybindings/app-keys";
 import { availableGridFunctions } from "../grid-modules/GridFunctionService";
+import { CellEventMessagingService } from "../../../../common/services/CellEventMessagingService";
 
 const logger = new Logger("GridCell");
 
@@ -115,6 +123,8 @@ export class GridCell {
       },
     ],
   };
+
+  private subscriptions: IDisposable[] = [];
 
   public get getEditWidth(): string {
     const longestLine = ArrayUtils.getLongestElement(
@@ -223,9 +233,15 @@ export class GridCell {
     private eventAggregator: EventAggregator = resolve(EventAggregator),
     private store: Store = resolve(Store),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+    private cellEventMessagingService = resolve(CellEventMessagingService),
   ) {}
 
   attached() {
+    if (this.cell) {
+      this.cell.col = this.column;
+      this.cell.row = this.row;
+    }
+
     if (debug) {
       this.updateAutocomplete();
     }
@@ -274,6 +290,11 @@ export class GridCell {
         this.vimEditorHooks?.onInsertInput?.(...args);
       },
     };
+    this.initCellMessagingSubscriptions();
+  }
+
+  detached() {
+    this.subscriptions.forEach((s) => s.dispose());
   }
 
   public setWidthPx(
@@ -462,5 +483,14 @@ export class GridCell {
     const isCell = this.column === c && this.row === r;
     const is = isCell && debugLog;
     return is;
+  }
+
+  private initCellMessagingSubscriptions(): void {
+    if (!this.cell?.text) return;
+    const key = this.cellEventMessagingService.getKey(0, 0);
+    const disp = this.cellEventMessagingService.subscribe(key, (payload) => {
+      /*prettier-ignore*/ console.log("[grid-cell.ts,479] payload: ", payload);
+    });
+    this.subscriptions.push(disp);
   }
 }

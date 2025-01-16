@@ -1,8 +1,6 @@
 import "./ui-audio.scss";
 import { CELL_HEIGHT, CELL_WIDTH } from "../../../common/modules/constants";
 import { bindable, containerless, resolve } from "aurelia";
-import { CellEventMessagingService } from "../../../common/services/CellEventMessagingService";
-import { DatabaseService } from "../../../common/services/DatabaseService";
 import IndexedDBService from "../../../common/services/IndexdDBService";
 import { featureFlags } from "../../pages/grid-test-page/grid-modules/featureFlags";
 
@@ -22,8 +20,6 @@ export class UiAudio {
   public audioSpeed = 1;
   public audioSrc: string;
 
-  public cellEventMessagingService = resolve(CellEventMessagingService);
-  // public databaseService = resolve(DatabaseService);
   public indexedDBService = resolve(IndexedDBService);
 
   async attached() {
