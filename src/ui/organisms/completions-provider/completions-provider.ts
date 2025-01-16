@@ -5,6 +5,8 @@ import {
   CompletionsService,
 } from "../../../common/services/CompletionsService";
 import {
+  ARROW_DOWN,
+  ARROW_UP,
   GRID_FUNCTION_TRIGGER,
   TAB,
 } from "../../../common/modules/keybindings/app-keys";
@@ -15,6 +17,7 @@ import { measureTextWidth } from "../../pages/grid-test-page/grid-modules/gridMo
 export class CompletionsProvider {
   @bindable host: HTMLInputElement | HTMLTextAreaElement;
   @bindable onCompletion: (item: CompletionItem) => void;
+  @bindable listClasses: string;
 
   public listRef: HTMLElement;
   public showCompletionsPopover = false;
@@ -34,15 +37,12 @@ export class CompletionsProvider {
   private completionsService = resolve(CompletionsService);
 
   attached() {
-    const items = this.completionsService.getItems(
-      COMPLETIONS_MAP.gridFunctions,
-    );
-    this.completionItems = items;
-
+    /*prettier-ignore*/ console.log("[completions-provider.ts,41] this.listClasses: ", this.listClasses);
     this.host.addEventListener("keydown", (_event: Event) => {
       const event = _event as KeyboardEvent;
       const key = event.key;
-      if (key !== TAB) return;
+      const okay = [ARROW_UP, ARROW_DOWN, TAB].includes(key);
+      if (!okay) return;
       event.preventDefault();
     });
 
@@ -69,6 +69,7 @@ export class CompletionsProvider {
         (v) => v.text.startsWith(functionName),
       );
       this.completionItems = filtered;
+      /*prettier-ignore*/ console.log("[completions-provider.ts,67] this.completionItems: ", this.completionItems);
 
       this.showCompletionsPopover = true;
     });
@@ -96,6 +97,7 @@ export class CompletionsProvider {
         this.activeCursorIndex = Math.max(0, this.activeCursorIndex - 1);
         this.scrollToSuggestion();
         event.preventDefault();
+        /*prettier-ignore*/ console.log("[completions-provider.ts,95] preventDefault: ", );
         handled = true;
         break;
       }
@@ -106,6 +108,7 @@ export class CompletionsProvider {
         );
         this.scrollToSuggestion();
         event.preventDefault();
+        /*prettier-ignore*/ console.log("[completions-provider.ts,106] preventDefault: ", );
         handled = true;
         break;
       }

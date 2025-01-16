@@ -83,7 +83,6 @@ export class GridCell {
   public clipText = FF.canClipText();
   public vimState: IVimState;
   public finalVimEditorHooks: VimHooks;
-  public showGridFunctionPopover = true;
   public availableGridFunctions =
     availableGridFunctions.map<AutocompleteSource>((v) => ({ text: v }));
   public mappingByModeCell: KeyBindingModes = {
@@ -269,12 +268,9 @@ export class GridCell {
       },
       onInsertInput: (...args) => {
         const textSoFar = args[1];
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,2076] textSoFar: ", textSoFar);
+        // /*prettier-ignore*/ console.log("[grid-test-page.ts,2076] textSoFar: ", textSoFar);
         const key = args[2];
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,2078] key: ", key);
-        if (key === GRID_FUNCTION_TRIGGER) {
-          this.showGridFunctionPopover = true;
-        }
+        // /*prettier-ignore*/ console.log("[grid-test-page.ts,2078] key: ", key);
         this.vimEditorHooks?.onInsertInput?.(...args);
       },
     };

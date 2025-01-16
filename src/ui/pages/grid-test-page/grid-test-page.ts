@@ -2081,15 +2081,7 @@ export class GridTestPage {
           }
         }, 0);
       },
-      onInsertInput: (...args) => {
-        //const textSoFar = args[1];
-        ///*prettier-ignore*/ console.log("[grid-test-page.ts,2076] textSoFar: ", textSoFar);
-        //const key = args[2];
-        ///*prettier-ignore*/ console.log("[grid-test-page.ts,2078] key: ", key);
-        //if (key === GRID_FUNCTION_TRIGGER) {
-        //  // this.showGridFunctionPopover = true;
-        //}
-      },
+      onInsertInput: (...args) => {},
     };
     const vimOptions: VimOptions = {
       container: this.gridTestContainerRef,
