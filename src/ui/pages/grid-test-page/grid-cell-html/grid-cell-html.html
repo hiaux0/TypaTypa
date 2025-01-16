@@ -1,8 +1,6 @@
 <div class="cell ${selected ? 'selected-cell' : ''}">
   <!-- Content -->
-  <div
-    class="w-full h-full relative"
-  >
+  <div class="w-full h-full relative">
     <ui-button
       if.bind="cell.kindConfig?.elementType === CellKindConfigElementType.BUTTON"
       >${cell.text}</ui-button

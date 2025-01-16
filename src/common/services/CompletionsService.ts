@@ -8,7 +8,7 @@ export interface CompletionItem {
 @singleton()
 export class CompletionsService {
   public completionsMap: Record<CompletionsMapKeys, CompletionItem[]> = {
-    gridFunctions: ["SUB"].sort().map((v) => ({ text: v })),
+    gridFunctions: ["SUB, PUB"].sort().map((v) => ({ text: v })),
     slashCommands: [],
   };
 

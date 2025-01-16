@@ -1,4 +1,4 @@
-import { bindable, customElement, resolve } from "aurelia";
+import { bindable, resolve } from "aurelia";
 import "./completions-provider.scss";
 import {
   CompletionItem,
