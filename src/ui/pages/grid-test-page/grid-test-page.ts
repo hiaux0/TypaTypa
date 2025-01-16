@@ -1901,14 +1901,14 @@ export class GridTestPage {
     kind: CellKindConfigElementType,
     payload: any,
   ): void => {
-    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 1, { skipUpdate: true },);
-    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 1, { skipUpdate: true },);
-    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 2, { skipUpdate: true },);
-    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 2, { skipUpdate: true },);
-    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 3, { skipUpdate: true },);
-    /*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 3, cell.row + 3, { skipUpdate: true },);
-    /*prettier-ignore*/ const update = this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 2,);
-    update?.();
+    ///*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 1, { skipUpdate: true },);
+    ///*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 1, { skipUpdate: true },);
+    ///*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 1, cell.row + 2, { skipUpdate: true },);
+    ///*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 2, { skipUpdate: true },);
+    ///*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 2, cell.row + 3, { skipUpdate: true },);
+    ///*prettier-ignore*/ this.setCurrentCellContent( payload.time?.toString(), cell.col + 3, cell.row + 3, { skipUpdate: true },);
+    ///*prettier-ignore*/ const update = this.setCurrentCellContent( payload.time?.toString(), cell.col, cell.row + 2,);
+    //update?.();
     //this.updateContentMapChangedForView();
   };
 
