@@ -24,6 +24,7 @@ export class Store {
   public servicesDatabase: Record<ServicesStorageKeys, any> = {
     RecentlyUsedService: {},
   };
+  public audioTime: number;
 
   // Grid
   public activeSheet: Sheet;

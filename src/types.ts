@@ -114,6 +114,7 @@ export interface CellKindConfig {
 
 export interface Cell {
   text: string;
+  displayText?: string;
   kind: CellKind;
   kindConfig?: CellKindConfig;
   col?: number;

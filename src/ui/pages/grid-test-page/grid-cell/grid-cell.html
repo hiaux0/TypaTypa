@@ -33,9 +33,9 @@
         if.bind="isOverflown && selected"
         class="read-only overflown"
         css="width: ${overflownWidthWhenSelected}px; color: ${cell.styles?.color}; height: ${isOverflown ? getOverflownHeight : CELL_HEIGHT + 1}px;"
-      >${cell.text}</pre
+      >${cell.displayText ?? cell.text}</pre
       >
-      <pre else class="read-only" css="color: ${cell.styles?.color}">${cell.text}</pre
+      <pre else class="read-only" css="color: ${cell.styles?.color}">${cell.displayText ?? cell.text}</pre
       >
     </template>
   </section>

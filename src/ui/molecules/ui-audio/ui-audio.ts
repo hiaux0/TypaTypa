@@ -3,6 +3,7 @@ import { CELL_HEIGHT, CELL_WIDTH } from "../../../common/modules/constants";
 import { bindable, containerless, resolve } from "aurelia";
 import IndexedDBService from "../../../common/services/IndexdDBService";
 import { featureFlags } from "../../pages/grid-test-page/grid-modules/featureFlags";
+import { Store } from "../../../common/modules/store";
 
 // played, seekable
 
@@ -20,7 +21,10 @@ export class UiAudio {
   public audioSpeed = 1;
   public audioSrc: string;
 
-  public indexedDBService = resolve(IndexedDBService);
+  constructor(
+    public indexedDBService = resolve(IndexedDBService),
+    public store = resolve(Store),
+  ) {}
 
   async attached() {
     this.audioPlayerRef.addEventListener("loadedmetadata", () => {
@@ -57,6 +61,7 @@ export class UiAudio {
         (this.audioPlayerRef.currentTime / this.audioPlayerRef.duration) * 100;
       if (typeof this.onTimeChange === "function") {
         this.onTimeChange(this.audioPlayerRef.currentTime, progressPercentage);
+        this.store.audioTime = this.audioPlayerRef.currentTime;
       }
     });
 

@@ -487,10 +487,13 @@ export class GridCell {
 
   private initCellMessagingSubscriptions(): void {
     if (!this.cell?.text) return;
-    const key = this.cellEventMessagingService.getKey(0, 0);
-    const disp = this.cellEventMessagingService.subscribe(key, (payload) => {
-      /*prettier-ignore*/ console.log("[grid-cell.ts,479] payload: ", payload);
-    });
-    this.subscriptions.push(disp);
+    // const key = this.cellEventMessagingService.getKey(0, 0);
+    //this.subscriptions.push(
+    //  this.cellEventMessagingService.subscribe(key, (payload) => {
+    //    /*prettier-ignore*/ console.log("[grid-cell.ts,479] payload: ", payload);
+    //    // this.cell.displayText = payload.payload.time;
+    //    this.onCellUpdate(this.column, this.row, this.cell);
+    //  }),
+    //);
   }
 }

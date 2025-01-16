@@ -1259,6 +1259,16 @@ export class GridTestPage {
       },
       preventUndoRedo: true,
     },
+    {
+      desc: "Get current time",
+      context: [VIM_ID_MAP.gridNavigation],
+      execute: () => {
+        const time = this.store.audioTime;
+        const update = this.setCurrentCellContent(time.toString());
+        update?.();
+      },
+      preventUndoRedo: true,
+    },
   ];
   private mappingByVisualMode: VimCommand[] = [
     {
