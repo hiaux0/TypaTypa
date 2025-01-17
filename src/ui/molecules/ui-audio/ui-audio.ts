@@ -36,8 +36,11 @@ export class UiAudio {
       const url = URL.createObjectURL(loadedFile);
       this.audioSrc = url;
       this.audioPlayerRef.load();
-      this.audioPlayerRef.muted = true;
-      if (featureFlags.autoPlayAudio) this.audioPlayerRef.play();
+      // this.audioPlayerRef.muted = true;
+      if (featureFlags.autoPlayAudio) {
+        this.audioPlayerRef.currentTime = 11;
+        this.audioPlayerRef.play();
+      }
     }
 
     // Seek functionality
@@ -57,11 +60,11 @@ export class UiAudio {
     });
 
     this.audioPlayerRef.addEventListener("timeupdate", () => {
-      const progressPercentage =
-        (this.audioPlayerRef.currentTime / this.audioPlayerRef.duration) * 100;
+      const time = Math.round(this.audioPlayerRef.currentTime);
+      const progressPercentage = (time / this.audioPlayerRef.duration) * 100;
       if (typeof this.onTimeChange === "function") {
-        this.onTimeChange(this.audioPlayerRef.currentTime, progressPercentage);
-        this.store.audioTime = this.audioPlayerRef.currentTime;
+        this.onTimeChange(time, progressPercentage);
+        this.store.audioTime = time;
       }
     });
 

@@ -47,6 +47,7 @@ import {
   COLORS,
   BORDER_WIDTH,
   COMPLETIONS_MAP,
+  UI_CONSTANTS,
 } from "../../../common/modules/constants";
 import { gridDatabase } from "../../../common/modules/database/gridDatabase";
 import { ITab, ITabHooks } from "../../molecules/or-tabs/or-tabs";
@@ -171,6 +172,7 @@ export class GridTestPage {
   public gridUndoRedo: UndoRedo<ContentMap>;
   public editedCellCoords = "";
   public vimEditorHooks: VimHooks;
+  public UI_CONSTANTS = UI_CONSTANTS;
   public mappingByModeForCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {

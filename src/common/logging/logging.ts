@@ -37,7 +37,7 @@ export const defaultShouldLogConfig: ShouldLogConfig = {
   // onlyLevels: [,5], // trace potential commands
   // onlyLevels: [,,1], // vim ui
   // onlyLevels: [,,2], // minimal command trace
-  // onlyLevels: [,,3], // E2E v2
+  onlyLevels: [,,3], // E2E v2
   // onlyLevels: [,,6], // All mode tracing
   logDepth: 1,
   allowedCallerNames: [],

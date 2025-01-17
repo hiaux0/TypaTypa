@@ -284,5 +284,6 @@ export const UI_CONSTANTS = {
     sticky: 10000,
     aboveEditor: 10000,
     aboveAll: 100000,
+    aboveAllMore: 1000000,
   },
 };

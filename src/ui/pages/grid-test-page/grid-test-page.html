@@ -102,7 +102,7 @@
           <div
             class="row-container ${activeSheet?.rowHeaderMap[rowIndex].isSticky ? 'sticky-row-coll' : ''}"
             repeat.for="rowIndex of rowSize"
-            css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}"
+            css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}; z-index: ${contentMapForView[CELL_COORDS(rowIndex, columnIndex)]?.kind === 'HTML' ? UI_CONSTANTS.zIndex.aboveAll : ''}"
           >
             <!-- HTML Cell -->
             <grid-cell-html
