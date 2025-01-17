@@ -121,7 +121,6 @@ export class VimEditorVtwo {
               const offset = SelectionService.getOffsetFromTextarea(
                 this.textareaRef,
               );
-                /*prettier-ignore*/ console.log("[vim-editor-vtwo.ts,128] newVimState: ", newVimState);
               const cursorFromOffset = VimHelper.convertOffsetToVimStateCursor(
                 offset,
                 newVimState,
@@ -140,6 +139,10 @@ export class VimEditorVtwo {
           }
 
           return newVimState;
+        },
+        onInsertInput: (vimState, _, key) => {
+          const textareaValue = this.textareaRef.value
+          this.vimEditorHooks.onInsertInput?.(vimState, textareaValue, key)
         },
       },
     };

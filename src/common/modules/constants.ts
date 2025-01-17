@@ -215,6 +215,19 @@ export const CELL_COORDS = (columnIndex: number, rowIndex: number) =>
 export const EV_GRID_CELL = (columnIndex: number, rowIndex: number) =>
   `grid-cell-[${columnIndex}:${rowIndex}]`;
 
+export const CELL_EVENTS_MAP = {
+  cellEvents: "CELL_EVENTS",
+  audioPlayer: "audioPlayer",
+} as const;
+
+export type CellEventsKey = keyof typeof CELL_EVENTS_MAP;
+
+export const COMPLETIONS_MAP = {
+  gridFunctions: "gridFunctions",
+  slashCommands: "slashCommands",
+} as const;
+export type CompletionsMapKeys = keyof typeof COMPLETIONS_MAP;
+
 export const VIM_ID_MAP = {
   global: "global",
   gridCell: "gridCell",
@@ -271,5 +284,6 @@ export const UI_CONSTANTS = {
     sticky: 10000,
     aboveEditor: 10000,
     aboveAll: 100000,
+    aboveAllMore: 1000000,
   },
 };

@@ -8,7 +8,7 @@ import { CELL_HEIGHT } from "../../../../common/modules/constants";
  */
 export const featureFlags = {
   autosave: true,
-  autoPlayAudio: false,
+  autoPlayAudio: true,
   llm: {
     printPrompts: true,
   },
@@ -21,7 +21,7 @@ export const featureFlags = {
   },
   grid: {
     cells: {
-      flag: true, // 0
+      flag: false, // 0
       clipText: true, // 1
       clipTextOffset: 1, // 2 measured in cells
     },

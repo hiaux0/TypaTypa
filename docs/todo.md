@@ -122,6 +122,9 @@ I want to have live-editor
     vimState.lines = [{ text: "0123" }, { text: "4 6789" }];
     vimState.cursor = { line: 0, col: 3 };
 
+## Errors
+- Uncaught (in promise) TypeError: vimState.lines[line] is undefined
+    convertOffsetToVimStateCursor VimHelper.ts:102
 
 ## Grid
 
@@ -256,12 +259,12 @@ I want to have live-editor
 - [ ] fix: cannot escape from visual mode
 - [ ] fix undo redo (again)
 - [ ] add rows button
-- [ ] html cell button
 - [ ] // const startingMode = text ? VimMode.NORMAL : VimMode.INSERT; // TODO, properly init cursor
 
 # Done
 ## Grid
 
+- [x] html cell button
 - [x] feat: grid: multi-row cells
 - [x] feat: command palette: recent
 - [x] bug: overflow vertical not showing (only hori)

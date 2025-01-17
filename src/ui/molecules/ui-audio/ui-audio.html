@@ -10,7 +10,7 @@
   </audio>
 
   <div class="controls flex justify-center items-center h-6 mt-1">
-    <button class="h-6" click.trigger="toggleRepeat()">
+    <button class="h-6 mr-2" click.trigger="toggleRepeat()">
       <template if.bind="isRepeating">
         <ui-icon icon="repeat" color="secondary"></ui-icon>
       </template>
@@ -21,15 +21,15 @@
 
     <div class="w-4/6">
       <label for="playbackSpeed" class="text-xs">Speed:</label>
-      <input
-        class="w-full"
-        type="range"
-        min="0.5"
-        max="2"
-        step="0.1"
-        value.bind="audioSpeed"
-        change.trigger="changeSpeed($event)"
-      />
+      <!--<input-->
+      <!--  class="w-full"-->
+      <!--  type="range"-->
+      <!--  min="0.5"-->
+      <!--  max="2"-->
+      <!--  step="0.1"-->
+      <!--  value.bind="audioSpeed"-->
+      <!--  change.trigger="changeSpeed($event)"-->
+      <!--/>-->
       <span id="speedDisplay">${audioSpeed}</span>
     </div>
 

@@ -118,7 +118,11 @@ export interface VimHooks {
     vim: VimCore,
   ) => QueueInputReturn[] | Promise<QueueInputReturn[]> | void;
   onBeforeCommand?: () => boolean;
-  onInsertInput?: (key: string) => boolean | void;
+  onInsertInput?: (
+    vimState: IVimState | undefined,
+    wholeText: string | null,
+    key: string,
+  ) => boolean | void;
   commandListener?: CommandListener;
   modeChanged?: ModeChanged;
   vimStateUpdated?: (vimState: IVimState) => void;

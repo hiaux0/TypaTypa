@@ -4,19 +4,24 @@
 <import from="./grid-cell-html/grid-cell-html"></import>
 
 <main ref="gridTestContainerRef" class="grid-test-container">
-  <section
-    style="
-      display: flex;
-      margin-bottom: 12px;
-      opacity: 0.2;
-      width: 90vw;
-      justify-content: space-around;
-    "
-  >
-    <div>${vimInputHandlerV2.activeId}</div>
-    <div>${mode}</div>
-    <div click.trigger="openFullscreen">fullscreen</div>
-    <div click.trigger="store.toggleZenMode">zen</div>
+  <section style="margin-bottom: 12px; opacity: 0.2; width: 90vw">
+    <div class="first-row flex">
+      <!-- Id History -->
+      <div
+        repeat.for="idEntry of vimInputHandlerV2.idHistory"
+        class="mr-2 cursor-pointer text-xs"
+        click.trigger="changeActiveId(idEntry)"
+      >
+        ${idEntry}
+      </div>
+    </div>
+
+    <div class="second-row flex justify-around">
+      <div>${vimInputHandlerV2.activeId}</div>
+      <div>${mode}</div>
+      <div click.trigger="openFullscreen">fullscreen</div>
+      <div click.trigger="store.toggleZenMode">zen</div>
+    </div>
   </section>
 
   <!-- Toolbar -->
@@ -97,7 +102,7 @@
           <div
             class="row-container ${activeSheet?.rowHeaderMap[rowIndex].isSticky ? 'sticky-row-coll' : ''}"
             repeat.for="rowIndex of rowSize"
-            css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}"
+            css="${activeSheet?.rowHeaderMap[rowIndex].isSticky ? `top: ${(rowIndex+1) * CELL_HEIGHT + BORDER_WIDTH}px` : ''}; z-index: ${contentMapForView[CELL_COORDS(rowIndex, columnIndex)]?.kind === 'HTML' ? UI_CONSTANTS.zIndex.aboveAll : ''}"
           >
             <!-- HTML Cell -->
             <grid-cell-html
@@ -122,6 +127,7 @@
               column-settings.bind="activeSheet?.colHeaderMap[columnIndex]"
               row-settings.bind="activeSheet?.rowHeaderMap[rowIndex]"
               is-edit.bind="editedCellCoords === CELL_COORDS(columnIndex, rowIndex)"
+              vim-editor-hooks.bind="vimEditorHooks"
               on-cell-update.bind="onCellUpdate"
               on-escape.bind="onEscape"
               on-enter.bind="onEnterPressedInCell"
@@ -135,7 +141,7 @@
       </section>
 
       <!-- 3/3 Panels -->
-      <section ref="panelContainerRef" class="panel-container">
+      <section ref="panelContainerRef" class="panel-container relative">
         <div
           class="panel-item-container"
           repeat.for="panel of gridPanels"

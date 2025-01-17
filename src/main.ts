@@ -33,13 +33,15 @@ import { debugFlags } from "./common/modules/debug/debugFlags";
 import { UiButton } from "./ui/atoms/ui-button/ui-button";
 import { UiAudio } from "./ui/molecules/ui-audio/ui-audio";
 import { UiIcon } from "./ui/atoms/ui-icon/ui-icon";
+import { UiPopover } from "./ui/molecules/ui-popover/ui-popover";
+import { CompletionsProvider } from "./ui/organisms/completions-provider/completions-provider";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 //
 
-const all = [UiAudio, UiButton, UiIcon];
+const all = [CompletionsProvider, UiAudio, UiButton, UiIcon, UiPopover];
 
 const attributes = [
   AutosizeCustomAttribute,

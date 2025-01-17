@@ -1,6 +1,13 @@
-import { EventAggregator, bindable, observable, resolve } from "aurelia";
+import {
+  EventAggregator,
+  IDisposable,
+  bindable,
+  observable,
+  resolve,
+} from "aurelia";
 import "./grid-cell.scss";
 import {
+  AutocompleteSource,
   Cell,
   CellKind,
   ColHeaderMap,
@@ -10,6 +17,7 @@ import {
 } from "../../../../types";
 import {
   BORDER_WIDTH,
+  CELL_EVENTS_MAP,
   CELL_HEIGHT,
   CELL_WIDTH,
   PADDING,
@@ -32,6 +40,9 @@ import { overwriteExistingKeyBindings } from "../../../../features/vim/vimCore/c
 import { FF, featureFlags } from "../grid-modules/featureFlags";
 import { IVimInputHandlerV2 } from "../../../../features/vim/VimInputHandlerV2";
 import { ArrayUtils } from "../../../../common/modules/array/array-utils";
+import { GRID_FUNCTION_TRIGGER } from "../../../../common/modules/keybindings/app-keys";
+import { availableGridFunctions } from "../grid-modules/GridFunctionService";
+import { CellEventMessagingService } from "../../../../common/services/CellEventMessagingService";
 
 const logger = new Logger("GridCell");
 
@@ -61,6 +72,7 @@ export class GridCell {
   @bindable public onEscape: () => void;
   @bindable public onEnter: () => void;
   @bindable public mappingByMode: KeyBindingModes;
+  @bindable public vimEditorHooks: VimHooks;
 
   @observable() public textareaValue = "";
 
@@ -78,13 +90,9 @@ export class GridCell {
   public measureTextWidth = measureTextWidth;
   public clipText = FF.canClipText();
   public vimState: IVimState;
-  public vimEditorHooks: VimHooks = {
-    afterInit: (vim) => {
-      if (featureFlags.mode.enterCellInInsertMode) {
-        vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
-      }
-    },
-  };
+  public finalVimEditorHooks: VimHooks;
+  public availableGridFunctions =
+    availableGridFunctions.map<AutocompleteSource>((v) => ({ text: v }));
   public mappingByModeCell: KeyBindingModes = {
     [VimMode.NORMAL]: [
       {
@@ -115,6 +123,8 @@ export class GridCell {
       },
     ],
   };
+
+  private subscriptions: IDisposable[] = [];
 
   public get getEditWidth(): string {
     const longestLine = ArrayUtils.getLongestElement(
@@ -223,9 +233,15 @@ export class GridCell {
     private eventAggregator: EventAggregator = resolve(EventAggregator),
     private store: Store = resolve(Store),
     private vimInputHandlerV2: IVimInputHandlerV2 = resolve(IVimInputHandlerV2),
+    private cellEventMessagingService = resolve(CellEventMessagingService),
   ) {}
 
   attached() {
+    if (this.cell) {
+      this.cell.col = this.column;
+      this.cell.row = this.row;
+    }
+
     if (debug) {
       this.updateAutocomplete();
     }
@@ -258,6 +274,27 @@ export class GridCell {
     //  { vimId: VIM_ID_MAP.gridCell },
     //  this.finalMappingByMode,
     //);
+    this.finalVimEditorHooks = {
+      ...this.vimEditorHooks,
+      afterInit: (vim) => {
+        if (featureFlags.mode.enterCellInInsertMode) {
+          vim.executeCommand(VIM_COMMAND.enterInsertMode, "i");
+        }
+        this.vimEditorHooks?.afterInit?.(vim);
+      },
+      onInsertInput: (...args) => {
+        const textSoFar = args[1];
+        // /*prettier-ignore*/ console.log("[grid-test-page.ts,2076] textSoFar: ", textSoFar);
+        const key = args[2];
+        // /*prettier-ignore*/ console.log("[grid-test-page.ts,2078] key: ", key);
+        this.vimEditorHooks?.onInsertInput?.(...args);
+      },
+    };
+    this.initCellMessagingSubscriptions();
+  }
+
+  detached() {
+    this.subscriptions.forEach((s) => s.dispose());
   }
 
   public setWidthPx(
@@ -408,7 +445,7 @@ export class GridCell {
     this.setWidthPx({
       text: suggestion,
       colsToNextText: this.cell.colsToNextText,
-      kind: CellKind.TEXT
+      kind: CellKind.TEXT,
     });
   };
 
@@ -446,5 +483,17 @@ export class GridCell {
     const isCell = this.column === c && this.row === r;
     const is = isCell && debugLog;
     return is;
+  }
+
+  private initCellMessagingSubscriptions(): void {
+    if (!this.cell?.text) return;
+    // const key = this.cellEventMessagingService.getKey(0, 0);
+    //this.subscriptions.push(
+    //  this.cellEventMessagingService.subscribe(key, (payload) => {
+    //    /*prettier-ignore*/ console.log("[grid-cell.ts,479] payload: ", payload);
+    //    // this.cell.displayText = payload.payload.time;
+    //    this.onCellUpdate(this.column, this.row, this.cell);
+    //  }),
+    //);
   }
 }

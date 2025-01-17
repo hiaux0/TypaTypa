@@ -58,6 +58,7 @@ textarea {
   border-radius: $borderRadius;
   background: $backgroundColor1;
   color: $textColor;
+  outline: none;
   &::placeholder {
     font-size: $fontSizeS;
   }
@@ -65,8 +66,7 @@ textarea {
 
 ol,
 ul {
-  margin-left: 2rem;
-  padding-top: 1rem;
+  margin-top: 1rem;
 }
 li,
 ol,

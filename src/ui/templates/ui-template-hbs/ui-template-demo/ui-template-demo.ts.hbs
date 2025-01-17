@@ -1,0 +1,13 @@
+import { customElement } from "aurelia";
+
+const template = `
+  <ui-{{name}}></ui-{{name}}>
+`;
+
+@customElement({
+  name: "ui-{{name}}-demo",
+  template,
+})
+export class Ui{{pascalCase name}}Demo {
+  public message = "ui-{{name}}-demo.html";
+}

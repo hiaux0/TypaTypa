@@ -92,6 +92,7 @@ export class VimInputHandlerV2 {
   }
 
   public setActiveId(id: VimIdMapKeys): void {
+    // /*prettier-ignore*/ console.trace("[VimInputHandlerV2.ts,95] setActiveId: ", );
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,52] id: ", id);
     this.pushIdToHistory(id);
     /*                                                                                           prettier-ignore*/ if(l.shouldLog([5])) console.log("[VimInputHandlerV2.ts,55] this.idHistory: ", this.idHistory);
@@ -105,6 +106,25 @@ export class VimInputHandlerV2 {
   public popIdIf(id: string): void {
     const is = this.idHistory[this.idHistory.length - 1] === id;
     if (is) this.popId();
+  }
+
+  public popIdIfContains(id: string): void {
+    const reverseIndex = this.idHistory
+      .reverse()
+      .findIndex((entry) => entry === id);
+    if (reverseIndex != null) return;
+    const index = this.idHistory.length - 1 - reverseIndex;
+    this.idHistory.slice(index, 0);
+  }
+
+  public moveIdToLatest(id: string): void {
+    const reverseIndex = this.idHistory
+      .reverse()
+      .findIndex((entry) => entry === id);
+    if (reverseIndex == null) return;
+    const index = this.idHistory.length - 1 - reverseIndex;
+    const popped = this.idHistory.splice(index, 1)[0] as VimIdMapKeys;
+    this.idHistory.push(popped);
   }
 
   public executeCommandSequence(sequence: string): void {
@@ -208,6 +228,7 @@ export class VimInputHandlerV2 {
       // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,375] this.idHistory: ", this.idHistory);
       // /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,379] this.activeId: ", this.activeId);
       const activeInstance = this.getInstanceMap(this.activeId);
+      if (!activeInstance) return;
 
       // 1. Event -> Keys + Modifiers
       const keyData = this.getKeyData(event);
@@ -217,7 +238,8 @@ export class VimInputHandlerV2 {
       const { targetCommand: command, potentialCommands } =
         this.getCommand(keyData, options) ?? {};
 
-      const isInsert = activeInstance.vimCore.getVimState().mode === VimMode.INSERT;
+      const isInsert =
+        activeInstance.vimCore.getVimState().mode === VimMode.INSERT;
       let beforePreventDefault = potentialCommands?.length && !isInsert;
       if (beforePreventDefault) {
         event.preventDefault();
@@ -232,8 +254,11 @@ export class VimInputHandlerV2 {
       if (preventDefault) event.preventDefault();
 
       const commandName = VIM_COMMAND[command?.command ?? "nothing"];
-      if (!vimState) return;
-      const mode = vimState.mode;
+      let mode = vimState?.mode;
+      if (!mode) {
+        const currentMode = activeInstance.vimCore.getVimState().mode;
+        mode = currentMode;
+      }
       VimHelper.switchModes(mode, {
         insert: () => {
           if (commandName) {
@@ -242,7 +267,11 @@ export class VimInputHandlerV2 {
             }
           }
           if (options?.hooks?.onInsertInput) {
-            const response = options.hooks.onInsertInput(keyData.composite);
+            const response = options.hooks.onInsertInput(
+              vimState,
+              null,
+              keyData.composite,
+            );
             if (response === true) {
               event.preventDefault();
             }

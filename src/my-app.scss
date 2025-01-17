@@ -142,10 +142,10 @@
     z-index: 9876543 !important;
   }
 
-  @media (min-width: 768px) {
-    .md\:block,
-    .hidden {
-      display: block !important;
-    }
-  }
+  // @media (min-width: 768px) {
+  //   .md\:block,
+  //   .hidden {
+  //     /* display: block !important; */
+  //   }
+  // }
 }

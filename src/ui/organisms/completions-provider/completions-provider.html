@@ -1,0 +1,21 @@
+<div class="completions-provider-container">
+  <au-slot></au-slot>
+
+  <!-- <ul if.bind="showCompletionsPopover && completionItems.length > 0" class="p-2 background" css="border: 1px solid hsl(240 5.9% 90%);"> -->
+  <ul
+    if.bind="showCompletionsPopover && completionItems.length > 0"
+    data-showCompletionsPopover.bind="showCompletionsPopover"
+    data-completionItems.bind="completionItems.length > 0"
+    ref="listRef"
+    class="background ${listClasses}"
+    style="border: 1px solid hsl(240 5.9% 90%); width: ${listWidth}px "
+  >
+    <li
+      repeat.for="item of completionItems"
+      class="p-2 ${activeCursorIndex === $index ? 'bg-gray-700' : ''}"
+      data-scroll-index="${$index}"
+    >
+      ${item.text}
+    </li>
+  </ul>
+</div>
