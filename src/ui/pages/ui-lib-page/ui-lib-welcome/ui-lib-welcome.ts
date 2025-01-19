@@ -10,6 +10,14 @@ export class UiLibWelcome {
     if (params.viewModelName) {
       const { viewModelName, category } = params;
       this.viewModelName = viewModelName;
+      if (category === 'new-components') {
+        this.templatePath = undefined;
+      /*prettier-ignore*/ console.log("[ui-lib-welcome.ts,13] viewModelName: ", viewModelName);
+        this.componentPath = `../${category}/${viewModelName}.ts`;
+        /*prettier-ignore*/ console.log("[ui-lib-welcome.ts,16] this.componentPath: ", this.componentPath);
+        return true;
+      }
+
       if (category?.endsWith("-new")) {
         const actualCategory = category.slice(0, -4);
         this.templatePath = undefined;
