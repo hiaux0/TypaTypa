@@ -78,6 +78,7 @@ import { UiToast } from "./ui/new-components/ui-toast/ui-toast";
 import { UiToggleGroup } from "./ui/new-components/ui-toggle-group/ui-toggle-group";
 import { UiToggle } from "./ui/new-components/ui-toggle/ui-toggle";
 import { UiTooltip } from "./ui/new-components/ui-tooltip/ui-tooltip";
+import { UilibColors } from "./ui/pages/ui-lib-page/uilib-atoms/uilib-colors/uilib-colors";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
@@ -86,6 +87,7 @@ window.activeVimInstancesIdMap = [];
 
 const all = [
   CompletionsProvider,
+  UilibColors,
   UiAudio,
   UiButton,
   UiIcon,

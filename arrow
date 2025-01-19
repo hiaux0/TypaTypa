@@ -103,12 +103,13 @@ src/common/modules/debug/debugFlags.ts
 src/ui/colors.scss
 src/ui/mixins.scss
 src/ui/pages/ui-lib-page/ui-lib-page.html
--
+src/ui/pages/ui-lib-page/ui-lib-welcome/ui-lib-welcome.ts
 src/ui/pages/grid-test-page/grid-cell-html/grid-cell-html.ts
 src/ui/pages/grid-test-page/grid-cell-html/grid-cell-html.html
 src/ui/pages/grid-test-page/grid-cell-html/grid-cell-html.scss
 src/ui/molecules/ui-audio/ui-audio.ts
 src/ui/molecules/ui-audio/ui-audio.html
+
 
 
 

@@ -27,6 +27,7 @@ export class UiLibWelcome {
 
       if (viewModelName === 'uilib-colors') {
         this.templatePath = `../pages/ui-lib-page/uilib-atoms/uilib-colors/uilib-colors.html`;
+        /*prettier-ignore*/ console.log("[ui-lib-welcome.ts,30] this.templatePath: ", this.templatePath);
         this.componentPath = `../pages/ui-lib-page/uilib-atoms/uilib-colors/uilib-colors.ts`;
         return true;
       }
