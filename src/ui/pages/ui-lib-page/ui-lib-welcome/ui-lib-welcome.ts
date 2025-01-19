@@ -13,7 +13,7 @@ export class UiLibWelcome {
       if (category === 'new-components') {
         this.templatePath = undefined;
       /*prettier-ignore*/ console.log("[ui-lib-welcome.ts,13] viewModelName: ", viewModelName);
-        this.componentPath = `../${category}/${viewModelName}.ts`;
+        this.componentPath = `../${category}/${viewModelName}/${viewModelName}.ts`;
         /*prettier-ignore*/ console.log("[ui-lib-welcome.ts,16] this.componentPath: ", this.componentPath);
         return true;
       }

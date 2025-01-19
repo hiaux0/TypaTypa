@@ -35,13 +35,29 @@ import { UiAudio } from "./ui/molecules/ui-audio/ui-audio";
 import { UiIcon } from "./ui/atoms/ui-icon/ui-icon";
 import { UiPopover } from "./ui/molecules/ui-popover/ui-popover";
 import { CompletionsProvider } from "./ui/organisms/completions-provider/completions-provider";
+import { UiAccordion } from "./ui/new-components/ui-accordion/ui-accordion";
+import { UiAlertDialog } from "./ui/new-components/ui-alert-dialog/ui-alert-dialog";
+import { UiAlert } from "./ui/new-components/ui-alert/ui-alert";
+import { UiAspectRatio } from "./ui/new-components/ui-aspect-ratio/ui-aspect-ratio";
+import { UiAvatar } from "./ui/new-components/ui-avatar/ui-avatar";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
 // /*prettier-ignore*/ console.log("[main.ts,24] window.activeVimInstancesIdMap: ", window.activeVimInstancesIdMap);
 //
 
-const all = [CompletionsProvider, UiAudio, UiButton, UiIcon, UiPopover];
+const all = [
+  CompletionsProvider,
+  UiAudio,
+  UiButton,
+  UiIcon,
+  UiPopover,
+  UiAccordion,
+  UiAlertDialog,
+  UiAlert,
+  UiAspectRatio,
+  UiAvatar,
+];
 
 const attributes = [
   AutosizeCustomAttribute,
