@@ -43,6 +43,15 @@ import { UiAvatar } from "./ui/new-components/ui-avatar/ui-avatar";
 import { UiCheckbox } from "./ui/new-components/ui-checkbox";
 import { UiCombobox } from "./ui/new-components/ui-combobox";
 import { UiCommand } from "./ui/new-components/ui-command";
+import { UiContextMenu } from "./ui/new-components/ui-context-menu";
+import { UiDataTable } from "./ui/new-components/ui-data-table";
+import { UiDatePicker } from "./ui/new-components/ui-date-picker";
+import { UiDialog } from "./ui/new-components/ui-dialog";
+import { UiDrawer } from "./ui/new-components/ui-drawer";
+import { UiDropdown } from "./ui/new-components/ui-dropdown";
+import { UiForm } from "./ui/new-components/ui-form";
+import { UiHoverCard } from "./ui/new-components/ui-hover-card";
+import { UiIcon } from "./ui/new-components/ui-icon";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
@@ -63,6 +72,15 @@ const all = [
   UiCheckbox,
   UiCombobox,
   UiCommand,
+  UiContextMenu,
+  UiDataTable,
+  UiDatePicker,
+  UiDialog,
+  UiDrawer,
+  UiDropdown,
+  UiForm,
+  UiHoverCard,
+  UiIcon,
 ];
 
 const attributes = [
