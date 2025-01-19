@@ -1,30 +1,23 @@
-import { UiButton } from "./ui-button";
+import { customElement } from "aurelia";
 
-export class UiButtonDemo {
-  public message = "ui-button-demo";
-
-  // Example 1: Default Button
-  public defaultButton = `
+const template = `
+  <div>
+    <h2>Default Button</h2>
     <ui-button label="Default Button"></ui-button>
-  `;
 
-  // Example 2: Destructive Button
-  public destructiveButton = `
+    <h2>Destructive Button</h2>
     <ui-button label="Destructive Button" variant="destructive"></ui-button>
-  `;
 
-  // Example 3: Outline Button
-  public outlineButton = `
+    <h2>Outline Button</h2>
     <ui-button label="Outline Button" variant="outline"></ui-button>
-  `;
 
-  // Example 4: Secondary Button
-  public secondaryButton = `
+    <h2>Secondary Button</h2>
     <ui-button label="Secondary Button" variant="secondary"></ui-button>
-  `;
 
-  // Example 5: Ghost Button
-  public ghostButton = `
+    <h2>Ghost Button</h2>
     <ui-button label="Ghost Button" variant="ghost"></ui-button>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-button-demo", template })
+export class UiButtonDemo {}

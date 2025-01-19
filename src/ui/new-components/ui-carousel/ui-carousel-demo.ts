@@ -1,45 +1,38 @@
-import { UiCarousel } from "./ui-carousel";
+import { customElement } from "aurelia";
 
-export class UiCarouselDemo {
-  public message = "ui-carousel-demo";
-
-  // Example 1: Default Carousel
-  public defaultCarousel = `
+const template = `
+  <div>
+    <h2>Default Carousel</h2>
     <ui-carousel>
       <div>Default Carousel Content 1</div>
       <div>Default Carousel Content 2</div>
     </ui-carousel>
-  `;
 
-  // Example 2: Small Carousel
-  public smallCarousel = `
+    <h2>Small Carousel</h2>
     <ui-carousel size="sm">
       <div>Small Carousel Content 1</div>
       <div>Small Carousel Content 2</div>
     </ui-carousel>
-  `;
 
-  // Example 3: Large Carousel
-  public largeCarousel = `
+    <h2>Large Carousel</h2>
     <ui-carousel size="lg">
       <div>Large Carousel Content 1</div>
       <div>Large Carousel Content 2</div>
     </ui-carousel>
-  `;
 
-  // Example 4: Primary Color Carousel
-  public primaryColorCarousel = `
+    <h2>Primary Color Carousel</h2>
     <ui-carousel color="primary">
       <div>Primary Color Carousel Content 1</div>
       <div>Primary Color Carousel Content 2</div>
     </ui-carousel>
-  `;
 
-  // Example 5: Destructive Color Carousel
-  public destructiveColorCarousel = `
+    <h2>Destructive Color Carousel</h2>
     <ui-carousel color="destructive">
       <div>Destructive Color Carousel Content 1</div>
       <div>Destructive Color Carousel Content 2</div>
     </ui-carousel>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-carousel-demo", template })
+export class UiCarouselDemo {}

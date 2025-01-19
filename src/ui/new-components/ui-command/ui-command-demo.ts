@@ -1,50 +1,35 @@
-import { UiCommand } from "./ui-command";
+import { customElement } from "aurelia";
 
-export class UiCommandDemo {
-  public message = "ui-command-demo";
-
-  // Example 1: Default Command
-  public defaultCommand = `
+const template = `
+  <div>
+    <h2>Default Command</h2>
     <ui-command>Default Command</ui-command>
-  `;
 
-  // Example 2: Destructive Command
-  public destructiveCommand = `
+    <h2>Destructive Command</h2>
     <ui-command variant="destructive">Destructive Command</ui-command>
-  `;
 
-  // Example 3: Outline Command
-  public outlineCommand = `
+    <h2>Outline Command</h2>
     <ui-command variant="outline">Outline Command</ui-command>
-  `;
 
-  // Example 4: Secondary Command
-  public secondaryCommand = `
+    <h2>Secondary Command</h2>
     <ui-command variant="secondary">Secondary Command</ui-command>
-  `;
 
-  // Example 5: Ghost Command
-  public ghostCommand = `
+    <h2>Ghost Command</h2>
     <ui-command variant="ghost">Ghost Command</ui-command>
-  `;
 
-  // Example 6: Link Command
-  public linkCommand = `
+    <h2>Link Command</h2>
     <ui-command variant="link">Link Command</ui-command>
-  `;
 
-  // Example 7: Small Command
-  public smallCommand = `
+    <h2>Small Command</h2>
     <ui-command size="sm">Small Command</ui-command>
-  `;
 
-  // Example 8: Large Command
-  public largeCommand = `
+    <h2>Large Command</h2>
     <ui-command size="lg">Large Command</ui-command>
-  `;
 
-  // Example 9: Icon Command
-  public iconCommand = `
+    <h2>Icon Command</h2>
     <ui-command size="icon">Icon Command</ui-command>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-command-demo", template })
+export class UiCommandDemo {}

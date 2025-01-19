@@ -1,38 +1,29 @@
-import { UiDataTable } from "./ui-data-table";
+import { customElement } from "aurelia";
 
-export class UiDataTableDemo {
-  public message = "ui-data-table-demo";
-
-  // Example 1: Default Data Table
-  public defaultDataTable = `
+const template = `
+  <div>
+    <h2>Default Data Table</h2>
     <ui-data-table columns.bind="columns" rows.bind="rows"></ui-data-table>
-  `;
 
-  // Example 2: Small Data Table
-  public smallDataTable = `
+    <h2>Small Data Table</h2>
     <ui-data-table size="sm" columns.bind="columns" rows.bind="rows"></ui-data-table>
-  `;
 
-  // Example 3: Large Data Table
-  public largeDataTable = `
+    <h2>Large Data Table</h2>
     <ui-data-table size="lg" columns.bind="columns" rows.bind="rows"></ui-data-table>
-  `;
 
-  // Example 4: Primary Data Table
-  public primaryDataTable = `
+    <h2>Primary Data Table</h2>
     <ui-data-table color="primary" columns.bind="columns" rows.bind="rows"></ui-data-table>
-  `;
 
-  // Example 5: Secondary Data Table
-  public secondaryDataTable = `
+    <h2>Secondary Data Table</h2>
     <ui-data-table color="secondary" columns.bind="columns" rows.bind="rows"></ui-data-table>
-  `;
 
-  // Example 6: Destructive Data Table
-  public destructiveDataTable = `
+    <h2>Destructive Data Table</h2>
     <ui-data-table color="destructive" columns.bind="columns" rows.bind="rows"></ui-data-table>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-data-table-demo", template })
+export class UiDataTableDemo {
   public columns = [
     { label: "Name", field: "name" },
     { label: "Age", field: "age" },

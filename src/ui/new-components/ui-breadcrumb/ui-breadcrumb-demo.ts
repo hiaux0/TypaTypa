@@ -1,29 +1,24 @@
-import { UiBreadcrumb } from "./ui-breadcrumb";
+import { customElement } from "aurelia";
 
-export class UiBreadcrumbDemo {
-  public message = "ui-breadcrumb-demo";
-
-  // Example 1: Default Breadcrumb
-  public defaultBreadcrumb = `
+const template = `
+  <div>
+    <h2>Default Breadcrumb</h2>
     <ui-breadcrumb items.bind="[{ label: 'Home', href: '/' }, { label: 'Library', href: '/library' }, { label: 'Data', href: '/library/data' }]">
     </ui-breadcrumb>
-  `;
 
-  // Example 2: Primary Breadcrumb
-  public primaryBreadcrumb = `
+    <h2>Primary Breadcrumb</h2>
     <ui-breadcrumb color="primary" items.bind="[{ label: 'Home', href: '/' }, { label: 'Library', href: '/library' }, { label: 'Data', href: '/library/data' }]">
     </ui-breadcrumb>
-  `;
 
-  // Example 3: Secondary Breadcrumb
-  public secondaryBreadcrumb = `
+    <h2>Secondary Breadcrumb</h2>
     <ui-breadcrumb color="secondary" items.bind="[{ label: 'Home', href: '/' }, { label: 'Library', href: '/library' }, { label: 'Data', href: '/library/data' }]">
     </ui-breadcrumb>
-  `;
 
-  // Example 4: Destructive Breadcrumb
-  public destructiveBreadcrumb = `
+    <h2>Destructive Breadcrumb</h2>
     <ui-breadcrumb color="destructive" items.bind="[{ label: 'Home', href: '/' }, { label: 'Library', href: '/library' }, { label: 'Data', href: '/library/data' }]">
     </ui-breadcrumb>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-breadcrumb-demo", template })
+export class UiBreadcrumbDemo {}

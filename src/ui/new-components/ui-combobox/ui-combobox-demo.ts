@@ -1,35 +1,26 @@
-import { UiCombobox } from "./ui-combobox";
+import { customElement } from "aurelia";
 
-export class UiComboboxDemo {
-  public message = "ui-combobox-demo";
-
-  // Example 1: Default Combobox
-  public defaultCombobox = `
+const template = `
+  <div>
+    <h2>Default Combobox</h2>
     <ui-combobox></ui-combobox>
-  `;
 
-  // Example 2: Small Combobox
-  public smallCombobox = `
+    <h2>Small Combobox</h2>
     <ui-combobox size="sm"></ui-combobox>
-  `;
 
-  // Example 3: Large Combobox
-  public largeCombobox = `
+    <h2>Large Combobox</h2>
     <ui-combobox size="lg"></ui-combobox>
-  `;
 
-  // Example 4: Combobox with Top Position
-  public topCombobox = `
+    <h2>Combobox with Top Position</h2>
     <ui-combobox position="top"></ui-combobox>
-  `;
 
-  // Example 5: Combobox with Left Position
-  public leftCombobox = `
+    <h2>Combobox with Left Position</h2>
     <ui-combobox position="left"></ui-combobox>
-  `;
 
-  // Example 6: Combobox with Right Position
-  public rightCombobox = `
+    <h2>Combobox with Right Position</h2>
     <ui-combobox position="right"></ui-combobox>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-combobox-demo", template })
+export class UiComboboxDemo {}

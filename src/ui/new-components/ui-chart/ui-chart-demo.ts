@@ -1,33 +1,26 @@
-import { UiChart } from "./ui-chart";
+import { customElement } from "aurelia";
 
-export class UiChartDemo {
-  public message = "ui-chart-demo";
-
-  // Example 1: Bar Chart
-  public barChart = `
+const template = `
+  <div>
+    <h2>Bar Chart</h2>
     <ui-chart type="bar" data.bind="barChartData" options.bind="chartOptions"></ui-chart>
-  `;
 
-  // Example 2: Line Chart
-  public lineChart = `
+    <h2>Line Chart</h2>
     <ui-chart type="line" data.bind="lineChartData" options.bind="chartOptions"></ui-chart>
-  `;
 
-  // Example 3: Pie Chart
-  public pieChart = `
+    <h2>Pie Chart</h2>
     <ui-chart type="pie" data.bind="pieChartData" options.bind="chartOptions"></ui-chart>
-  `;
 
-  // Example 4: Primary Color Bar Chart
-  public primaryColorBarChart = `
+    <h2>Primary Color Bar Chart</h2>
     <ui-chart type="bar" color="primary" data.bind="barChartData" options.bind="chartOptions"></ui-chart>
-  `;
 
-  // Example 5: Destructive Color Line Chart
-  public destructiveColorLineChart = `
+    <h2>Destructive Color Line Chart</h2>
     <ui-chart type="line" color="destructive" data.bind="lineChartData" options.bind="chartOptions"></ui-chart>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-chart-demo", template })
+export class UiChartDemo {
   public barChartData = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [
