@@ -1,35 +1,26 @@
-import { UiDatePicker } from "./ui-date-picker";
+import { customElement } from "aurelia";
 
-export class UiDatePickerDemo {
-  public message = "ui-date-picker-demo";
-
-  // Example 1: Default Date Picker
-  public defaultDatePicker = `
+const template = `
+  <div>
+    <h2>Default Date Picker</h2>
     <ui-date-picker></ui-date-picker>
-  `;
 
-  // Example 2: Small Date Picker
-  public smallDatePicker = `
+    <h2>Small Date Picker</h2>
     <ui-date-picker size="sm"></ui-date-picker>
-  `;
 
-  // Example 3: Large Date Picker
-  public largeDatePicker = `
+    <h2>Large Date Picker</h2>
     <ui-date-picker size="lg"></ui-date-picker>
-  `;
 
-  // Example 4: Date Picker with Top Position
-  public topDatePicker = `
+    <h2>Date Picker with Top Position</h2>
     <ui-date-picker position="top"></ui-date-picker>
-  `;
 
-  // Example 5: Date Picker with Left Position
-  public leftDatePicker = `
+    <h2>Date Picker with Left Position</h2>
     <ui-date-picker position="left"></ui-date-picker>
-  `;
 
-  // Example 6: Date Picker with Right Position
-  public rightDatePicker = `
+    <h2>Date Picker with Right Position</h2>
     <ui-date-picker position="right"></ui-date-picker>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-date-picker-demo", template })
+export class UiDatePickerDemo {}

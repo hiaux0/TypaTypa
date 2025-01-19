@@ -1,25 +1,20 @@
-import { UiRadio } from "./ui-radio";
+import { customElement } from "aurelia";
 
-export class UiRadioDemo {
-  public message = "ui-radio-demo";
-
-  // Example 1: Default Radio
-  public defaultRadio = `
+const template = `
+  <div>
+    <h2>Default Radio</h2>
     <ui-radio></ui-radio>
-  `;
 
-  // Example 2: Small Radio
-  public smallRadio = `
+    <h2>Small Radio</h2>
     <ui-radio size="sm"></ui-radio>
-  `;
 
-  // Example 3: Large Radio
-  public largeRadio = `
+    <h2>Large Radio</h2>
     <ui-radio size="lg"></ui-radio>
-  `;
 
-  // Example 4: Disabled Radio
-  public disabledRadio = `
+    <h2>Disabled Radio</h2>
     <ui-radio disabled="true"></ui-radio>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-radio-demo", template })
+export class UiRadioDemo {}

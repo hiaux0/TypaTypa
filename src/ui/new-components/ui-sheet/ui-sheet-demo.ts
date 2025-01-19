@@ -1,33 +1,28 @@
-import { UiSheet } from "./ui-sheet";
+import { customElement } from "aurelia";
 
-export class UiSheetDemo {
-  public message = "ui-sheet-demo";
-
-  // Example 1: Default Sheet
-  public defaultSheet = `
+const template = `
+  <div>
+    <h2>Default Sheet</h2>
     <ui-sheet>
       <div>Default Sheet Content</div>
     </ui-sheet>
-  `;
 
-  // Example 2: Small Sheet
-  public smallSheet = `
+    <h2>Small Sheet</h2>
     <ui-sheet size="sm">
       <div>Small Sheet Content</div>
     </ui-sheet>
-  `;
 
-  // Example 3: Large Sheet
-  public largeSheet = `
+    <h2>Large Sheet</h2>
     <ui-sheet size="lg">
       <div>Large Sheet Content</div>
     </ui-sheet>
-  `;
 
-  // Example 4: Sheet without Backdrop
-  public noBackdropSheet = `
+    <h2>Sheet without Backdrop</h2>
     <ui-sheet backdrop="none">
       <div>Sheet without Backdrop Content</div>
     </ui-sheet>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-sheet-demo", template })
+export class UiSheetDemo {}

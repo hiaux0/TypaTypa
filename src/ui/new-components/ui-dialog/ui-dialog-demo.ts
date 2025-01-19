@@ -1,33 +1,28 @@
-import { UiDialog } from "./ui-dialog";
+import { customElement } from "aurelia";
 
-export class UiDialogDemo {
-  public message = "ui-dialog-demo";
-
-  // Example 1: Default Dialog
-  public defaultDialog = `
+const template = `
+  <div>
+    <h2>Default Dialog</h2>
     <ui-dialog>
       <div>Default Dialog Content</div>
     </ui-dialog>
-  `;
 
-  // Example 2: Small Dialog
-  public smallDialog = `
+    <h2>Small Dialog</h2>
     <ui-dialog size="sm">
       <div>Small Dialog Content</div>
     </ui-dialog>
-  `;
 
-  // Example 3: Large Dialog
-  public largeDialog = `
+    <h2>Large Dialog</h2>
     <ui-dialog size="lg">
       <div>Large Dialog Content</div>
     </ui-dialog>
-  `;
 
-  // Example 4: Dialog without Backdrop
-  public noBackdropDialog = `
+    <h2>Dialog without Backdrop</h2>
     <ui-dialog backdrop="none">
       <div>Dialog without Backdrop Content</div>
     </ui-dialog>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-dialog-demo", template })
+export class UiDialogDemo {}

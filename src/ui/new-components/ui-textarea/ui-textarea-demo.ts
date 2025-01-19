@@ -1,35 +1,26 @@
-import { UiTextarea } from "./ui-textarea";
+import { customElement } from "aurelia";
 
-export class UiTextareaDemo {
-  public message = "ui-textarea-demo";
-
-  // Example 1: Default Textarea
-  public defaultTextarea = `
+const template = `
+  <div>
+    <h2>Default Textarea</h2>
     <ui-textarea></ui-textarea>
-  `;
 
-  // Example 2: Destructive Textarea
-  public destructiveTextarea = `
+    <h2>Destructive Textarea</h2>
     <ui-textarea variant="destructive"></ui-textarea>
-  `;
 
-  // Example 3: Outline Textarea
-  public outlineTextarea = `
+    <h2>Outline Textarea</h2>
     <ui-textarea variant="outline"></ui-textarea>
-  `;
 
-  // Example 4: Secondary Textarea
-  public secondaryTextarea = `
+    <h2>Secondary Textarea</h2>
     <ui-textarea variant="secondary"></ui-textarea>
-  `;
 
-  // Example 5: Small Textarea
-  public smallTextarea = `
+    <h2>Small Textarea</h2>
     <ui-textarea size="sm"></ui-textarea>
-  `;
 
-  // Example 6: Large Textarea
-  public largeTextarea = `
+    <h2>Large Textarea</h2>
     <ui-textarea size="lg"></ui-textarea>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-textarea-demo", template })
+export class UiTextareaDemo {}

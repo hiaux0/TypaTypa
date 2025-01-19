@@ -1,33 +1,28 @@
-import { UiDrawer } from "./ui-drawer";
+import { customElement } from "aurelia";
 
-export class UiDrawerDemo {
-  public message = "ui-drawer-demo";
-
-  // Example 1: Default Drawer
-  public defaultDrawer = `
+const template = `
+  <div>
+    <h2>Default Drawer</h2>
     <ui-drawer>
       <div>Default Drawer Content</div>
     </ui-drawer>
-  `;
 
-  // Example 2: Small Drawer
-  public smallDrawer = `
+    <h2>Small Drawer</h2>
     <ui-drawer size="sm">
       <div>Small Drawer Content</div>
     </ui-drawer>
-  `;
 
-  // Example 3: Large Drawer
-  public largeDrawer = `
+    <h2>Large Drawer</h2>
     <ui-drawer size="lg">
       <div>Large Drawer Content</div>
     </ui-drawer>
-  `;
 
-  // Example 4: Drawer without Backdrop
-  public noBackdropDrawer = `
+    <h2>Drawer without Backdrop</h2>
     <ui-drawer backdrop="none">
       <div>Drawer without Backdrop Content</div>
     </ui-drawer>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-drawer-demo", template })
+export class UiDrawerDemo {}

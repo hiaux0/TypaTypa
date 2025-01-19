@@ -1,33 +1,28 @@
-import { UiCard } from "./ui-card";
+import { customElement } from "aurelia";
 
-export class UiCardDemo {
-  public message = "ui-card-demo";
-
-  // Example 1: Default Card
-  public defaultCard = `
+const template = `
+  <div>
+    <h2>Default Card</h2>
     <ui-card>
       <div>Default Card Content</div>
     </ui-card>
-  `;
 
-  // Example 2: Primary Card
-  public primaryCard = `
+    <h2>Primary Card</h2>
     <ui-card variant="primary">
       <div>Primary Card Content</div>
     </ui-card>
-  `;
 
-  // Example 3: Secondary Card
-  public secondaryCard = `
+    <h2>Secondary Card</h2>
     <ui-card variant="secondary">
       <div>Secondary Card Content</div>
     </ui-card>
-  `;
 
-  // Example 4: Destructive Card
-  public destructiveCard = `
+    <h2>Destructive Card</h2>
     <ui-card variant="destructive">
       <div>Destructive Card Content</div>
     </ui-card>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-card-demo", template })
+export class UiCardDemo {}

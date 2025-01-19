@@ -1,33 +1,28 @@
-import { UiBadge } from "./ui-badge";
+import { customElement } from "aurelia";
 
-export class UiBadgeDemo {
-  public message = "ui-badge-demo";
-
-  // Example 1: Default Badge
-  public defaultBadge = `
+const template = `
+  <div>
+    <h2>Default Badge</h2>
     <ui-badge>
       <div>Default Badge Content</div>
     </ui-badge>
-  `;
 
-  // Example 2: Primary Badge
-  public primaryBadge = `
+    <h2>Primary Badge</h2>
     <ui-badge color="primary">
       <div>Primary Badge Content</div>
     </ui-badge>
-  `;
 
-  // Example 3: Secondary Badge
-  public secondaryBadge = `
+    <h2>Secondary Badge</h2>
     <ui-badge color="secondary">
       <div>Secondary Badge Content</div>
     </ui-badge>
-  `;
 
-  // Example 4: Destructive Badge
-  public destructiveBadge = `
+    <h2>Destructive Badge</h2>
     <ui-badge color="destructive">
       <div>Destructive Badge Content</div>
     </ui-badge>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-badge-demo", template })
+export class UiBadgeDemo {}

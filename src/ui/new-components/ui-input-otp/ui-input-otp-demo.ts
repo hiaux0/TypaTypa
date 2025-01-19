@@ -1,45 +1,32 @@
-import { UiInputOtp } from "./ui-input-otp";
+import { customElement } from "aurelia";
 
-export class UiInputOtpDemo {
-  public message = "ui-input-otp-demo";
-
-  // Example 1: Default Input OTP
-  public defaultInputOtp = `
+const template = `
+  <div>
+    <h2>Default Input OTP</h2>
     <ui-input-otp></ui-input-otp>
-  `;
 
-  // Example 2: Destructive Input OTP
-  public destructiveInputOtp = `
+    <h2>Destructive Input OTP</h2>
     <ui-input-otp variant="destructive"></ui-input-otp>
-  `;
 
-  // Example 3: Outline Input OTP
-  public outlineInputOtp = `
+    <h2>Outline Input OTP</h2>
     <ui-input-otp variant="outline"></ui-input-otp>
-  `;
 
-  // Example 4: Secondary Input OTP
-  public secondaryInputOtp = `
+    <h2>Secondary Input OTP</h2>
     <ui-input-otp variant="secondary"></ui-input-otp>
-  `;
 
-  // Example 5: Ghost Input OTP
-  public ghostInputOtp = `
+    <h2>Ghost Input OTP</h2>
     <ui-input-otp variant="ghost"></ui-input-otp>
-  `;
 
-  // Example 6: Link Input OTP
-  public linkInputOtp = `
+    <h2>Link Input OTP</h2>
     <ui-input-otp variant="link"></ui-input-otp>
-  `;
 
-  // Example 7: Small Input OTP
-  public smallInputOtp = `
+    <h2>Small Input OTP</h2>
     <ui-input-otp size="sm"></ui-input-otp>
-  `;
 
-  // Example 8: Large Input OTP
-  public largeInputOtp = `
+    <h2>Large Input OTP</h2>
     <ui-input-otp size="lg"></ui-input-otp>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-input-otp-demo", template })
+export class UiInputOtpDemo {}

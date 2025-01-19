@@ -1,25 +1,20 @@
-import { UiPopover } from "./ui-popover";
+import { customElement } from "aurelia";
 
-export class UiPopoverDemo {
-  public message = "ui-popover-demo";
-
-  // Example 1: Default Popover
-  public defaultPopover = `
+const template = `
+  <div>
+    <h2>Default Popover</h2>
     <ui-popover text="Default Popover"></ui-popover>
-  `;
 
-  // Example 2: Popover with Bottom Position
-  public bottomPopover = `
+    <h2>Popover with Bottom Position</h2>
     <ui-popover text="Bottom Popover" position="bottom"></ui-popover>
-  `;
 
-  // Example 3: Popover with Left Position
-  public leftPopover = `
+    <h2>Popover with Left Position</h2>
     <ui-popover text="Left Popover" position="left"></ui-popover>
-  `;
 
-  // Example 4: Popover with Right Position
-  public rightPopover = `
+    <h2>Popover with Right Position</h2>
     <ui-popover text="Right Popover" position="right"></ui-popover>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-popover-demo", template })
+export class UiPopoverDemo {}

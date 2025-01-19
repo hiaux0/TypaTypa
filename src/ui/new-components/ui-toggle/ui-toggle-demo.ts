@@ -1,30 +1,23 @@
-import { UiToggle } from "./ui-toggle";
+import { customElement } from "aurelia";
 
-export class UiToggleDemo {
-  public message = "ui-toggle-demo";
-
-  // Example 1: Default Toggle
-  public defaultToggle = `
+const template = `
+  <div>
+    <h2>Default Toggle</h2>
     <ui-toggle></ui-toggle>
-  `;
 
-  // Example 2: Primary Toggle
-  public primaryToggle = `
+    <h2>Primary Toggle</h2>
     <ui-toggle color="primary"></ui-toggle>
-  `;
 
-  // Example 3: Secondary Toggle
-  public secondaryToggle = `
+    <h2>Secondary Toggle</h2>
     <ui-toggle color="secondary"></ui-toggle>
-  `;
 
-  // Example 4: Destructive Toggle
-  public destructiveToggle = `
+    <h2>Destructive Toggle</h2>
     <ui-toggle color="destructive"></ui-toggle>
-  `;
 
-  // Example 5: Disabled Toggle
-  public disabledToggle = `
+    <h2>Disabled Toggle</h2>
     <ui-toggle disabled="true"></ui-toggle>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-toggle-demo", template })
+export class UiToggleDemo {}

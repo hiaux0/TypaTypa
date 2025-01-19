@@ -1,37 +1,32 @@
-import { UiAccordion } from "./ui-accordion";
+import { customElement } from "aurelia";
 
-export class UiAccordionDemo {
-  public message = "ui-accordion-demo";
-
-  // Example 1: Default Accordion
-  public defaultAccordion = `
+const template = `
+  <div>
+    <h2>Default Accordion</h2>
     <ui-accordion>
       <div>Accordion Content 1</div>
       <div>Accordion Content 2</div>
     </ui-accordion>
-  `;
 
-  // Example 2: Primary Accordion
-  public primaryAccordion = `
+    <h2>Primary Accordion</h2>
     <ui-accordion variant="primary">
       <div>Primary Accordion Content 1</div>
       <div>Primary Accordion Content 2</div>
     </ui-accordion>
-  `;
 
-  // Example 3: Secondary Accordion
-  public secondaryAccordion = `
+    <h2>Secondary Accordion</h2>
     <ui-accordion variant="secondary">
       <div>Secondary Accordion Content 1</div>
       <div>Secondary Accordion Content 2</div>
     </ui-accordion>
-  `;
 
-  // Example 4: Destructive Accordion
-  public destructiveAccordion = `
+    <h2>Destructive Accordion</h2>
     <ui-accordion variant="destructive">
       <div>Destructive Accordion Content 1</div>
       <div>Destructive Accordion Content 2</div>
     </ui-accordion>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-accordion-demo", template })
+export class UiAccordionDemo {}

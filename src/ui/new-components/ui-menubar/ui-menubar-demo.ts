@@ -1,28 +1,23 @@
-import { UiMenubar } from "./ui-menubar";
+import { customElement } from "aurelia";
 
-export class UiMenubarDemo {
-  public message = "ui-menubar-demo";
-
-  // Example 1: Default Menubar
-  public defaultMenubar = `
+const template = `
+  <div>
+    <h2>Default Menubar</h2>
     <ui-menubar items.bind="defaultItems"></ui-menubar>
-  `;
 
-  // Example 2: Primary Menubar
-  public primaryMenubar = `
+    <h2>Primary Menubar</h2>
     <ui-menubar items.bind="primaryItems" color="primary"></ui-menubar>
-  `;
 
-  // Example 3: Secondary Menubar
-  public secondaryMenubar = `
+    <h2>Secondary Menubar</h2>
     <ui-menubar items.bind="secondaryItems" color="secondary"></ui-menubar>
-  `;
 
-  // Example 4: Destructive Menubar
-  public destructiveMenubar = `
+    <h2>Destructive Menubar</h2>
     <ui-menubar items.bind="destructiveItems" color="destructive"></ui-menubar>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-menubar-demo", template })
+export class UiMenubarDemo {
   public defaultItems = [
     { label: "Home", href: "#" },
     { label: "About", href: "#" },

@@ -1,28 +1,23 @@
-export class UiAvatarDemo {
-  public message = "ui-avatar-demo";
+import { customElement } from "aurelia";
 
-  // Example 1: Default Avatar
-  public defaultAvatar = `
+const template = `
+  <div>
+    <h2>Default Avatar</h2>
     <ui-avatar src="path/to/default-avatar.jpg" alt="Default Avatar"></ui-avatar>
-  `;
 
-  // Example 2: Small Avatar
-  public smallAvatar = `
+    <h2>Small Avatar</h2>
     <ui-avatar src="path/to/small-avatar.jpg" alt="Small Avatar" size="sm"></ui-avatar>
-  `;
 
-  // Example 3: Large Avatar
-  public largeAvatar = `
+    <h2>Large Avatar</h2>
     <ui-avatar src="path/to/large-avatar.jpg" alt="Large Avatar" size="lg"></ui-avatar>
-  `;
 
-  // Example 4: Primary Color Avatar
-  public primaryColorAvatar = `
+    <h2>Primary Color Avatar</h2>
     <ui-avatar src="path/to/primary-avatar.jpg" alt="Primary Avatar" color="primary"></ui-avatar>
-  `;
 
-  // Example 5: Destructive Color Avatar
-  public destructiveColorAvatar = `
+    <h2>Destructive Color Avatar</h2>
     <ui-avatar src="path/to/destructive-avatar.jpg" alt="Destructive Avatar" color="destructive"></ui-avatar>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-avatar-demo", template })
+export class UiAvatarDemo {}

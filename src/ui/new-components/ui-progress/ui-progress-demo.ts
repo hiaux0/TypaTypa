@@ -1,25 +1,20 @@
-import { UiProgress } from "./ui-progress";
+import { customElement } from "aurelia";
 
-export class UiProgressDemo {
-  public message = "ui-progress-demo";
-
-  // Example 1: Default Progress
-  public defaultProgress = `
+const template = `
+  <div>
+    <h2>Default Progress</h2>
     <ui-progress value="50"></ui-progress>
-  `;
 
-  // Example 2: Secondary Progress
-  public secondaryProgress = `
+    <h2>Secondary Progress</h2>
     <ui-progress value="75" color="secondary"></ui-progress>
-  `;
 
-  // Example 3: Destructive Progress
-  public destructiveProgress = `
+    <h2>Destructive Progress</h2>
     <ui-progress value="25" color="destructive"></ui-progress>
-  `;
 
-  // Example 4: Progress with 100% Value
-  public fullProgress = `
+    <h2>Progress with 100% Value</h2>
     <ui-progress value="100"></ui-progress>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-progress-demo", template })
+export class UiProgressDemo {}

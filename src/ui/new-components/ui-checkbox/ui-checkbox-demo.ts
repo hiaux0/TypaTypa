@@ -1,25 +1,20 @@
-import { UiCheckbox } from "./ui-checkbox";
+import { customElement } from "aurelia";
 
-export class UiCheckboxDemo {
-  public message = "ui-checkbox-demo";
-
-  // Example 1: Default Checkbox
-  public defaultCheckbox = `
+const template = `
+  <div>
+    <h2>Default Checkbox</h2>
     <ui-checkbox></ui-checkbox>
-  `;
 
-  // Example 2: Small Checkbox
-  public smallCheckbox = `
+    <h2>Small Checkbox</h2>
     <ui-checkbox size="sm"></ui-checkbox>
-  `;
 
-  // Example 3: Large Checkbox
-  public largeCheckbox = `
+    <h2>Large Checkbox</h2>
     <ui-checkbox size="lg"></ui-checkbox>
-  `;
 
-  // Example 4: Disabled Checkbox
-  public disabledCheckbox = `
+    <h2>Disabled Checkbox</h2>
     <ui-checkbox disabled="true"></ui-checkbox>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-checkbox-demo", template })
+export class UiCheckboxDemo {}

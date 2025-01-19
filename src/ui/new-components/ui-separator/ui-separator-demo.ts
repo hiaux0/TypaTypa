@@ -1,25 +1,20 @@
-import { UiSeparator } from "./ui-separator";
+import { customElement } from "aurelia";
 
-export class UiSeparatorDemo {
-  public message = "ui-separator-demo";
-
-  // Example 1: Default Separator
-  public defaultSeparator = `
+const template = `
+  <div>
+    <h2>Default Separator</h2>
     <ui-separator></ui-separator>
-  `;
 
-  // Example 2: Primary Separator
-  public primarySeparator = `
+    <h2>Primary Separator</h2>
     <ui-separator color="primary"></ui-separator>
-  `;
 
-  // Example 3: Secondary Separator
-  public secondarySeparator = `
+    <h2>Secondary Separator</h2>
     <ui-separator color="secondary"></ui-separator>
-  `;
 
-  // Example 4: Destructive Separator
-  public destructiveSeparator = `
+    <h2>Destructive Separator</h2>
     <ui-separator color="destructive"></ui-separator>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-separator-demo", template })
+export class UiSeparatorDemo {}

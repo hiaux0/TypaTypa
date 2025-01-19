@@ -1,25 +1,20 @@
-import { UiHoverCard } from "./ui-hover-card";
+import { customElement } from "aurelia";
 
-export class UiHoverCardDemo {
-  public message = "ui-hover-card-demo";
-
-  // Example 1: Default Hover Card
-  public defaultHoverCard = `
+const template = `
+  <div>
+    <h2>Default Hover Card</h2>
     <ui-hover-card text="Default Hover Card"></ui-hover-card>
-  `;
 
-  // Example 2: Hover Card with Bottom Position
-  public bottomHoverCard = `
+    <h2>Hover Card with Bottom Position</h2>
     <ui-hover-card text="Bottom Hover Card" position="bottom"></ui-hover-card>
-  `;
 
-  // Example 3: Hover Card with Left Position
-  public leftHoverCard = `
+    <h2>Hover Card with Left Position</h2>
     <ui-hover-card text="Left Hover Card" position="left"></ui-hover-card>
-  `;
 
-  // Example 4: Hover Card with Right Position
-  public rightHoverCard = `
+    <h2>Hover Card with Right Position</h2>
     <ui-hover-card text="Right Hover Card" position="right"></ui-hover-card>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-hover-card-demo", template })
+export class UiHoverCardDemo {}
