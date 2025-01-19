@@ -1,25 +1,20 @@
-import { UiTooltip } from "./ui-tooltip";
+import { customElement } from "aurelia";
 
-export class UiTooltipDemo {
-  public message = "ui-tooltip-demo";
-
-  // Example 1: Default Tooltip
-  public defaultTooltip = `
+const template = `
+  <div>
+    <h2>Default Tooltip</h2>
     <ui-tooltip text="Default Tooltip"></ui-tooltip>
-  `;
 
-  // Example 2: Tooltip with Bottom Position
-  public bottomTooltip = `
+    <h2>Tooltip with Bottom Position</h2>
     <ui-tooltip text="Bottom Tooltip" position="bottom"></ui-tooltip>
-  `;
 
-  // Example 3: Tooltip with Left Position
-  public leftTooltip = `
+    <h2>Tooltip with Left Position</h2>
     <ui-tooltip text="Left Tooltip" position="left"></ui-tooltip>
-  `;
 
-  // Example 4: Tooltip with Right Position
-  public rightTooltip = `
+    <h2>Tooltip with Right Position</h2>
     <ui-tooltip text="Right Tooltip" position="right"></ui-tooltip>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-tooltip-demo", template })
+export class UiTooltipDemo {}

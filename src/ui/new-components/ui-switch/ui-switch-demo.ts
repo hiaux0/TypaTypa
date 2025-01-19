@@ -1,30 +1,23 @@
-import { UiSwitch } from "./ui-switch";
+import { customElement } from "aurelia";
 
-export class UiSwitchDemo {
-  public message = "ui-switch-demo";
-
-  // Example 1: Default Switch
-  public defaultSwitch = `
+const template = `
+  <div>
+    <h2>Default Switch</h2>
     <ui-switch></ui-switch>
-  `;
 
-  // Example 2: Primary Switch
-  public primarySwitch = `
+    <h2>Primary Switch</h2>
     <ui-switch color="primary"></ui-switch>
-  `;
 
-  // Example 3: Secondary Switch
-  public secondarySwitch = `
+    <h2>Secondary Switch</h2>
     <ui-switch color="secondary"></ui-switch>
-  `;
 
-  // Example 4: Destructive Switch
-  public destructiveSwitch = `
+    <h2>Destructive Switch</h2>
     <ui-switch color="destructive"></ui-switch>
-  `;
 
-  // Example 5: Disabled Switch
-  public disabledSwitch = `
+    <h2>Disabled Switch</h2>
     <ui-switch disabled="true"></ui-switch>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-switch-demo", template })
+export class UiSwitchDemo {}

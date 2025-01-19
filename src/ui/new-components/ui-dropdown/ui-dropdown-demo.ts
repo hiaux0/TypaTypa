@@ -1,35 +1,26 @@
-import { UiDropdown } from "./ui-dropdown";
+import { customElement } from "aurelia";
 
-export class UiDropdownDemo {
-  public message = "ui-dropdown-demo";
-
-  // Example 1: Default Dropdown
-  public defaultDropdown = `
+const template = `
+  <div>
+    <h2>Default Dropdown</h2>
     <ui-dropdown></ui-dropdown>
-  `;
 
-  // Example 2: Small Dropdown
-  public smallDropdown = `
+    <h2>Small Dropdown</h2>
     <ui-dropdown size="sm"></ui-dropdown>
-  `;
 
-  // Example 3: Large Dropdown
-  public largeDropdown = `
+    <h2>Large Dropdown</h2>
     <ui-dropdown size="lg"></ui-dropdown>
-  `;
 
-  // Example 4: Dropdown with Top Position
-  public topDropdown = `
+    <h2>Dropdown with Top Position</h2>
     <ui-dropdown position="top"></ui-dropdown>
-  `;
 
-  // Example 5: Dropdown with Left Position
-  public leftDropdown = `
+    <h2>Dropdown with Left Position</h2>
     <ui-dropdown position="left"></ui-dropdown>
-  `;
 
-  // Example 6: Dropdown with Right Position
-  public rightDropdown = `
+    <h2>Dropdown with Right Position</h2>
     <ui-dropdown position="right"></ui-dropdown>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-dropdown-demo", template })
+export class UiDropdownDemo {}

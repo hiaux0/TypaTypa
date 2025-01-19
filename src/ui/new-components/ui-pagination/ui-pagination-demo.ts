@@ -1,48 +1,35 @@
-import { UiPagination } from "./ui-pagination";
+import { customElement } from "aurelia";
 
-export class UiPaginationDemo {
-  public message = "ui-pagination-demo";
-
-  // Example 1: Default Pagination
-  public defaultPagination = `
+const template = `
+  <div>
+    <h2>Default Pagination</h2>
     <ui-pagination pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 2: Destructive Pagination
-  public destructivePagination = `
+    <h2>Destructive Pagination</h2>
     <ui-pagination variant="destructive" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 3: Outline Pagination
-  public outlinePagination = `
+    <h2>Outline Pagination</h2>
     <ui-pagination variant="outline" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 4: Secondary Pagination
-  public secondaryPagination = `
+    <h2>Secondary Pagination</h2>
     <ui-pagination variant="secondary" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 5: Ghost Pagination
-  public ghostPagination = `
+    <h2>Ghost Pagination</h2>
     <ui-pagination variant="ghost" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 6: Link Pagination
-  public linkPagination = `
+    <h2>Link Pagination</h2>
     <ui-pagination variant="link" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 7: Small Pagination
-  public smallPagination = `
+    <h2>Small Pagination</h2>
     <ui-pagination size="sm" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
 
-  // Example 8: Large Pagination
-  public largePagination = `
+    <h2>Large Pagination</h2>
     <ui-pagination size="lg" pages.bind="pages" currentPage.bind="currentPage" onPageChange.bind="handlePageChange"></ui-pagination>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-pagination-demo", template })
+export class UiPaginationDemo {
   public pages = [1, 2, 3, 4, 5];
   public currentPage = 1;
 

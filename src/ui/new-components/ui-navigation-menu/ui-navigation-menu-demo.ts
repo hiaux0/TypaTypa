@@ -1,28 +1,23 @@
-import { UiNavigationMenu } from "./ui-navigation-menu";
+import { customElement } from "aurelia";
 
-export class UiNavigationMenuDemo {
-  public message = "ui-navigation-menu-demo";
-
-  // Example 1: Default Navigation Menu
-  public defaultNavigationMenu = `
+const template = `
+  <div>
+    <h2>Default Navigation Menu</h2>
     <ui-navigation-menu items.bind="items"></ui-navigation-menu>
-  `;
 
-  // Example 2: Primary Navigation Menu
-  public primaryNavigationMenu = `
+    <h2>Primary Navigation Menu</h2>
     <ui-navigation-menu items.bind="items" color="primary"></ui-navigation-menu>
-  `;
 
-  // Example 3: Secondary Navigation Menu
-  public secondaryNavigationMenu = `
+    <h2>Secondary Navigation Menu</h2>
     <ui-navigation-menu items.bind="items" color="secondary"></ui-navigation-menu>
-  `;
 
-  // Example 4: Destructive Navigation Menu
-  public destructiveNavigationMenu = `
+    <h2>Destructive Navigation Menu</h2>
     <ui-navigation-menu items.bind="items" color="destructive"></ui-navigation-menu>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-navigation-menu-demo", template })
+export class UiNavigationMenuDemo {
   public items = [
     { label: "Home", href: "#" },
     { label: "About", href: "#" },

@@ -1,35 +1,26 @@
-import { UiSlider } from "./ui-slider";
+import { customElement } from "aurelia";
 
-export class UiSliderDemo {
-  public message = "ui-slider-demo";
-
-  // Example 1: Default Slider
-  public defaultSlider = `
+const template = `
+  <div>
+    <h2>Default Slider</h2>
     <ui-slider></ui-slider>
-  `;
 
-  // Example 2: Small Slider
-  public smallSlider = `
+    <h2>Small Slider</h2>
     <ui-slider size="sm"></ui-slider>
-  `;
 
-  // Example 3: Large Slider
-  public largeSlider = `
+    <h2>Large Slider</h2>
     <ui-slider size="lg"></ui-slider>
-  `;
 
-  // Example 4: Primary Slider
-  public primarySlider = `
+    <h2>Primary Slider</h2>
     <ui-slider color="primary"></ui-slider>
-  `;
 
-  // Example 5: Secondary Slider
-  public secondarySlider = `
+    <h2>Secondary Slider</h2>
     <ui-slider color="secondary"></ui-slider>
-  `;
 
-  // Example 6: Destructive Slider
-  public destructiveSlider = `
+    <h2>Destructive Slider</h2>
     <ui-slider color="destructive"></ui-slider>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-slider-demo", template })
+export class UiSliderDemo {}

@@ -1,29 +1,26 @@
-import { UiRadioGroup } from "./ui-radio-group";
+import { customElement } from "aurelia";
 
-export class UiRadioGroupDemo {
-  public message = "ui-radio-group-demo";
-
-  // Example 1: Default Radio Group
-  public defaultRadioGroup = `
+const template = `
+  <div>
+    <h2>Default Radio Group</h2>
     <ui-radio-group>
       <div>Radio Group Item 1</div>
       <div>Radio Group Item 2</div>
     </ui-radio-group>
-  `;
 
-  // Example 2: Horizontal Radio Group
-  public horizontalRadioGroup = `
+    <h2>Horizontal Radio Group</h2>
     <ui-radio-group direction="horizontal">
       <div>Horizontal Radio Group Item 1</div>
       <div>Horizontal Radio Group Item 2</div>
     </ui-radio-group>
-  `;
 
-  // Example 3: Vertical Radio Group
-  public verticalRadioGroup = `
+    <h2>Vertical Radio Group</h2>
     <ui-radio-group direction="vertical">
       <div>Vertical Radio Group Item 1</div>
       <div>Vertical Radio Group Item 2</div>
     </ui-radio-group>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-radio-group-demo", template })
+export class UiRadioGroupDemo {}

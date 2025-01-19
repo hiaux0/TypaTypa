@@ -1,30 +1,23 @@
-import { UiSkeleton } from "./ui-skeleton";
+import { customElement } from "aurelia";
 
-export class UiSkeletonDemo {
-  public message = "ui-skeleton-demo";
-
-  // Example 1: Default Skeleton
-  public defaultSkeleton = `
+const template = `
+  <div>
+    <h2>Default Skeleton</h2>
     <ui-skeleton></ui-skeleton>
-  `;
 
-  // Example 2: Small Skeleton
-  public smallSkeleton = `
+    <h2>Small Skeleton</h2>
     <ui-skeleton size="sm"></ui-skeleton>
-  `;
 
-  // Example 3: Large Skeleton
-  public largeSkeleton = `
+    <h2>Large Skeleton</h2>
     <ui-skeleton size="lg"></ui-skeleton>
-  `;
 
-  // Example 4: Square Skeleton
-  public squareSkeleton = `
+    <h2>Square Skeleton</h2>
     <ui-skeleton shape="square"></ui-skeleton>
-  `;
 
-  // Example 5: Circle Skeleton
-  public circleSkeleton = `
+    <h2>Circle Skeleton</h2>
     <ui-skeleton shape="circle"></ui-skeleton>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-skeleton-demo", template })
+export class UiSkeletonDemo {}

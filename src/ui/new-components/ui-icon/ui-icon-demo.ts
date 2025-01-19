@@ -1,35 +1,26 @@
-import { UiIcon } from "./ui-icon";
+import { customElement } from "aurelia";
 
-export class UiIconDemo {
-  public message = "ui-icon-demo";
-
-  // Example 1: Default Icon
-  public defaultIcon = `
+const template = `
+  <div>
+    <h2>Default Icon</h2>
     <ui-icon></ui-icon>
-  `;
 
-  // Example 2: Small Icon
-  public smallIcon = `
+    <h2>Small Icon</h2>
     <ui-icon size="sm"></ui-icon>
-  `;
 
-  // Example 3: Large Icon
-  public largeIcon = `
+    <h2>Large Icon</h2>
     <ui-icon size="lg"></ui-icon>
-  `;
 
-  // Example 4: Primary Icon
-  public primaryIcon = `
+    <h2>Primary Icon</h2>
     <ui-icon color="primary"></ui-icon>
-  `;
 
-  // Example 5: Secondary Icon
-  public secondaryIcon = `
+    <h2>Secondary Icon</h2>
     <ui-icon color="secondary"></ui-icon>
-  `;
 
-  // Example 6: Destructive Icon
-  public destructiveIcon = `
+    <h2>Destructive Icon</h2>
     <ui-icon color="destructive"></ui-icon>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-icon-demo", template })
+export class UiIconDemo {}

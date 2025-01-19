@@ -1,25 +1,20 @@
-import { UiToast } from "./ui-toast";
+import { customElement } from "aurelia";
 
-export class UiToastDemo {
-  public message = "ui-toast-demo";
-
-  // Example 1: Default Toast
-  public defaultToast = `
+const template = `
+  <div>
+    <h2>Default Toast</h2>
     <ui-toast>Default Toast</ui-toast>
-  `;
 
-  // Example 2: Success Toast
-  public successToast = `
+    <h2>Success Toast</h2>
     <ui-toast variant="success">Success Toast</ui-toast>
-  `;
 
-  // Example 3: Error Toast
-  public errorToast = `
+    <h2>Error Toast</h2>
     <ui-toast variant="error">Error Toast</ui-toast>
-  `;
 
-  // Example 4: Warning Toast
-  public warningToast = `
+    <h2>Warning Toast</h2>
     <ui-toast variant="warning">Warning Toast</ui-toast>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-toast-demo", template })
+export class UiToastDemo {}

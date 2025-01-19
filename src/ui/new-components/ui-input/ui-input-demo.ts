@@ -1,45 +1,32 @@
-import { UiInput } from "./ui-input";
+import { customElement } from "aurelia";
 
-export class UiInputDemo {
-  public message = "ui-input-demo";
-
-  // Example 1: Default Input
-  public defaultInput = `
+const template = `
+  <div>
+    <h2>Default Input</h2>
     <ui-input></ui-input>
-  `;
 
-  // Example 2: Destructive Input
-  public destructiveInput = `
+    <h2>Destructive Input</h2>
     <ui-input variant="destructive"></ui-input>
-  `;
 
-  // Example 3: Outline Input
-  public outlineInput = `
+    <h2>Outline Input</h2>
     <ui-input variant="outline"></ui-input>
-  `;
 
-  // Example 4: Secondary Input
-  public secondaryInput = `
+    <h2>Secondary Input</h2>
     <ui-input variant="secondary"></ui-input>
-  `;
 
-  // Example 5: Ghost Input
-  public ghostInput = `
+    <h2>Ghost Input</h2>
     <ui-input variant="ghost"></ui-input>
-  `;
 
-  // Example 6: Link Input
-  public linkInput = `
+    <h2>Link Input</h2>
     <ui-input variant="link"></ui-input>
-  `;
 
-  // Example 7: Small Input
-  public smallInput = `
+    <h2>Small Input</h2>
     <ui-input size="sm"></ui-input>
-  `;
 
-  // Example 8: Large Input
-  public largeInput = `
+    <h2>Large Input</h2>
     <ui-input size="lg"></ui-input>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-input-demo", template })
+export class UiInputDemo {}

@@ -1,35 +1,26 @@
-import { UiSonner } from "./ui-sonner";
+import { customElement } from "aurelia";
 
-export class UiSonnerDemo {
-  public message = "ui-sonner-demo";
-
-  // Example 1: Default Sonner
-  public defaultSonner = `
+const template = `
+  <div>
+    <h2>Default Sonner</h2>
     <ui-sonner></ui-sonner>
-  `;
 
-  // Example 2: Small Sonner
-  public smallSonner = `
+    <h2>Small Sonner</h2>
     <ui-sonner size="sm"></ui-sonner>
-  `;
 
-  // Example 3: Large Sonner
-  public largeSonner = `
+    <h2>Large Sonner</h2>
     <ui-sonner size="lg"></ui-sonner>
-  `;
 
-  // Example 4: Sonner with Top Position
-  public topSonner = `
+    <h2>Sonner with Top Position</h2>
     <ui-sonner position="top"></ui-sonner>
-  `;
 
-  // Example 5: Sonner with Left Position
-  public leftSonner = `
+    <h2>Sonner with Left Position</h2>
     <ui-sonner position="left"></ui-sonner>
-  `;
 
-  // Example 6: Sonner with Right Position
-  public rightSonner = `
+    <h2>Sonner with Right Position</h2>
     <ui-sonner position="right"></ui-sonner>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-sonner-demo", template })
+export class UiSonnerDemo {}

@@ -1,35 +1,26 @@
-import { UiSelect } from "./ui-select";
+import { customElement } from "aurelia";
 
-export class UiSelectDemo {
-  public message = "ui-select-demo";
-
-  // Example 1: Default Select
-  public defaultSelect = `
+const template = `
+  <div>
+    <h2>Default Select</h2>
     <ui-select></ui-select>
-  `;
 
-  // Example 2: Small Select
-  public smallSelect = `
+    <h2>Small Select</h2>
     <ui-select size="sm"></ui-select>
-  `;
 
-  // Example 3: Large Select
-  public largeSelect = `
+    <h2>Large Select</h2>
     <ui-select size="lg"></ui-select>
-  `;
 
-  // Example 4: Primary Select
-  public primarySelect = `
+    <h2>Primary Select</h2>
     <ui-select color="primary"></ui-select>
-  `;
 
-  // Example 5: Secondary Select
-  public secondarySelect = `
+    <h2>Secondary Select</h2>
     <ui-select color="secondary"></ui-select>
-  `;
 
-  // Example 6: Destructive Select
-  public destructiveSelect = `
+    <h2>Destructive Select</h2>
     <ui-select color="destructive"></ui-select>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-select-demo", template })
+export class UiSelectDemo {}

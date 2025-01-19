@@ -1,47 +1,38 @@
-import { UiResizable } from "./ui-resizable";
+import { customElement } from "aurelia";
 
-export class UiResizableDemo {
-  public message = "ui-resizable-demo";
-
-  // Example 1: Default Resizable
-  public defaultResizable = `
+const template = `
+  <div>
+    <h2>Default Resizable</h2>
     <ui-resizable>
       <div>Default Resizable Content</div>
     </ui-resizable>
-  `;
 
-  // Example 2: Small Resizable
-  public smallResizable = `
+    <h2>Small Resizable</h2>
     <ui-resizable size="sm">
       <div>Small Resizable Content</div>
     </ui-resizable>
-  `;
 
-  // Example 3: Large Resizable
-  public largeResizable = `
+    <h2>Large Resizable</h2>
     <ui-resizable size="lg">
       <div>Large Resizable Content</div>
     </ui-resizable>
-  `;
 
-  // Example 4: Resizable with Top Position
-  public topResizable = `
+    <h2>Resizable with Top Position</h2>
     <ui-resizable position="top">
       <div>Top Resizable Content</div>
     </ui-resizable>
-  `;
 
-  // Example 5: Resizable with Left Position
-  public leftResizable = `
+    <h2>Resizable with Left Position</h2>
     <ui-resizable position="left">
       <div>Left Resizable Content</div>
     </ui-resizable>
-  `;
 
-  // Example 6: Resizable with Right Position
-  public rightResizable = `
+    <h2>Resizable with Right Position</h2>
     <ui-resizable position="right">
       <div>Right Resizable Content</div>
     </ui-resizable>
-  `;
-}
+  </div>
+`;
+
+@customElement({ name: "ui-resizable-demo", template })
+export class UiResizableDemo {}

@@ -1,48 +1,41 @@
-import { UiForm } from "./ui-form";
+import { customElement } from "aurelia";
 
-export class UiFormDemo {
-  public message = "ui-form-demo";
-
-  // Example 1: Default Form
-  public defaultForm = `
+const template = `
+  <div>
+    <h2>Default Form</h2>
     <ui-form>
       <input type="text" placeholder="Default Form Input" />
       <button type="submit">Submit</button>
     </ui-form>
-  `;
 
-  // Example 2: Primary Form
-  public primaryForm = `
+    <h2>Primary Form</h2>
     <ui-form variant="primary">
       <input type="text" placeholder="Primary Form Input" />
       <button type="submit">Submit</button>
     </ui-form>
-  `;
 
-  // Example 3: Secondary Form
-  public secondaryForm = `
+    <h2>Secondary Form</h2>
     <ui-form variant="secondary">
       <input type="text" placeholder="Secondary Form Input" />
       <button type="submit">Submit</button>
     </ui-form>
-  `;
 
-  // Example 4: Destructive Form
-  public destructiveForm = `
+    <h2>Destructive Form</h2>
     <ui-form variant="destructive">
       <input type="text" placeholder="Destructive Form Input" />
       <button type="submit">Submit</button>
     </ui-form>
-  `;
 
-  // Example 5: Form with Validation
-  public formWithValidation = `
+    <h2>Form with Validation</h2>
     <ui-form submit.bind="validateForm">
       <input type="text" placeholder="Form Input" required />
       <button type="submit">Submit</button>
     </ui-form>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-form-demo", template })
+export class UiFormDemo {
   public validateForm() {
     // Add form validation logic here
     alert("Form submitted!");

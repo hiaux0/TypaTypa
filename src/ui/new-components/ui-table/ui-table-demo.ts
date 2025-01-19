@@ -1,38 +1,29 @@
-import { UiTable } from "./ui-table";
+import { customElement } from "aurelia";
 
-export class UiTableDemo {
-  public message = "ui-table-demo";
-
-  // Example 1: Default Table
-  public defaultTable = `
+const template = `
+  <div>
+    <h2>Default Table</h2>
     <ui-table columns.bind="columns" rows.bind="rows"></ui-table>
-  `;
 
-  // Example 2: Small Table
-  public smallTable = `
+    <h2>Small Table</h2>
     <ui-table size="sm" columns.bind="columns" rows.bind="rows"></ui-table>
-  `;
 
-  // Example 3: Large Table
-  public largeTable = `
+    <h2>Large Table</h2>
     <ui-table size="lg" columns.bind="columns" rows.bind="rows"></ui-table>
-  `;
 
-  // Example 4: Primary Table
-  public primaryTable = `
+    <h2>Primary Table</h2>
     <ui-table color="primary" columns.bind="columns" rows.bind="rows"></ui-table>
-  `;
 
-  // Example 5: Secondary Table
-  public secondaryTable = `
+    <h2>Secondary Table</h2>
     <ui-table color="secondary" columns.bind="columns" rows.bind="rows"></ui-table>
-  `;
 
-  // Example 6: Destructive Table
-  public destructiveTable = `
+    <h2>Destructive Table</h2>
     <ui-table color="destructive" columns.bind="columns" rows.bind="rows"></ui-table>
-  `;
+  </div>
+`;
 
+@customElement({ name: "ui-table-demo", template })
+export class UiTableDemo {
   public columns = [
     { label: "Name", field: "name" },
     { label: "Age", field: "age" },
