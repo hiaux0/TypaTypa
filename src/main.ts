@@ -40,6 +40,9 @@ import { UiAlertDialog } from "./ui/new-components/ui-alert-dialog/ui-alert-dial
 import { UiAlert } from "./ui/new-components/ui-alert/ui-alert";
 import { UiAspectRatio } from "./ui/new-components/ui-aspect-ratio/ui-aspect-ratio";
 import { UiAvatar } from "./ui/new-components/ui-avatar/ui-avatar";
+import { UiCheckbox } from "./ui/new-components/ui-checkbox";
+import { UiCombobox } from "./ui/new-components/ui-combobox";
+import { UiCommand } from "./ui/new-components/ui-command";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
@@ -57,6 +60,9 @@ const all = [
   UiAlert,
   UiAspectRatio,
   UiAvatar,
+  UiCheckbox,
+  UiCombobox,
+  UiCommand,
 ];
 
 const attributes = [
