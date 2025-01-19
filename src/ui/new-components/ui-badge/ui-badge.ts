@@ -19,7 +19,7 @@ const badgeVariants = cva(
 );
 
 const template = `
-  <span class.bind="badgeClass">
+  <span class.bind="badgeClass" tabindex="0" role="status" aria-live="polite">
     <au-slot></au-slot>
   </span>
 `;
@@ -34,5 +34,23 @@ export class UiBadge {
 
   public get badgeClass() {
     return badgeVariants({ color: this.color });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

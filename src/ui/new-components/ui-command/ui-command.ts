@@ -32,7 +32,11 @@ const template = `
     type.bind="type"
     disabled.bind="disabled"
     click.trigger="handleClick()"
-    class.bind="commandClass">
+    class.bind="commandClass"
+    aria-pressed.bind="pressed"
+    aria-label.bind="label"
+    tabindex="0"
+    role="button">
       <template if.bind="label">\${label}</template>
       <au-slot else></au-slot>
   </button>
@@ -55,6 +59,7 @@ export class UiCommand {
     | "ghost"
     | "link";
   @bindable() size: "default" | "sm" | "lg" | "icon";
+  @bindable() pressed: boolean = false;
 
   public get commandClass() {
     const styles = commandVariants({ variant: this.variant });
@@ -66,4 +71,18 @@ export class UiCommand {
       this.click();
     }
   }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      this.handleClick();
+    }
+  };
 }

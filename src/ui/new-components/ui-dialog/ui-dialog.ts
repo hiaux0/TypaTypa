@@ -23,7 +23,7 @@ const dialogVariants = cva(
 );
 
 const template = `
-  <div class.bind="dialogClass">
+  <div class.bind="dialogClass" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-description">
     <div class="bg-white rounded-lg shadow-lg p-4">
       <au-slot></au-slot>
     </div>
@@ -40,5 +40,23 @@ export class UiDialog {
 
   public get dialogClass() {
     return dialogVariants({ size: this.size, backdrop: this.backdrop });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

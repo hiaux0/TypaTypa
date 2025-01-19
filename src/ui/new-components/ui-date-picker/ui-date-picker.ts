@@ -25,7 +25,7 @@ const datePickerVariants = cva(
 );
 
 const template = `
-  <div class="relative inline-block text-left">
+  <div class="relative inline-block text-left" tabindex="0" role="region" aria-label="Date Picker">
     <div class="date-picker-content" class.bind="datePickerClass">
       <au-slot></au-slot>
     </div>
@@ -42,5 +42,23 @@ export class UiDatePicker {
 
   public get datePickerClass() {
     return datePickerVariants({ size: this.size, position: this.position });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

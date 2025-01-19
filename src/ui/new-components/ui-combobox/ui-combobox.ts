@@ -25,7 +25,7 @@ const comboboxVariants = cva(
 );
 
 const template = `
-  <div class="relative inline-block text-left">
+  <div class="relative inline-block text-left" tabindex="0" role="combobox" aria-expanded.bind="expanded" aria-haspopup="listbox">
     <div class="combobox-content" class.bind="comboboxClass">
       <au-slot></au-slot>
     </div>
@@ -39,8 +39,33 @@ const template = `
 export class UiCombobox {
   @bindable() size: "sm" | "md" | "lg" = "md";
   @bindable() position: "top" | "bottom" | "left" | "right" = "bottom";
+  @bindable() expanded: boolean = false;
 
   public get comboboxClass() {
     return comboboxVariants({ size: this.size, position: this.position });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      this.toggleExpanded();
+    } else if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private toggleExpanded() {
+    this.expanded = !this.expanded;
+  }
+
+  private close() {
+    this.expanded = false;
   }
 }

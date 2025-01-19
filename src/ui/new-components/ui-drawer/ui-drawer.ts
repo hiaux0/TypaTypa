@@ -23,7 +23,7 @@ const drawerVariants = cva(
 );
 
 const template = `
-  <div class.bind="drawerClass">
+  <div class.bind="drawerClass" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-describedby="drawer-description">
     <div class="bg-white rounded-lg shadow-lg p-4">
       <au-slot></au-slot>
     </div>
@@ -40,5 +40,23 @@ export class UiDrawer {
 
   public get drawerClass() {
     return drawerVariants({ size: this.size, backdrop: this.backdrop });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

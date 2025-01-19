@@ -25,7 +25,7 @@ const carouselVariants = cva(
 );
 
 const template = `
-  <div class.bind="carouselClass">
+  <div class.bind="carouselClass" tabindex="0" role="region" aria-label="Carousel">
     <div class="carousel-inner">
       <au-slot></au-slot>
     </div>
@@ -43,5 +43,29 @@ export class UiCarousel {
 
   public get carouselClass() {
     return carouselVariants({ size: this.size, color: this.color });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "ArrowLeft") {
+      this.prevSlide();
+    } else if (event.key === "ArrowRight") {
+      this.nextSlide();
+    }
+  };
+
+  private prevSlide() {
+    // Implement previous slide functionality
+  }
+
+  private nextSlide() {
+    // Implement next slide functionality
   }
 }

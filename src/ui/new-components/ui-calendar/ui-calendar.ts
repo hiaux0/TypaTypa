@@ -28,7 +28,7 @@ const calendarVariants = cva(
 );
 
 const template = `
-  <div class.bind="calendarClass">
+  <div class.bind="calendarClass" tabindex="0" role="region" aria-label="Calendar">
     <au-slot></au-slot>
   </div>
 `;
@@ -43,5 +43,23 @@ export class UiCalendar {
 
   public get calendarClass() {
     return calendarVariants({ variant: this.variant, size: this.size });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }
