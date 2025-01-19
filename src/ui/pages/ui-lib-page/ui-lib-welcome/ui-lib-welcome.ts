@@ -25,6 +25,12 @@ export class UiLibWelcome {
         return true;
       }
 
+      if (viewModelName === 'uilib-colors') {
+        this.templatePath = `../pages/ui-lib-page/uilib-atoms/uilib-colors/uilib-colors.html`;
+        this.componentPath = `../pages/ui-lib-page/uilib-atoms/uilib-colors/uilib-colors.ts`;
+        return true;
+      }
+
       this.templatePath = `../pages/ui-lib-page/uilib-${category}/${viewModelName}/${viewModelName}.html`;
       this.componentPath = `../pages/ui-lib-page/uilib-${category}/${viewModelName}/${viewModelName}.ts`;
     }
