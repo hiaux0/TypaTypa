@@ -52,6 +52,9 @@ import { UiDropdown } from "./ui/new-components/ui-dropdown";
 import { UiForm } from "./ui/new-components/ui-form";
 import { UiHoverCard } from "./ui/new-components/ui-hover-card";
 import { UiIcon } from "./ui/new-components/ui-icon";
+import { UiInputOtp } from "./ui/new-components/ui-input-otp";
+import { UiInput } from "./ui/new-components/ui-input";
+import { UiLabel } from "./ui/new-components/ui-label";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
@@ -81,6 +84,9 @@ const all = [
   UiForm,
   UiHoverCard,
   UiIcon,
+  UiInputOtp,
+  UiInput,
+  UiLabel,
 ];
 
 const attributes = [
