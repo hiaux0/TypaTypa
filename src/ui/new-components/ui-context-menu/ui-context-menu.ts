@@ -25,7 +25,7 @@ const contextMenuVariants = cva(
 );
 
 const template = `
-  <div class.bind="contextMenuClass">
+  <div class.bind="contextMenuClass" tabindex="0" role="menu" aria-label="Context Menu">
     <au-slot></au-slot>
   </div>
 `;
@@ -40,5 +40,23 @@ export class UiContextMenu {
 
   public get contextMenuClass() {
     return contextMenuVariants({ size: this.size, position: this.position });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

@@ -19,7 +19,7 @@ const alertVariants = cva(
 );
 
 const template = `
-  <div class.bind="alertClass">
+  <div class.bind="alertClass" role="alert" tabindex="0">
     <au-slot></au-slot>
   </div>
 `;
@@ -33,5 +33,23 @@ export class UiAlert {
 
   public get alertClass() {
     return alertVariants({ variant: this.variant });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

@@ -25,7 +25,7 @@ const avatarVariants = cva(
 );
 
 const template = `
-  <div class.bind="avatarClass">
+  <div class.bind="avatarClass" tabindex="0" role="img" aria-label.bind="alt">
     <img src.bind="src" alt.bind="alt" class="h-full w-full object-cover" />
   </div>
 `;
@@ -43,5 +43,23 @@ export class UiAvatar {
 
   public get avatarClass() {
     return avatarVariants({ size: this.size, color: this.color });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

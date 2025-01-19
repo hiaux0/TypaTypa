@@ -19,7 +19,7 @@ const aspectRatioVariants = cva(
 );
 
 const template = `
-  <div class.bind="aspectRatioClass">
+  <div class.bind="aspectRatioClass" tabindex="0" role="region" aria-label="Aspect Ratio Container">
     <au-slot></au-slot>
   </div>
 `;
@@ -33,5 +33,23 @@ export class UiAspectRatio {
 
   public get aspectRatioClass() {
     return aspectRatioVariants({ ratio: this.ratio });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

@@ -19,7 +19,7 @@ const cardVariants = cva(
 );
 
 const template = `
-  <div class.bind="cardClass">
+  <div class.bind="cardClass" tabindex="0" role="region" aria-label="Card">
     <au-slot></au-slot>
   </div>
 `;
@@ -34,5 +34,23 @@ export class UiCard {
 
   public get cardClass() {
     return cardVariants({ variant: this.variant });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

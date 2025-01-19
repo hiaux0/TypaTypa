@@ -25,7 +25,7 @@ const dataTableVariants = cva(
 );
 
 const template = `
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Data Table">
     <div class="min-w-full divide-y divide-gray-200">
       <table class.bind="dataTableClass">
         <thead>
@@ -66,5 +66,29 @@ export class UiDataTable {
 
   public get dataTableClass() {
     return dataTableVariants({ size: this.size, color: this.color });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      this.navigateRows(event.key);
+    } else if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private navigateRows(key: string) {
+    // Implement row navigation functionality
+  }
+
+  private close() {
+    // Implement close functionality
   }
 }

@@ -23,7 +23,7 @@ const alertDialogVariants = cva(
 );
 
 const template = `
-  <div class.bind="alertDialogClass">
+  <div class.bind="alertDialogClass" role="alertdialog" aria-modal="true" aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
     <div class="bg-white rounded-lg shadow-lg p-4">
       <au-slot></au-slot>
     </div>
@@ -40,5 +40,23 @@ export class UiAlertDialog {
 
   public get alertDialogClass() {
     return alertDialogVariants({ size: this.size, backdrop: this.backdrop });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }

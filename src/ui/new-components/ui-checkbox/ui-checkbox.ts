@@ -23,6 +23,10 @@ const template = `
     class.bind="checkboxClass"
     checked.bind="checked"
     disabled.bind="disabled"
+    aria-checked.bind="checked"
+    aria-disabled.bind="disabled"
+    tabindex="0"
+    role="checkbox"
   />
 `;
 
@@ -37,5 +41,25 @@ export class UiCheckbox {
 
   public get checkboxClass() {
     return checkboxVariants({ size: this.size });
+  }
+
+  attached() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      this.toggleChecked();
+    }
+  };
+
+  private toggleChecked() {
+    if (!this.disabled) {
+      this.checked = !this.checked;
+    }
   }
 }

@@ -19,7 +19,7 @@ const accordionVariants = cva(
 );
 
 const template = `
-  <div class.bind="accordionClass">
+  <div class.bind="accordionClass" role="region" aria-labelledby="accordion-header">
     <au-slot></au-slot>
   </div>
 `;

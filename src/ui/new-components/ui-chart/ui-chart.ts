@@ -25,7 +25,7 @@ const chartVariants = cva(
 );
 
 const template = `
-  <div class.bind="chartClass">
+  <div class.bind="chartClass" tabindex="0" role="region" aria-label="Chart">
     <canvas ref="canvas"></canvas>
   </div>
 `;
@@ -47,6 +47,11 @@ export class UiChart {
 
   attached() {
     this.renderChart();
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  detached() {
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   dataChanged() {
@@ -66,5 +71,15 @@ export class UiChart {
         options: this.options,
       });
     }
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
+
+  private close() {
+    // Implement close functionality
   }
 }
