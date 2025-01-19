@@ -55,6 +55,31 @@ import { UiIcon } from "./ui/new-components/ui-icon";
 import { UiInputOtp } from "./ui/new-components/ui-input-otp";
 import { UiInput } from "./ui/new-components/ui-input";
 import { UiLabel } from "./ui/new-components/ui-label";
+import { UiMenubar } from "./ui/new-components/ui-menubar";
+import { UiModal } from "./ui/new-components/ui-modal";
+import { UiNavigationMenu } from "./ui/new-components/ui-navigation-menu";
+import { UiPagination } from "./ui/new-components/ui-pagination";
+import { UiPopover } from "./ui/new-components/ui-popover";
+import { UiProgress } from "./ui/new-components/ui-progress";
+import { UiRadioGroup } from "./ui/new-components/ui-radio-group";
+import { UiRadio } from "./ui/new-components/ui-radio";
+import { UiResizable } from "./ui/new-components/ui-resizable";
+import { UiScrollArea } from "./ui/new-components/ui-scroll-area";
+import { UiSelect } from "./ui/new-components/ui-select";
+import { UiSeparator } from "./ui/new-components/ui-separator";
+import { UiSheet } from "./ui/new-components/ui-sheet";
+import { UiSidebar } from "./ui/new-components/ui-sidebar";
+import { UiSkeleton } from "./ui/new-components/ui-skeleton";
+import { UiSlider } from "./ui/new-components/ui-slider";
+import { UiSonner } from "./ui/new-components/ui-sonner";
+import { UiSwitch } from "./ui/new-components/ui-switch";
+import { UiTable } from "./ui/new-components/ui-table";
+import { UiTabs } from "./ui/new-components/ui-tabs";
+import { UiTextarea } from "./ui/new-components/ui-textarea";
+import { UiToast } from "./ui/new-components/ui-toast";
+import { UiToggleGroup } from "./ui/new-components/ui-toggle-group";
+import { UiToggle } from "./ui/new-components/ui-toggle";
+import { UiTooltip } from "./ui/new-components/ui-tooltip";
 
 if (debugFlags.clearConsole) console.clear();
 window.activeVimInstancesIdMap = [];
@@ -87,6 +112,31 @@ const all = [
   UiInputOtp,
   UiInput,
   UiLabel,
+  UiMenubar,
+  UiModal,
+  UiNavigationMenu,
+  UiPagination,
+  UiPopover,
+  UiProgress,
+  UiRadioGroup,
+  UiRadio,
+  UiResizable,
+  UiScrollArea,
+  UiSelect,
+  UiSeparator,
+  UiSheet,
+  UiSidebar,
+  UiSkeleton,
+  UiSlider,
+  UiSonner,
+  UiSwitch,
+  UiTable,
+  UiTabs,
+  UiTextarea,
+  UiToast,
+  UiToggleGroup,
+  UiToggle,
+  UiTooltip,
 ];
 
 const attributes = [
