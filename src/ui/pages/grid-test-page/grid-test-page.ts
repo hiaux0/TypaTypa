@@ -1266,6 +1266,7 @@ export class GridTestPage {
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         const time = this.store.audioTime;
+        /*prettier-ignore*/ console.log("[grid-test-page.ts,1269] time: ", time);
         if (!time) return;
         const update = this.setCurrentCellContent(time.toString());
         update?.();

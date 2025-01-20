@@ -1,4 +1,4 @@
-import { DI, resolve } from "aurelia";
+import { DI, resolve, singleton } from "aurelia";
 import { Logger } from "../logging/logging";
 import {
   VIM_COMMAND,

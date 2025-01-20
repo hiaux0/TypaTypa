@@ -260,6 +260,10 @@ I want to have live-editor
 - [ ] fix undo redo (again)
 - [ ] add rows button
 - [ ] // const startingMode = text ? VimMode.NORMAL : VimMode.INSERT; // TODO, properly init cursor
+- [ ] macros
+  - save sequence in array
+  - letter registers
+- [ ] cell type: timestamp
 
 # Done
 ## Grid

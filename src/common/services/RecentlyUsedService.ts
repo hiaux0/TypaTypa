@@ -1,7 +1,12 @@
 import { resolve } from "aurelia";
 import { VimCommand } from "../../features/vim/vim-commands-repository";
 import { Store } from "../modules/store";
-import { createCommandId } from "./CommandsService";
+import {
+  CommandsService,
+  ICommandsService,
+  createCommandId,
+} from "./CommandsService";
+import { VimIdMapKeys } from "../../types";
 
 export interface RecentlyUsedDataMap<T> {
   lastUsed: string;
@@ -11,15 +16,32 @@ export interface RecentlyUsedDataMap<T> {
 export class RecentlyUsedService {
   private commands: RecentlyUsedDataMap<VimCommand>[] = [];
 
-  constructor(private store: Store = resolve(Store)) {
+  constructor(
+    private store: Store = resolve(Store),
+    private commandsService: CommandsService = resolve(ICommandsService),
+  ) {
     const saved = this.store.getServiceItem(
       "RecentlyUsedService",
     ) as RecentlyUsedDataMap<VimCommand>[];
-    if (!Array.isArray(saved)) return
+    if (!Array.isArray(saved)) return;
     saved.forEach((c) => {
       c.item.id = createCommandId(c.item);
     });
     this.commands = saved;
+  }
+
+  public getLastCommand(
+    context: VimIdMapKeys,
+  ): RecentlyUsedDataMap<VimCommand> | undefined {
+    const last = this.commands[0].item;
+    /*prettier-ignore*/ console.log("[RecentlyUsedService.ts,33] last: ", last);
+    const command = this.commandsService.getCommand(context, last);
+    if (!command) return;
+    const result: RecentlyUsedDataMap<VimCommand> = {
+      lastUsed: new Date().toISOString(),
+      item: command,
+    };
+    return result;
   }
 
   public getCommands(): RecentlyUsedDataMap<VimCommand>[] {
