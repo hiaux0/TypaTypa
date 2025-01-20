@@ -37,3 +37,5 @@ export async function setClipboardContent(text: string): Promise<void> {
     }
   }
 }
+
+export const copyToClipboard = setClipboardContent;

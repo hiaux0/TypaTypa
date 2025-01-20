@@ -1,6 +1,8 @@
 import { bindable, containerless, customElement } from "aurelia";
 import { cva } from "class-variance-authority";
 
+export type IconType = "repeat" | "copy" | "copy-solid" | "upload" | "warning";
+
 const iconVariants = cva(
   "w-full h-full inline-flex items-center justify-center rounded-md transition-colors",
   {
@@ -25,16 +27,6 @@ const iconVariants = cva(
 );
 
 @containerless()
-@customElement({
-  name: "ui-icon",
-  template: `
-    <div class.bind="iconClass">
-      <svg class="w-[24px] h-[24px]">
-        <use xlink:href="\${iconUrl}" href="\${iconUrl}"></use>
-      </svg>
-    </div>
-  `,
-})
 export class UiIcon {
   @bindable() size: "sm" | "md" | "lg" = "md";
   @bindable() color: "default" | "primary" | "secondary" | "destructive" =
@@ -49,6 +41,6 @@ export class UiIcon {
     /**
      * NEED to add id="svg" to your svg file
      */
-    return `/icons/\${this.icon}.svg#svg`;
+    return `/icons/${this.icon}.svg#svg`;
   }
 }

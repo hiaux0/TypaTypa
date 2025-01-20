@@ -1,6 +1,8 @@
 import { bindable, containerless, customElement } from "aurelia";
 import { cva } from "class-variance-authority";
 
+export type IconType = "repeat" | "copy" | "copy-solid" | "upload" | "warning";
+
 const iconVariants = cva(
   "w-full h-full inline-flex items-center justify-center rounded-md transition-colors",
   {
