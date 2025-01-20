@@ -9,7 +9,7 @@ import {
   KeyBindingModes,
   VimMode,
 } from "../../features/vim/vim-types";
-import { isEnter } from "../../features/vim/key-bindings";
+import { isEnter, keyBindings } from "../../features/vim/key-bindings";
 import { VimCore } from "../../features/vim/vimCore/VimCore";
 import {
   IKeyMappingService,
@@ -20,6 +20,8 @@ import {
   overwriteKeybindingsV2,
 } from "../../features/vim/vimCore/commands/KeyMappingService";
 import { hashStringArray } from "../modules/strings";
+import { VimIdMapKeys } from "../../types";
+import { VIM_ID_MAP } from "../modules/constants";
 
 const l = new Logger("CommandsService");
 
@@ -41,7 +43,9 @@ export function createCommandId(command: VimCommand): string | undefined {
 }
 
 export class CommandsService {
-  public commandsRepository: Record<string, any> = {};
+  public commandsRepository: Record<string, any> = {
+    [VIM_ID_MAP.default]: keyBindings,
+  };
   public createId = createCommandId;
 
   constructor(
@@ -49,7 +53,7 @@ export class CommandsService {
   ) {}
 
   public registerCommands(
-    context: string | undefined,
+    context: VimIdMapKeys | undefined,
     commands: KeyBindingModes,
   ): void {
     if (!context) return;
@@ -62,7 +66,7 @@ export class CommandsService {
   }
 
   public getCommand(
-    context: string,
+    context: VimIdMapKeys,
     command: VimCommand,
   ): VimCommand | undefined {
     const mode = command.mode;
@@ -73,7 +77,7 @@ export class CommandsService {
     return commandInRepo;
   }
 
-  public updateCommand(context: string, command: VimCommand): void {
+  public updateCommand(context: VimIdMapKeys, command: VimCommand): void {
     const commandInRepo = this.commandsRepository[context].find(
       (c: VimCommand) => c.command === command.command,
     );

@@ -628,6 +628,7 @@ export class KeyMappingService {
   public keyBindings: KeyBindingModes = keyBindings;
   private potentialCommands: VimCommand[] = [];
   private lastCommand: VimCommand;
+  private lastCommandPaletteCommand: VimCommand;
   private lastKey: string;
   /** If a command did not trigger, save key */
   public queuedKeys: string[] = [];
@@ -848,6 +849,14 @@ export class KeyMappingService {
 
   public setLastCommand(lastCommand: VimCommand): void {
     this.lastCommand = lastCommand;
+  }
+
+  public getLastCommandPaletteCommand(): VimCommand {
+    return this.lastCommandPaletteCommand;
+  }
+
+  public setLastCommandPaletteCommand(lastCommand: VimCommand): void {
+    this.lastCommandPaletteCommand = lastCommand;
   }
 
   public getLastKey(): string {

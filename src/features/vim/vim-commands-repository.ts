@@ -44,6 +44,7 @@ export enum VIM_COMMAND {
   "pasteVimBefore" = "pasteVimBefore",
   "redo" = "redo",
   "repeatLastCommand" = "repeatLastCommand",
+  "repeatLastCommandPaletteCommand" = "repeatLastCommandPaletteCommand",
   "replace" = "replace",
   "snippet" = "snippet",
   "space" = "space",

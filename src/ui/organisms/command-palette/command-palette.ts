@@ -2,11 +2,12 @@ import { bindable, resolve } from "aurelia";
 import "./command-palette.scss";
 import {
   IKeyMappingService,
+  KeyMappingService,
   mergeKeybindings,
 } from "../../../features/vim/vimCore/commands/KeyMappingService";
 import { IVimInputHandlerV2 } from "../../../features/vim/VimInputHandlerV2";
 import { KeyBindingModes, VimMode } from "../../../features/vim/vim-types";
-import { AutocompleteSource } from "../../../types";
+import { AutocompleteSource, VimIdMapKeys } from "../../../types";
 import { VIM_ID_MAP } from "../../../common/modules/constants";
 import { VimCommand } from "../../../features/vim/vim-commands-repository";
 import { UiSuggestion } from "../../../domain/types/uiTypes";
@@ -47,13 +48,14 @@ export class CommandPalette {
 
   public acceptCommand = (suggestion: UiSuggestion<VimCommand>): void => {
     const vimCore = this.vimInputHandler.vimCore;
-    const context = suggestion.data?.context?.[0];
+    const context = suggestion.data?.context?.[0] as VimIdMapKeys;
     if (!context) return;
     if (!suggestion.data) return;
     const command = this.commandsService.getCommand(context, suggestion.data);
     if (!command) return;
     this.commandsService.executeCommand(vimCore, command);
     this.recentlyUsedService.addCommand(suggestion.data);
+    this.keyMappingService.setLastCommandPaletteCommand(command);
     this.close();
   };
 

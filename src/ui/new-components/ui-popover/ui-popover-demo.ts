@@ -1,20 +1,40 @@
-import { customElement } from "aurelia";
+import { TypeService } from "../../../../common/services/TypeService";
+import { AutocompleteSource } from "../../../../types";
 
-const template = `
-  <div>
-    <h2>Default Popover</h2>
-    <ui-popover text="Default Popover"></ui-popover>
+export class UiPopoverDemo {
+  public message = "ui-popover-demo.html";
+  public source = ["one", "two", "three"].map<AutocompleteSource>((v) => ({
+    text: v,
+  }));
+}
 
-    <h2>Popover with Bottom Position</h2>
-    <ui-popover text="Bottom Popover" position="bottom"></ui-popover>
-
-    <h2>Popover with Left Position</h2>
-    <ui-popover text="Left Popover" position="left"></ui-popover>
-
-    <h2>Popover with Right Position</h2>
-    <ui-popover text="Right Popover" position="right"></ui-popover>
-  </div>
-`;
-
-@customElement({ name: "ui-popover-demo", template })
-export class UiPopoverDemo {}
+//<ui-popover position="top-left">
+//  <template au-slot="trigger">open</template>
+//  <template au-slot="content">content</template>
+//</ui-popover>
+//
+//<ui-popover position="top-right">
+//  <template au-slot="trigger">open</template>
+//  <template au-slot="content">content</template>
+//</ui-popover>
+//
+//<ui-popover position="top">
+//  <template au-slot="trigger">open</template>
+//  <template au-slot="content">content</template>
+//</ui-popover>
+//
+//<ui-popover position="bottom-left">
+//  <template au-slot="trigger">open</template>
+//  <template au-slot="content">content</template>
+//</ui-popover>
+//
+//<ui-popover position="bottom-right">
+//  <template au-slot="trigger">open</template>
+//  <template au-slot="content">content</template>
+//</ui-popover>
+//
+//<ui-popover position="bottom">
+//  <template au-slot="trigger">open</template>
+//  <template au-slot="content">content</template>
+//</ui-popover>
+// `;

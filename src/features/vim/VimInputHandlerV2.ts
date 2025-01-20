@@ -324,7 +324,7 @@ export class VimInputHandlerV2 {
       options,
     );
     let { targetCommand: finalCommand, potentialCommands } = result ?? {};
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([3,,3])) console.log("command", finalCommand);
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([3,,3])) console.log("finalCommand", finalCommand);
     let finalPressedKey = keyData.key;
     const hasQueuedKeys = this.keyMappingService.queuedKeys.length;
     if (!finalCommand && !hasQueuedKeys) {
@@ -341,10 +341,30 @@ export class VimInputHandlerV2 {
         potentialCommands = preparedCommands.potentialCommands;
       }
     }
+
+    // Still no commands? Then use default
+    if (!finalCommand) {
+      const defaultBindings =
+        this.commandsService.commandsRepository[VIM_ID_MAP.default];
+      options.keyBindings = defaultBindings;
+      const preparedCommands = this.keyMappingService.prepareCommandV2(
+        keyData.composite,
+        mode,
+        options,
+      );
+      if (preparedCommands) {
+        finalCommand = preparedCommands.targetCommand;
+        potentialCommands = preparedCommands.potentialCommands;
+      }
+    }
+
     const commandName = VIM_COMMAND[finalCommand?.command ?? "nothing"];
-    /*                                                                                           prettier-ignore*/ if(l.shouldLog([])) console.log("commandName", commandName);
+    /*                                                                                           prettier-ignore*/ if(l.shouldLog([,,3])) console.log("commandName", commandName);
     if (commandName === VIM_COMMAND.repeatLastCommand) {
       finalCommand = this.keyMappingService.getLastCommand();
+      finalPressedKey = this.keyMappingService.getLastKey();
+    } else if (commandName === VIM_COMMAND.repeatLastCommandPaletteCommand) {
+      finalCommand = this.keyMappingService.getLastCommandPaletteCommand();
       finalPressedKey = this.keyMappingService.getLastKey();
     }
 
@@ -353,6 +373,7 @@ export class VimInputHandlerV2 {
       commandName !== VIM_COMMAND.repeatLastCommand &&
       !VimHelper.isModeChangingCommand(commandName);
     if (saveLast) {
+      /*prettier-ignore*/ console.log("[VimInputHandlerV2.ts,373] saveLast: ", saveLast);
       this.keyMappingService.setLastKey(keyData.composite);
       if (finalCommand) this.keyMappingService.setLastCommand(finalCommand);
     }

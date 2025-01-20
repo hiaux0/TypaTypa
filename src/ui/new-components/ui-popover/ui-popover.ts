@@ -1,47 +1,94 @@
+// ui-popover
 import { bindable, customElement } from "aurelia";
 import { cva } from "class-variance-authority";
+import { onOutsideClick } from "../../../common/modules/htmlElements";
 
-const popoverVariants = cva(
-  "relative inline-block",
-  {
-    variants: {
-      position: {
-        top: "bottom-full left-1/2 transform -translate-x-1/2 mb-2",
-        bottom: "top-full left-1/2 transform -translate-x-1/2 mt-2",
-        left: "right-full top-1/2 transform -translate-y-1/2 mr-2",
-        right: "left-full top-1/2 transform -translate-y-1/2 ml-2",
-      },
-    },
-    defaultVariants: {
-      position: "top",
-    },
-  },
-);
+const adjust = 5;
+const popoverVariants = cva();
 
 const template = `
-  <div class="relative inline-block">
-    <div class="popover-content" class.bind="popoverClass">
-      <au-slot></au-slot>
-    </div>
-    <div class="popover-text" class.bind="popoverTextClass">
-      \${text}
-    </div>
+<div-ui-popover
+  ref="uiPopoverRef"
+  class="relative inline-block text-left"
+  data-position.bind="position"
+>
+  <button
+    if.bind="!host"
+    ref="trigger"
+    class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  >
+    <au-slot name="trigger"></au-slot>
+  </button>
+  <div
+    ref="content"
+    class="
+      \${isOpen ? '' : 'hidden'}
+      absolute w-28 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none
+    "
+    style.bind="contentPosition"
+  >
+    <au-slot name="content"></au-slot>
   </div>
+</div-ui-popover
 `;
 
 @customElement({
   name: "ui-popover",
   template,
+  containerless: true,
 })
 export class UiPopover {
-  @bindable() text: string = "";
-  @bindable() position: "top" | "bottom" | "left" | "right" = "top";
+  @bindable() host: HTMLElement;
+  @bindable() isOpen: boolean = true;
+  @bindable() position: string = "bottom-right";
 
-  public get popoverClass() {
-    return popoverVariants({ position: this.position });
+  public uiPopoverRef: HTMLElement;
+  public trigger: HTMLElement;
+  public content: HTMLElement;
+  public width: number;
+  public height: number;
+
+  public get contentPosition() {
+    switch (this.position) {
+      case "top-left":
+        return `bottom: 100%; left: 0; margin-bottom: 0.5rem;`;
+      case "top-right":
+        return `bottom: 100%; right: 0; margin-bottom: 0.5rem;`;
+      case "top":
+        return `bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 0.5rem;`;
+      case "bottom-left":
+        return `top: 100%; left: 0; margin-top: 0.5rem;`;
+      case "bottom-right":
+        return `top: 100%; left: ${this.width + adjust}px;`;
+      case "bottom":
+        return `top: 100%; left: 50%; transform: translateX(-50%); margin-top: 0.5rem;`;
+      default:
+        return `top: 100%; right: 0; margin-top: 0.5rem;`;
+    }
   }
 
-  public get popoverTextClass() {
-    return "absolute bg-gray-700 text-white text-xs rounded py-1 px-2 z-10";
+  attached() {
+    const finalElement = this.host ?? this.uiPopoverRef;
+    /*prettier-ignore*/ console.log("[ui-popover.ts,70] this.host: ", this.host);
+    this.width = finalElement.offsetWidth;
+    this.height = finalElement.offsetHeight;
+
+    this.trigger?.addEventListener("click", () => {
+      this.toggle();
+    });
+
+    onOutsideClick(this.host, () => {
+      this.close();
+    });
   }
+
+  private close = (): void => {
+    this.isOpen = false;
+    // this.content?.classList.toggle("hidden", !this.isOpen);
+  };
+
+  private toggle = (): void => {
+    this.isOpen = !this.isOpen;
+    // this.content?.classList.toggle("hidden", !this.isOpen);
+  };
 }

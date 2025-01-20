@@ -114,6 +114,7 @@ export const keyBindings: KeyBindingModes = {
     { key: "x", command: "delete" },
     { key: "za", command: "toggleFold" },
     { key: ".", command: VIM_COMMAND.repeatLastCommand },
+    { key: ",.", command: VIM_COMMAND.repeatLastCommandPaletteCommand },
     { key: "gh", command: "hint" },
     { key: "<Shift>A", command: VIM_COMMAND.enterInsertAfterModeEnd },
     { key: "<Control>v", command: "paste" },

@@ -229,6 +229,7 @@ export const COMPLETIONS_MAP = {
 export type CompletionsMapKeys = keyof typeof COMPLETIONS_MAP;
 
 export const VIM_ID_MAP = {
+  default: "default",
   global: "global",
   gridCell: "gridCell",
   gridCellVimEditor: "gridCellVimEditor",
