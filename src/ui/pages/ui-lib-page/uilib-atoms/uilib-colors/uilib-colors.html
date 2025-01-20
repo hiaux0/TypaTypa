@@ -1,7 +1,31 @@
 <template>
   <div class="color-demo">
-    <div repeat.for="color of colors" class="color-box" style="background-color: ${color.value}">
+    <div
+      repeat.for="color of colors"
+      class="color-box"
+      style="background-color: ${color.value}; color: ${color.textColor};"
+    >
       ${color.name}
+      <button click.trigger="copyToClipboard(color.value)">
+        <ui-icon icon="copy"></ui-icon>
+      </button>
+    </div>
+  </div>
+
+  <br />
+  <hr />
+  <hr />
+  <h1 class="text-lg">Sorted</h1>
+  <div class="color-demo">
+    <div
+      repeat.for="sortedColor of sortedColors"
+      class="color-box"
+      style="background-color: ${sortedColor.value}; color: ${sortedColor.textColor};"
+    >
+      ${sortedColor.name}
+      <button click.trigger="copyToClipboard(color.value)">
+        <ui-icon icon="copy"></ui-icon>
+      </button>
     </div>
   </div>
 </template>

@@ -90,7 +90,6 @@ const all = [
   UilibColors,
   UiAudio,
   UiButton,
-  UiIcon,
   UiPopover,
   UiAccordion,
   UiAlertDialog,

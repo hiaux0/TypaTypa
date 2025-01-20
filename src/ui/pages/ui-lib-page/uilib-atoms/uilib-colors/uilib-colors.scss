@@ -1,4 +1,3 @@
-@import "../../../../../../my-app.scss";
 
 .color-demo {
   display: flex;
@@ -7,7 +6,7 @@
 }
 
 .color-box {
-  width: 100px;
+  width: 200px;
   height: 100px;
   display: flex;
   align-items: center;
@@ -17,109 +16,3 @@
   text-align: center;
 }
 
-.color-primary0 {
-  background-color: $primary0;
-}
-
-.color-primary {
-  background-color: $primary;
-}
-
-.color-primary1 {
-  background-color: $primary1;
-}
-
-.color-primary2 {
-  background-color: $primary2;
-}
-
-.color-primaryDark0 {
-  background-color: $primaryDark0;
-}
-
-.color-primaryDark {
-  background-color: $primaryDark;
-}
-
-.color-primaryDark1 {
-  background-color: $primaryDark1;
-}
-
-.color-primaryDark2 {
-  background-color: $primaryDark2;
-}
-
-.color-secondaryLight0 {
-  background-color: $secondaryLight0;
-}
-
-.color-secondaryLight {
-  background-color: $secondaryLight;
-}
-
-.color-secondaryLight1 {
-  background-color: $secondaryLight1;
-}
-
-.color-secondaryLight2 {
-  background-color: $secondaryLight2;
-}
-
-.color-secondary {
-  background-color: $secondary;
-}
-
-.color-black0 {
-  background-color: $black0;
-}
-
-.color-black {
-  background-color: $black;
-}
-
-.color-black05 {
-  background-color: $black05;
-}
-
-.color-black1 {
-  background-color: $black1;
-}
-
-.color-white0 {
-  background-color: $white0;
-  color: #000;
-}
-
-.color-white {
-  background-color: $white;
-  color: #000;
-}
-
-.color-white1 {
-  background-color: $white1;
-  color: #000;
-}
-
-.color-grey0 {
-  background-color: $grey0;
-}
-
-.color-grey {
-  background-color: $grey;
-}
-
-.color-grey1 {
-  background-color: $grey1;
-}
-
-.color-red {
-  background-color: $red;
-}
-
-.color-orange {
-  background-color: $orange;
-}
-
-.color-orange1 {
-  background-color: $orange1;
-}
