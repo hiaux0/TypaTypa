@@ -1,14 +1,27 @@
 import "./ui-audio.scss";
 import { CELL_HEIGHT, CELL_WIDTH } from "../../../common/modules/constants";
-import { bindable, containerless, resolve } from "aurelia";
+import {
+  ICustomElementViewModel,
+  bindable,
+  containerless,
+  resolve,
+} from "aurelia";
 import IndexedDBService from "../../../common/services/IndexdDBService";
 import { featureFlags } from "../../pages/grid-test-page/grid-modules/featureFlags";
 import { Store } from "../../../common/modules/store";
+import { CellEventMessagingService } from "../../../common/services/CellEventMessagingService";
+import { Cell } from "../../../types";
+import { IHydratedController } from "@aurelia/runtime-html";
+import {
+  GRID_FUNCTIONS,
+  isAudioStartFunction,
+} from "../../../domain/entities/grid/CellFunctionEntities";
 
 // played, seekable
 
 @containerless()
-export class UiAudio {
+export class UiAudio implements ICustomElementViewModel {
+  @bindable cell: Cell;
   @bindable onTimeChange: (time: number, progress: number) => void;
   @bindable onStateChange: (isPlaying: boolean, event: Event) => void;
 
@@ -21,10 +34,24 @@ export class UiAudio {
   public audioSpeed = 1;
   public audioSrc: string;
 
+  private audioStart: number;
+
   constructor(
     public indexedDBService = resolve(IndexedDBService),
     public store = resolve(Store),
+    private cellEventMessagingService = resolve(CellEventMessagingService),
   ) {}
+
+  binding(): void | Promise<void> {
+    this.cellEventMessagingService.subscribe(this.cell, (payload) => {
+      /*prettier-ignore*/ console.log("[ui-audio.ts,47] payload: ", payload);
+      const is = isAudioStartFunction(payload);
+      /*prettier-ignore*/ console.log("[ui-audio.ts,49] is: ", is);
+      if (is) {
+        this.store.audioTime = payload.data.start
+      }
+    });
+  }
 
   async attached() {
     this.audioPlayerRef.addEventListener("loadedmetadata", () => {
@@ -38,7 +65,7 @@ export class UiAudio {
       this.audioPlayerRef.load();
       // this.audioPlayerRef.muted = true;
       if (featureFlags.autoPlayAudio) {
-        this.audioPlayerRef.currentTime = 11;
+        this.audioPlayerRef.currentTime = this.store.audioTime ?? 0;
         this.audioPlayerRef.play();
       }
     }

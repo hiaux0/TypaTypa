@@ -2,10 +2,11 @@ import { bindable, resolve } from "aurelia";
 import "./grid-cell-html.scss";
 import { Cell, CellKindConfigElementType } from "../../../../types";
 import {
-  CELL_EVENTS_MAP,
+  CELL_EVENT_SOURCE_MAP,
   UI_CONSTANTS,
 } from "../../../../common/modules/constants";
 import { CellEventMessagingService } from "../../../../common/services/CellEventMessagingService";
+import { ICellEventsPayload } from "../../../../domain/entities/grid/CellFunctionEntities";
 
 export class GridCellHtml {
   @bindable public column: number;
@@ -34,20 +35,20 @@ export class GridCellHtml {
   public onTimeChange = (time: number, progress: number) => {
     if (!this.onChange) return;
     if (typeof this.onChange !== "function") return;
-    const payload = {
-      time,
-      progress,
+    const payload: ICellEventsPayload = {
+      source: CELL_EVENT_SOURCE_MAP.audioPlayer,
+      name: "start",
+      data: {
+        time,
+        progress,
+      },
     };
     this.onChange(this.cell, CellKindConfigElementType.AUDIO, payload);
     const key = this.cellEventMessagingService.getKey(
       this.cell.col,
       this.cell.row,
     );
-    this.cellEventMessagingService.publish(
-      key,
-      CELL_EVENTS_MAP.audioPlayer,
-      payload,
-    );
+    // this.cellEventMessagingService.publish(key, payload);
   };
 
   public onStateChange = (isPlaying: boolean, event: Event) => {

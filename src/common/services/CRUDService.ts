@@ -1,11 +1,20 @@
+import { IdObject } from "../../types";
 import generateId from "../modules/random/random";
 
 type Id = string;
 
+interface CreateOptions<T> {
+  allowDuplicate?: boolean;
+  /**
+   * Provide a key, to check the uniqueness of the item based on that key
+   */
+  uniqueByKey?: keyof T;
+}
+
 /**
  * const abcCRUD = new CRUDService(items)
  */
-export class CRUDService<T extends { id: string }> {
+export class CRUDService<T extends IdObject> {
   private items: T[] = [];
   private activeItemId: Id;
 
@@ -16,10 +25,7 @@ export class CRUDService<T extends { id: string }> {
   }
 
   /** CREATE */
-  public create(
-    item: Partial<T>,
-    options: { allowDuplicate?: boolean; uniqueByKey?: keyof T } = {},
-  ): void {
+  public create(item: Partial<T>, options: CreateOptions<T> = {}): void {
     // @ts-ignore instantiated
     const finalItem: T = {
       id: generateId(),

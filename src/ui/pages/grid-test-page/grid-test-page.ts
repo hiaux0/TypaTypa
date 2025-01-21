@@ -925,6 +925,14 @@ export class GridTestPage {
       },
     },
     {
+      key: "<Space>ecal",
+      desc: "[E]ditor [c]olumn [a]dd [l]eft",
+      context: [VIM_ID_MAP.gridNavigation],
+      execute: () => {
+        this.addColLeft();
+      },
+    },
+    {
       key: "<Space>ecla",
       desc: "[E]ditor [Cl]ear [A]ll",
       context: [VIM_ID_MAP.gridNavigation],
@@ -1868,12 +1876,20 @@ export class GridTestPage {
   }
 
   public autoAdjustWidth(col: number): void {
+    // /*prettier-ignore*/ console.log("----------------------------");
+    // const currentWidth = this.getColHeaderMap(col).colWidth;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1881] currentWidth: ", currentWidth);
+
     const colData = this.getCurrentColumnData(col);
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1884] colData: ", colData);
     const longest = ArrayUtils.getLongestElement(colData);
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1885] longest: ", longest);
     const longestWidth = measureTextWidth(longest);
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1886] longestWidth: ", longestWidth);
 
     const map = this.getColHeaderMap(col);
     const adjusted = longestWidth + PADDING * 2;
+    // /*prettier-ignore*/ console.log("[grid-test-page.ts,1888] adjusted: ", adjusted);
     map.colWidth = adjusted;
   }
 
@@ -2135,14 +2151,19 @@ export class GridTestPage {
   }
 
   private getNextCellCoords(): GridSelectionCoord {
-    let prevCol = this.dragStartColumnIndex + 1;
-    let prevRow = this.dragStartRowIndex;
-    if (prevCol === this.colSize) {
-      prevCol = 0;
-      prevRow = prevRow + 1;
+    let nextCol = this.dragStartColumnIndex + 1;
+    let nextRow = this.dragStartRowIndex;
+    if (nextCol === this.colSize) {
+      nextCol = 0;
+      nextRow = nextRow + 1;
     }
 
-    return [prevCol, prevRow];
+    return [nextCol, nextRow];
+  }
+
+  public getNextCell(): Cell | undefined {
+    const [nextCol, nextRow] = this.getNextCellCoords();
+    return this.getCurrentCell(nextCol, nextRow);
   }
 
   private getCurrentCell(

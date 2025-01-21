@@ -11,6 +11,9 @@ declare global {
 }
 
 export type AnyObject = Record<PropertyKey, any>;
+export interface IdObject {
+  id: Id;
+}
 
 export type RequiredPick<T, Keys extends keyof T> = Required<Pick<T, Keys>> &
   Omit<T, Keys>;

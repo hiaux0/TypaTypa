@@ -17,7 +17,7 @@ import {
 } from "../../../../types";
 import {
   BORDER_WIDTH,
-  CELL_EVENTS_MAP,
+  CELL_EVENT_SOURCE_MAP,
   CELL_HEIGHT,
   CELL_WIDTH,
   PADDING,
@@ -43,6 +43,11 @@ import { ArrayUtils } from "../../../../common/modules/array/array-utils";
 import { GRID_FUNCTION_TRIGGER } from "../../../../common/modules/keybindings/app-keys";
 import { availableGridFunctions } from "../grid-modules/GridFunctionService";
 import { CellEventMessagingService } from "../../../../common/services/CellEventMessagingService";
+import { GridTestPage } from "../grid-test-page";
+import {
+  GRID_FUNCTIONS,
+  IAudioCellStartPayload,
+} from "../../../../domain/entities/grid/CellFunctionEntities";
 
 const logger = new Logger("GridCell");
 
@@ -71,6 +76,7 @@ export class GridCell {
   @bindable public onCellUpdate: (col: number, row: number, cell: Cell) => void;
   @bindable public onEscape: () => void;
   @bindable public onEnter: () => void;
+  @bindable public parentGrid: GridTestPage;
   @bindable public mappingByMode: KeyBindingModes;
   @bindable public vimEditorHooks: VimHooks;
 
@@ -487,6 +493,22 @@ export class GridCell {
 
   private initCellMessagingSubscriptions(): void {
     if (!this.cell?.text) return;
+
+    const text = this.cell.text.trim();
+    switch (text) {
+      case "start": {
+        const cell = this.parentGrid.getNextCell();
+        const startAsNum = parseInt(cell?.text ?? "");
+        /*prettier-ignore*/ console.log("[grid-cell.ts,499] startAsNum: ", startAsNum);
+        const key = this.cellEventMessagingService.getKey(0, 0);
+        this.cellEventMessagingService.publish<IAudioCellStartPayload>(key, {
+          source: CELL_EVENT_SOURCE_MAP.audioPlayer,
+          name: GRID_FUNCTIONS.audio.start,
+          data: { start: startAsNum },
+        });
+        break;
+      }
+    }
     // const key = this.cellEventMessagingService.getKey(0, 0);
     //this.subscriptions.push(
     //  this.cellEventMessagingService.subscribe(key, (payload) => {

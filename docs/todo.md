@@ -264,6 +264,7 @@ I want to have live-editor
   - save sequence in array
   - letter registers
 - [ ] cell type: timestamp
+- [ ] feat: functions: =AUDIO('start', A0)
 
 # Done
 ## Grid

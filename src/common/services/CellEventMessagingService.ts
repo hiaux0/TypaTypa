@@ -1,39 +1,45 @@
 import { EventAggregator, resolve, singleton } from "aurelia";
-import { Cell } from "../../types";
-import { CELL_EVENTS_MAP, CellEventsKey } from "../modules/constants";
+import { AnyObject, Cell, IdObject } from "../../types";
+import { CELL_EVENT_SOURCE_MAP, CellEventsKey } from "../modules/constants";
+import { CRUDService } from "./CRUDService";
+import { ICellEventsPayload } from "../../domain/entities/grid/CellFunctionEntities";
 
-export interface IEventMessagingPayload {
-  source: keyof typeof CELL_EVENTS_MAP;
-  payload: unknown;
-}
+type EventKey = string;
 
 @singleton()
 export class CellEventMessagingService {
-  public events: string[] = [];
+  public events = new CRUDService();
 
   private eventAggregator = resolve(EventAggregator);
 
   public addEvent(cell: Cell) {
     const key = this.getKey(cell.col, cell.row);
-    this.events.push(key);
+    this.events.create({ id: key });
   }
 
-  public publish(key: string, source: CellEventsKey, payload: any) {
-    const final: IEventMessagingPayload = {
-      source,
-      payload,
-    };
-    this.eventAggregator.publish(key, final);
+  public publish<T = ICellEventsPayload>(eventKeyOrCell: EventKey | Cell, payload: T) {
+    const eventKey =
+      typeof eventKeyOrCell === "string"
+        ? eventKeyOrCell
+        : this.getKey(eventKeyOrCell.col, eventKeyOrCell.row);
+    this.events.create({ id: eventKey });
+    /*prettier-ignore*/ console.log("[CellEventMessagingService.ts,26] eventKey: ", eventKey);
+    this.eventAggregator.publish(eventKey, payload);
   }
 
   public subscribe(
-    eventName: string,
-    callback: (payload: IEventMessagingPayload) => void,
+    eventKeyOrCell: EventKey | Cell,
+    callback: (payload: ICellEventsPayload) => void,
   ) {
-    return this.eventAggregator.subscribe(eventName, callback);
+    const eventKey =
+      typeof eventKeyOrCell === "string"
+        ? eventKeyOrCell
+        : this.getKey(eventKeyOrCell.col, eventKeyOrCell.row);
+    /*prettier-ignore*/ console.log("[CellEventMessagingService.ts,38] eventKey: ", eventKey);
+    return this.eventAggregator.subscribe(eventKey, callback);
   }
 
-  public getKey(col: number | undefined, row: number | undefined) {
-    return `${CELL_EVENTS_MAP.cellEvents}:[${col}-${row}]`;
+  public getKey(col: number | undefined, row: number | undefined): EventKey {
+    return `${CELL_EVENT_SOURCE_MAP.cellEvents}:[${col}-${row}]`;
   }
 }

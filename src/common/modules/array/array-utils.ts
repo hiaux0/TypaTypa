@@ -93,10 +93,11 @@ export class ArrayUtils {
     return array.map((entry) => [entry]);
   }
 
-  public static getLongestElement<T extends string[]>(array: T): string {
+  public static getLongestElement<T extends (string | undefined)[]>(array: T): string {
     if (array.length === 0) return "";
     let longest = "";
     for (const item of array) {
+      if (!item) continue;
       if (item.length > longest.length) {
         longest = item;
       }
