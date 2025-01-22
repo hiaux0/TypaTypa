@@ -10,6 +10,7 @@
       var(--cell-height) - var(--padding) - var(--border-width)
     );
     border-bottom: $border;
+    border-right: $border;
   }
 }
 
@@ -106,7 +107,7 @@
       left: 0;
       border-bottom: $border;
       background: $secondaryLight0;
-      z-index: $zIndexEditing2;
+      z-index: $zIndexAboveAll2;
 
       .column-header-container {
         border-right: $border;

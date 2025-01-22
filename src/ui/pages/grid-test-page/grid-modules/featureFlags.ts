@@ -15,7 +15,7 @@ export const featureFlags = {
   copy: {
     autopasteIntoRow: {
       enabled: true,
-      col: 2,
+      col: 4,
       method: ["yank"],
     },
   },

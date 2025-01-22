@@ -2174,7 +2174,7 @@ export class GridTestPage {
     return this.getCurrentCell(nextCol, nextRow);
   }
 
-  private getCurrentCell(
+  public getCurrentCell(
     col = this.dragStartColumnIndex,
     row = this.dragStartRowIndex,
   ): Cell | undefined {

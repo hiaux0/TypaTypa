@@ -1,5 +1,5 @@
-$theme: dark;
-/* $theme: light; */
+/* $theme: dark; */
+$theme: light;
 
 // Light theme colors
 $light-primary0: #d5dcbc; // sage (green)
@@ -144,6 +144,7 @@ $zIndexEditing21: 2100;
 $zIndexEditing3: 3000;
 $zIndexSticky: 10000;
 $zIndexAboveAll: 100000;
+$zIndexAboveAll2: 200000;
 
 $columnWidth: 64px;
 $columnHeight: var(--cell-height);

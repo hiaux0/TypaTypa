@@ -20,6 +20,7 @@ export const COLORS = {
 
 export const LANGUAGES = {
   vi: "vietnamese",
+  en: "english",
 };
 
 /**

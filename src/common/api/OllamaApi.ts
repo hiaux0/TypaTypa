@@ -1,9 +1,15 @@
 type Models =
   | "llama3.1"
   | "llama3.2"
-  | "llama3.2-llava"
-  | "llama3.2-llava-2"
-  | "llama3.2-llava-3";
+  | "deepseek-r1:1.5b"
+  | "deepseek-r1:8b"
+  | "deepseek-r1:latest"
+  | "phi3.5:latest"
+  | "phi4:latest";
+
+// const defaultModel: Models = "deepseek-r1:latest";
+// const defaultModel: Models = "phi3.5:latest";
+const defaultModel: Models = "llama3.2";
 
 const baseUrl = "http://localhost:11434";
 
@@ -38,7 +44,7 @@ type Options = {
 };
 
 export class OllamaApi {
-  constructor(private model: Models = "llama3.1") {}
+  constructor(private model: Models = defaultModel) {}
 
   public async generateCompletion(
     prompt: string,
@@ -112,4 +118,4 @@ export class OllamaApi {
   }
 }
 
-export const ollamaApi = new OllamaApi("llama3.2");
+export const ollamaApi = new OllamaApi(defaultModel);

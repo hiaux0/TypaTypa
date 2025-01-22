@@ -516,11 +516,13 @@ export class GridCell {
         break;
       }
       case GRID_FUNCTIONS.audio.end: {
-        const nextCell = this.parentGrid.getNextCell(
-          this.cell.col,
+        const nextCell = this.parentGrid.getCurrentCell(
+          (this.cell.col ?? 0) + 2,
           this.cell.row,
         );
+        /*prettier-ignore*/ console.log("[grid-cell.ts,520] nextCell: ", nextCell);
         const endAsNum = parseInt(nextCell?.text ?? "");
+        /*prettier-ignore*/ console.log("[grid-cell.ts,525] endAsNum: ", endAsNum);
         const key = this.cellEventMessagingService.getKey(0, 0);
         this.cellEventMessagingService.publish<IAudioCellEndPayload>(key, {
           source: CELL_EVENT_SOURCE_MAP.audioPlayer,
