@@ -1,10 +1,12 @@
 import { EventAggregator, resolve, singleton } from "aurelia";
-import { AnyObject, Cell, IdObject } from "../../types";
-import { CELL_EVENT_SOURCE_MAP, CellEventsKey } from "../modules/constants";
+import { Cell } from "../../types";
+import { CELL_EVENT_SOURCE_MAP } from "../modules/constants";
 import { CRUDService } from "./CRUDService";
 import { ICellEventsPayload } from "../../domain/entities/grid/CellFunctionEntities";
 
 type EventKey = string;
+
+const shouldLog = false;
 
 @singleton()
 export class CellEventMessagingService {
@@ -23,7 +25,7 @@ export class CellEventMessagingService {
         ? eventKeyOrCell
         : this.getKey(eventKeyOrCell.col, eventKeyOrCell.row);
     this.events.create({ id: eventKey });
-    /*prettier-ignore*/ console.log("[CellEventMessagingService.ts,26] eventKey: ", eventKey);
+    /*prettier-ignore*/                                           shouldLog && console.log("[CellEventMessagingService.ts,26] eventKey: ", eventKey);
     this.eventAggregator.publish(eventKey, payload);
   }
 
@@ -35,7 +37,7 @@ export class CellEventMessagingService {
       typeof eventKeyOrCell === "string"
         ? eventKeyOrCell
         : this.getKey(eventKeyOrCell.col, eventKeyOrCell.row);
-    /*prettier-ignore*/ console.log("[CellEventMessagingService.ts,38] eventKey: ", eventKey);
+    /*prettier-ignore*/                                           shouldLog && console.log("[CellEventMessagingService.ts,38] eventKey: ", eventKey);
     return this.eventAggregator.subscribe(eventKey, callback);
   }
 

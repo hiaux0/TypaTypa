@@ -11,13 +11,14 @@ import { featureFlags } from "../../pages/grid-test-page/grid-modules/featureFla
 import { Store } from "../../../common/modules/store";
 import { CellEventMessagingService } from "../../../common/services/CellEventMessagingService";
 import { Cell } from "../../../types";
-import { IHydratedController } from "@aurelia/runtime-html";
 import {
-  GRID_FUNCTIONS,
+  isAudioEndFunction,
   isAudioStartFunction,
 } from "../../../domain/entities/grid/CellFunctionEntities";
 
 // played, seekable
+
+const bufferAtStart = 0.5;
 
 @containerless()
 export class UiAudio implements ICustomElementViewModel {
@@ -43,12 +44,12 @@ export class UiAudio implements ICustomElementViewModel {
   ) {}
 
   binding(): void | Promise<void> {
+    if (!featureFlags.grid.cells.audio.aBRepeat) return;
     this.cellEventMessagingService.subscribe(this.cell, (payload) => {
-      /*prettier-ignore*/ console.log("[ui-audio.ts,47] payload: ", payload);
-      const is = isAudioStartFunction(payload);
-      /*prettier-ignore*/ console.log("[ui-audio.ts,49] is: ", is);
-      if (is) {
-        this.store.audioTime = payload.data.start
+      if (isAudioStartFunction(payload)) {
+        this.store.audioTimeStart = payload.data.start;
+      } else if (isAudioEndFunction(payload)) {
+        this.store.audioTimeEnd = payload.data.end;
       }
     });
   }
@@ -65,7 +66,7 @@ export class UiAudio implements ICustomElementViewModel {
       this.audioPlayerRef.load();
       // this.audioPlayerRef.muted = true;
       if (featureFlags.autoPlayAudio) {
-        this.audioPlayerRef.currentTime = this.store.audioTime ?? 0;
+        this.audioPlayerRef.currentTime = this.store.audioTimeStart;
         this.audioPlayerRef.play();
       }
     }
@@ -78,16 +79,40 @@ export class UiAudio implements ICustomElementViewModel {
     //  this.audioPlayerRef.currentTime = progressPercentage * this.audioPlayerRef.duration;
     //});
 
-    this.audioPlayerRef.addEventListener("playing", (event) => {
+    this.audioPlayerRef.addEventListener("play", (event) => {
+      if (!this.store.audioTime) return;
+      const time = Math.max(0, this.store.audioTimeStart - bufferAtStart);
+      this.audioPlayerRef.currentTime = time;
       this.onStateChange(true, event);
     });
+    //this.audioPlayerRef.addEventListener("playing", (event) => {
+    //  /*prettier-ignore*/ console.log("[ui-audio.ts,82] event: ", event);
+    //  // this.audioPlayerRef.currentTime = this.store.audioTime ?? 0;
+    //  // this.audioPlayerRef.play();
+    //  this.onStateChange(true, event);
+    //});
 
     this.audioPlayerRef.addEventListener("pause", (event) => {
       this.onStateChange(false, event);
     });
 
+    this.audioPlayerRef.addEventListener("seeking", () => {
+      if (!featureFlags.grid.cells.audio.aBRepeat) return;
+      const currentTime = this.audioPlayerRef.currentTime;
+      const isBeforeStart = currentTime < this.store.audioTimeStart;
+      if (isBeforeStart) {
+        this.audioPlayerRef.currentTime = this.store.audioTimeStart;
+      }
+    });
+
     this.audioPlayerRef.addEventListener("timeupdate", () => {
       const time = Math.round(this.audioPlayerRef.currentTime);
+      const hasReachedEnd = time > this.store.audioTimeEnd;
+      if (hasReachedEnd) {
+        const time = this.store.audioTimeStart;
+        this.audioPlayerRef.currentTime = time;
+      }
+
       const progressPercentage = (time / this.audioPlayerRef.duration) * 100;
       if (typeof this.onTimeChange === "function") {
         this.onTimeChange(time, progressPercentage);

@@ -1274,7 +1274,6 @@ export class GridTestPage {
       context: [VIM_ID_MAP.gridNavigation],
       execute: () => {
         const time = this.store.audioTime;
-        /*prettier-ignore*/ console.log("[grid-test-page.ts,1269] time: ", time);
         if (!time) return;
         const update = this.setCurrentCellContent(time.toString());
         update?.();
@@ -2139,9 +2138,12 @@ export class GridTestPage {
     this.updateAllSelecedCells();
   }
 
-  private getPreviousCellCoords(): GridSelectionCoord {
-    let prevCol = this.dragStartColumnIndex - 1;
-    let prevRow = this.dragStartRowIndex;
+  private getPreviousCellCoords(
+    col: number = this.dragStartColumnIndex,
+    row: number = this.dragStartRowIndex,
+  ): GridSelectionCoord {
+    let prevCol = col - 1;
+    let prevRow = row;
     if (prevCol === -1) {
       prevCol = this.colSize - 1;
       prevRow = prevRow - 1;
@@ -2150,9 +2152,12 @@ export class GridTestPage {
     return [prevCol, prevRow];
   }
 
-  private getNextCellCoords(): GridSelectionCoord {
-    let nextCol = this.dragStartColumnIndex + 1;
-    let nextRow = this.dragStartRowIndex;
+  private getNextCellCoords(
+    col: number = this.dragStartColumnIndex,
+    row: number = this.dragStartRowIndex,
+  ): GridSelectionCoord {
+    let nextCol = col + 1;
+    let nextRow = row;
     if (nextCol === this.colSize) {
       nextCol = 0;
       nextRow = nextRow + 1;
@@ -2161,8 +2166,11 @@ export class GridTestPage {
     return [nextCol, nextRow];
   }
 
-  public getNextCell(): Cell | undefined {
-    const [nextCol, nextRow] = this.getNextCellCoords();
+  public getNextCell(
+    col: number = this.dragStartColumnIndex,
+    row: number = this.dragStartRowIndex,
+  ): Cell | undefined {
+    const [nextCol, nextRow] = this.getNextCellCoords(col, row);
     return this.getCurrentCell(nextCol, nextRow);
   }
 

@@ -46,6 +46,7 @@ import { CellEventMessagingService } from "../../../../common/services/CellEvent
 import { GridTestPage } from "../grid-test-page";
 import {
   GRID_FUNCTIONS,
+  IAudioCellEndPayload,
   IAudioCellStartPayload,
 } from "../../../../domain/entities/grid/CellFunctionEntities";
 
@@ -230,9 +231,12 @@ export class GridCell {
     }, 0);
   }
 
+  cellChanged() {
+    this.initCellMessagingSubscriptions();
+  }
+
   textareaValueChanged(): void {
     this.autocompleteValue = this.textareaValue;
-    /*prettier-ignore*/ debugLog &&  console.log("GC.A [grid-cell.ts,148] this.autocompleteValue: ", this.autocompleteValue);
   }
 
   constructor(
@@ -494,12 +498,15 @@ export class GridCell {
   private initCellMessagingSubscriptions(): void {
     if (!this.cell?.text) return;
 
-    const text = this.cell.text.trim();
+    if (!featureFlags.grid.cells.audio.aBRepeat) return;
+    const text = this.cell.text.trim().toLocaleUpperCase();
     switch (text) {
-      case "start": {
-        const cell = this.parentGrid.getNextCell();
-        const startAsNum = parseInt(cell?.text ?? "");
-        /*prettier-ignore*/ console.log("[grid-cell.ts,499] startAsNum: ", startAsNum);
+      case GRID_FUNCTIONS.audio.start: {
+        const nextCell = this.parentGrid.getNextCell(
+          this.cell.col,
+          this.cell.row,
+        );
+        const startAsNum = parseInt(nextCell?.text ?? "");
         const key = this.cellEventMessagingService.getKey(0, 0);
         this.cellEventMessagingService.publish<IAudioCellStartPayload>(key, {
           source: CELL_EVENT_SOURCE_MAP.audioPlayer,
@@ -508,14 +515,20 @@ export class GridCell {
         });
         break;
       }
+      case GRID_FUNCTIONS.audio.end: {
+        const nextCell = this.parentGrid.getNextCell(
+          this.cell.col,
+          this.cell.row,
+        );
+        const endAsNum = parseInt(nextCell?.text ?? "");
+        const key = this.cellEventMessagingService.getKey(0, 0);
+        this.cellEventMessagingService.publish<IAudioCellEndPayload>(key, {
+          source: CELL_EVENT_SOURCE_MAP.audioPlayer,
+          name: GRID_FUNCTIONS.audio.end,
+          data: { end: endAsNum },
+        });
+        break;
+      }
     }
-    // const key = this.cellEventMessagingService.getKey(0, 0);
-    //this.subscriptions.push(
-    //  this.cellEventMessagingService.subscribe(key, (payload) => {
-    //    /*prettier-ignore*/ console.log("[grid-cell.ts,479] payload: ", payload);
-    //    // this.cell.displayText = payload.payload.time;
-    //    this.onCellUpdate(this.column, this.row, this.cell);
-    //  }),
-    //);
   }
 }

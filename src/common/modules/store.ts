@@ -24,7 +24,9 @@ export class Store {
   public servicesDatabase: Record<ServicesStorageKeys, any> = {
     RecentlyUsedService: {},
   };
-  public audioTime: number;
+  public audioTime: number = 0;
+  public audioTimeStart: number = 0;
+  public audioTimeEnd: number = 0;
 
   // Grid
   public activeSheet: Sheet;
@@ -71,6 +73,9 @@ export class Store {
       localState?.dictionaryLookedUpList ?? new Set();
     this.servicesDatabase =
       localState?.servicesDatabase ?? this.servicesDatabase;
+    this.audioTime = localState?.audioTime ?? 0;
+    this.audioTimeStart = localState?.audioTimeStart ?? 0;
+    this.audioTimeEnd = localState?.audioTimeEnd ?? 0;
   }
 
   private loadLocalStorage() {

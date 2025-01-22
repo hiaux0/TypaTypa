@@ -8,7 +8,7 @@ import { CELL_HEIGHT } from "../../../../common/modules/constants";
  */
 export const featureFlags = {
   autosave: true,
-  autoPlayAudio: true,
+  autoPlayAudio: false,
   llm: {
     printPrompts: true,
   },
@@ -24,6 +24,9 @@ export const featureFlags = {
       flag: false, // 0
       clipText: true, // 1
       clipTextOffset: 1, // 2 measured in cells
+      audio: {
+        aBRepeat: true,
+      }
     },
     cursor: {
       keepCursorAtCenter: true,
@@ -61,6 +64,7 @@ export const featureFlags = {
 // featureFlags.grid.cursor.cell.scrollAmount
 // featureFlags.grid.cursor.keepCursorAtCenter
 // featureFlags.grid.cells.clipTextOffset;
+// featureFlags.grid.cells.audio.aBRepeat;
 // featureFlags.llm.printPrompts
 // featureFlags.mode.enterCellInInsertMode
 // featureFlags.mode.autoExpandGrid
