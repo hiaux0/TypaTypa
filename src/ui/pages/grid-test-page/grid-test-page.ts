@@ -202,29 +202,32 @@ export class GridTestPage {
           this.updateContentMapChangedForView();
         },
       },
-      //{
-      //  command: VIM_COMMAND.cursorDown,
-      //  desc: "Move to below cell when in INSERT mode",
-      //  context: [VIM_ID_MAP.gridNavigation],
-      //  execute: () => {
-      //    this.onEscape();
-      //    popVimInstanceId();
-      //    this.getCommand(VIM_COMMAND.cursorDown, VimMode.NORMAL)?.execute?.();
-      //    this.putCellIntoEdit();
-      //  },
-      //},
-      //{
-      //  command: VIM_COMMAND.cursorUp,
-      //  desc: "Move to above cell when in INSERT mode",
-      //  context: [VIM_ID_MAP.gridNavigation],
-      //  execute: () => {
-      //    console.log("1");
-      //    this.onEscape();
-      //    popVimInstanceId();
-      //    this.getCommand(VIM_COMMAND.cursorUp, VimMode.NORMAL)?.execute?.();
-      //    this.putCellIntoEdit();
-      //  },
-      // },
+      {
+        command: VIM_COMMAND.cursorDown,
+        desc: "Move to below cell when in INSERT mode",
+        context: [VIM_ID_MAP.gridNavigation],
+        execute: () => {
+          if (!featureFlags.grid.cells.modes.insert.allowMoveCellVertically)
+            return;
+          this.onEscape();
+          popVimInstanceId();
+          this.getCommand(VIM_COMMAND.cursorDown, VimMode.NORMAL)?.execute?.();
+          this.putCellIntoEdit();
+        },
+      },
+      {
+        command: VIM_COMMAND.cursorUp,
+        desc: "Move to above cell when in INSERT mode",
+        context: [VIM_ID_MAP.gridNavigation],
+        execute: () => {
+          if (!featureFlags.grid.cells.modes.insert.allowMoveCellVertically)
+            return;
+          this.onEscape();
+          popVimInstanceId();
+          this.getCommand(VIM_COMMAND.cursorUp, VimMode.NORMAL)?.execute?.();
+          this.putCellIntoEdit();
+        },
+      },
     ],
     [VimMode.VISUAL]: [
       {

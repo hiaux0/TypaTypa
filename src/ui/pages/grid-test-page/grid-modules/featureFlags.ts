@@ -8,25 +8,26 @@ import { CELL_HEIGHT } from "../../../../common/modules/constants";
  */
 export const featureFlags = {
   autosave: true,
-  autoPlayAudio: false,
   llm: {
     printPrompts: true,
   },
   copy: {
     autopasteIntoRow: {
       enabled: true,
-      col: 4,
+      col: 2,
       method: ["yank"],
     },
   },
   grid: {
     cells: {
-      flag: false, // 0
+      flag: true, // 0
       clipText: true, // 1
       clipTextOffset: 1, // 2 measured in cells
-      audio: {
-        aBRepeat: true,
-      }
+      modes: {
+        insert: {
+          allowMoveCellVertically: true,
+        },
+      },
     },
     cursor: {
       keepCursorAtCenter: true,
@@ -64,7 +65,7 @@ export const featureFlags = {
 // featureFlags.grid.cursor.cell.scrollAmount
 // featureFlags.grid.cursor.keepCursorAtCenter
 // featureFlags.grid.cells.clipTextOffset;
-// featureFlags.grid.cells.audio.aBRepeat;
+// featureFlags.grid.cells.modes.insert.allowMoveCellVertically;
 // featureFlags.llm.printPrompts
 // featureFlags.mode.enterCellInInsertMode
 // featureFlags.mode.autoExpandGrid
