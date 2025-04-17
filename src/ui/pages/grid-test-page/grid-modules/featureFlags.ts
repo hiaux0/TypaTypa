@@ -23,6 +23,9 @@ export const featureFlags = {
       flag: true, // 0
       clipText: true, // 1
       clipTextOffset: 1, // 2 measured in cells
+      audio: {
+        aBRepeat: true,
+      },
       modes: {
         insert: {
           allowMoveCellVertically: true,
