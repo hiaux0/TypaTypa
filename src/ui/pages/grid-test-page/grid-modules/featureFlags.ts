@@ -17,6 +17,7 @@ export const featureFlags = {
       col: 2,
       method: ["yank"],
     },
+    copyRowRaw: true,
   },
   grid: {
     cells: {

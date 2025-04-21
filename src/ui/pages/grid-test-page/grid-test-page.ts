@@ -1374,8 +1374,12 @@ export class GridTestPage {
           const text = this.getCurrentCell(col, row)?.text ?? "";
           collectToCopy[row].push(text);
         });
+          /*prettier-ignore*/ console.log("[grid-test-page.ts,1377] collectToCopy: ", collectToCopy);
         const filtered = collectToCopy.filter((a) => a);
-        const asString = JSON.stringify(filtered);
+        let asString = JSON.stringify(filtered);
+        if (featureFlags.copy.copyRowRaw) {
+          asString = filtered.flatMap((a) => a).join("\n");
+        }
         setClipboardContent(asString);
         this.vimInit.executeCommand(VIM_COMMAND.enterNormalMode, "");
         this.setAndUpdateSingleCellSelection();
